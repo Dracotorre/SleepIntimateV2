@@ -1,0 +1,570 @@
+{
+  "modName": "SleepIntimate",
+  "displayName": "Sleep Intimate",
+  "minMcmVersion": 2,
+  "pluginRequirements": ["SleepIntimate.esp"], 
+  "content": [
+    {
+      "text": "Sleep Intimate R-X version 2 - immersive sleep and romance",
+      "align": "center",
+      "type": "text"
+    },
+    {
+      "type": "spacer"
+    },
+    {
+	  "text": "Choose 'Rest' on bed to get started. Build workshop custom storage quick-dress to change outfit, or build an intimate bed with storage for sleep outfit.",
+      "type": "text",
+	  "align": "left"
+    },
+	{
+	  "type": "spacer"
+	},
+	{
+	  "text": "What is Sex Appeal?",
+	  "type": "section"
+	},
+	{
+	  "text": "Skill based on charisma, health (addictions and disease), perks, and intimacy experience (number of intimate scenes).",
+	  "type": "text",
+	  "align": "left"
+	},
+	{
+	  "type": "spacer"
+	},
+	{
+	  "text": "What is intimate attempt chance based on as shown in prompt?",
+	  "type": "section"
+	},
+	{
+	  "text": "3 factors shown on prompt: Sex Appeal, time-since, and location score. Plus hidden bonuses which include special items, party drugs, or bonus help to get started. Time-since less than day is generally negative and increasingly positive after 24 hours until maximum at around 10 days. Location score includes bonus from special bed (Vault bed, double-bed, or intimate bed), bed ownership (yours or companion's), weather, season, hour of day, and nearby awake NPCs.",
+	  "type": "text",
+	  "align": "left"
+	},
+	{
+	  "type": "spacer"
+	}
+  ],
+  "pages": [
+    {
+      "pageDisplayName": "Preference Settings",
+	  "content": [
+		{
+			"text": "basic preferences - see holotape for advanced settings",
+			"type": "text"
+		},
+		{
+			"type": "spacer",
+			"numLines": 1
+		},
+		{
+			"text": "General / Main",
+			"type": "section"
+		},
+		{
+			"id": "MCM_SettingCamera:Main",
+			"text": "Custom Camera",
+			"type": "dropdown",
+			"help": "bed-lowered camera - if using another custom camera then disable this",
+			"valueOptions": {
+				"options": ["Disabled", "Enabled"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|3006C",
+				"propertyName": "DTSleep_SettingCamera"
+			}
+		},
+		{
+			"id": "MCM_SettingChemCraft:Main",
+			"text": "Chemistry Craft Sleepwear",
+			"type": "dropdown",
+			"help": "craft sleep clothes at chem station",
+			"valueOptions": {
+				"options": ["Disabled", "Enabled"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|53333",
+				"propertyName": "DTSleep_SettingChemCraft"
+			}
+		},
+		{
+			"id": "MCM_SettingNotifications:Main",
+			"text": "Notifications",
+			"type": "dropdown",
+			"help": "most notifications",
+			"valueOptions": {
+				"options": ["Disabled", "Enabled"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|5DA83",
+				"propertyName": "DTSleep_SettingNotifications"
+			}
+		},
+		{
+			"text": "Sleep and Undress for Bed",
+			"type": "section"
+		},
+		{
+			"id": "MCM_SettingNapOnly:Rest",
+			"text": "Immersive Rest",
+			"type": "dropdown",
+			"help": "watch sleep recovery with chance for interruption, or disable to use sleep menu then wake in bed",
+			"valueOptions": {
+				"options": ["Disabled", "constant-time", "fast-time", "fast-wait-time"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|814DF",
+				"propertyName": "DTSleep_SettingNapOnly"
+			}
+		},
+		{
+			"id": "MCM_SettingFastSleepEffect:Rest",
+			"text": "Immersive Rest fast-time Effect",
+			"type": "dropdown",
+			"help": "night-vision screen effect to remind time passes faster.",
+			"valueOptions": {
+				"options": ["Disabled", "Enabled"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|E5125",
+				"propertyName": "DTSleep_SettingFastSleepEffect"
+			}
+		},
+		{
+			"id": "MCM_SettingNapComp:Rest",
+			"text": "Companion go to bed",
+			"type": "dropdown",
+			"help": "companion search for available supported bed to sleep (Immersive Rest) - some custom beds not supported",
+			"valueOptions": {
+				"options": ["After Intimacy", "Always"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|9E48F",
+				"propertyName": "DTSleep_SettingNapComp"
+			}
+		},
+		{
+			"id": "MCM_SettingBedOwn:Rest",
+			"text": "Twin/Double-Bed owned",
+			"type": "dropdown",
+			"help": "When with companion warn if double-bed or vault twin-beds (side-by-side) assigned to another, or claim ownership",
+			"valueOptions": {
+				"options": ["Disabled", "Warn-only", "Warn-and-claim"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|DA258",
+				"propertyName": "DTSleep_SettingBedOwn"
+			}
+		},
+		{
+			"id": "MCM_SettingUndress:Rest",
+			"text": "Undress for Rest",
+			"type": "dropdown",
+			"help": "",
+			"valueOptions": {
+				"options": ["Disabled", "Situational", "undress-all"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|F99",
+				"propertyName": "DTSleep_SettingUndress"
+			}
+		},
+		{
+			"id": "MCM_SettingUndressGlasses:Rest",
+			"text": "Remove Eyewear",
+			"type": "dropdown",
+			"help": "Remove recognized eye-glasses, goggles, etc for bed-only, bed and intimate scenes, or never",
+			"valueOptions": {
+				"options": ["Never", "Bed-only", "Always"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|7E744",
+				"propertyName": "DTSleep_SettingUndressGlasses"
+			}
+		},
+		{
+			"id": "MCM_SettingSave:Rest",
+			"text": "Save-on-exit Bed",
+			"type": "dropdown",
+			"help": "Immersive Rest only: Auto-save after exit bed with minimum hour-count limited once every 8 hours",
+			"valueOptions": {
+				"options": ["Disabled", "2+ hours sleep", "5+ hours sleep"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|A309C",
+				"propertyName": "DTSleep_SettingSave"
+			}
+		},
+		{
+			"id": "MCM_SettingNapExit:Rest",
+			"text": "Immersive Rest Done",
+			"type": "dropdown",
+			"help": "Immersive Rest only: get out of bed on maximum sleep or keep napping with hourly reminder",
+			"valueOptions": {
+				"options": ["Keep napping", "Get up!"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|90823",
+				"propertyName": "DTSleep_SettingNapExit"
+			}
+		},
+		{
+			"id": "MCM_SettingBedDecor:Rest",
+			"text": "Bed Decor",
+			"type": "dropdown",
+			"help": "chance for pillow, teddy bear, addiction chems, or gifts from lover",
+			"valueOptions": {
+				"options": ["Disabled", "Enabled"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|A65D6",
+				"propertyName": "DTSleep_SettingBedDecor"
+			}
+		},
+		{
+			"text": "Intimacy ",
+			"type": "section"
+		},
+		{
+			"id": "MCM_SettingIntimate:Intimacy",
+			"text": "Intimate Scenes",
+			"type": "dropdown",
+			"help": "pre-bed scenes -Disable for sleep-only. Extra NPCs: includes non-romance companions for challenge - require companion perk.",
+			"valueOptions": {
+				"options": ["Disabled", "Enabled", "Extra NPCs"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|F9A",
+				"propertyName": "DTSleep_SettingIntimate"
+			}
+		},
+		{
+			"id": "MCM_SettingLover2:Intimacy",
+			"text": "Second Lover",
+			"type": "dropdown",
+			"help": "include second lover for sleep and supported intimate animations",
+			"valueOptions": {
+				"options": ["Disabled", "Enabled"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|10745A",
+				"propertyName": "DTSleep_SettingLover2"
+			}
+		},
+		{
+			"id": "MCM_SettingChairsEnabled:Intimacy",
+			"text": "Seat Scenes",
+			"type": "dropdown",
+			"help": "include benches, chairs, and sofas as places to embrace your love",
+			"valueOptions": {
+				"options": ["Disabled", "Enabled-Embrace", "Enabled-Intimate"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|104E52",
+				"propertyName": "DTSleep_SettingChairsEnabled"
+			}
+		},
+		{
+			"id": "MCM_SettingGenderPref:Intimacy",
+			"text": "Gender Preference",
+			"type": "dropdown",
+			"help": "gender of companion to limit intimacy or only single companion (faithful / 3+ scenes).",
+			"valueOptions": {
+				"options": ["Male", "Female", "Both"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|FB64F",
+				"propertyName": "DTSleep_SettingGenderPref"
+			}
+		},
+		{
+			"id": "MCM_SettingShowIntimateCheck:Intimacy",
+			"text": "Prompt for Intimacy",
+			"type": "dropdown",
+			"help": "Prompt: Default: places characters. Pick Scene allows choosing a style or position which includes pick a spot.",
+			"valueOptions": {
+				"options": ["Disabled / Auto", "Default", "Pick Scene"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|55933",
+				"propertyName": "DTSleep_SettingShowIntimateCheck"
+			}
+		},
+		{
+			"id": "MCM_SettingWarnLoverBusy:Intimacy",
+			"text": "Companion Busy Reminder",
+			"type": "dropdown",
+			"help": "Prompt to Cancel or Rest if companion is too busy for intimacy (such as sitting or using workstation)",
+			"valueOptions": {
+				"options": ["Disabled", "Enabled"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|9BE8B",
+				"propertyName": "DTSleep_SettingWarnLoverBusy"
+			}
+		},
+		{
+			"id": "MCM_SettingDoAffinity:Intimacy",
+			"text": "Companion Affinity",
+			"type": "dropdown",
+			"help": "same rule as flirting: nearby, romanced (and awake) companion may hate getting intimate with another lover",
+			"valueOptions": {
+				"options": ["Disabled", "Enabled"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|F6A53",
+				"propertyName": "DTSleep_SettingDoAffinity"
+			}
+		},
+		{
+			"id": "MCM_SettingCrime:Intimacy",
+			"text": "Crime Violence",
+			"type": "dropdown",
+			"help": "guards may attack after intimate scene (and a 2-second warning) for indecent act",
+			"valueOptions": {
+				"options": ["Disabled", "Enabled"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|114949",
+				"propertyName": "DTSleep_SettingCrime"
+			}
+		},
+		{
+			"id": "MCM_SettingAAF:Intimacy",
+			"text": "Intimate AAF Scenes",
+			"type": "dropdown",
+			"help": "play Advanced Animation Framework (AAF) API instead of standard player - requires extra files",
+			"valueOptions": {
+				"options": ["Disabled / Standard", "Enabled", "No-fade scene"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|C0043",
+				"propertyName": "DTSleep_SettingAAF"
+			}
+		},
+		{
+			"id": "MCM_SettingFadeEndScene:Intimacy",
+			"text": "Go-to-Bed (Immersive Rest)",
+			"type": "dropdown",
+			"help": "after scene go to bed if tired - disable for prompt or stay awake",
+			"valueOptions": {
+				"options": ["Disabled / Prompt", "Tired only"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|A56A1",
+				"propertyName": "DTSleep_SettingFadeEndScene"
+			}
+		},
+		{
+			"id": "MCM_SettingCancelScene:Intimacy",
+			"text": "Scene Cancel with Pip-Boy",
+			"type": "dropdown",
+			"help": "open and close Pip-Boy to cancel - only for extended intimate scenes, not brief hugs or AAF",
+			"valueOptions": {
+				"options": ["Disabled", "Enabled"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|4478D",
+				"propertyName": "DTSleep_SettingCancelScene"
+			}
+		},
+		{
+			"text": "Backpack ",
+			"type": "section"
+		},
+		{
+			"id": "MCM_SettingPackOnGround:Backpack",
+			"text": "Place on ground",
+			"type": "dropdown",
+			"help": "place fake pack near feet, at bed, or beside chair",
+			"valueOptions": {
+				"options": ["Disabled", "Sleep", "Bed and Chair"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|12901C",
+				"propertyName": "DTSleep_SettingPackOnGround"
+			}
+		},
+		{
+			"text": "TEST features ",
+			"type": "section"
+		},
+		{
+			"id": "MCM_SettingFastTime:Test",
+			"text": "Immersive Rest fast-time Rate",
+			"type": "dropdown",
+			"help": "Changes fast-time rate TimeScale. Select total real-time minutes for 6-hour sleep",
+			"valueOptions": {
+				"options": ["10 minutes - default", "8 minutes", "7 minutes"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|DF5EE",
+				"propertyName": "DTSleep_SettingFastTime"
+			}
+		},
+		{
+			"id": "MCM_SettingAACV:Test",
+			"text": "Standard Scene View (no AAF)",
+			"type": "dropdown",
+			"help": "default let decide Orbit-or-Look -- look locks position to avoid scene shaking and reduced character positioning",
+			"valueOptions": {
+				"options": ["Force Orbit", "Orbit-or-Look", "Look only"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|10D73C",
+				"propertyName": "DTSleep_SettingAACV"
+			}
+		}
+	  ]
+	},
+    {
+      "pageDisplayName": "Problems-Solutions",
+      "content": [
+        {
+          "text": "Camera after bed stays low or in wrong position",
+          "type": "section"
+        },
+		{
+		  "text": "Try toggle 1st/3rd-person view. If using another custom camera disable this custom camera in the MCM. When sleeping loading a save-game may cause camera to become stuck. Exit to main menu and load save again.",
+		  "type": "text",
+		  "align": "left"
+		},
+        {
+          "type": "spacer"
+        },
+		{
+          "text": "Rest: no 'Rest' option on bed (only 'Sleep')",
+          "type": "section"
+        },
+		{
+		  "text": "The 'Rest' will hide when in Power Armor, weapon drawn, sneaking, over-encumbered, or if bed marked incompatible by the mod. If only 'Sleep' may have another mod altering bed activation. If instead of 'Sleep' states, 'Awaken' then sneak or try activate bed to reset.",
+		  "type": "text",
+		  "align": "left"
+		},
+        {
+          "type": "spacer"
+        },
+		{
+          "text": "Rest: stuck standing on bed",
+          "type": "section"
+        },
+		{
+		  "text": "Sneak to regain controls. Beds require enough space on the sides and above for character to enter and exit. Avoid blue tarp-tent and other beds with low hanging obstructions.",
+		  "type": "text",
+		  "align": "left"
+		},
+        {
+          "type": "spacer"
+        },
+		{
+          "text": "Rest: after exit bed failed to redress, companion stuck in bed, or bed still has 'Awaken'",
+          "type": "section"
+        },
+		{
+		  "text": "Sneak to redress. May have accidentally activated a nearby furniture. Remember to activate same bed sleeping in to exit.",
+		  "type": "text",
+		  "align": "left"
+		},
+        {
+          "type": "spacer"
+        },
+		{
+          "text": "Rest (immersive): companion can't find bed",
+          "type": "section"
+        },
+		{
+		  "text": "Plenty of open beds nearby, but companion can't find bed! Companion ignores beds assigned to others, or custom bed not recognized. Send companion to sleep.",
+		  "type": "text",
+		  "align": "left"
+		},
+        {
+          "type": "spacer"
+        },
+		{
+          "text": "Rest: companion remains dressed for bed",
+          "type": "section"
+        },
+		{
+		  "text": "Only romanced companion (not Extra NPCs) will undress for bed to the same level as player character, and only if in bed or finds a bed nearby. Instruct companion to use bed to make sure bed is found. Some items, like hats, may fail to remove. For these items use the Trade menu to remove and re-equip to get system to recognize.",
+		  "type": "text",
+		  "align": "left"
+		},
+        {
+          "type": "spacer"
+        },
+		{
+          "text": "Rest: companion refuses to equip sleep clothes",
+          "type": "section"
+        },
+		{
+		  "text": "Full-body outfit works best. Sleepwear must be bathrobe, recognized custom sleepwear, or marked as sleep clothes using the holotape. If player can wear, equip it and open Sleep Clothes Menu. At the top the banner should mention if wearing sleep clothes. If not, mark it.",
+		  "type": "text",
+		  "align": "left"
+		},
+		{
+		  "text": "Test companion: in Trade menu, equip then remove sleep item so companion back in normal outfit. In holotape, enable Test Mode (Settings Menu) then in Test Menu, select Undress lover for bed, and exit holotape. If companion undressed, but not wearing sleep outfit then use Trade Menu to equip. Return to holotape Test Menu and select Redress lover.",
+		  "type": "text",
+		  "align": "left"
+		},
+        {
+          "type": "spacer"
+        },
+		{
+          "text": "Intimacy: No prompt - have companion, but go straight to sleep",
+          "type": "section"
+        },
+		{
+		  "text": "Must be romanced or flirting. Make sure companion is nearby and standing. Optional non-romance companions (Extra NPCs) require having perk. A game bug may temporarily make companion appear non-romanced until obtaining next like. Custom companion with custom follow system may not be compatible.",
+		  "type": "text",
+		  "align": "left"
+		},
+        {
+          "type": "spacer"
+        },
+		{
+          "text": "Intimacy: Help! Always fail attempt!",
+          "type": "section"
+        },
+		{
+		  "text": "Until gaining more experience limit attempts to once each night to maximize starter bonus. Choose private areas like rented bed or Home Plate. Try to get Sex Appeal up to 30+ using bathrobe or drugs. Liquor helps with low charisma, but may be a negative for highly charismatic character.",
+		  "type": "text",
+		  "align": "left"
+		},
+        {
+          "type": "spacer"
+        },
+		{
+          "text": "Intimacy: have naughty animations pack, but characters only hug and kiss before bed",
+          "type": "section"
+        },
+		{
+		  "text": "Situation (same-gender, race, or small bed) may limit scene picking, or companion prefers cuddle. Try Pick Scene. Female-female scenes require extra gear for Leito's pack, or pack with female-female animations. Gen-2 synths limited to hugs and kisses.",
+		  "type": "text",
+		  "align": "left"
+		},
+        {
+          "type": "spacer"
+        },
+		{
+          "text": "Intimacy: stuck at black load-screen (before or after scene)",
+          "type": "section"
+        },
+		{
+		  "text": "Rare glitch related to moving player character. Version 2 reduces movement by choosing stand in position (like hugs) or cloning your character. If happens too often, set Go-to-Bed to prompt, or try in Test section - Scene View Look. Reporting to author details including frequency or world location may help.",
+		  "type": "text",
+		  "align": "left"
+		},
+        {
+          "type": "spacer"
+        },
+		{
+          "text": "Intimacy: Hey, I just want to test scene with my setup!",
+          "type": "section"
+        },
+		{
+		  "text": "Enable demo for free intimacy check pass. Be ready at a bed or chair with romanced companion.",
+		  "type": "text",
+		  "align": "left"
+		},
+		{
+		  "text": "1. holotape Settings Menu: Test Mode (Enabled)",
+		  "type": "text",
+		  "align": "left"
+		},
+		{
+		  "text": "2. holotape main menu, open Test Menu",
+		  "type": "text",
+		  "align": "left"
+		},
+		{
+		  "text": "3. select Intimate Scene Demo",
+		  "type": "text",
+		  "align": "left"
+		},
+		{
+		  "text": "4. exit Pip-Boy and activate Rest on bed - persuasion check will pass without points - no voice for success",
+		  "type": "text",
+		  "align": "left"
+		},
+        {
+          "type": "spacer"
+        }
+        
+      ]
+	}
+  ]
+}

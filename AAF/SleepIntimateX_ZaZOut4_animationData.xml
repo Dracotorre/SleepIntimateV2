@@ -1,0 +1,215 @@
+<meta title="SleepIntimateX_ZaZOut4_animationData.xml" version="2.0" dataSet="animation"/>
+<defaults source="ZaZOut4.esp"/>
+
+<animation id="SIX_ZaZ_PilloryOral_BJ-00" offset="0,-1,0,180:0,0.5,0,0" time="300">
+	<actor gender="M">
+		<idle form="05004503" id="ZOut4-HP_2P_BJ00_M"/>
+	</actor>
+	<actor gender="F">
+		<idle form="05004504" id="ZOut4-HP_2P_BJ00_F"/>
+	</actor>
+</animation>
+
+<animation id="SIX_ZaZ_PilloryOral_BJ-01" offset="0,-1,0,180:0,0.5,0,0" time="500">
+	<actor gender="M">
+		<idle form="050035C5" id="ZOut4-HP_2P_BJ01_M"/>
+		<!--<value path="morph" value="Erection Up" to="1.0"/>-->
+	</actor>
+	<actor gender="F">
+		<idle form="050035C6" id="ZOut4-HP_2P_BJ01_F"/>
+	</actor>
+</animation>
+
+<animation id="SIX_ZaZ_PilloryOral_BJ-02" offset="0,-1.0,0,180:0,0.5,0,0" time="500">
+	<actor gender="M">
+		<idle form="050035C7" id="ZOut4-HP_2P_BJ02_M"/>
+		<!--<value path="morph" value="Erection Up" to="1.0"/>-->
+	</actor>
+	<actor gender="F">
+		<idle form="050035C8" id="ZOut4-HP_2P_BJ02_F"/>
+	</actor>
+</animation>
+
+<animation id="SIX_ZaZ_PilloryOral_BJ-03" offset="0,-1.0,0,180:0,0.5,0,0" time="500">
+	<actor gender="M">
+		<idle form="050035C9" id="ZOut4-HP_2P_BJ03_M"/>
+		<!--<value path="morph" value="Erection Up" to="1.0"/>-->
+	</actor>
+	<actor gender="F">
+		<idle form="050035CA" id="ZOut4-HP_2P_BJ03_F"/>
+	</actor>
+</animation>
+
+<animation id="SIX_ZaZ_PilloryOral_BJ-03_TR" offset="0,-1.0,0,180:0,0.5,0,0" time="180">
+	<actor gender="M">
+		<idle form="05003D84" id="ZOut4-HP_2P_BJ03_TR_M"/>
+	</actor>
+	<actor gender="F">
+		<idle form="05003D85" id="ZOut4-HP_2P_BJ03_TR_F"/>
+	</actor>
+</animation>
+
+<animation id="SIX_ZaZ_PilloryOral_BJ-04" offset="0,-1.0,0,180:0,0.5,0,0" time="500">
+	<actor gender="M">
+		<idle form="05003D65" id="ZOut4-HP_2P_BJ04_M"/>
+	</actor>
+	<actor gender="F">
+		<idle form="05003D66" id="ZOut4-HP_2P_BJ04_F"/>
+	</actor>
+</animation>
+
+<animation id="SIX_ZaZ_PilloryOral_BJ-04_TR" offset="0,-1.0,0,180:0,0.5,0,0" time="300">
+	<actor gender="M">
+		<idle form="05004528" id="ZOut4-HP_2P_BJ04_TR_M"/>
+	</actor>
+	<actor gender="F">
+		<idle form="05004529" id="ZOut4-HP_2P_BJ04_TR_F"/>
+	</actor>
+</animation>
+
+<animation id="SIX_ZaZ_PilloryOral_BJ-05" offset="0,-1.0,0,180:0,0.5,0,0" time="500">
+	<actor gender="M">
+		<idle form="05004501" id="ZOut4-HP_2P_BJ05_M"/>
+		<!--<value path="morph" value="Erection Up" to="1.0"/>-->
+	</actor>
+	<actor gender="F">
+		<idle form="05004502" id="ZOut4-HP_2P_BJ05_F"/>
+	</actor>
+</animation>
+
+<animation id="SIX_ZaZ_PilloryOral_BJ-06" offset="0,-1.0,0,180:0,0.5,0,0" time="500">
+	<actor gender="M">
+		<idle form="05004505" id="ZOut4-HP_2P_BJ06_M"/>
+	</actor>
+	<actor gender="F">
+		<idle form="05004506" id="ZOut4-HP_2P_BJ06_F"/>
+	</actor>
+</animation>
+
+<animation id="SIX_ZaZ_PilloryOral_BJ-07" offset="0,-1.0,0,180:0,0.5,0,0" time="500">
+	<actor gender="M">
+		<idle form="0500452A" id="ZOut4-HP_2P_BJ07_M"/>
+	</actor>
+	<actor gender="F">
+		<idle form="0500452B" id="ZOut4-HP_2P_BJ07_F"/>
+	</actor>
+</animation>
+
+
+
+<!-- Enter Animation For Pillory Sex Auto -->
+
+<animation id="SIX_ZaZ_ZOut4-HP_2P_A-Enter_Pussy" offset="0,0,0,0:0,0,0,0" time="80">
+	<actor gender="M">
+		<idle form="05002697" id="ZOut4-HP_2P_A-Enter_Pussy_M"/>
+	</actor>
+	<actor gender="F">
+		<idle form="05002698" id="ZOut4-HP_2P_A-Enter_Pussy_F"/>
+	</actor>
+</animation>
+
+
+<animation id="SIX_ZaZ_PillorySex_A-Pussy-00" offset="0,0,0,0:0,0,0,0" time="500">
+	<actor gender="M">
+		<idle form="05001EE3" id="ZOut4-HP_2P_A-Pussy00_M"/>
+	</actor>
+	<actor gender="F">
+		<idle form="05001EE4" id="ZOut4-HP_2P_A-Pussy00_F"/>
+	</actor>
+</animation>
+
+<animation id="SIX_ZaZ_PillorySex_A-Pussy-01" offset="0,0,0,0:0,0,0,0" time="500">
+	<actor gender="M">
+		<idle form="05001EE6" id="ZOut4-HP_2P_A-Pussy01_M"/>
+	</actor>
+	<actor gender="F">
+		<idle form="05001EE5" id="ZOut4-HP_2P_A-Pussy01_F"/>
+	</actor>
+</animation>
+
+<animation id="SIX_ZaZ_PillorySex_A-Pussy-02" offset="0,0,0,0:0,0,0,0" time="500">
+	<actor gender="M">
+		<idle form="05001EEA" id="ZOut4-HP_2P_A-Pussy02_M"/>
+	</actor>
+	<actor gender="F">
+		<idle form="05001EEB" id="ZOut4-HP_2P_A-Pussy02_F"/>
+	</actor>
+</animation>
+
+<animation id="SIX_ZaZ_PillorySex_A-Pussy-03" offset="0,0,0,0:0,0,0,0" time="500">
+	<actor gender="M">
+		<idle form="05002690" id="ZOut4-HP_2P_A-Pussy03_M"/>
+	</actor>
+	<actor gender="F">
+		<idle form="05002691" id="ZOut4-HP_2P_A-Pussy03_F"/>
+	</actor>
+</animation>
+
+<animation id="SIX_ZaZ_PillorySex_A-Pussy-04" offset="0,0,0,0:0,0,0,0" time="500">
+	<actor gender="M">
+		<idle form="05002693" id="ZOut4-HP_2P_A-Pussy04_M"/>
+	</actor>
+	<actor gender="F">
+		<idle form="05002694" id="ZOut4-HP_2P_A-Pussy04_F"/>
+	</actor>
+</animation>
+
+<animation id="SIX_ZaZ_PillorySex_A-Pussy-05" offset="0,0,0,0:0,0,0,0" time="500">
+	<actor gender="M">
+		<idle form="05002695" id="ZOut4-HP_2P_A-Pussy05_M"/>
+	</actor>
+	<actor gender="F">
+		<idle form="05002696" id="ZOut4-HP_2P_A-Pussy05_F"/>
+	</actor>
+</animation>
+
+<animation id="SIX_ZaZ_PillorySex_A-Pussy-06" offset="0,0,0,0:0,0,0,0" time="500">
+	<actor gender="M">
+		<idle form="05002699" id="ZOut4-HP_2P_A-Pussy06_M"/>
+	</actor>
+	<actor gender="F">
+		<idle form="500269A" id="ZOut4-HP_2P_A-Pussy06_F"/>
+	</actor>
+</animation>
+
+<!-- Transition From Animation-06 to Animation-07  -->
+
+<animation id="SIX_ZaZ_PillorySex_A-Pussy-06_TR" offset="0,0,0,0:0,0,0,0" time="400">
+	<actor gender="M">
+		<idle form="050026A2" id="ZOut4-HP_2P_A-Pussy06_TR01_M"/>
+	</actor>
+	<actor gender="F">
+		<idle form="050026A3" id="ZOut4-HP_2P_A-Pussy06_TR01_F"/>
+	</actor>
+</animation>
+
+
+
+<animation id="SIX_ZaZ_PillorySex_A-Pussy-07" offset="0,0,0,0:0,0,0,0" time="300">
+	<actor gender="M">
+		<idle form="050026A4" id="ZZOut4-HP_2P_A-Pussy07_M"/>
+	</actor>
+	<actor gender="F">
+		<idle form="050026A5" id="ZOut4-HP_2P_A-Pussy07_F"/>
+	</actor>
+</animation>
+
+<!-- Transitions From Animation-07 to Animation-08  -->
+
+<animation id="SIX_ZaZ_PillorySex_A-Pussy-07_TR" offset="0,0,0,0:0,0,0,0" time="90">
+	<actor gender="M">
+		<idle form="050026A6" id="ZOut4-HP_2P_A-Pussy07_TR_M"/>
+	</actor>
+	<actor gender="F">
+		<idle form="050026A7" id="ZOut4-HP_2P_A-Pussy07_TR_F"/>
+	</actor>
+</animation>
+
+<animation id="SIX_ZaZ_PillorySex_A-Pussy-08" offset="0,0,0,0:0,0,0,0" time="500">
+	<actor gender="M">
+		<idle form="050026A8" id="ZOut4-HP_2P_A-Pussy08_M"/>
+	</actor>
+	<actor gender="F">
+		<idle form="050026A9" id="ZOut4-HP_2P_A-Pussy08_F"/>
+	</actor>
+</animation>
