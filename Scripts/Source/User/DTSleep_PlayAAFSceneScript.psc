@@ -29,6 +29,9 @@ Scriptname DTSleep_PlayAAFSceneScript extends Quest
 ; 	- SleepIntimateX_ZaZOut4_positionData.xml
 ;	- SleepIntimateX_ZaZOut4_animationData.xml
 ;
+; 50 Shades of Fallout by Gray scenes:
+;   - SleepIntimateX_Graymod_positionData.xml
+;
 ; AAF uses a doppelganger borrowing player-character armor items which is then returned afterward
 ; and rather late.
 ;
@@ -55,6 +58,7 @@ GlobalVariable property DTSleep_SettingTestMode auto const
 GlobalVariable property DTSleep_DebugMode auto const
 GlobalVariable property DTSleep_SettingAAF auto const
 GlobalVariable property DTSleep_SettingUseLeitoGun auto const
+GlobalVariable property DTSleep_SettingUseBT2Gun auto const
 { if using erection 'gun' nude body for male }
 GlobalVariable property DTSleep_AAFTestTipShown auto	; time last shown
 EndGroup
@@ -66,6 +70,7 @@ DTSleep_SceneData property SceneData auto const
 ;FormList property DTSleep_StrapOnList auto const
 FormList property DTSleep_LeitoGunList auto const
 { nude male body sets with erection 'gun' aimed - use when need to replace AAF morph }
+FormList property DTSleep_BT2GunList auto const
 ;Armor property DTSleep_NudeSuitPlayerUp auto const
 Message property DTSleep_TestModeIDMessage auto const   ; reminds in test mode - could activate AAF interface to see ID
 Message property DTSleep_AAFGUIReminderMsg auto const
@@ -484,6 +489,8 @@ bool Function PlaySequence()
 				PlaySequenceSCStages()
 			elseIf (SequenceID < 900)
 				PlaySequenceZaZStages()
+			elseIf (SequenceID < 1000)
+				PlaySequenceGrayStages()
 			else
 				Debug.Trace("[DTSleep_PlayAAF] invalid sequence ID " + SequenceID)
 			
@@ -784,6 +791,9 @@ string Function CreateSeqBaseStr(bool fullStr = true)
 			else
 				baseStr = "DTSIXF_"
 			endIf
+		elseIf (SequenceID == 940)
+		
+			baseStr = "DTSIXF_"
 		
 		elseIf (SceneData.SameGender && SceneData.MaleRoleGender == 1)
 			if (SceneData.SecondMaleRole != None)
@@ -823,24 +833,56 @@ endFunction
 ; use if morph not available, but not on player's character which is a doppelganger
 ; 0 = normal, 1 = up, 2 = down
 Armor Function GetLeitoGun(int kind)
+
+	return GetArmorNudeGun(kind)
+endFunction
+
+; 0 = normal, 1 = up, 2 = down
+Armor Function GetArmorNudeGun(int kind)
 	Armor gun = None
+	if (kind < 0)
+		return None
+	endIf
+	if (!Debug.GetPlatformName() as bool)
+		return None
+	endIf
+	if (DTSleep_SettingTestMode.GetValue() < 1.0)
+		return None
+	endIf
+	int evbVal = DTSleep_SettingUseLeitoGun.GetValueInt()
+	int bt2Val = DTSleep_SettingUseBT2Gun.GetValueInt()
 	
-	if (DTSleep_SettingUseLeitoGun.GetValue() > 0)
+	if (SceneData.IsCreatureType == 1)
+		evbVal = 2
+		bt2Val = -1
+	elseIf (DTSConditionals.IsUniquePlayerMaleActive && evbVal > 0 && SceneData.MaleRole == PlayerRef)
+		bt2Val = -1
+	endIf
 	
-		if (SceneData.MaleRole == PlayerRef)
-			if (DTSConditionals.IsUniquePlayerMaleActive)
+	if (kind > 0 && evbVal == 1)
+		kind = 0
+	endIf
+	
+	if ((evbVal > 0 || bt2Val > 0) && SceneData.IsCreatureType != 2)
+	
+		if (SceneData.MaleRole == PlayerRef || SceneData.FemaleRole == SecondActor)
+			if (evbVal > 0 && DTSConditionals.IsUniquePlayerMaleActive)
 				kind += 3
 			;else
 				;return DTSleep_NudeSuitPlayerUp
 			endIf
-		elseIf (DTSConditionals.IsUniqueFollowerMaleActive)
+		elseIf (evbVal > 0 && DTSConditionals.IsUniqueFollowerMaleActive)
 			if (SceneData.MaleRoleCompanionIndex > 0)
 				kind += (3 * SceneData.MaleRoleCompanionIndex)
 			endIf
 		endIf
 		
-		if (kind >= 0 && DTSleep_LeitoGunList && DTSleep_LeitoGunlist.GetSize() > kind)
-			gun = DTSleep_LeitoGunList.GetAt(kind) as Armor
+		if (kind >= 0)
+			if (bt2Val < 0 && DTSleep_LeitoGunList != None && DTSleep_LeitoGunlist.GetSize() > kind)
+				gun = DTSleep_LeitoGunList.GetAt(kind) as Armor
+			elseIf (bt2Val >= 0 && DTSleep_BT2GunList != None && DTSleep_BT2GunList.GetSize() > kind)
+				gun = DTSleep_BT2GunList.GetAt(kind) as Armor
+			endIf
 		endIf
 	endIf
 	
@@ -959,6 +1001,14 @@ Function PlaySequenceSCStages()
 	endIf
 	
 	PlayPairSequenceLists(SceneData.MaleRole, SceneData.FemaleRole, SceneData.SecondMaleRole, seqArr, true)
+endFunction
+
+Function PlaySequenceGrayStages()
+
+	Armor gunStart = GetLeitoGun(0)
+	AStageItem[] seqArr = CreateSeqArrayForID(SequenceID, 4, gunStart)
+	
+	PlayPairSequenceLists(SceneData.MaleRole, SceneData.FemaleRole, None, seqArr, true)
 endFunction
 
 Function PlaySequenceZaZStages()

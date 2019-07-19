@@ -491,7 +491,7 @@ Point3DOrient Function GetPointBedLeitoA(bool isLowBed, float zAngleOfBed, float
 EndFunction
 
 ; relative to pt
-Point3DOrient Function GetPointDistOnHeading(Point3DOrient pt, float dist) global
+Point3DOrient Function GetPointDistOnHeading(Point3DOrient pt, float dist, float offsetAngle = 0.0) global
 	Point3DOrient positionResult = new Point3DOrient
 	positionResult.X = 0.0
 	positionResult.Y = 0.0
@@ -500,7 +500,7 @@ Point3DOrient Function GetPointDistOnHeading(Point3DOrient pt, float dist) globa
 		positionResult.Heading = pt.Heading
 	else
 		positionResult.Y = dist
-		positionResult = GetPointOrientedFromPointByAngle(positionResult, pt.Heading)
+		positionResult = GetPointOrientedFromPointByAngle(positionResult, pt.Heading + offsetAngle)
 		positionResult.Heading = pt.Heading
 	endIf
 	

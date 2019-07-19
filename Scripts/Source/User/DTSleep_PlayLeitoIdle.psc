@@ -22,6 +22,7 @@ GlobalVariable property DTSleep_IntimateIdleID auto Mandatory
 GlobalVariable property DTSleep_IntimateSceneLen auto
 GlobalVariable property DTSleep_IntimateDogEXP auto
 GlobalVariable property DTSleep_SettingUseLeitoGun auto const
+GlobalVariable property DTSleep_SettingUseBT2Gun auto const
 EndGroup
 
 Group A_GameData
@@ -37,6 +38,7 @@ Keyword property PlayerHackFailSubtype auto const
 Idle property LooseIdleStop auto const Mandatory
 FormList property DTSleep_StrapOnList auto const
 FormList property DTSleep_LeitoGunList auto const
+FormList property DTSleep_BT2GunList auto const
 Armor property DTSleep_NudeSuitPlayerUp auto const
 EndGroup
 
@@ -83,6 +85,7 @@ EndGroup
 Actor property MainActor auto hidden
 Actor property SecondActor auto hidden
 int property SequenceID auto hidden
+int property ArmGunBodyType auto hidden
 
 
 ; *************************
@@ -121,6 +124,13 @@ Event OnEffectStart(Actor akfActor, Actor akmActor)
 	
 	if (SequenceID >= 600)
 		SequenceID = SequenceID - 500
+		if (DTSleep_SettingUseBT2Gun.GetValue() > 0 && SceneData.IsCreatureType <= 0)
+			ArmGunBodyType = 2
+		else
+			ArmGunBodyType = 1
+		endIf
+	else
+		ArmGunBodyType = 1
 	endIf
 	
 	if (akfActor != None && akfActor != PlayerRef)
@@ -228,19 +238,29 @@ Function CheckRemoveSecondActorWeapon(float waitSecs = 0.07)
 EndFunction
 
 ; 0 = normal, 1 = up, 2 = down
-Armor Function GetLeitoGun(int kind)
+Armor Function GetArmorNudeGun(int kind)
 	Armor gun = None
-	
+	if (kind < 0)
+		return None
+	endIf
+	if (!Debug.GetPlatformName() as bool)
+		return None
+	endIf
 	int evbVal = DTSleep_SettingUseLeitoGun.GetValueInt()
+	if (SceneData.IsCreatureType == 1)
+		evbVal = 2
+	elseIf (ArmGunBodyType == 2 && !DTSConditionals.IsUniquePlayerMaleActive)
+		evbVal = DTSleep_SettingUseBT2Gun.GetValueInt()
+	endIf
 	
-	if (kind > 0 && evbVal == 1)
+	if (ArmGunBodyType == 1 && kind > 0 && evbVal == 1)
 		kind = 0
 	endIf
 	
-	if (evbVal > 0)
+	if (evbVal > 0 && SceneData.IsCreatureType != 2)
 	
 		if (SceneData.MaleRole == PlayerRef || SceneData.FemaleRole == SecondActor)
-			if (DTSConditionals.IsUniquePlayerMaleActive)
+			if (ArmGunBodyType == 1 && DTSConditionals.IsUniquePlayerMaleActive)
 				kind += 3
 			;else
 				;return DTSleep_NudeSuitPlayerUp
@@ -251,8 +271,12 @@ Armor Function GetLeitoGun(int kind)
 			endIf
 		endIf
 		
-		if (kind >= 0 && DTSleep_LeitoGunList && DTSleep_LeitoGunlist.GetSize() > kind)
-			gun = DTSleep_LeitoGunList.GetAt(kind) as Armor
+		if (kind >= 0)
+			if (ArmGunBodyType == 1 && DTSleep_LeitoGunList != None && DTSleep_LeitoGunlist.GetSize() > kind)
+				gun = DTSleep_LeitoGunList.GetAt(kind) as Armor
+			elseIf (ArmGunBodyType == 2 && DTSleep_BT2GunList != None && DTSleep_BT2GunList.GetSize() > kind)
+				gun = DTSleep_BT2GunList.GetAt(kind) as Armor
+			endIf
 		endIf
 	endIf
 	
@@ -299,11 +323,11 @@ Function PlaySequence()
 				endIf
 				
 			elseIf (SequenceID == 101)
-				if (DTSleep_IntimateSceneLen.GetValue() >= 2)
-					PlayMissionaryMixSeq(SceneData.MaleRole, SceneData.FemaleRole)
-				else
+				;if (DTSleep_IntimateSceneLen.GetValue() >= 2)
+				;	PlayMissionaryMixSeq(SceneData.MaleRole, SceneData.FemaleRole)
+				;else
 					PlayMissionary2Seq(SceneData.MaleRole, SceneData.FemaleRole)
-				endIf
+				;endIf
 			elseIf (SequenceID == 102)
 				if (DTSleep_IntimateSceneLen.GetValue() >= 2)
 					PlayDoggyMixSeq(SceneData.MaleRole, SceneData.FemaleRole)
@@ -378,7 +402,7 @@ Function PlayPairAnimFromListIndex(int listIndex, Actor mActor, Actor fActor, Fo
 		int listLen = mList.GetSize()
 		
 		int mSex = (mActor.GetLeveledActorBase() as ActorBase).GetSex()
-		if (armS1 && mSex == 0)
+		if (armS1 != None && mSex == 0)
 			mActor.EquipItem(armS1, true, true)
 		endIf
 		
@@ -429,14 +453,14 @@ Function PlaySingleAnimListIndex(int listIndex, Actor aActor, FormList aList, fl
 
 endFunction
 
+
+
 ; mActor is considered dominate
 Function PlayPairSequenceLists(Actor mActor, Actor fActor, FormList mList, FormList fList, float waitSecs, int startCount = 0, Armor armS1 = None, Armor armS2 = None, Armor armS3 = None)
-	if (mActor && fActor && mList && fList)
+	if (mActor != None && fActor != None && mList != None && fList)
 		int mSex = (mActor.GetLeveledActorBase() as ActorBase).GetSex()
-		if (armS1 && mSex == 0)
-			;mActor.AddItem(armS1, 1, true)
+		if (armS1 != None && mSex == 0)
 			mActor.EquipItem(armS1, true, true)
-			
 		endIf
 		int seqCount = startCount
 		int seqTotalCount = 0
@@ -508,112 +532,112 @@ endFunction
 
 
 Function PlayBlowjobStandSeq(Actor mActor, Actor fActor)
-	Armor gunStart = GetLeitoGun(0)
+	Armor gunStart = GetArmorNudeGun(0)
 	fActor.ChangeAnimFaceArchetype(AnimFaceArchetypeInPain)
 	mActor.ChangeAnimFaceArchetype(AnimFaceArchetypeSinisterSmile)
 	PlayPairSequenceLists(mActor, fActor, DTSleep_LeitoBlowjobA2List, DTSleep_LeitoBlowjobA1List, SceneData.WaitSecs, 0, gunStart)
 endFunction
 
 Function PlayCarrySeq(Actor mActor, Actor fActor)
-	Armor gunStart = GetLeitoGun(1)
+	Armor gunStart = GetArmorNudeGun(1)
 	PlayPairSequenceLists(mActor, fActor, DTSleep_LeitoCarryA2List, DTSleep_LeitoCarryA1List, SceneData.WaitSecs, 0, gunStart)
 endFunction
 
 Function PlayCowgirlSeq(Actor mActor, Actor fActor)
-	Armor gunStart = GetLeitoGun(0)
-	Armor gun2 = GetLeitoGun(1)
+	Armor gunStart = GetArmorNudeGun(0)
+	Armor gun2 = GetArmorNudeGun(1)
 	fActor.ChangeAnimFaceArchetype(AnimFaceArchetypeFlirting)
 	PlayPairSequenceLists(mActor, fActor, DTSleep_LeitoCowgirl1A2List, DTSleep_LeitoCowgirl1A1List, SceneData.WaitSecs, 0, gunStart, gun2)
 
 endFunction
 
 Function PlayCowgirl2Seq(Actor mActor, Actor fActor)
-	Armor gunStart = GetLeitoGun(0)
+	Armor gunStart = GetArmorNudeGun(0)
 	PlayPairSequenceLists(mActor, fActor, DTSleep_LeitoCowgirl2A2List, DTSleep_LeitoCowgirl2A1List, SceneData.WaitSecs, 0, gunStart)
 endFunction
 
 Function PlayCowgirl3Seq(Actor mActor, Actor fActor)
-	Armor gunStart = GetLeitoGun(2)
+	Armor gunStart = GetArmorNudeGun(2)
 	PlayPairSequenceLists(mActor, fActor, DTSleep_LeitoCowgirl3A2List, DTSleep_LeitoCowgirl3A1List, SceneData.WaitSecs, 0, gunStart)
 endFunction
 
 Function PlayCowgirl4Seq(Actor mActor, Actor fActor)
-	Armor gunStart = GetLeitoGun(0)
+	Armor gunStart = GetArmorNudeGun(0)
 	PlayPairSequenceLists(mActor, fActor, DTSleep_LeitoCowgirl4A2List, DTSleep_LeitoCowgirl4A1List, SceneData.WaitSecs, 0, gunStart)
 endFunction
 
 Function PlayCowgirl3ExtrSeq(Actor mActor, Actor fActor)
-	Armor gunStart = GetLeitoGun(2)
+	Armor gunStart = GetArmorNudeGun(2)
 	PlayPairAnimFromListIndex(0, mActor, fActor, DTSleep_LeitoCowgirl3A2List, DTSleep_LeitoCowgirl3A1List, 6.5, gunStart)
 	PlayPairAnimFromListIndex(1, mActor, fActor, DTSleep_LeitoCowgirl3A2List, DTSleep_LeitoCowgirl3A1List, SceneData.WaitSecs, gunStart)
-	gunStart = GetLeitoGun(1)
+	gunStart = GetArmorNudeGun(0)
 	PlayPairSequenceLists(mActor, fActor, DTSleep_LeitoCowgirl4A2List, DTSleep_LeitoCowgirl4A1List, SceneData.WaitSecs, 2, gunStart)
 endFunction
 
 Function PlayCowgirlReverse1Seq(Actor mActor, Actor fActor)
-	Armor gunStart = GetLeitoGun(1)
+	Armor gunStart = GetArmorNudeGun(1)
 	PlayPairSequenceLists(mActor, fActor, DTSleep_LeitoCowgirlRev1A2List, DTSleep_LeitoCowgirlRev1A1List, SceneData.WaitSecs, 0, gunStart)
 endFunction
 
 Function PlayCowgirlReverse2Seq(Actor mActor, Actor fActor)
-	Armor gunStart = GetLeitoGun(1)
+	Armor gunStart = GetArmorNudeGun(1)
 	PlayPairSequenceLists(mActor, fActor, DTSleep_LeitoCowgirlRev2A2List, DTSleep_LeitoCowgirlRev2A1List, SceneData.WaitSecs, 0, gunStart)
 endFunction
 
 Function PlayDoggy1Seq(Actor mActor, Actor fActor)
-	Armor gunStart = GetLeitoGun(0)
+	Armor gunStart = GetArmorNudeGun(0)
 	PlayPairSequenceLists(mActor, fActor, DTSleep_LeitoDoggy1A2List, DTSleep_LeitoDoggy1A1List, SceneData.WaitSecs, 0, gunStart)
 EndFunction
 
 Function PlayDoggy2Seq(Actor mActor, Actor fActor)
-	Armor gunStart = GetLeitoGun(0)
+	Armor gunStart = GetArmorNudeGun(0)
 	PlayPairSequenceLists(mActor, fActor, DTSleep_LeitoDoggy2A2List, DTSleep_LeitoDoggy2A1List, SceneData.WaitSecs, 0, gunStart)
 EndFunction
 
 Function PlayDoggyMixSeq(Actor mActor, Actor fActor)
-	Armor gunStart = GetLeitoGun(0)
+	Armor gunStart = GetArmorNudeGun(0)
 	PlayPairAnimFromListIndex(0, mActor, fActor, DTSleep_LeitoDoggy1A2List, DTSleep_LeitoDoggy1A1List, 6.5, gunStart)
 	PlayPairAnimFromListIndex(1, mActor, fActor, DTSleep_LeitoDoggy1A2List, DTSleep_LeitoDoggy1A1List, SceneData.WaitSecs, gunStart)
 	PlayPairSequenceLists(mActor, fActor, DTSleep_LeitoDoggy2A2List, DTSleep_LeitoDoggy2A1List, SceneData.WaitSecs, 2, gunStart)
 endFunction
 
 Function PlayMissionary1Seq(Actor mActor, Actor fActor)
-	Armor gunStart = GetLeitoGun(1)
+	Armor gunStart = GetArmorNudeGun(1)
 	PlayPairSequenceLists(mActor, fActor, DTSleep_LeitoMissionary1A2List, DTSleep_LeitoMissionary1A1List, SceneData.WaitSecs, 0, gunStart)
 EndFunction	
 
 Function PlayMissionary2Seq(Actor mActor, Actor fActor)
-	Armor gunStart = GetLeitoGun(0)
-	;Armor gun3 = GetLeitoGun(1)
+	Armor gunStart = GetArmorNudeGun(0)
+	;Armor gun3 = GetArmorNudeGun(1)
 	PlayPairSequenceLists(mActor, fActor, DTSleep_LeitoMissionary2A2List, DTSleep_LeitoMissionary2A1List, SceneData.WaitSecs, 0, gunStart)
 EndFunction
 
 Function PlayMissionaryMixSeq(Actor mActor, Actor fActor)
-	Armor gunStart = GetLeitoGun(1)
+	Armor gunStart = GetArmorNudeGun(1)
 	PlayPairAnimFromListIndex(0, mActor, fActor, DTSleep_LeitoMissionary1A2List, DTSleep_LeitoMissionary1A1List, 6.5, gunStart)
 	PlayPairAnimFromListIndex(1, mActor, fActor, DTSleep_LeitoMissionary1A2List, DTSleep_LeitoMissionary1A1List, SceneData.WaitSecs, gunStart)
-	gunStart = GetLeitoGun(0)
+	gunStart = GetArmorNudeGun(0)
 	PlayPairSequenceLists(mActor, fActor, DTSleep_LeitoMissionary2A2List, DTSleep_LeitoMissionary2A1List, SceneData.WaitSecs, 2, gunStart)
 endFunction
 
 Function PlaySpoonSeq(Actor mActor, Actor fActor)
-	Armor gunStart = GetLeitoGun(1)
+	Armor gunStart = GetArmorNudeGun(1)
 	PlayPairSequenceLists(mActor, fActor, DTSleep_LeitoSpoonA2List, DTSleep_LeitoSpoonA1List, SceneData.WaitSecs, 0, gunStart)
 EndFunction
 
 Function PlayStandDoggy1Seq(Actor mActor, Actor fActor)
-	Armor gunStart = GetLeitoGun(1)
+	Armor gunStart = GetArmorNudeGun(1)
 	PlayPairSequenceLists(mActor, fActor, DTSleep_LeitoStandDoggy1A2List, DTSleep_LeitoStandDoggy1A1List, SceneData.WaitSecs, 0, gunStart)
 EndFunction
 
 Function PlayStandDoggy2Seq(Actor mActor, Actor fActor)
-	Armor gunStart = GetLeitoGun(0)
+	Armor gunStart = GetArmorNudeGun(0)
 	PlayPairSequenceLists(mActor, fActor, DTSleep_LeitoStandDoggy2A2List, DTSleep_LeitoStandDoggy2A1List, SceneData.WaitSecs, 0, gunStart)
 EndFunction
 
 Function PlayStandDoggy3Mix(Actor mActor, Actor fActor)
-	Armor gunStart = GetLeitoGun(1)
-	Armor gunTwo = GetLeitoGun(0)
+	Armor gunStart = GetArmorNudeGun(1)
+	Armor gunTwo = GetArmorNudeGun(0)
 	
 	PlayPairAnimFromListIndex(0, mActor, fActor, DTSleep_LeitoStandDoggy1A2List, DTSleep_LeitoStandDoggy1A1List, 9.2, gunStart)
 	
@@ -621,8 +645,8 @@ Function PlayStandDoggy3Mix(Actor mActor, Actor fActor)
 EndFunction
 
 Function PlayStrongCarry(Actor mActor, Actor fActor)
-	Armor gunStart = GetLeitoGun(1)
-	Armor gunForward = GetLeitoGun(0)
+	Armor gunStart = GetArmorNudeGun(1)
+	Armor gunForward = GetArmorNudeGun(0)
 	int sceneLen = DTSleep_IntimateSceneLen.GetValueInt()
 	int sceneCount = 0
 	
@@ -641,8 +665,8 @@ Function PlayStrongCarry(Actor mActor, Actor fActor)
 EndFunction
 
 Function PlayStrongCarryReverse(Actor mActor, Actor fActor)
-	Armor gunStart = GetLeitoGun(1)
-	Armor gunForward = GetLeitoGun(0)
+	Armor gunStart = GetArmorNudeGun(1)
+	Armor gunForward = GetArmorNudeGun(0)
 	int sceneLen = DTSleep_IntimateSceneLen.GetValueInt()
 	int sceneCount = 0
 	
@@ -665,7 +689,7 @@ Function PlayStrongCarryReverse(Actor mActor, Actor fActor)
 EndFunction
 
 Function PlayStrongStandDoggy(Actor mActor, Actor fActor)
-	Armor gunStart = GetLeitoGun(0)
+	Armor gunStart = GetArmorNudeGun(0)
 	int sceneLen = DTSleep_IntimateSceneLen.GetValueInt()
 	
 	PlayPairAnimFromListIndex(2, mActor, fActor, DTSleep_LeitoStrongMaleList, DTSleep_LeitoStrongFemaleList, 37.7, gunStart)
@@ -685,7 +709,7 @@ Function PlayStrongStandDoggy(Actor mActor, Actor fActor)
 EndFunction
 
 Function PlayStrongStandSideways(Actor mActor, Actor fActor)
-	Armor gunStart = GetLeitoGun(0)
+	Armor gunStart = GetArmorNudeGun(0)
 	int sceneLen = DTSleep_IntimateSceneLen.GetValueInt()
 	
 	PlayPairAnimFromListIndex(3, mActor, fActor, DTSleep_LeitoStrongMaleList, DTSleep_LeitoStrongFemaleList, 37.7, gunStart)
@@ -709,7 +733,7 @@ Function PlayMaleMasterbate(Actor mActor, bool doIntro)
 
 	int sceneLen = DTSleep_IntimateSceneLen.GetValueInt()
 	int sceneCount = 0
-	Armor gunStart = GetLeitoGun(1)
+	Armor gunStart = GetArmorNudeGun(1)
 	mActor.EquipItem(gunStart, true, true)
 
 	if (doIntro)
@@ -857,7 +881,11 @@ endFunction
 
 Function RemoveLeitoGuns(Actor aActor)
 	;Debug.Trace("[DTSleep_PlayLeito] RemoveLeitoGuns")
-	if (DTSleep_LeitoGunList)
+	
+	if (ArmGunBodyType == 2)
+		RemoveBT2Guns(aActor)
+	
+	elseIf (DTSleep_LeitoGunList != None)
 	
 		int len = DTSleep_LeitoGunList.GetSize()
 		int idx = 0
@@ -875,6 +903,25 @@ Function RemoveLeitoGuns(Actor aActor)
 		endWhile
 	endIf
 EndFunction
+
+Function RemoveBT2Guns(Actor aActor)
+	if (DTSleep_BT2GunList != None)
+		int len = DTSleep_BT2GunList.GetSize()
+		int idx = 0
+		while (idx < len)
+			Armor gun = DTSleep_BT2GunList.GetAt(idx) as Armor
+			if (gun != None)
+				int count = aActor.GetItemCount(gun)
+				if (count > 0)
+					Debug.Trace("[DTSleep_PlayAAC] removing BT2 nude gun: " + gun)
+					aActor.UnequipItem(gun as Form, false, true)
+					aActor.RemoveItem(gun as Form, count, true, None)
+				endIf
+			endIf
+			idx += 1
+		endWhile
+	endIf
+endFunction
 
 Function StopActor(Actor aActor)
 	if (aActor != None)

@@ -151,7 +151,9 @@ int Function GetHolidayVal()
 		result = 6
 	elseIf (month == 10)
 		if (day == 23)
-			result = 7
+			if (Utility.GetCurrentGameTime() > 300.0)
+				result = 7
+			endIf
 		elseIf (day == 31)
 			result = 8
 		endIf

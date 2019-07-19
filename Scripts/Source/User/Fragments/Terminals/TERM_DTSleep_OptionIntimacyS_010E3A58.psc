@@ -97,13 +97,7 @@ EndFunction
 ;BEGIN FRAGMENT Fragment_Terminal_09
 Function Fragment_Terminal_09(ObjectReference akTerminalRef)
 ;BEGIN CODE
-if (pDTSleep_IsLeitoActive.GetValue() >= 2.0 && pDTSleep_AdultContentOn.GetValue() >= 2.0 && pDTSleep_SettingIntimate.GetValue() > 0.0 && pDTSleep_IntimateDogExp.GetValue() >= 1.0)
-
-    pDTSleep_SettingDogRestrain.SetValue(0.0)
-
-else
-     pDTSleep_SettingDogRestrain.SetValue(-1.0)
-endIf
+pDTSleep_SettingUseLeitoGun.SetValue(0.0)
 ;END CODE
 EndFunction
 ;END FRAGMENT
@@ -119,11 +113,7 @@ EndFunction
 ;BEGIN FRAGMENT Fragment_Terminal_11
 Function Fragment_Terminal_11(ObjectReference akTerminalRef)
 ;BEGIN CODE
-pDTSleep_SettingDogRestrain.SetValue(-1.0)
-
-if (pDTSleep_DogTrainQuest.IsRunning())
-     pDTSleep_DogTrainQuest.SetStage(60)
-endIf
+pDTSleep_SettingUseBT2Gun.SetValue(0.0)
 ;END CODE
 EndFunction
 ;END FRAGMENT
@@ -187,7 +177,7 @@ EndFunction
 ;BEGIN FRAGMENT Fragment_Terminal_19
 Function Fragment_Terminal_19(ObjectReference akTerminalRef)
 ;BEGIN CODE
-pDTSleep_SettingUseLeitoGun.SetValue(0.0)
+pDTSleep_SettingUseLeitoGun.SetValue(2.0)
 ;END CODE
 EndFunction
 ;END FRAGMENT
@@ -376,6 +366,14 @@ pDTSleep_SettingFadeEndScene.SetValue(1.0)
 EndFunction
 ;END FRAGMENT
 
+;BEGIN FRAGMENT Fragment_Terminal_43
+Function Fragment_Terminal_43(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingUseBT2Gun.SetValue(1.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
 ;END FRAGMENT CODE - Do not edit anything between this and the begin comment
 
 GlobalVariable Property pDTSleep_SettingIntimate Auto Const Mandatory
@@ -423,3 +421,5 @@ GlobalVariable Property pDTSleep_SettingCrime Auto Const Mandatory
 GlobalVariable Property pDTSleep_SettingFadeEndScene Auto Const Mandatory
 
 GlobalVariable Property pDTSleep_IntimateDogExp Auto Const Mandatory
+
+GlobalVariable Property pDTSleep_SettingUseBT2Gun Auto Const Mandatory

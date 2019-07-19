@@ -26,6 +26,7 @@ GlobalVariable property DTSleep_IntimateIdleID auto Mandatory
 GlobalVariable property DTSleep_IntimateSceneLen auto
 GlobalVariable property DTSleep_IntimateDogEXP auto
 GlobalVariable property DTSleep_SettingUseLeitoGun auto const
+GlobalVariable property DTSleep_SettingUseBT2Gun auto const
 EndGroup
 
 Group A_GameData
@@ -41,6 +42,7 @@ Keyword property AnimFaceArchetypeHappy auto const
 Keyword property PlayerHackFailSubtype auto const
 ;FormList property DTSleep_StrapOnList auto const
 FormList property DTSleep_LeitoGunList auto const
+FormList property DTSleep_BT2GunList auto const
 Armor property DTSleep_NudeSuitPlayerUp auto const
 ;Armor property DTSleep_LeitoNudeDogmeat auto const
 ;Armor property SkinDogmeat auto const
@@ -330,7 +332,7 @@ Function CheckRemoveSecondActorWeapon(float waitSecs = 0.07)
 EndFunction
 
 ; 0 = normal, 1 = up, 2 = down
-Armor Function GetLeitoGun(int kind)
+Armor Function GetArmorNudeGun(int kind)
 	Armor gun = None
 	if (kind < 0)
 		return None
@@ -339,25 +341,39 @@ Armor Function GetLeitoGun(int kind)
 		return None
 	endIf
 	int evbVal = DTSleep_SettingUseLeitoGun.GetValueInt()
+	int bt2Val = DTSleep_SettingUseBT2Gun.GetValueInt()
+	
+	if (SceneData.IsCreatureType == 1)
+		evbVal = 2
+		bt2Val = -1
+	elseIf (DTSConditionals.IsUniquePlayerMaleActive && evbVal > 0 && SceneData.MaleRole == PlayerRef)
+		bt2Val = -1
+	endIf
 	
 	if (kind > 0 && evbVal == 1)
 		kind = 0
 	endIf
-	if (evbVal > 0 && SceneData.IsCreatureType != 2)
-		if (SceneData.MaleRole == MainActor && SceneData.MaleRoleGender == 0)
-			if (DTSConditionals.IsUniquePlayerMaleActive)
+	
+	if ((evbVal > 0 || bt2Val > 0) && SceneData.IsCreatureType != 2)
+	
+		if (SceneData.MaleRole == PlayerRef || SceneData.FemaleRole == SecondActor)
+			if (evbVal > 0 && DTSConditionals.IsUniquePlayerMaleActive)
 				kind += 3
 			;else
 				;return DTSleep_NudeSuitPlayerUp
 			endIf
-		elseIf (DTSConditionals.IsUniqueFollowerMaleActive)
+		elseIf (evbVal > 0 && DTSConditionals.IsUniqueFollowerMaleActive)
 			if (SceneData.MaleRoleCompanionIndex > 0)
 				kind += (3 * SceneData.MaleRoleCompanionIndex)
 			endIf
 		endIf
 		
-		if (kind >= 0 && DTSleep_LeitoGunList && DTSleep_LeitoGunlist.GetSize() > kind)
-			gun = DTSleep_LeitoGunList.GetAt(kind) as Armor
+		if (kind >= 0)
+			if (bt2Val <= 0 && DTSleep_LeitoGunList != None && DTSleep_LeitoGunlist.GetSize() > kind)
+				gun = DTSleep_LeitoGunList.GetAt(kind) as Armor
+			elseIf (bt2Val > 0 && DTSleep_BT2GunList != None && DTSleep_BT2GunList.GetSize() > kind)
+				gun = DTSleep_BT2GunList.GetAt(kind) as Armor
+			endIf
 		endIf
 	endIf
 	
@@ -563,10 +579,10 @@ Function PlaySequence(DTAACSceneStageStruct[] seqStagesArray)
 			endIf
 		endIf
 		; armor gun
-		if (seqStagesArray[seqCount].ArmorNudeAGun != gunIndex)
-			gunIndex = seqStagesArray[seqCount].ArmorNudeAGun
-			gunArmor = GetLeitoGun(gunIndex)
-		endIf
+		;if (seqStagesArray[seqCount].ArmorNudeAGun != gunIndex)
+		;	gunIndex = seqStagesArray[seqCount].ArmorNudeAGun
+		;	gunArmor = GetArmorNudeGun(gunIndex)
+		;endIf
 		
 		PlayAnimAtStage(seqStagesArray[seqCount], SceneData.MaleRole, SceneData.FemaleRole, ThirdActor, waitSecs)
 		
@@ -625,7 +641,7 @@ Function PlayAnimAtStage(DTAACSceneStageStruct stage, Actor mActor, Actor fActor
 		
 			if (stage.ArmorNudeAGun != LastGunAIndex)
 				LastGunAIndex = stage.ArmorNudeAGun
-				Armor armS1 = GetLeitoGun(LastGunAIndex)
+				Armor armS1 = GetArmorNudeGun(LastGunAIndex)
 				if (MaleRoleSex < 0 && mActor != None)
 					MaleRoleSex = (mActor.GetLeveledActorBase() as ActorBase).GetSex()
 				endIf
@@ -634,7 +650,7 @@ Function PlayAnimAtStage(DTAACSceneStageStruct stage, Actor mActor, Actor fActor
 				endIf
 			endIf
 			if (oActor != None && stage.ArmorNudeBGun >= 0 && LastGunBIndex != stage.ArmorNudeBGun)
-				Armor armB1 = GetLeitoGun(stage.ArmorNudeBGun)
+				Armor armB1 = GetArmorNudeGun(stage.ArmorNudeBGun)
 				if (armB1 != None)
 					oActor.EquipItem(armB1, true, true)
 				endIf
@@ -679,16 +695,20 @@ endFunction
 Function RemoveLeitoGuns(Actor aActor)
 	;Debug.Trace("[DTSleep_PlayAAC] RemoveLeitoGuns")
 	
-	if (DTSleep_LeitoGunList != None)
+	if (DTSleep_SettingUseBT2Gun.GetValueInt() > 0)
+		RemoveBT2Guns(aActor)
+	endIf	
+	
+	if (DTSleep_LeitoGunList != None && DTSleep_SettingUseLeitoGun.GetValueInt() > 0)
 	
 		int len = DTSleep_LeitoGunList.GetSize()
 		int idx = 0
 		while (idx < len)
 			Armor gun = DTSleep_LeitoGunList.GetAt(idx) as Armor
-			if (gun)
+			if (gun != None)
 				int count = aActor.GetItemCount(gun)
 				if (count > 0)
-					Debug.Trace("[DTSleep_PlayAAC] removing nude gun: " + gun)
+					;Debug.Trace("[DTSleep_PlayAAC] removing nude gun: " + gun)
 					aActor.UnequipItem(gun as Form, false, true)
 					aActor.RemoveItem(gun as Form, count, true, None)
 				endIf
@@ -697,6 +717,25 @@ Function RemoveLeitoGuns(Actor aActor)
 		endWhile
 	endIf
 EndFunction
+
+Function RemoveBT2Guns(Actor aActor)
+	if (DTSleep_BT2GunList != None)
+		int len = DTSleep_BT2GunList.GetSize()
+		int idx = 0
+		while (idx < len)
+			Armor gun = DTSleep_BT2GunList.GetAt(idx) as Armor
+			if (gun != None)
+				int count = aActor.GetItemCount(gun)
+				if (count > 0)
+					;Debug.Trace("[DTSleep_PlayAAC] removing nude gun: " + gun)
+					aActor.UnequipItem(gun as Form, false, true)
+					aActor.RemoveItem(gun as Form, count, true, None)
+				endIf
+			endIf
+			idx += 1
+		endWhile
+	endIf
+endFunction
 
 Function StopActor(Actor aActor)
 	if (aActor != None)

@@ -1,5 +1,5 @@
-<meta title="SleepIntimateX_Leito_positionData.xml" version="1.0" dataSet="position"/>
-<defaults startEquipmentSet="None" stopEquipmentSet="None" walkOffset="0,0,0"/> <!-- offset="0,50,180"/>-->
+<meta title="SleepIntimateX_Leito_positionData.xml" version="2.1" dataSet="position"/>
+<defaults startEquipmentSet="None" stopEquipmentSet="None" startMorphSet="Erected" stopMorphSet="Flaccid" walkOffset="0,0,0"/> <!-- offset="0,50,180"/>-->
 
 <animationOffset actor="1" offset="0,0,0,180"/>
 <animationOffset actor="2" offset="0,0,0,180"/>
@@ -18,97 +18,97 @@
 
     See script, DTSleep_PlayAAFSceneScript	-->
 	
-<position id="DTSIX_600_S1" animation="SIX_Leito_Missionary_1_S1" isHidden="true"/>
-<position id="DTSIX_600_S2" animation="SIX_Leito_Missionary_1_S2" isHidden="true"/>
-<position id="DTSIX_600_S3" animation="SIX_Leito_Missionary_1_S3" isHidden="true"/>
-<position id="DTSIX_600_S4" animation="SIX_Leito_Missionary_1_S4" isHidden="true"/>
+<position id="DTSIX_600_S1" animation="Leito_Missionary_1_S1" isHidden="true"/>
+<position id="DTSIX_600_S2" animation="Leito_Missionary_1_S2" isHidden="true"/>
+<position id="DTSIX_600_S3" animation="Leito_Missionary_1_S3" isHidden="true"/>
+<position id="DTSIX_600_S4" animation="Leito_Missionary_1_S4" isHidden="true"/>
 
-<position id="DTSIX_601_S1" animation="SIX_Leito_Missionary_2_S1" isHidden="true"/>
-<position id="DTSIX_601_S2" animation="SIX_Leito_Missionary_2_S2" isHidden="true"/>
-<position id="DTSIX_601_S3" animation="SIX_Leito_Missionary_2_S3" isHidden="true"/>
-<position id="DTSIX_601_S4" animation="SIX_Leito_Missionary_2_S4" isHidden="true"/>
+<position id="DTSIX_601_S1" animation="Leito_Missionary_2_S1" isHidden="true"/>
+<position id="DTSIX_601_S2" animation="Leito_Missionary_2_S2" isHidden="true"/>
+<position id="DTSIX_601_S3" animation="Leito_Missionary_2_S3" isHidden="true"/>
+<position id="DTSIX_601_S4" animation="Leito_Missionary_2_S4" isHidden="true"/>
 
-<position id="DTSIX_602_S1" animation="SIX_Leito_Doggy_1_S1" isHidden="true"/>
-<position id="DTSIX_602_S2" animation="SIX_Leito_Doggy_1_S2" isHidden="true"/>
-<position id="DTSIX_602_S3" animation="SIX_Leito_Doggy_1_S3" isHidden="true"/>
-<position id="DTSIX_602_S4" animation="SIX_Leito_Doggy_1_S4" isHidden="true"/>
+<position id="DTSIX_602_S1" animation="Leito_Doggy_1_S1" isHidden="true"/>
+<position id="DTSIX_602_S2" animation="Leito_Doggy_1_S2" isHidden="true"/>
+<position id="DTSIX_602_S3" animation="Leito_Doggy_1_S3" isHidden="true"/>
+<position id="DTSIX_602_S4" animation="Leito_Doggy_1_S4" isHidden="true"/>
 
-<position id="DTSIX_603_S1" animation="SIX_Leito_Doggy_2_S1" isHidden="true"/>
-<position id="DTSIX_603_S2" animation="SIX_Leito_Doggy_2_S2" isHidden="true"/>
-<position id="DTSIX_603_S3" animation="SIX_Leito_Doggy_2_S3" isHidden="true"/>
-<position id="DTSIX_603_S4" animation="SIX_Leito_Doggy_2_S4" isHidden="true"/>
+<position id="DTSIX_603_S1" animation="Leito_Doggy_2_S1" isHidden="true"/>
+<position id="DTSIX_603_S2" animation="Leito_Doggy_2_S2" isHidden="true"/>
+<position id="DTSIX_603_S3" animation="Leito_Doggy_2_S3" isHidden="true"/>
+<position id="DTSIX_603_S4" animation="Leito_Doggy_2_S4" isHidden="true"/>
 
-<position id="DTSIX_604_S1" animation="SIX_Leito_Cowgirl_1_S1" isHidden="true"/>
-<position id="DTSIX_604_S2" animation="SIX_Leito_Cowgirl_1_S2" isHidden="true"/>
-<position id="DTSIX_604_S3" animation="SIX_Leito_Cowgirl_1_S3" isHidden="true"/>
-<position id="DTSIX_604_S4" animation="SIX_Leito_Cowgirl_1_S4" isHidden="true"/>
+<position id="DTSIX_604_S1" animation="Leito_Cowgirl_1_S1" isHidden="true"/>
+<position id="DTSIX_604_S2" animation="Leito_Cowgirl_1_S2" isHidden="true"/>
+<position id="DTSIX_604_S3" animation="Leito_Cowgirl_1_S3" isHidden="true"/>
+<position id="DTSIX_604_S4" animation="Leito_Cowgirl_1_S4" isHidden="true"/>
 
-<position id="DTSIX_605_S1" animation="SIX_Leito_Cowgirl_2_S1" isHidden="true"/>
-<position id="DTSIX_605_S2" animation="SIX_Leito_Cowgirl_2_S2" isHidden="true"/>
-<position id="DTSIX_605_S3" animation="SIX_Leito_Cowgirl_2_S3" isHidden="true"/>
-<position id="DTSIX_605_S4" animation="SIX_Leito_Cowgirl_2_S4" isHidden="true"/>
+<position id="DTSIX_605_S1" animation="Leito_Cowgirl_2_S1" isHidden="true"/>
+<position id="DTSIX_605_S2" animation="Leito_Cowgirl_2_S2" isHidden="true"/>
+<position id="DTSIX_605_S3" animation="Leito_Cowgirl_2_S3" isHidden="true"/>
+<position id="DTSIX_605_S4" animation="Leito_Cowgirl_2_S4" isHidden="true"/>
 
-<position id="DTSIX_606_S1" animation="SIX_Leito_Cowgirl_3_S1" isHidden="true"/>
-<position id="DTSIX_606_S2" animation="SIX_Leito_Cowgirl_3_S2" isHidden="true"/>
-<position id="DTSIX_606_S3" animation="SIX_Leito_Cowgirl_3_S3" isHidden="true"/>
-<position id="DTSIX_606_S4" animation="SIX_Leito_Cowgirl_3_S4" isHidden="true"/>
+<position id="DTSIX_606_S1" animation="Leito_Cowgirl_3_S1" isHidden="true"/>
+<position id="DTSIX_606_S2" animation="Leito_Cowgirl_3_S2" isHidden="true"/>
+<position id="DTSIX_606_S3" animation="Leito_Cowgirl_3_S3" isHidden="true"/>
+<position id="DTSIX_606_S4" animation="Leito_Cowgirl_3_S4" isHidden="true"/>
 
-<position id="DTSIX_607_S1" animation="SIX_Leito_Cowgirl_4_S1" isHidden="true"/>
-<position id="DTSIX_607_S2" animation="SIX_Leito_Cowgirl_4_S2" isHidden="true"/>
-<position id="DTSIX_607_S3" animation="SIX_Leito_Cowgirl_4_S3" isHidden="true"/>
-<position id="DTSIX_607_S4" animation="SIX_Leito_Cowgirl_4_S4" isHidden="true"/>
+<position id="DTSIX_607_S1" animation="Leito_Cowgirl_4_S1" isHidden="true"/>
+<position id="DTSIX_607_S2" animation="Leito_Cowgirl_4_S2" isHidden="true"/>
+<position id="DTSIX_607_S3" animation="Leito_Cowgirl_4_S3" isHidden="true"/>
+<position id="DTSIX_607_S4" animation="Leito_Cowgirl_4_S4" isHidden="true"/>
 
-<position id="DTSIX_608_S1" animation="SIX_Leito_ReverseCowgirl_1_S1" isHidden="true"/>
-<position id="DTSIX_608_S2" animation="SIX_Leito_ReverseCowgirl_1_S2" isHidden="true"/>
-<position id="DTSIX_608_S3" animation="SIX_Leito_ReverseCowgirl_1_S3" isHidden="true"/>
-<position id="DTSIX_608_S4" animation="SIX_Leito_ReverseCowgirl_1_S4" isHidden="true"/>
+<position id="DTSIX_608_S1" animation="Leito_ReverseCowgirl_1_S1" isHidden="true"/>
+<position id="DTSIX_608_S2" animation="Leito_ReverseCowgirl_1_S2" isHidden="true"/>
+<position id="DTSIX_608_S3" animation="Leito_ReverseCowgirl_1_S3" isHidden="true"/>
+<position id="DTSIX_608_S4" animation="Leito_ReverseCowgirl_1_S4" isHidden="true"/>
 
-<position id="DTSIX_609_S1" animation="SIX_Leito_ReverseCowgirl_2_S1" isHidden="true"/>
-<position id="DTSIX_609_S2" animation="SIX_Leito_ReverseCowgirl_2_S2" isHidden="true"/>
-<position id="DTSIX_609_S3" animation="SIX_Leito_ReverseCowgirl_2_S3" isHidden="true"/>
-<position id="DTSIX_609_S4" animation="SIX_Leito_ReverseCowgirl_2_S4" isHidden="true"/>
+<position id="DTSIX_609_S1" animation="Leito_ReverseCowgirl_2_S1" isHidden="true"/>
+<position id="DTSIX_609_S2" animation="Leito_ReverseCowgirl_2_S2" isHidden="true"/>
+<position id="DTSIX_609_S3" animation="Leito_ReverseCowgirl_2_S3" isHidden="true"/>
+<position id="DTSIX_609_S4" animation="Leito_ReverseCowgirl_2_S4" isHidden="true"/>
 
-<position id="DTSIX_610_S1" animation="SIX_Leito_Spoon_1_S1" isHidden="true"/>
-<position id="DTSIX_610_S2" animation="SIX_Leito_Spoon_1_S2" isHidden="true"/>
-<position id="DTSIX_610_S3" animation="SIX_Leito_Spoon_1_S3" isHidden="true"/>
-<position id="DTSIX_610_S4" animation="SIX_Leito_Spoon_1_S4" isHidden="true"/>
+<position id="DTSIX_610_S1" animation="Leito_Spoon_1_S1" isHidden="true"/>
+<position id="DTSIX_610_S2" animation="Leito_Spoon_1_S2" isHidden="true"/>
+<position id="DTSIX_610_S3" animation="Leito_Spoon_1_S3" isHidden="true"/>
+<position id="DTSIX_610_S4" animation="Leito_Spoon_1_S4" isHidden="true"/>
 
-<position id="DTSIX_650_S1" animation="SIX_Leito_Blowjob_1_S1" isHidden="true"/>
-<position id="DTSIX_650_S2" animation="SIX_Leito_Blowjob_1_S2" isHidden="true"/>
-<position id="DTSIX_650_S3" animation="SIX_Leito_Blowjob_1_S3" isHidden="true"/>
-<position id="DTSIX_650_S4" animation="SIX_Leito_Blowjob_1_S4" isHidden="true"/>
+<position id="DTSIX_650_S1" animation="Leito_Blowjob_1_S1" isHidden="true"/>
+<position id="DTSIX_650_S2" animation="Leito_Blowjob_1_S2" isHidden="true"/>
+<position id="DTSIX_650_S3" animation="Leito_Blowjob_1_S3" isHidden="true"/>
+<position id="DTSIX_650_S4" animation="Leito_Blowjob_1_S4" isHidden="true"/>
 
-<position id="DTSIX_654_S1" animation="SIX_Leito_Carry_1_S1" isHidden="true"/>
-<position id="DTSIX_654_S2" animation="SIX_Leito_Carry_1_S2" isHidden="true"/>
-<position id="DTSIX_654_S3" animation="SIX_Leito_Carry_1_S3" isHidden="true"/>
-<position id="DTSIX_654_S4" animation="SIX_Leito_Carry_1_S4" isHidden="true"/>
+<position id="DTSIX_654_S1" animation="Leito_Carry_1_S1" isHidden="true"/>
+<position id="DTSIX_654_S2" animation="Leito_Carry_1_S2" isHidden="true"/>
+<position id="DTSIX_654_S3" animation="Leito_Carry_1_S3" isHidden="true"/>
+<position id="DTSIX_654_S4" animation="Leito_Carry_1_S4" isHidden="true"/>
 
-<position id="DTSIX_655_S1" animation="SIX_Leito_Carry_2_S1" isHidden="true"/>
-<position id="DTSIX_655_S2" animation="SIX_Leito_Carry_2_S2" isHidden="true"/>
-<position id="DTSIX_655_S3" animation="SIX_Leito_Carry_2_S3" isHidden="true"/>
-<position id="DTSIX_655_S4" animation="SIX_Leito_Carry_2_S4" isHidden="true"/>
+<position id="DTSIX_655_S1" animation="Leito_Carry_2_S1" isHidden="true"/>
+<position id="DTSIX_655_S2" animation="Leito_Carry_2_S2" isHidden="true"/>
+<position id="DTSIX_655_S3" animation="Leito_Carry_2_S3" isHidden="true"/>
+<position id="DTSIX_655_S4" animation="Leito_Carry_2_S4" isHidden="true"/>
 
-<position id="DTSIX_651_S1" animation="SIX_Leito_StandingDoggy_1_S1" isHidden="true"/>
-<position id="DTSIX_651_S2" animation="SIX_Leito_StandingDoggy_1_S2" isHidden="true"/>
-<position id="DTSIX_651_S3" animation="SIX_Leito_StandingDoggy_1_S3" isHidden="true"/>
-<position id="DTSIX_651_S4" animation="SIX_Leito_StandingDoggy_1_S4" isHidden="true"/>
+<position id="DTSIX_651_S1" animation="Leito_StandingDoggy_1_S1" isHidden="true"/>
+<position id="DTSIX_651_S2" animation="Leito_StandingDoggy_1_S2" isHidden="true"/>
+<position id="DTSIX_651_S3" animation="Leito_StandingDoggy_1_S3" isHidden="true"/>
+<position id="DTSIX_651_S4" animation="Leito_StandingDoggy_1_S4" isHidden="true"/>
 
-<position id="DTSIX_652_S1" animation="SIX_Leito_StandingDoggy_2_S1" isHidden="true"/>
-<position id="DTSIX_652_S2" animation="SIX_Leito_StandingDoggy_2_S2" isHidden="true"/>
-<position id="DTSIX_652_S3" animation="SIX_Leito_StandingDoggy_2_S3" isHidden="true"/>
-<position id="DTSIX_652_S4" animation="SIX_Leito_StandingDoggy_2_S4" isHidden="true"/>
+<position id="DTSIX_652_S1" animation="Leito_StandingDoggy_2_S1" isHidden="true"/>
+<position id="DTSIX_652_S2" animation="Leito_StandingDoggy_2_S2" isHidden="true"/>
+<position id="DTSIX_652_S3" animation="Leito_StandingDoggy_2_S3" isHidden="true"/>
+<position id="DTSIX_652_S4" animation="Leito_StandingDoggy_2_S4" isHidden="true"/>
 
-<position id="DTSIX_653_S1" animation="SIX_Leito_StandingDoggy_1_S1" isHidden="true"/>
-<position id="DTSIX_653_S2" animation="SIX_Leito_StandingDoggy_2_S1" isHidden="true"/>
-<position id="DTSIX_653_S3" animation="SIX_Leito_StandingDoggy_2_S2" isHidden="true"/>
-<position id="DTSIX_653_S4" animation="SIX_Leito_StandingDoggy_2_S3" isHidden="true"/>
-<position id="DTSIX_653_S5" animation="SIX_Leito_StandingDoggy_2_S4" isHidden="true"/>
+<position id="DTSIX_653_S1" animation="Leito_StandingDoggy_1_S1" isHidden="true"/>
+<position id="DTSIX_653_S2" animation="Leito_StandingDoggy_2_S1" isHidden="true"/>
+<position id="DTSIX_653_S3" animation="Leito_StandingDoggy_2_S2" isHidden="true"/>
+<position id="DTSIX_653_S4" animation="Leito_StandingDoggy_2_S3" isHidden="true"/>
+<position id="DTSIX_653_S5" animation="Leito_StandingDoggy_2_S4" isHidden="true"/>
 
 
 
 <!-- **************** Supermutant!! ************************ -->
 
-<position id="DTSIXSM_660_S1" animation="SIX_Leito_SuperMutant_Carry" isHidden="true"/>
-<position id="DTSIXSM_661_S1" animation="SIX_Leito_SuperMutant_StandingDoggy" isHidden="true"/>
-<position id="DTSIXSM_662_S1" animation="SIX_Leito_SuperMutant_StandingSideways" isHidden="true"/>
-<position id="DTSIXSM_663_S1" animation="SIX_Leito_SuperMutant_ReverseCarry" isHidden="true"/>
+<position id="DTSIXSM_660_S1" animation="Leito_SuperMutant_Carry" isHidden="true"/>
+<position id="DTSIXSM_661_S1" animation="Leito_SuperMutant_StandingDoggy" isHidden="true"/>
+<position id="DTSIXSM_662_S1" animation="Leito_SuperMutant_StandingSideways" isHidden="true"/>
+<position id="DTSIXSM_663_S1" animation="Leito_SuperMutant_ReverseCarry" isHidden="true"/>

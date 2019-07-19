@@ -106,6 +106,7 @@ FormList property DTSleep_ModCompanionActorList auto const
 FormList property DTSleep_ArmorPipPadList auto const
 FormList property DTSleep_ArmorGlassesList auto const
 FormList property DTSleep_LeitoGunList auto const ; for backup check
+FormList property DTSleep_BT2GunList auto const
 FormList property DTSleep_IntimateAttireFemaleOnlyList auto const
 EndGroup
 
@@ -130,6 +131,7 @@ EndGroup
 Group D_Settings
 GlobalVariable property DTSleep_SettingUndressTimer auto
 GlobalVariable property DTSleep_SettingUseLeitoGun auto const
+GlobalVariable property DTSleep_SettingUseBT2Gun auto const
 GlobalVariable property DTSleep_AdultContentOn auto const
 GlobalVariable property DTSleep_SettingUndressGlasses auto const
 GlobalVariable property DTSleep_SettingUndressPipboy auto const		; only for backup to check disabled status - caller decides for regular use
@@ -1207,6 +1209,8 @@ endFunction
 ; backup for after scenes
 Function CheckRemoveLeitoGuns(Actor aActor)
 
+	CheckRemoveBT2Guns(aActor)
+	
 	if (DTSleep_LeitoGunList != None)
 	
 		int len = DTSleep_LeitoGunList.GetSize()
@@ -1216,13 +1220,31 @@ Function CheckRemoveLeitoGuns(Actor aActor)
 			if (gun)
 				int count = aActor.GetItemCount(gun)
 				if (count > 0)
-					aActor.UnequipItem(gun as Form, false, true)
+					aActor.UnequipItem(gun as Form, true, true)
 					aActor.RemoveItem(gun as Form, count, true, None)
 				endIf
 			endIf
 			idx += 1
 		endWhile
 	endIf
+EndFunction
+
+Function CheckRemoveBT2Guns(Actor aActor)
+	
+	int len = DTSleep_BT2GunList.GetSize()
+	int idx = 0
+	while (idx < len)
+		Armor gun = DTSleep_BT2GunList.GetAt(idx) as Armor
+		if (gun)
+			int count = aActor.GetItemCount(gun)
+			if (count > 0)
+				aActor.UnequipItem(gun as Form, true, true)
+				aActor.RemoveItem(gun as Form, count, true, None)
+			endIf
+		endIf
+		idx += 1
+	endWhile
+
 EndFunction
 
 bool Function CheckRemoveAllNudeSuits(Actor actorRef, bool checkCustom = true)
@@ -1434,18 +1456,28 @@ endFunction
 
 Armor Function GetPlayerNudeSuitMale()
 
-	if (DTSleep_SettingUseLeitoGun.GetValueInt() > 0 && DTSleep_AdultContentOn.GetValueInt() > 1)
+	if (DTSleep_AdultContentOn.GetValueInt() > 1)
 	
-		if ((DTSConditionals as DTSleep_Conditionals).IsUniquePlayerMaleActive)
+		if ((DTSConditionals as DTSleep_Conditionals).IsUniquePlayerMaleActive && DTSleep_SettingUseLeitoGun.GetValueInt() > 0)
 			if (self.PlayerArousedAngle >= 1)
 				return DTSleep_LeitoGunNudeUp_UP
 			else
 				return DTSleep_LeitoGunNudeUp_Forw
 			endIf
 		elseIf (self.PlayerArousedAngle >= 1)
-			return DTSleep_NudeSuitPlayerUp
+			
+			if (DTSleep_SettingUseLeitoGun.GetValueInt() > 1)
+				return DTSleep_NudeSuitPlayerUp
+				
+			elseIf (DTSleep_SettingUseBT2Gun.GetValueInt() > 0)
+				return DTSleep_BT2GunList.GetAt(1) as Armor
+			endIf
 		else
-			return DTSleep_NudeSuitPlayerForw
+			if (DTSleep_SettingUseLeitoGun.GetValueInt() > 0)
+				return DTSleep_NudeSuitPlayerForw
+			elseIf (DTSleep_SettingUseBT2Gun.GetValueInt() > 0)
+				return DTSleep_BT2GunList.GetAt(0) as Armor
+			endIf
 		endIf
 	endIf
 	
@@ -2343,6 +2375,7 @@ Function RedressActor(Actor actorRef, Form[] equippedFormArray, bool slowly = tr
 	Utility.WaitMenuMode(0.1)
 	int arrayLen = equippedFormArray.Length
 	int i = arrayLen - 1
+	int bt2Val = DTSleep_SettingUseBT2Gun.GetValueInt()
 	DTDebug("  redress " + actorRef + " equip Len: " + (i + 1) + " slowly: " + slowly, 2)
 
 	; equip by array
@@ -2384,6 +2417,10 @@ Function RedressActor(Actor actorRef, Form[] equippedFormArray, bool slowly = tr
 				RedressActorRemoveNudeSuits(actorRef, DTSleep_NudeSuitPlayerForw, " playerNudeSuit-Forw", false)
 			elseIf (item == DTSleep_LeitoGunNudeUp_Forw)
 				RedressActorRemoveNudeSuits(actorRef, DTSleep_LeitoGunNudeUp_Forw, " LeitoGunUP-Forw", false)
+			elseIf (bt2Val > 0 && item == (DTSleep_BT2GunList.GetAt(0) as Armor))
+				RedressActorRemoveNudeSuits(actorRef, (DTSleep_BT2GunList.GetAt(0) as Armor), " BT2NudeSuit-Forw", false)
+			elseIf (bt2Val > 0 && item == (DTSleep_BT2GunList.GetAt(1) as Armor))
+				RedressActorRemoveNudeSuits(actorRef, (DTSleep_BT2GunList.GetAt(1) as Armor), " BT2NudeSuite-Up", false)
 			else
 			
 				actorRef.EquipItem(item, false, true)
@@ -3287,8 +3324,12 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 		; companion and if include all then nude-ring removes these below
 		; remove by slots on companion only works sometimes
 		; v1.54; v1.57 - check if sleepwear includes outer armor
-		if (hasSleepWearMainOutfit && DressData.CompanionEquippedSleepwearItem != None && DTSleep_ArmorAllExceptionList.HasForm(DressData.CompanionEquippedSleepwearItem as Form))
-			actorWearingArmorAll = true
+		if (hasSleepWearMainOutfit && DressData.CompanionEquippedSleepwearItem != None)
+			if (DTSleep_SleepAttireFullArmorList.HasForm(DressData.CompanionEquippedSleepwearItem as Form))
+				actorWearingArmorAll = true
+			elseIf (DTSleep_ArmorAllExceptionList.HasForm(DressData.CompanionEquippedSleepwearItem as Form))
+				actorWearingArmorAll = true
+			endIf
 		else
 			actorRef.EquipItem(DTSleep_NudeRingArmorOuter, false, true)		; allow removal, silent
 		endIf
@@ -3328,10 +3369,10 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 		
 			; assume intimate a main outfit then check at end for correction
 			if (!actorWearingIntimateItem)
-
+				ensureNude = true
 				actorRef.UnequipItemSlot(3) ; 33 - full body outfit
 				; wait for a mod item event
-				Utility.WaitMenuMode(0.16)
+				Utility.WaitMenuMode(0.12)
 			endIf
 			
 			UndressActorArmorInnerSlots(actorRef)

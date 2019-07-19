@@ -23,6 +23,9 @@ Quest property RobotMQ105Quest = None auto conditional hidden
 Actor property RobotAdaRef = None auto conditional hidden
 
 ; mod compatibility 
+Actor property NoraSpouseRef = None auto conditional hidden
+Actor property DualSurvivorsNateRef = None auto conditional hidden
+Actor property InsaneIvyRef = None auto conditional hidden
 bool property IsSMMActive = false auto conditional hidden
 bool property IsAWKCRActive = false auto conditional hidden
 bool property IsAFTActive = false auto conditional hidden
@@ -42,6 +45,7 @@ bool property IsEFFActive = false auto conditional hidden
 bool property IsAtomicLustActive = false auto conditional hidden
 float property AtomicLustVers = 0.0 auto conditional hidden
 bool property IsHoloboyActive = false auto conditional hidden
+bool property IsGrayAnimsActive = false auto conditional hidden
 bool property IsSavageCabbageActive = false auto conditional hidden
 bool property IsConquestActive = false auto conditional hidden
 Keyword property ConquestWorkshopKW = None auto conditional hidden
