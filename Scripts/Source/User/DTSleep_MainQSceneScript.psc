@@ -112,19 +112,24 @@ Function GoSceneViewDone(bool goFirstOK)
 endFunction
 
 Function GoSceneViewStart(int useLowCam = 1)
-
+	
 	; this AnimationVariable sometimes misreports so always force ThirdPerson
 	if (PlayerRef.GetAnimationVariableBool("IsFirstPerson"))
-		;Debug.Trace("[DTSLeep_SceneScr] ViewStart set first-person")
+		;Debug.Trace("[DTSLeep_SceneScr] ViewStart set first-person - useLowCam? " + useLowCam)
 		DTSleep_WasPlayerThirdPerson.SetValue(-1.0)
-		Game.ForceFirstPerson()  ; toggle anyway - sometimes reports wrong
-		Utility.Wait(0.33)
+		if (useLowCam >= 0 && DTSL_CamCustomEnabled.GetValue() > 0.0)
+			Game.ForceFirstPerson()  ; toggle anyway - sometimes reports wrong
+			Utility.Wait(0.33)
+		endIf
 	else
-		;Debug.Trace("[DTSLeep_SceneScr] ViewStart set was third-person")
+		;Debug.Trace("[DTSLeep_SceneScr] ViewStart set was third-person - useLowCam? " + useLowCam)
 		DTSleep_WasPlayerThirdPerson.SetValue(1.0)
-		Game.ForceFirstPerson()  ; toggle before setting custom cam
-		Utility.Wait(0.67)
+		if (useLowCam >= 0 && DTSL_CamCustomEnabled.GetValue() > 0.0)
+			Game.ForceFirstPerson()  ; toggle before setting custom cam
+			Utility.Wait(0.67)
+		endIf
 	endIf
+
 	
 	GoSceneViewCamCustom(useLowCam)  ; set custom cam before going third-person
 	Utility.Wait(0.06)

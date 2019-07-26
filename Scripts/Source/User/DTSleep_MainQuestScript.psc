@@ -4068,7 +4068,7 @@ Function DisablePlayerControlsSleep(int level = 0)
 		;SleepInputLayer  disable activate    move,  fight, camSw, look, snk, menu, act, journ, Vats, Favs, run
 		SleepInputLayer.DisablePlayerControls(true, true, true, false, true, true, true, true, true, true, true)
 	elseIf (level >= 3)
-		SleepInputLayer.DisablePlayerControls(false, true, true, false, true, true, true, true, true, true, false)
+		SleepInputLayer.DisablePlayerControls(false, true, true, false, true, true, true, true, true, true, true)
 	elseIf (level == 2)
 		;SleepInputLayer  disable activate    move,  fight, camSw, look, snk, menu, act, journ, Vats, Favs, run
 		SleepInputLayer.DisablePlayerControls(true, true, true, true, true, true, true, true, true, true, true)
@@ -7126,7 +7126,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 				if (doDance)
 					(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).StartForActorsAndBed(PlayerRef, IntimateCompanionRef, furnToPlayObj, false, true, false)
 					
-					MainQSceneScriptP.GoSceneViewStart(0)
+					MainQSceneScriptP.GoSceneViewStart(-1)
 				
 					if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlayActionDancing())
 					
@@ -7278,7 +7278,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 						
 							(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).StartForActorsAndBed(PlayerRef, None, akFurniture, false, true, false)
 						
-							MainQSceneScriptP.GoSceneViewStart(0)
+							MainQSceneScriptP.GoSceneViewStart(-1)
 							
 							if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlayActionDancing())
 	
@@ -11241,6 +11241,8 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 		elseIf (SceneData.AnimationSet == 9)
 			lowCam = true
 		endIf
+	elseIf (SceneData.AnimationSet == 0 || seqID < 100)
+		camLevel = -1
 	endIf
 	
 	(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).FadeEnable = fadePlay

@@ -1476,7 +1476,7 @@ float Function GetTimeForPlayID(int id)
 		if (SceneData.AnimationSet == 5 && id != 547 && id != 546)	
 			DTSleep_IntimateSceneLen.SetValueInt(0)
 			
-			if (id >= 505 && id <= 506)
+			if (id >= 505 && id <= 509)
 				return 33.5
 			elseIf (id >= 551 && id < 552)
 				return 36.0
@@ -2603,7 +2603,7 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 								xOffset = -29.0
 							endIf
 							
-						elseIf (id == 501 || (id >= 504 && id <= 506) || id == 541 || id == 550)
+						elseIf (id == 501 || (id >= 504 && id <= 509) || id == 541 || id == 550)
 							placeOnBedSimple = true
 							zOffset = PositionMarkerOnBedZAdjustForSceneID(id)
 							if (zOffset == 0.0)
@@ -2638,6 +2638,9 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 						elseIf (id >= 700 && id < 760)
 							placeOnBedSimple = true
 							markerIsBed = true
+							yOffset = 0.0
+							xOffset = 0.0
+							zOffset = 0.0
 							
 							if (id == 704 && SceneData.SecondMaleRole != None)
 								bedUseNodeMarker = true
@@ -2664,6 +2667,7 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 								; let's turn at an angle
 								markerIsBed = false
 								bedUseNodeMarker = true
+								
 								if (DTSleep_IntimateStoolBackList.HasForm(SleepBedRef.GetBaseObject() as Form))
 									headingAngle = SleepBedRef.GetAngleZ() + 90.0
 								elseIf (Utility.RandomInt(2,4) > 2)
@@ -2806,9 +2810,10 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 										Point3DOrient ptOrig = DTSleep_CommonF.PointOfObject(SleepBedRef)
 										Point3DOrient ptTargetNode = DTSleep_CommonF.GetPointDistOnHeading(ptOrig, yOffset, xOffset)
 										
-										Debug.Trace(myScriptName + " chair point: " + DTSleep_CommonF.Point3DOrientToString(ptOrig) + ", placement: " + DTSleep_CommonF.Point3DOrientToString(ptTargetNode))
-										
-										mainNode.MoveTo(SleepBedRef, ptTargetNode.X, ptTargetNode.Y, ptTargetNode.Z, true)
+										if (DTSleep_SettingTestMode.GetValue() > 0.0 && DTSleep_DebugMode.GetValue() >= 1.0) ;TODO remove
+											Debug.Trace(myScriptName + " chair point: " + DTSleep_CommonF.Point3DOrientToString(ptOrig) + ", placement offset: " + DTSleep_CommonF.Point3DOrientToString(ptTargetNode))
+										endIf
+										mainNode.MoveTo(SleepBedRef, ptTargetNode.X, ptTargetNode.Y, zOffset, true)
 										if (headingAngle == 0.0)
 											headingAngle = mainNode.GetAngleZ() + (Utility.RandomInt(-6, 6) as float)
 										endIf
@@ -3216,6 +3221,8 @@ float Function PositionMarkerOnBedZAdjustForSceneID(int id)
 			return -40.2
 		elseIf (id == 504 || id == 541 || id == 550 || id >= 900)
 			return 0.16				; added v1.60
+		elseIf (id >= 507 && id <= 508)
+			return 0.16
 		elseIf (id == 770)
 			return 0.2
 		endIf
@@ -3229,6 +3236,8 @@ float Function PositionMarkerOnBedZAdjustForSceneID(int id)
 	elseIf (id == 504 || id == 541 || id == 550 || id >= 900)
 		; no bed z-offset with this animation so plays at bed position (beneath bed) -- added v1.60
 		return 0.12
+	elseIf (id >= 507 && id <= 508)
+		return 0.16
 	endIf
 
 	return 0.0
@@ -3387,8 +3396,12 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 	bool bedIsTable = false
 	bool restricted = false   ; if same-gender no toy
 	
-	if (noLeitoGun && packID > 0 && packID < 5)
-		return sidArray
+	if (noLeitoGun && packID > 0 && packID < 5 && DTSleep_SettingUseBT2Gun.GetValue() > 0.0)
+		if (SceneData.SameGender && SceneData.MaleRoleGender == 1)
+			; 2 females okay
+		else
+			return sidArray
+		endIf
 	endIf
 	
 	if (DTSleep_PilloryList.HasForm(baseBedForm) || DTSleep_TortureDList.HasForm(baseBedForm))
@@ -3637,6 +3650,13 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 									sidArray.Add(5); cowgirl double-bed
 								elseIf (!bedIsFloorBed)
 									sidArray.Add(6); cowgirl vault
+								endIf
+								if ((DTSConditionals as DTSleep_Conditionals).AtomicLustVers >= 2.50)
+									sidArray.Add(7)			; ground cowgirl
+									sidArray.Add(8)
+									if (!bedIsFloorBed)
+										sidArray.Add(8)	; on-bed reversed cowgirl - 2 stage no ping-pong
+									endIf
 								endIf
 								
 							elseIf (SceneData.SameGender && SceneData.MaleRoleGender == 0)
