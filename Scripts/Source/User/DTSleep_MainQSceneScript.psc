@@ -104,7 +104,8 @@ Function GoSceneViewDone(bool goFirstOK)
 		
 			;Debug.Trace("[DTSLeep_SceneScr] ViewDone force first person")
 			Game.ForceFirstPerson()
-			PlayerRef.SetAnimationVariableBool("IsFirstPerson", true)
+			; v2.11 comment out: doesn't appear to work anyway
+			;PlayerRef.SetAnimationVariableBool("IsFirstPerson", true)
 		endIf
 	;endIf
 	GoSceneViewCamDefault()
@@ -114,6 +115,7 @@ endFunction
 Function GoSceneViewStart(int useLowCam = 1)
 	
 	; this AnimationVariable sometimes misreports so always force ThirdPerson
+	; v2.11 - skip forcing FirstPerosn if cam disabled
 	if (PlayerRef.GetAnimationVariableBool("IsFirstPerson"))
 		;Debug.Trace("[DTSLeep_SceneScr] ViewStart set first-person - useLowCam? " + useLowCam)
 		DTSleep_WasPlayerThirdPerson.SetValue(-1.0)

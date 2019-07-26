@@ -10398,6 +10398,11 @@ int Function RestoreTestSettings(float oldVersion = 0.0)
 		RegisterForMenuOpenCloseEvent("WorkshopMenu")
 	endIf
 	
+	if (DTSleep_AdultContentOn.GetValueInt() <= 1.0 && DTSleep_SettingChairsEnabled.GetValueInt() >= 2)
+		DTSleep_SettingChairsEnabled.SetValueInt(1)
+	endIf
+	
+	; version updates
 	if (oldVersion <= 1.540)
 		; fix for error in previous version
 		int napComp = DTSleep_SettingNapComp.GetValueInt()
