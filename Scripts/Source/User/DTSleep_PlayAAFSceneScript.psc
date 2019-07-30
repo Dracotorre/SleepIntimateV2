@@ -705,20 +705,23 @@ Function PlayAtomicScene()
 		objRef = BedInSceneRef
 	elseIf (SequenceID == 503 || SequenceID == 504 || SequenceID == 509 || SequenceID == 541)
 		objRef = BedInSceneRef
-		;if (SceneData.SameGender && SceneData.MaleRoleGender == 0)
-		;	armGun = GetLeitoGun(0)
-		;endIf
-	;elseIf (SequenceID >= 505 && SequenceID <= 506)
-		;armGun = GetLeitoGun(0)
+		if (SceneData.SameGender && SceneData.MaleRoleGender == 0)
+			armGun = GetLeitoGun(0)
+		elseIf (SequenceID == 509)
+			armGun == GetLeitoGun(1)
+		endIf
+	endIf
+	if (SequenceID >= 505 && SequenceID <= 509)
+		armGun = GetLeitoGun(0)
 	elseIf (SequenceID >= 540 && SequenceID <= 541)
 		objRef = MainActor
-		;if (MainActor == SceneData.MaleRole)
-		;	armGun = GetLeitoGun(0)
-		;endIf
+		if (MainActor == SceneData.MaleRole)
+			armGun = GetLeitoGun(0)
+		endIf
 	elseIf (SequenceID == 548)
 		timer = 18.0
-	;elseIf (SequenceID >= 550 && SequenceID <= 552)
-	;	armGun = GetLeitoGun(0)
+	elseIf (SequenceID >= 550 && SequenceID <= 552)
+		armGun = GetLeitoGun(0)
 	endIf
 
 	PlaySingleStageScene(positionStr, timer, objRef, armGun)
@@ -834,63 +837,74 @@ endFunction
 ; 0 = normal, 1 = up, 2 = down
 Armor Function GetLeitoGun(int kind)
 
-	; should not be needed
-	return None
+	return GetArmorNudeGun(kind)
 endFunction
 
 ; 0 = normal, 1 = up, 2 = down
 Armor Function GetArmorNudeGun(int kind)
-	; should not be needed
-	return None
+	; AAF morphs should only need forward??
+	Debug.Trace("[DTSleep_PlayAAF] GetArmorNudeGun start kind = " + kind)
+	Armor gun = None
+	if (kind < 0)
+		return None
+	endIf
+	if (!Debug.GetPlatformName() as bool)
+		return None
+	endIf
+	; only allow Atomic Lust
+	if (SequenceID < 503 || SequenceID > 540)
+		return None
+	endIf
 	
-	; Armor gun = None
-	; if (kind < 0)
-		; return None
-	; endIf
-	; if (!Debug.GetPlatformName() as bool)
-		; return None
-	; endIf
-	; if (DTSleep_SettingTestMode.GetValue() < 1.0)
-		; return None
-	; endIf
-	; int evbVal = DTSleep_SettingUseLeitoGun.GetValueInt()
-	; int bt2Val = DTSleep_SettingUseBT2Gun.GetValueInt()
+	int evbVal = DTSleep_SettingUseLeitoGun.GetValueInt()
+	int bt2Val = DTSleep_SettingUseBT2Gun.GetValueInt()
 	
-	; if (SceneData.IsCreatureType == 1)
-		; evbVal = 2
-		; bt2Val = -1
-	; elseIf (DTSConditionals.IsUniquePlayerMaleActive && evbVal > 0 && SceneData.MaleRole == PlayerRef)
-		; bt2Val = -1
-	; endIf
+	if (SceneData.IsCreatureType == 1)
+		evbVal = 2
+		bt2Val = -1
+	elseIf (DTSConditionals.IsUniquePlayerMaleActive && evbVal > 0 && SceneData.MaleRole == PlayerRef)
+		bt2Val = -1
+	endIf
 	
-	; if (kind > 0 && evbVal == 1)
-		; kind = 0
-	; endIf
+	if (evbVal <= 0 && bt2Val <= 0)
+		return None
+	endIf
 	
-	; if ((evbVal > 0 || bt2Val > 0) && SceneData.IsCreatureType != 2)
+	if (kind > 0 && evbVal == 1)
+		kind = 0
+	elseIf (SequenceID >= 503 && SequenceID < 540 && bt2Val > 0)
+		kind = 0
+	endIf
 	
-		; if (SceneData.MaleRole == PlayerRef || SceneData.FemaleRole == SecondActor)
-			; if (evbVal > 0 && DTSConditionals.IsUniquePlayerMaleActive)
-				; kind += 3
-			; ;else
-				; ;return DTSleep_NudeSuitPlayerUp
-			; endIf
-		; elseIf (evbVal > 0 && DTSConditionals.IsUniqueFollowerMaleActive)
-			; if (SceneData.MaleRoleCompanionIndex > 0)
-				; kind += (3 * SceneData.MaleRoleCompanionIndex)
-			; endIf
-		; endIf
+	Debug.Trace("[DTSleep_PlayAAF] GetArmorNudeGun kind = " + kind)
+	
+	if ((evbVal > 0 || bt2Val > 0) && SceneData.IsCreatureType != 2)
+	
+		if (SceneData.MaleRole == PlayerRef || SceneData.FemaleRole == SecondActor)
+			if (evbVal > 0 && DTSConditionals.IsUniquePlayerMaleActive)
+				kind += 3
+			;else
+				;return DTSleep_NudeSuitPlayerUp
+			endIf
+		elseIf (evbVal > 0 && DTSConditionals.IsUniqueFollowerMaleActive)
+			if (SceneData.MaleRoleCompanionIndex > 0)
+				kind += (3 * SceneData.MaleRoleCompanionIndex)
+			endIf
+		endIf
 		
-		; if (kind >= 0)
-			; if (bt2Val < 0 && DTSleep_LeitoGunList != None && DTSleep_LeitoGunlist.GetSize() > kind)
-				; gun = DTSleep_LeitoGunList.GetAt(kind) as Armor
-			; elseIf (bt2Val >= 0 && DTSleep_BT2GunList != None && DTSleep_BT2GunList.GetSize() > kind)
-				; gun = DTSleep_BT2GunList.GetAt(kind) as Armor
-			; endIf
-		; endIf
-	; endIf
+		if (kind >= 0)
+			if (bt2Val < 0 && DTSleep_LeitoGunList != None && DTSleep_LeitoGunlist.GetSize() > kind)
+				gun = DTSleep_LeitoGunList.GetAt(kind) as Armor
+			elseIf (bt2Val >= 0 && DTSleep_BT2GunList != None && DTSleep_BT2GunList.GetSize() > kind)
+				; Atomic Lust animates the skeleton for BodyTalk so limit to kind = 0
+				if (kind == 0 || SceneData.AnimationSet != 5)
+					gun = DTSleep_BT2GunList.GetAt(kind) as Armor
+				endIf
+			endIf
+		endIf
+	endIf
 	
-	; return gun
+	return gun
 endFunction
 
 ; SavageCabbages
@@ -1495,7 +1509,11 @@ endFunction
 
 Function RemoveLeitoGuns(Actor aActor)
 	
-	if (DTSleep_LeitoGunList)
+	if (DTSleep_SettingUseBT2Gun.GetValueInt() > 0)
+		RemoveBT2Guns(aActor)
+	endIf
+	
+	if (DTSleep_LeitoGunList != None)
 	
 		int len = DTSleep_LeitoGunList.GetSize()
 		int idx = 0
@@ -1515,3 +1533,22 @@ Function RemoveLeitoGuns(Actor aActor)
 		endWhile
 	endIf
 EndFunction
+
+Function RemoveBT2Guns(Actor aActor)
+	if (DTSleep_BT2GunList != None)
+		int len = DTSleep_BT2GunList.GetSize()
+		int idx = 0
+		while (idx < len)
+			Armor gun = DTSleep_BT2GunList.GetAt(idx) as Armor
+			if (gun != None)
+				int count = aActor.GetItemCount(gun)
+				if (count > 0)
+					;Debug.Trace("[DTSleep_PlayAAC] removing nude gun: " + gun)
+					aActor.UnequipItem(gun as Form, false, true)
+					aActor.RemoveItem(gun as Form, count, true, None)
+				endIf
+			endIf
+			idx += 1
+		endWhile
+	endIf
+endFunction

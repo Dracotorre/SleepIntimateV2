@@ -374,6 +374,38 @@ pDTSleep_SettingUseBT2Gun.SetValue(1.0)
 EndFunction
 ;END FRAGMENT
 
+;BEGIN FRAGMENT Fragment_Terminal_44
+Function Fragment_Terminal_44(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingAltFemBody.SetValue(2.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_45
+Function Fragment_Terminal_45(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingAltFemBody.SetValue(1.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_46
+Function Fragment_Terminal_46(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingAltFemBody.SetValue(3.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_47
+Function Fragment_Terminal_47(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingAltFemBody.SetValue(0.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
 ;END FRAGMENT CODE - Do not edit anything between this and the begin comment
 
 GlobalVariable Property pDTSleep_SettingIntimate Auto Const Mandatory
@@ -423,3 +455,5 @@ GlobalVariable Property pDTSleep_SettingFadeEndScene Auto Const Mandatory
 GlobalVariable Property pDTSleep_IntimateDogExp Auto Const Mandatory
 
 GlobalVariable Property pDTSleep_SettingUseBT2Gun Auto Const Mandatory
+
+GlobalVariable Property pDTSleep_SettingAltFemBody Auto Const Mandatory

@@ -382,6 +382,17 @@ Function StopAll(bool fadeIn = false)
 	; do not stop quest
 endFunction
 
+bool Function AnimationSetSupportsZeX(int animSet)
+
+	if (animSet == 5)
+		return true
+	elseIf (animSet >= 7 && animSet <= 8)
+		return true
+	endIf
+
+	return false
+endFunction
+
 int Function BaseIDForFullSequenceID(int seqID)
 	if (seqID >= 100)
 		int hundredNum = Math.Floor(seqID as float / 100.0)
@@ -1057,7 +1068,7 @@ Function FadeAndPlay(int id, bool mainActorIsMaleRole = true)
 	endIf
 	
 	if (SleepBedRef != None)
-		; prevent NPCs from using furniture
+		; prevent NPCs from using furniture -- does not always work (Heather only?)
 		SleepBedRef.SetDestroyed(true)
 	endIf
 	
@@ -3797,7 +3808,12 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 				
 		elseIf (packID == 1 || packID == 2 || packID == 6)
 		
-			if (!SceneData.IsUsingCreature && !cuddlesOnly && !SceneData.CompanionInPowerArmor && SceneData.SecondMaleRole == None && SceneData.SecondFemaleRole == None)
+			if (SceneData.CompanionInPowerArmor)
+				if (packID == 2)
+					sidArray.Add(50)	; solo
+				endIf
+				
+			elseIf (!SceneData.IsUsingCreature && !cuddlesOnly && SceneData.SecondMaleRole == None && SceneData.SecondFemaleRole == None)
 				
 				int numToAdd = 1
 				if (!mainActorIsMaleRole)

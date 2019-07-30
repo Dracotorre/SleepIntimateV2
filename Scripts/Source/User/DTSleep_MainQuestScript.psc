@@ -2148,12 +2148,9 @@ endFunction
 Function GoNearbyCompanionInLoveNaked()
 	IntimateCompanionSet companionSet = GetCompanionNearbyHighestRelationRank(true)
 
-	
-	;if (companionSet.CompanionActor)
-		SetUndressForManualStop(true, companionSet.CompanionActor, false, companionSet.RequiresNudeSuit, None, false, false)
-	;else
-		;DTSleep_CompanionNotFoundMsg.Show()
-	;endIf
+	(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).AltFemBodyEnabled = false
+
+	SetUndressForManualStop(true, companionSet.CompanionActor, false, companionSet.RequiresNudeSuit, None, false, false)
 endFunction
 
 Function GoNearbyCompanionInLoveUndressForBed()
@@ -6272,6 +6269,7 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 						
 				elseIf ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlayActionDancing())
 					noPreBedAnim = false
+					(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlaceInBedOnFinish = false
 					RegisterForCustomEvent((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript), "IntimateSequenceDoneEvent")
 
 				else
@@ -6418,6 +6416,7 @@ Function HandlePlayerActivateOutfitContainer(ObjectReference akTarget, bool forB
 			endIf
 		else
 			;   clothing, no companion, no winter, no companion nudeSuit, no bed, no Pip-boy, no drop sleepwear
+			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).AltFemBodyEnabled = false
 			SetUndressForManualStop(true, None, false, false, None, false, false, forBed)  
 		endIf
 		
@@ -7910,7 +7909,8 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 	
 		DTDebug("IntimateAnimPacksPick powerArmorFlag?" + powerArmorFlag + " inPowerArmor? " + SceneData.CompanionInPowerArmor + " stylePicked? " + stylePicked, 2)
 		
-		if (SceneData.CompanionInPowerArmor)		
+		if (SceneData.CompanionInPowerArmor)
+			; intended for Danse in power armor
 			if (playerSex == 1 && !aafEnabled && (DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive && DTSleep_BedsBigDoubleList.HasForm(baseBedForm))
 				; solo for Danse in PA limited to scene
 				hasSavageCabbageAnims = true
@@ -7918,6 +7918,10 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 			endIf
 			if ((DTSConditionals as DTSleep_Conditionals).IsGrayAnimsActive)
 				hasGrayAnims = true
+				animSetCount += 1
+			endIf
+			if ((DTSConditionals as DTSleep_Conditionals).IsCrazyAnimGunActive)
+				hasCrazyGunAnims = true
 				animSetCount += 1
 			endIf
 		else
@@ -11057,6 +11061,7 @@ bool Function SetUndressForBed(ObjectReference playerBed, Actor companionActor, 
 	(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).EnableCarryBonus = true
 	(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).SuspendEquipStore = false
 	(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).PlayerIsAroused = false
+	(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).AltFemBodyEnabled = false
 	
 	;if (IsAdultAnimationAvailable() && companionActor != None && PlayerFriskyScore() > 60)
 	;	(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).PlayerIsAroused = true
@@ -11086,6 +11091,7 @@ bool Function SetUndressForCheck(bool includeClothing, Actor companionActor, boo
 	(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).EnableCarryBonus = false
 	(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).SuspendEquipStore = true
 	(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).PlayerIsAroused = false
+	(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).AltFemBodyEnabled = false
 	
 	;bool includePipBoy = false
 	;if (DTSleep_SettingUndressPipboy.GetValue() >= 1.0)
@@ -11109,6 +11115,7 @@ bool Function SetUndressForRespectSit(ObjectReference akFurniture, Actor compani
 			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).EnableCarryBonus = true
 			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).SuspendEquipStore = false
 			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).PlayerIsAroused = false
+			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).AltFemBodyEnabled = false
 			
 			IntimateWeatherScoreSet wScore = ChanceForIntimateSceneWeatherScore()
 			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).WeatherClass = wScore.wClass
@@ -11128,6 +11135,7 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 	int seqID = -1
 	int evbBestFitVal = (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).DTSleep_SettingUseLeitoGun.GetValueInt()
 	int bt2Val = (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).DTSleep_SettingUseBT2Gun.GetValueInt()
+	bool animationZeX = false
 	
 	; function follows these steps -- order important
 	; 1. limit scene choices
@@ -11194,9 +11202,9 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 	; 4. set animation packs to get sequenceID and animation set
 	if (adultContentVal >= 1 && (DTSConditionals as DTSleep_Conditionals).ImaPCMod)
 		; set animation packs
-		if (animPacks != None && animPacks.Length > 0)
+		if (animPacks.Length > 0)
 			
-			if (adultContentVal >= 2 && arousalAngle >= 0 && aafIsReady && testModeOn && SceneData.MaleRole == PlayerRef && playerScenePick < 0)
+			if (adultContentVal >= 2 && arousalAngle >= 0 && SceneData.MaleRole == PlayerRef && playerScenePick < 0 && DressData.PlayerGender == 1)
 				(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).RestrictScenesToErectAngle = arousalAngle
 			endIf
 			
@@ -11209,21 +11217,29 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 			; also sets SceneData.AnimationSet if valid ID found and may clear 2nd lovers if not needed
 			seqID = (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetAnimationPacksAndGetSceneID(animPacks)
 			
+			animationZeX = (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).AnimationSetSupportsZeX(SceneData.AnimationSet)
+			
+			if (aafIsReady && animationZeX && arousalAngle >= 0)
+				arousalAngle = 0
+			else
+				arousalAngle = -1
+			endIf
+			
 			if (seqID <= 99)
 				SceneData.AnimationSet = 0
-			elseIf (aafIsReady && arousalAngle >= 0 && testModeOn)
+			;elseIf (aafIsReady && doArousal)
 				; no swapping during AAF and since scene picker does not restrict these then adjust to best
-				if (arousalAngle == 0 && seqID >= 735 && seqID < 738)
-					arousalAngle = 1
-				elseIf (arousalAngle != 1 && seqID >= 758 && seqID <= 759)
-					arousalAngle = 1
-				elseIf (arousalAngle != 1 && seqID == 754)
-					arousalAngle = 1
-				elseIf (arousalAngle == 1 && (seqID == 753 || seqID == 755 || seqID == 738 || seqID == 751))
-					arousalAngle = 0
-				elseIf (seqID == 547)
-					arousalAngle = -1
-				endIf
+				;if (arousalAngle == 0 && seqID >= 735 && seqID < 738)
+				;	arousalAngle = 1
+				;elseIf (arousalAngle != 1 && seqID >= 758 && seqID <= 759)
+				;	arousalAngle = 1
+				;elseIf (arousalAngle != 1 && seqID == 754)
+				;	arousalAngle = 1
+				;elseIf (arousalAngle == 1 && (seqID == 753 || seqID == 755 || seqID == 738 || seqID == 751))
+				;	arousalAngle = 0
+				;elseIf (seqID == 547)
+				;	arousalAngle = -1
+				;endIf
 			endIf
 			
 			; check to clear 2nd lover and swap back if not needed
@@ -11321,8 +11337,8 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 			endIf
 		endIf
 		
-		if (aafIsReady && testModeOn)
-			if (includeClothing && arousalAngle >=0 && DressData.PlayerGender == 0 && adultContentVal >= 2 && SceneData.AnimationSet >= 5)
+		if (aafIsReady)
+			if (includeClothing && arousalAngle >=0 && DressData.PlayerGender == 0 && adultContentVal >= 2 && animationZeX)
 				
 				arousalAngle = (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).SetPlayerArousedLevel(arousalAngle)
 			endIf
@@ -11336,14 +11352,31 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 		
 		; for intimacy scenes no winter check and companion always uses nude suit
 		
+		; check alt-female nude-suit for specific scenes - only need to disable since undress defaults to enabled and checks setting
+		; option setting: 1 = always, 2 = ZeX-only, 3 = EVB/CBBE-only
+		int altFemVal = (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).DTSleep_SettingAltFemBody.GetValueInt()
+		if (altFemVal >= 2)
+				
+			if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).AnimationSetSupportsZeX(SceneData.AnimationSet))
+				if (altFemVal >= 3)
+					(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).AltFemBodyEnabled = false
+				endIf
+			elseIf (altFemVal == 2)
+				(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).AltFemBodyEnabled = false
+			endIf
+		endIf
+		
 		; first check respect
 		if (fadeUndressLevel >= 0 && fadeUndressLevel <= 1)
 			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).DropSleepClothes = false
 			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).EnableCarryBonus = true
 			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).SuspendEquipStore = false
 			
+			
 			IntimateWeatherScoreSet wScore = ChanceForIntimateSceneWeatherScore()
 			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).WeatherClass = wScore.wClass
+			
+			
 			
 			; sleep clothes if have them and if for bed
 			

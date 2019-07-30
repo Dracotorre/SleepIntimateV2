@@ -352,6 +352,8 @@ Armor Function GetArmorNudeGun(int kind)
 	
 	if (kind > 0 && evbVal == 1)
 		kind = 0
+	elseIf (kind > 0 && SceneData.AnimationSet == 5 && bt2Val > 0)
+		kind = 0
 	endIf
 	
 	if ((evbVal > 0 || bt2Val > 0) && SceneData.IsCreatureType != 2)

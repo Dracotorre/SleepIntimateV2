@@ -71,6 +71,7 @@ GlobalVariable property DTSleep_SettingTestMode auto const
 GlobalVariable property DTSleep_SettingPackOnGround auto const
 GlobalVariable property DTSleep_DebugMode auto const
 GlobalVariable property DTSleep_IUndressStat auto
+GlobalVariable property DTSleep_SettingAltFemBody auto	; added v2.12 for alternate female body
 EndGroup
 
 Group B_Lists
@@ -126,6 +127,7 @@ Armor property DTSleep_LeitoGunNudeUp_UP auto const
 Armor property DTSleep_LeitoGunNudeUp_Forw auto const
 Armor property DTSleep_PlayerNudeRing auto const
 Armor property DTSleep_PlayerNudeBodyNoPipBoy auto const
+Armor property DTSleep_AltFemNudeBody auto const			; added v2.12
 EndGroup
 
 Group D_Settings
@@ -156,6 +158,7 @@ bool property PlayerIsAroused = false auto hidden
 int property PlayerArousedAngle = 0 auto hidden
 int property UndressedForType = 0 auto hidden	; 1 for bed, 2 for manual-stop, 3 for sleep clothes, 5 for init, 0 = stopped
 int property WeatherClass = 0 auto hidden
+bool property AltFemBodyEnabled = true auto hidden	; disable to prevent alternate female nude-suit equip
 
 ; ********************************************
 ; ******           variables     ***********
@@ -418,6 +421,7 @@ bool Function StartForBedWake(bool includeClothing, ObjectReference mainBedRef, 
 	endIf
 	bool needInitEquipMon = false
 	UndressedForType = 1
+	AltFemBodyEnabled = false
 	DTSleep_IUndressStat.SetValueInt(2)
 	EnableCarryBonusRemove = true
 	
@@ -630,6 +634,7 @@ bool Function StartForCompanionSleepwear(Actor companionActorRef, bool companion
 	if (companionActorRef == None || companionActorRef.WornHasKeyword(ArmorTypePower))
 		return false
 	endIf
+	AltFemBodyEnabled = false
 	UndressedForType = 1
 	
 	CompanionSleepwearToRemoveSet = new SleepwearEquipSet
@@ -740,6 +745,7 @@ bool Function StartForManualStopSleepwear(Actor companionActorRef, ObjectReferen
 		
 		removeNudeSuit = true
 	endIf
+	AltFemBodyEnabled = false
 	
 	if (IsActorWearingSleepwear(PlayerRef))
 		return true
@@ -1057,6 +1063,11 @@ Function DoneStopAll()
 	PlayerBedRef = None
 	CompanionBedRef = None
 	CompanionSecondRef = None
+	if (DTSleep_AdultContentOn.GetValue() >= 2.0)
+		AltFemBodyEnabled = true
+	else
+		AltFemBodyEnabled = false
+	endIf
 	DTSleep_IUndressStat.SetValueInt(0)
 endFunction
 
@@ -1466,17 +1477,16 @@ Armor Function GetPlayerNudeSuitMale()
 			endIf
 		elseIf (self.PlayerArousedAngle >= 1)
 			
-			if (DTSleep_SettingUseLeitoGun.GetValueInt() > 1)
-				return DTSleep_NudeSuitPlayerUp
-				
-			elseIf (DTSleep_SettingUseBT2Gun.GetValueInt() > 0)
+			if (DTSleep_SettingUseBT2Gun.GetValueInt() > 0)
 				return DTSleep_BT2GunList.GetAt(1) as Armor
+			elseIf (DTSleep_SettingUseLeitoGun.GetValueInt() > 1)
+				return DTSleep_NudeSuitPlayerUp
 			endIf
 		else
-			if (DTSleep_SettingUseLeitoGun.GetValueInt() > 0)
-				return DTSleep_NudeSuitPlayerForw
-			elseIf (DTSleep_SettingUseBT2Gun.GetValueInt() > 0)
+			if (DTSleep_SettingUseBT2Gun.GetValueInt() > 0)
 				return DTSleep_BT2GunList.GetAt(0) as Armor
+			elseIf (DTSleep_SettingUseLeitoGun.GetValueInt() > 0)
+				return DTSleep_NudeSuitPlayerForw
 			endIf
 		endIf
 	endIf
@@ -2351,7 +2361,9 @@ Function RedressActor(Actor actorRef, Form[] equippedFormArray, bool slowly = tr
 			UndressInputLayer.DisablePlayerControls(false, false, true, false, false, true, true, true, false, false, false)
 		endIf
 	
-		if (PlayerRef.GetItemCount(DTSleep_PlayerNudeRing) > 0)
+		if (DTSleep_SettingAltFemBody.GetValueInt() >= 1 && AltFemBodyEnabled && GetGenderForActor(actorRef) == 1 && PlayerRef.GetItemCount(DTSleep_AltFemNudeBody) > 0)
+			RedressActorRemoveNudeSuits(actorRef, DTSleep_AltFemNudeBody, " player alt-fem nude-suit", true)
+		elseIf (PlayerRef.GetItemCount(DTSleep_PlayerNudeRing) > 0)
 			RedressActorRemoveNudeSuits(actorRef, DTSleep_PlayerNudeRing, " player nude-ring", true)
 		endIf
 		;v1.81
@@ -2361,11 +2373,15 @@ Function RedressActor(Actor actorRef, Form[] equippedFormArray, bool slowly = tr
 	endIf
 	
 	if (actorRef == CompanionRef)
-		if (DressData.CompanionNudeSuit != None)
+		if (DTSleep_SettingAltFemBody.GetValueInt() >= 1 && AltFemBodyEnabled && GetGenderForActor(actorRef) == 1 && actorRef.GetItemCount(DTSleep_AltFemNudeBody) > 0)
+			RedressActorRemoveNudeSuits(actorRef, DTSleep_AltFemNudeBody, " player alt-fem nude-suit", true)
+		elseIf (DressData.CompanionNudeSuit != None)
 			RedressActorRemoveNudeSuits(CompanionRef, DressData.CompanionNudeSuit, " custom nude-suit ")
 		elseIf (DressData.CompanionRequiresNudeSuit)
 			RedressActorRemoveNudeSuits(CompanionRef, DTSleep_NudeSuit, " nude-suit ")
-		else 
+		elseIf (DTSleep_SettingAltFemBody.GetValueInt() >= 1 && AltFemBodyEnabled && GetGenderForActor(actorRef) == 1 && actorRef.GetItemCount(DTSleep_AltFemNudeBody) > 0)
+			RedressActorRemoveNudeSuits(actorRef, DTSleep_AltFemNudeBody, " player alt-fem nude-suit", true)
+		else
 			CheckRemoveAllNudeSuits(CompanionRef, false)
 		endIf
 	elseIf (CompanionSecondRef != None && CompanionSecondRef == actorRef)
@@ -3370,7 +3386,11 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 			; assume intimate a main outfit then check at end for correction
 			if (!actorWearingIntimateItem)
 				ensureNude = true
-				actorRef.UnequipItemSlot(3) ; 33 - full body outfit
+				if (DTSleep_SettingAltFemBody.GetValueInt() >= 1 && AltFemBodyEnabled && DTSleep_AdultContentOn.GetValue() >= 2.0 && GetGenderForActor(actorRef) == 1)
+					actorRef.EquipItem(DTSleep_AltFemNudeBody, true, true)
+				else
+					actorRef.UnequipItemSlot(3) ; 33 - full body outfit
+				endIf
 				; wait for a mod item event
 				Utility.WaitMenuMode(0.12)
 			endIf
@@ -4191,7 +4211,11 @@ Function UndressActorCompanionDressNudeSuit(Actor actorRef, bool hasSleepMainOut
 	endIf
 	Utility.WaitMenuMode(0.10)
 	
-	if (DressData.CompanionRequiresNudeSuit)
+	if (DTSleep_SettingAltFemBody.GetValue() >= 1.0 && AltFemBodyEnabled && DTSleep_AdultContentOn.GetValue() >= 2.0 && GetGenderForActor(actorRef) == 1)
+		
+		actorRef.EquipItem(DTSleep_AltFemNudeBody, true, true)
+		
+	elseIf (DressData.CompanionRequiresNudeSuit)
 	
 		; prevent actor from bumping nude-suit (EquipItem true on 1st parameter)
 		; sleep clothing may not bump nude-suits - check to remove before equip sleepwear
