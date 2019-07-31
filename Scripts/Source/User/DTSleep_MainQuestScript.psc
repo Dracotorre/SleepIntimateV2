@@ -11217,9 +11217,9 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 			; also sets SceneData.AnimationSet if valid ID found and may clear 2nd lovers if not needed
 			seqID = (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetAnimationPacksAndGetSceneID(animPacks)
 			
-			animationZeX = (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).AnimationSetSupportsZeX(SceneData.AnimationSet)
+			;animationZeX = (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).AnimationSetSupportsZeX(SceneData.AnimationSet)
 			
-			if (aafIsReady && animationZeX && arousalAngle >= 0)
+			if (aafIsReady && SceneData.AnimationSet == 5 && arousalAngle >= 0 && seqID < 540)
 				arousalAngle = 0
 			else
 				arousalAngle = -1
