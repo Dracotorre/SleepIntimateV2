@@ -1,19 +1,46 @@
 Scriptname DTSleep_MainQuestScript extends Quest
-{ Main quest reacts to bed activation via DTSleep_PlayerSleepBedPerk }
+{ Main quest reacts to bed or seat activation via DTSleep_PlayerSleepBedPerk }
 
 ; ********************* 
 ; DTSleep_MainQuestScript main quest controller for Sleep Intimate version 2
 ; by DracoTorre
 ; www.dracotorre.com/mods/sleepintimate/
+; https://github.com/Dracotorre/SleepIntimateV2
 ;
-; This quest never stops -- runs on player bed or seat activation event added by Perk
+; This quest never stops -- responds on player bed or seat activation event added by Perk
+;
 ; 
 ; Adds animations on bed with undress/dress and lover intimacy using additional bed activation set in a Perk, DTSleep_PlayerSleepBedPerk.
 ;  The perk adds a new activated control so that player may choose normal sleep or our "Rest" sleep. We catch this perk control in an OnEntry event.
 ;
 ; Allows outfit-swap using Outfit container; player undress put in container and dress from container contents. Uses same Perk.
 ;
-; using other quests and scripts:
+; ----------------------------------------------------------------------------------------------------------------------
+; **** mod authors interested in making compatibility patch  - see the website for details
+;
+;    basics: player may choose two styles of sleep:
+;       - Quick Sleep (global DTSleep_SettingNapOnly <= 0): normal game sleep events then OnPlayerSleepStop places characters in bed if unocuppied
+;       - Immersive Rest (global DTSleep_SettingNapOnly >= 1): fake-sleep with character placed in bed with optional recovery for Survival
+;			** player allowed to exit bed early and continue sleep within 2 hours
+;
+;    basics: how player character exits bed:
+;		- activate 'Akwaken' via Perk activator override 
+;		- activate a different furniture ('sleep walking') -- this MainQuest cancels sleep status after player sneaks or changes location
+;       - Immersive Rest sleep-timer ends 
+;		- rest interruption (DTSleep_HealthRecoverQuestScript)
+;
+;       No matter how player exits bed for Immersive Rest, DTSleep_HealthRecoverQuestScript.RestCompleteEvent is sent
+;
+; 	If your mod depends on OnPlayerSleepStart or OnPlayerSleepStop events other than for animating, advise players to choose Quick Sleep.
+;	To find out when Immersive Rest ends, listen for DTSleep_HealthRecoverQuestScript.RestCompleteEvent.
+;   To find when Immersive Rest begins (after 1st game-hour), listen to DTSleep_HealthRecoverQuestScript.RestStartedEvent.
+;
+;
+; No API, but you may use Game.GetFormFromFile (and store the Form for performance) to check on data or listen for events.
+;
+;
+; -----------------------------------------------------------------------------------------------------------------------
+; MainQuest uses other quests and scripts:
 ;
 ; DTSleep_Conditionals				- stores data mostly to keep track of DLCs and other supported mods installed
 ; DTSleep_CommonF					- global collection of common functions
@@ -25,7 +52,7 @@ Scriptname DTSleep_MainQuestScript extends Quest
 ; DTSleep_OutfitContainerScript		- mod furniture to swap outfits activated through Perk-added activator
 ; DTSleep_HealthRecoverQuestScript 	- controls Immersive Rest recovery and reports if player is sleepy or not
 ; DTSleep_IntimateTourQuestScript 	- destinations quest
-; DTSleep_DogTrainQuestScript 		- training dog with sex (adult only)
+; DTSleep_DogTrainQuestScript 		- training dog with sex (adult only and no longer used in version 2)
 ; DT_PotionHandleQuestScript		- safely add effects to player without triggering game-freeze bug (VATS)
 ; DT_RandomQuestScript				- Random numbers using card-shuffle, because game's random generator found to be too deterministic
 ; DTSleep_BedOwnQuestScript			- helps player claim or change ownership to fend off settlers, or just keep track of companion ownership
@@ -51,7 +78,10 @@ Scriptname DTSleep_MainQuestScript extends Quest
 ; - chance for intimate scenes allow role-playing / game value--factors include charisma, illness, time since last scene, location
 ; - some beds cannot perform in-bed animation on player so performs normal sleep--tracked by list: DTSleep_BedPlacedNoRestList
 ; -----------------------------------------
-
+;
+;  ObjectReference.IsFurnitureInUse note: set to true once NPC begins to walk towards it so may not actually be in use yet
+;		- double-check using function, IsFurnitureActuallyInUse
+;
 ;  Actor notes:
 ;
 ; actor's sleep state, which is one of the following (game actually binary sleep/not):
@@ -59,6 +89,7 @@ Scriptname DTSleep_MainQuestScript extends Quest
 ; 2 - Not sleeping, wants to sleep	- game does not use
 ; 3 - Sleeping
 ; 4 - Sleeping, wants to wake		- game does not use 
+;
 ;int Function GetSleepState() native
 ;
 ;  sitting (or using workstation) is also binary (wants-to-sit never set), so determine if actually sitting by watching movement
@@ -129,7 +160,6 @@ Quest property DTSleep_EncounterQuestP auto
 Quest property DTSleep_IntimateUndressQuestP auto
 Quest property DTSleep_IntimateAnimQuestP auto
 Quest property DTSleep_IntimateAffinityQuest auto
-Quest property DTSleep_DogTrainQuestP auto
 Quest property DTSleep_IntimateTourQuestP auto
 Quest property DTSleep_TimeDayQuestP auto
 Quest property DTSleep_HealthRecoverQuestP auto
@@ -1656,7 +1686,10 @@ Event OnPlayerSleepStop(bool abInterrupted, ObjectReference akBed)
 
 	UnregisterForRemoteEvent(akBed, "OnActivate")
 	
-	if (!abInterrupted && !PlayerRef.IsInCombat() && akBed != None)
+	; check enabled and 3D since some mods take bed away (which breaks some base-game features)
+	;  - bed may be taken away after this causing issue
+	;
+	if (!abInterrupted && !PlayerRef.IsInCombat() && akBed != None && akBed.IsEnabled() && akbed.Is3DLoaded())
 	
 		Location currentLoc = (SleepPlayerAlias as DTSleep_PlayerAliasScript).CurrentLocation
 		bool observeWinter = true
@@ -1676,7 +1709,8 @@ Event OnPlayerSleepStop(bool abInterrupted, ObjectReference akBed)
 		if (abInterrupted)
 			DTDebug(" OnSleepStop interrupted...", 1)
 			DTSleep_SleepInterruptedSleepStopMsg.Show()
-		elseIf (akBed == None)
+		elseIf (akBed == None || !akBed.IsEnabled() || !akbed.Is3DLoaded())
+			; v2.13
 			DTDebug(" OnSleepStop no bed!", 1)
 		endIf
 		
@@ -2518,7 +2552,12 @@ int Function ChanceForIntimateCompanionAdj(Actor companionRef)
 		endIf
 	endIf
 	if (IntimateCompanionSecRef != None)
-		if (SceneData.SecondFemaleRole != None)
+		; v2.13 - companion affinity -- reduce chance instead of forbid
+		if ((DTSleep_IntimateAffinityQuest as DTSleep_IntimateAffinityQuestScript).CompanionHatesIntimateOtherPublic(IntimateCompanionSecRef))
+			return -40
+		elseIf ((DTSleep_IntimateAffinityQuest as DTSleep_IntimateAffinityQuestScript).CompanionHatesIntimateOtherPublic(IntimateCompanionRef))
+			return -32
+		elseIf (SceneData.SecondFemaleRole != None)
 			return -9
 		elseIf (SceneData.SecondMaleRole != None)
 			return -15
@@ -5720,8 +5759,8 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 				;
 				if (!SceneData.IsCreatureType && DTSleep_AdultContentOn.GetValue() >= 2.0 && DTSleep_SettingLover2.GetValue() >= 1.0 && !SceneData.CompanionInPowerArmor)
 				
-					; make certain current lover is not the jealous type
-					if (!(DTSleep_IntimateAffinityQuest as DTSleep_IntimateAffinityQuestScript).CompanionHatesIntimateOtherPublic(IntimateCompanionRef))
+					; v2.13 -- allow jealous type and reduce chance instead 
+					;if (!(DTSleep_IntimateAffinityQuest as DTSleep_IntimateAffinityQuestScript).CompanionHatesIntimateOtherPublic(IntimateCompanionRef))
 				
 						int extraLoverReady = (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).GetFurnitureSupportExtraActorForPacks(targetRef, basebedForm, None)
 						DTDebug("extraLoverReady " + extraLoverReady + " for bed ", 2)
@@ -5743,7 +5782,7 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 								SetExtraLovePartners(loverType)
 							endIf
 						endIf
-					endIf
+					;endIf
 				endIf
 				; ------------------------end partner set
 				
@@ -6801,8 +6840,8 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 		;
 		if (!hugsOnly && !doDance && !SceneData.IsCreatureType && DTSleep_AdultContentOn.GetValue() >= 2.0 && DTSleep_SettingLover2.GetValue() >= 1.0)
 			if (!isPillory || animPacks[0] == 7)
-				; make certain current lover is not the jealous type
-				if (!(DTSleep_IntimateAffinityQuest as DTSleep_IntimateAffinityQuestScript).CompanionHatesIntimateOtherPublic(IntimateCompanionRef))
+				; v2.13 - allow jealous type and reduce chance instead 
+				;if (!(DTSleep_IntimateAffinityQuest as DTSleep_IntimateAffinityQuestScript).CompanionHatesIntimateOtherPublic(IntimateCompanionRef))
 			
 					int extraLoverReady = (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).GetFurnitureSupportExtraActorForPacks(furnToPlayObj, None, animPacks)
 					DTDebug("extraLoverReady " + extraLoverReady + " for furniture " + furnToPlayObj, 2)
@@ -6824,7 +6863,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 							SetExtraLovePartners(loverType)
 						endIf
 					endIf
-				endIf
+				;endIf
 			endIf
 		endIf
 		; ------------------------end partner set
@@ -7400,6 +7439,10 @@ Function HandlePlayerSleepStop(ObjectReference akBed, bool observeWinter = false
 			if (IsFurnitureActuallyInUse(akBed))	; v1.92
 				isBedBusy = true
 			endIf
+		elseIf (!akBed.IsEnabled() || !akBed.Is3DLoaded())
+			; v2.13 - make sure bed is actually here
+			DTDebug(" HandlePlayerSleepStop - bed disabled or not loaded!", 1)
+			isBedBusy = true
 		endIf
 	endIf
 		
@@ -9961,7 +10004,7 @@ bool Function PlayerHasTreatsOnList(FormList treatsList, bool spend = false)
 
 endFunction
 
-; only called when healthrecoverquest timer expires
+; only called when healthrecoverquest timer expires or caught interruptedEvent and still in bed
 ;
 Function PlayerSleepAwake(bool doneSleep)
 
@@ -12605,5 +12648,7 @@ Keyword property PlayerHackSuccessSubtype auto const
 Message property DTSleep_TourLocCheckedMsg auto const
 GlobalVariable property DTSleep_SettingCamera auto
 { deprecated }
+Quest property DTSleep_DogTrainQuestP auto
+{ no longer used }
 EndGroup
 float IntimateLastEmbraceScoreTime ; not using

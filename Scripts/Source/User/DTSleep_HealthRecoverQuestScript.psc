@@ -2,6 +2,7 @@ Scriptname DTSleep_HealthRecoverQuestScript extends Quest
 
 ; by DracoTorre
 ; www.dracotorre.com/mods/sleepintimate/
+; https://github.com/Dracotorre/SleepIntimateV2
 ;
 ; gradually recover health over game-time with chance for disease 
 ; supports Hardcore/Survival which simply recovers health and fatigue since HC_Manager runs everything on timers
@@ -80,9 +81,31 @@ bool property SleepyPlayer auto hidden
 { set on SleepTime check - only valid if recently checked IsSleepTimePublic }
 float property PlayerWellRestedTime auto hidden
 
-
+; ---------------------------------------------------------------------
+; ************************ Custom Events ******************************
+; ---------------------------------------------------------------------
 ; listen to this to be notified of poor rest
+;  - 0=player exit early, 1=over-encumbered, 2=poor sleep
+;  - no notification if player exit bed before 1 game-hour 
 CustomEvent RestInterruptionEvent
+
+; listen to this for notification of rest finished, interrupted or not
+;   - will only notify if rest 1+ hours so that player may exit bed without counting as sleep
+CustomEvent RestCompleteEvent
+;   kArgs[0] = interruptType: 0=player exit early, 1=over-encumbered, 2=poor sleep
+;   kArgs[1] = HourCount	: rest hours
+;   kArgs[2] = IsDone		: bool- full-rest for bed type (5 for ground bed, 7+ for regular bed)
+;   kArgs[3] = GoodSleep	: bool- no interruption, complete
+;   kArgs[4] = BedType		: see SleepBed*ID below
+;	kArgs[5] = RecoveryPref : int- 0=no fatigue or health recovery applied, 1=health recovery; fatigue set if Survival difficulty
+;   
+
+; listen to this for notification of rest started for first game hour completed --- 
+;    this gives chance for player to change mind and exit bed in first hour
+CustomEvent RestStartedEvent
+;	kArgs[0] = HourCount  	: if larger than 1, rest continued 
+;
+; ****************************************************************************
 
 int TimeScaleSpeedVal = 40 const			; default fast-time speed
 int SleepBedNoneID = 0 const
@@ -96,6 +119,8 @@ int SleepNapRecGameTimerID = 104 const		; health
 int SleepNapFatGameTimerID = 106 const		; fatigue and adrenaline
 int SleepNapTimeScaleTimerID = 99 const
 
+; *************************************************************
+; events
 
 Event OnQuestInit()
 	HourCount = -1
@@ -206,7 +231,11 @@ Function StopAllCancel()
 	if (!IsDone)
 		IsDone = true
 		if (HourCount >= 6)
-			HandleStop(true, false)
+			if (HourCount >= 7)
+				HandleStop(true, true)		;v2.13 allow full recover for 7+ hours
+			else
+				HandleStop(true, false)
+			endIf
 		else 
 			HandleStop()
 		endIf
@@ -288,17 +317,22 @@ bool Function CheckGameHourIncrement()
 
 	if (HourCount < 0)
 		InitHourCount()
+		int napOnly = DTSleep_SettingNapOnly.GetValueInt()
 		
 		if (HourCount >= 1)
 			SleepInterrupted = true
 			
-			if (DTSleep_SettingNotifications.GetValue() > 0.0 && DTSleep_SettingNapOnly.GetValue() > 0.0)
+			if (DTSleep_SettingNotifications.GetValue() > 0.0 && napOnly > 0)
 				if (GoodSleep)
 					DTSleep_ResumeRestMsg.Show(HourCount + 1)
 				else
 					DTSleep_ResumeRestPoorMsg.Show(HourCount + 1)
 				endIf
 			endIf
+		endIf
+		
+		if (napOnly > 0)
+			SendRestStartedEvent()
 		endIf
 	endIf
 
@@ -333,9 +367,10 @@ endFunction
 Function CheckPrepareSleep()
 
 	SleepStarted = true
+	int napOnly = DTSleep_SettingNapOnly.GetValueInt()
 	
 	; check to prevent forced wake due fatigue level
-	if (Game.GetDifficulty() >= 6 && DTSleep_SettingNapOnly.GetValue() > 0.0)
+	if (Game.GetDifficulty() >= 6 && napOnly > 0)
 		float sleepEffectVal = PlayerRef.GetValue(HC_SleepEffectAV)
 		float incapVal = HC_SE_Incapacitated.GetValue()
 		if (sleepEffectVal >= incapVal)
@@ -523,6 +558,8 @@ Function HandleStop(bool fullRecover = false, bool fullSleep = false)
 			PlayerRef.SetValue(HC_SleepEffectAV, sleepEffectVal as float)
 			; no reset at start so reset now for new sleep effect
 			SetHCSleepTimer(8.0, false)
+			
+			SendRestCompleteEvent(0)
 		endIf
 	endIf
 	
@@ -889,12 +926,29 @@ Function PlayerNapRecoverFinal(int recoverLevel)
 		PlayerWellRestedTime = Utility.GetCurrentGameTime()
 	endIf
 	
+	SendRestCompleteEvent(0)
+	
 endFunction
 
 Function RestoreValueByFraction(ActorValue actorValToRestore, float fractionVal, float maxVal)
 
 	float valRestore = fractionVal * maxVal
 	PlayerRef.RestoreValue(actorValToRestore, valRestore)
+endFunction
+
+Function SendRestCompleteEvent(int interruptType)
+
+	if (DTSleep_SettingNapOnly.GetValue() >= 1.0)
+		Var[] kArgs = new Var[6]
+		kArgs[0] = interruptType
+		kArgs[1] = HourCount
+		kArgs[2] = IsDone
+		kArgs[3] = GoodSleep
+		kArgs[4] = BedType
+		kArgs[5] = DTSleep_SettingNapRecover.GetValueInt()
+
+		SendCustomEvent("RestCompleteEvent", kArgs)
+	endIf
 endFunction
 
 Function SendRestInterruptEvent(int interruptType)
@@ -905,6 +959,17 @@ Function SendRestInterruptEvent(int interruptType)
 
 	
 	SendCustomEvent("RestInterruptionEvent", kArgs)
+endFunction
+
+Function SendRestStartedEvent()
+
+	if (DTSleep_SettingNapOnly.GetValue() >= 1.0)
+		Var[] kArgs = new Var[2]
+		kArgs[0] = HourCount
+		kArgs[1] = SleepInterrupted
+		
+		SendCustomEvent("RestStartedEvent", kArgs)
+	endIf
 endFunction
 
 Function SetHCSleepTimer(float sleepTimer, bool interrupted = false)

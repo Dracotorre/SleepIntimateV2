@@ -635,7 +635,9 @@ bool Function StartForCompanionSleepwear(Actor companionActorRef, bool companion
 		return false
 	endIf
 	AltFemBodyEnabled = false
-	UndressedForType = 1
+	if (UndressedForType <= 0)
+		UndressedForType = 1
+	endIf
 	
 	CompanionSleepwearToRemoveSet = new SleepwearEquipSet
 	
@@ -2367,12 +2369,15 @@ Function RedressActor(Actor actorRef, Form[] equippedFormArray, bool slowly = tr
 			RedressActorRemoveNudeSuits(actorRef, DTSleep_PlayerNudeRing, " player nude-ring", true)
 		endIf
 		;v1.81
-		if (UndressedForType >= 5 && PlayerRef.GetItemCount(DTSleep_PlayerNudeBodyNoPipBoy) > 0)
-			RedressActorRemoveNudeSuits(actorRef, DTSleep_PlayerNudeBodyNoPipBoy, " player nude-body-noPip", true)
+		if (UndressedForType >= 5)
+			if (PlayerRef.GetItemCount(DTSleep_PlayerNudeBodyNoPipBoy) > 0)
+				RedressActorRemoveNudeSuits(actorRef, DTSleep_PlayerNudeBodyNoPipBoy, " player nude-body-noPip", true)
+			else
+				DTDebug("no nude-suit pip-boy found to remove...", 1)
+			endIf
 		endIf
-	endIf
-	
-	if (actorRef == CompanionRef)
+		
+	elseIf (actorRef == CompanionRef)
 		if (DTSleep_SettingAltFemBody.GetValueInt() >= 1 && AltFemBodyEnabled && GetGenderForActor(actorRef) == 1 && actorRef.GetItemCount(DTSleep_AltFemNudeBody) > 0)
 			RedressActorRemoveNudeSuits(actorRef, DTSleep_AltFemNudeBody, " player alt-fem nude-suit", true)
 		elseIf (DressData.CompanionNudeSuit != None)
@@ -2433,10 +2438,19 @@ Function RedressActor(Actor actorRef, Form[] equippedFormArray, bool slowly = tr
 				RedressActorRemoveNudeSuits(actorRef, DTSleep_NudeSuitPlayerForw, " playerNudeSuit-Forw", false)
 			elseIf (item == DTSleep_LeitoGunNudeUp_Forw)
 				RedressActorRemoveNudeSuits(actorRef, DTSleep_LeitoGunNudeUp_Forw, " LeitoGunUP-Forw", false)
+			elseIf (item == DTSleep_PlayerNudeBodyNoPipBoy)
+				; v2.13 -- ensure remove / avoid putting back
+				DTDebug("nude-suit no-Pip-Boy in equip-list... skip/remove now", 1)
+				RedressActorRemoveNudeSuits(actorRef, DTSleep_PlayerNudeBodyNoPipBoy, " player nude-suit no-pip-boy ", false)
+			elseIf (item == DTSleep_AltFemNudeBody)
+				; v2.13
+				RedressActorRemoveNudeSuits(actorRef, DTSleep_AltFemNudeBody, " alt-fem-body ", false)
 			elseIf (bt2Val > 0 && item == (DTSleep_BT2GunList.GetAt(0) as Armor))
 				RedressActorRemoveNudeSuits(actorRef, (DTSleep_BT2GunList.GetAt(0) as Armor), " BT2NudeSuit-Forw", false)
 			elseIf (bt2Val > 0 && item == (DTSleep_BT2GunList.GetAt(1) as Armor))
 				RedressActorRemoveNudeSuits(actorRef, (DTSleep_BT2GunList.GetAt(1) as Armor), " BT2NudeSuite-Up", false)
+			elseIf (bt2Val > 0 && item == (DTSleep_BT2GunList.GetAt(2) as Armor))
+				RedressActorRemoveNudeSuits(actorRef, (DTSleep_BT2GunList.GetAt(2) as Armor), " BT2NudeSuite-Down", false)
 			else
 			
 				actorRef.EquipItem(item, false, true)
@@ -3814,7 +3828,7 @@ Function UndressActorArmorExtendedSlots(Actor actorRef, bool forBed, bool includ
 	; 51 - ring ; "Wearable Camo Backpacks" gives choice of 50,51,61
 	
 	; 54 - Atom Girl Rifle, Overboss/HarleyQ Jacket, AWK-Cloak, Ranger Harness, Backpack Of Comm, AnSBackpack, TNR Shoulder Lamp
-	;    - TheKite_MilitiaWoman Pack
+	;    - TheKite_MilitiaWoman Pack; Defy Noncomformist Top
 	; 59 (shield)
 	; -----------------------------
 	
