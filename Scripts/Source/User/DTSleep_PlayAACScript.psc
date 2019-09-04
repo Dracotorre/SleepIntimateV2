@@ -346,6 +346,9 @@ Armor Function GetArmorNudeGun(int kind)
 	if (SceneData.IsCreatureType == 1)
 		evbVal = 2
 		bt2Val = -1
+	elseIf (SceneData.AnimationSet == 8)
+		bt2Val = -1
+		evbVal = 2
 	elseIf (DTSConditionals.IsUniquePlayerMaleActive && evbVal > 0 && SceneData.MaleRole == PlayerRef)
 		bt2Val = -1
 	endIf
@@ -566,7 +569,7 @@ Function PlaySequence(DTAACSceneStageStruct[] seqStagesArray)
 
 	if (seqLen <= 3)
 		pingPongCount = 0
-	elseIf (startSecs <= 13.0 && waitSecs < 13.0 && seqLen <= 5)
+	elseIf (seqLen > 2 && startSecs <= 13.0 && waitSecs < 13.0 && seqLen <= 5)
 		pingPongCount += 1
 	endIf
 	
@@ -646,15 +649,18 @@ Function PlayAnimAtStage(DTAACSceneStageStruct stage, Actor mActor, Actor fActor
 		
 			if (stage.ArmorNudeAGun != LastGunAIndex)
 				LastGunAIndex = stage.ArmorNudeAGun
-				Armor armS1 = GetArmorNudeGun(LastGunAIndex)
+				Armor armS1 = GetArmorNudeGun(stage.ArmorNudeAGun)
+				;Debug.Trace("[DTSleep_PlayAAC] got armor-nude index " + stage.ArmorNudeAGun + " armor " + armS1)
 				if (MaleRoleSex < 0 && mActor != None)
 					MaleRoleSex = (mActor.GetLeveledActorBase() as ActorBase).GetSex()
 				endIf
 				if (armS1 != None && mActor != None && MaleRoleSex == 0)
 					mActor.EquipItem(armS1, true, true)
+					
 				endIf
 			endIf
 			if (oActor != None && stage.ArmorNudeBGun >= 0 && LastGunBIndex != stage.ArmorNudeBGun)
+				LastGunBIndex = stage.ArmorNudeBGun
 				Armor armB1 = GetArmorNudeGun(stage.ArmorNudeBGun)
 				if (armB1 != None)
 					oActor.EquipItem(armB1, true, true)

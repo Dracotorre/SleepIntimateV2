@@ -443,7 +443,7 @@
           "type": "spacer"
         },
 		{
-          "text": "Rest (immersive): companion can't find bed",
+          "text": "Rest (immersive): companion cannot find bed",
           "type": "section"
         },
 		{
@@ -488,7 +488,7 @@
           "type": "section"
         },
 		{
-		  "text": "Must be romanced or flirting. Make sure companion is nearby and standing. Optional non-romance companions (Extra NPCs) require having perk. A game bug may temporarily make companion appear non-romanced until obtaining next like. Custom companion with custom follow system may not be compatible.",
+		  "text": "Must be romanced or companion idolizes you. Make sure companion is nearby and standing, but the Intimate Lover Ring accepts seated companion. Optional non-romance companions (Extra NPCs) require having perk. Custom companion with custom follow system may not be compatible. Try equip Intimate Lover Ring and then try in Test Mode. May disable Test Mode after ring equipped.",
 		  "type": "text",
 		  "align": "left"
 		},
@@ -500,7 +500,7 @@
           "type": "section"
         },
 		{
-		  "text": "Until gaining more experience limit attempts to once each night to maximize starter bonus. Choose private areas like rented bed or Home Plate. Try to get Sex Appeal up to 30+ using bathrobe or drugs. Liquor helps with low charisma, but may be a negative for highly charismatic character.",
+		  "text": "Until gaining more experience limit attempts to once each night to maximize starter bonus. Choose private areas like rented bed or Home Plate. Upgrade settlement by building twin-beds or double-bed. Try to get Sex Appeal up to 30+ using bathrobe or drugs. Liquor helps with low charisma, but may be a negative for highly charismatic character.",
 		  "type": "text",
 		  "align": "left"
 		},
@@ -513,18 +513,6 @@
         },
 		{
 		  "text": "Situation (same-gender, race, or small bed) may limit scene picking, or companion prefers cuddle. Try Pick Scene. Female-female scenes require extra gear for Leito's pack, or pack with female-female animations. Gen-2 synths limited to hugs and kisses.",
-		  "type": "text",
-		  "align": "left"
-		},
-        {
-          "type": "spacer"
-        },
-		{
-          "text": "Intimacy: stuck at black load-screen (before or after scene)",
-          "type": "section"
-        },
-		{
-		  "text": "Rare glitch related to moving player character. Version 2 reduces movement by choosing stand in position (like hugs) or cloning your character. If happens too often, set Go-to-Bed to prompt, or try in Test section - Scene View Look. Reporting to author details including frequency or world location may help.",
 		  "type": "text",
 		  "align": "left"
 		},

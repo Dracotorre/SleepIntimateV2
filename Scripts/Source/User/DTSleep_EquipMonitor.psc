@@ -97,6 +97,7 @@ FormList property DTSleep_ArmorChokerList auto const
 FormList property DTSleep_ArmorNecklaceSlot50List auto const
 FormList property DTSleep_ArmorMaskList auto const
 FormList property DTSleep_LeitoGunList auto const
+FormList property DTSleep_BT2GunList auto const					; added v2.14 (forgot to add sooner)
 FormList property DTSleep_ArmorGlassesList auto const
 FormList property DTSleep_ArmorPipBoyList auto const
 FormList property DTSleep_ArmorPipPadList auto const
@@ -150,7 +151,8 @@ Event OnItemEquipped(Form akBaseObject, ObjectReference akReference)
 	
 	if (akBaseObject as Armor && DTSleep_EquipMonInit.GetValue() >= 0.0)
 	
-		if (akBaseObject == DTSleep_NudeSuitPlayerUp || DTSleep_LeitoGunList.HasForm(akBaseObject) || DTSleep_NudeRingList.HasForm(akBaseObject))
+		; ignore nude-suit armor
+		if (akBaseObject == DTSleep_NudeSuitPlayerUp || DTSleep_LeitoGunList.HasForm(akBaseObject) || DTSleep_NudeRingList.HasForm(akBaseObject) || DTSleep_BT2GunList.HasForm(akBaseObject))
 			return
 		endIf
 		
@@ -282,6 +284,7 @@ Event OnItemUnequipped(Form akBaseObject, ObjectReference akReference)
 	if (akBaseObject as Armor && DTSleep_EquipMonInit.GetValue() >= 0.0)
 	
 		if (akBaseObject == DTSleep_NudeSuitPlayerUp || DTSleep_LeitoGunList.HasForm(akBaseObject) || DTSleep_NudeRingList.HasForm(akBaseObject))
+			;Debug.Trace("[DTSleep_EquipMon] **** ignore un-equip nude-armor " + akBaseObject)
 			return
 		endIf
 		
@@ -1822,7 +1825,7 @@ Function StoreAddToCompanionSecEquip(Form akBaseObject)
 		;Debug.Trace("[DTSleep_EquipMon] companion found custom nude-armor" + akBaseObject + " NOT storing!")
 		return 
 		
-	elseIf (DTSleep_LeitoGunList.HasForm(akBaseObject) || DTSleep_NudeRingList.HasForm(akBaseObject))
+	elseIf (DTSleep_LeitoGunList.HasForm(akBaseObject) || DTSleep_NudeRingList.HasForm(akBaseObject) || DTSleep_BT2GunList.HasForm(akBaseObject))
 		;Debug.Trace("[DTSleep_EquipMon] companion found Leito nude-armor" + akBaseObject + " NOT storing!")
 		return
 	endIf
@@ -1840,7 +1843,7 @@ Function StoreAddToCompanionEquip(Form akBaseObject, ObjectReference akReference
 		;Debug.Trace("[DTSleep_EquipMon] companion found custom nude-armor" + akBaseObject + " NOT storing!")
 		return 
 		
-	elseIf (DTSleep_LeitoGunList.HasForm(akBaseObject) || DTSleep_NudeRingList.HasForm(akBaseObject))
+	elseIf (DTSleep_LeitoGunList.HasForm(akBaseObject) || DTSleep_NudeRingList.HasForm(akBaseObject) || DTSleep_BT2GunList.HasForm(akBaseObject))
 		;Debug.Trace("[DTSleep_EquipMon] companion found Leito nude-armor" + akBaseObject + " NOT storing!")
 		return
 	endIf

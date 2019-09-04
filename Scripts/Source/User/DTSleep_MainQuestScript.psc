@@ -307,6 +307,7 @@ Keyword property PlayerHackFailSubtype auto const
 Keyword property HC_Obj_SleepingBagKY auto const
 Keyword property CAT_Event_SleepTogetherWakeKY auto const
 Keyword property FurnitureClassRelaxationKY auto const
+Keyword property FurnitureTypePowerArmorKY auto const
 
 Keyword property DTSleep_OutfitContainerKY auto const
 ActorValue property WorkshopPlayerOwned auto Const
@@ -466,6 +467,7 @@ Message property DTSleep_LoversEmbraceMsg auto const
 Message property DTSleep_LoversEmbraceHugMsg auto const
 Message property DTSleep_PersuadePilloryNoneMsg auto const
 Message property DTSleep_PilloryBusyMessage auto const
+Message property DTSleep_PAStationPANearMessage auto const
 Message property DTSleep_UndressInitMessage auto const
 Message property DTSleep_IntimateScenePickMessage auto const
 Message property DTSleep_AAFDisableMessage auto const
@@ -522,6 +524,7 @@ Message property DTSleep_IntimateCheckWarnNoChanceMsg auto const
 Message property DTSleep_IntimateCheckCrimeMsg auto const
 Message property DTSleep_ChairCheckBeginMsg auto const
 Message property DTSleep_ChairCheckCrimeMsg auto const
+Message property DTSleep_FurnUseCheckCrimeMsg auto const
 Message property DTSleep_ChairCheckMsg auto const
 Message property DTSleep_ChairCheckNoCompMessage auto const
 Message property DTSleep_ChairCheckRecentMsg auto const
@@ -532,6 +535,11 @@ Message property DTSleep_DeskCheckMsg auto const
 Message property DTSleep_DeskCheckRecentMsg auto const
 Message property DTSleep_DeskCheckNPCMsg auto const
 Message property DTSleep_DeskCheckShowChanceMsg auto const
+Message property DTSleep_PASCheckBeginMsg auto const
+Message property DTSleep_PASCheckMsg auto const
+Message property DTSleep_PASCheckRecentMsg auto const
+Message property DTSleep_PASCheckNPCMsg auto const
+Message property DTSleep_PASCheckShowChanceMsg auto const
 Message property DTSleep_PilloryCheckBeginMsg auto const
 Message property DTSleep_PilloryCheckMsg auto const
 Message property DTSleep_PilloryCheckRecentMsg auto const
@@ -769,6 +777,12 @@ Event OnQuestInit()
 		; not hardcore survival so switch to simple
 		DTSleep_SettingNapOnly.SetValue(0.0)
 	endIf
+	if (Game.IsPluginInstalled("AdvancedNeeds2.esp"))
+		; set preference to needs for sleep handling and recovery
+		DTSleep_SettingNapOnly.SetValue(0.0)
+		DTSleep_SettingNapRecover.SetValue(0.0)
+		(DTSConditionals as DTSleep_Conditionals).HasModReqNormSleep = true
+	endIf
 	
 	if (DTSleep_AdultContentOn.GetValue() <= 1.0 && DTSleep_SettingUndressPipboy.GetValueInt() == 1)
 		; default 1 not applicable 
@@ -955,6 +969,12 @@ Event Perk.OnEntryRun(Perk DTSleep_PlayerSleepBedPerk, int Fragment_Entry_01, Ob
 		
 		return
 		
+	elseIf (Fragment_Entry_01 == 11)
+		; PA station
+		if (CanPlayerRestRadDam())
+			HandlePlayerActivateFurniture(akTarget, 4)
+		endIf
+		
 	elseIf (Fragment_Entry_01 == 10)
 		; desk
 		if (CanPlayerRestRadDam())
@@ -985,11 +1005,12 @@ Event Perk.OnEntryRun(Perk DTSleep_PlayerSleepBedPerk, int Fragment_Entry_01, Ob
 		
 		
 	elseIf (Fragment_Entry_01 == 5 && DTSleep_PlayerUsingBed.GetValue() >= 1.0)
-		; Wake activate
+		; Awaken activate
+		
 		if (SleepBedInUseRef != None)
 			SleepBedInUseRef.Activate(PlayerRef)
 		else
-			DTDebug("Wake activate and player using bed, but no bed -- reset all", 1)
+			DTDebug("Awaken activate and player using bed, but no bed -- reset all", 1)
 			ResetAll()
 		endIf
 		
@@ -1236,7 +1257,6 @@ Event DTSleep_IntimateAnimQuestScript.IntimateSequenceDoneEvent(DTSleep_Intimate
 				
 					if (SceneData.AnimationSet >= 5 && (IsAAFReady() || hasAAFBeenDisabled))
 						; AAF scene end - do not go directly to bed! - use prompt if set
-					
 						redressSlowly = true
 						doFadeIn = true
 						Utility.Wait(1.50)
@@ -1319,13 +1339,13 @@ Event DTSleep_IntimateAnimQuestScript.IntimateSequenceDoneEvent(DTSleep_Intimate
 						WaitForRedressAfterScene(7)
 						
 						EnablePlayerControlsSleep()
-						needEnableControls = false 
+						needEnableControls = false
 					endIf
 					
 					Utility.Wait(0.1)
 					
 					MainQSceneScriptP.GoSceneViewDone(true)
-					Utility.Wait(0.3)
+					Utility.Wait(0.4)
 				endIf
 				
 				
@@ -1334,12 +1354,14 @@ Event DTSleep_IntimateAnimQuestScript.IntimateSequenceDoneEvent(DTSleep_Intimate
 				SetUndressStop(false)
 				undressStopped = true
 				fadedOut = false
-				Utility.Wait(1.50)
+				Utility.Wait(1.75)
 			endIf
 			
 			if (bedRef != None)
 			
-				UnregisterForRemoteEvent(bedRef, "OnActivate")			; TODO - remove
+				DTDebug("have a Bed, should we prompt for exit? -- Interrupted? " + SceneData.Interrupted, 2)
+			
+				UnregisterForRemoteEvent(bedRef, "OnActivate")
 				
 				if (SceneData.Interrupted <= 0 && SceneData.AnimationSet != 8)
 				
@@ -1684,7 +1706,9 @@ Event OnPlayerSleepStop(bool abInterrupted, ObjectReference akBed)
 	Utility.Wait(0.2)
 	UnregisterForPlayerSleep()
 
-	UnregisterForRemoteEvent(akBed, "OnActivate")
+	if (akBed != None)
+		UnregisterForRemoteEvent(akBed, "OnActivate")
+	endIf
 	
 	; check enabled and 3D since some mods take bed away (which breaks some base-game features)
 	;  - bed may be taken away after this causing issue
@@ -1717,6 +1741,11 @@ Event OnPlayerSleepStop(bool abInterrupted, ObjectReference akBed)
 		DTSleep_PlayerUsingBed.SetValue(0.0)
 		if (DTSleep_PlayerUndressed.GetValue() > 0.0)
 			SetUndressStop(false)
+		endIf
+		
+		; happy notice - which otherwise displays in bed
+		if (self.SleepLoverBonusOnSleepID > 0)
+			StartTimer(5.5, LoverBonusAddTimerID)
 		endIf
 		
 	endIf 
@@ -2140,7 +2169,7 @@ int Function CheckMessageTipPersuasion()
 			DTSleep_PersuadeFailMessage.ShowAsHelpMessage("Rest", 6.0, 30.0, 1)
 		elseIf (PersuadeTutorialFailShown == 2)
 		
-			if (IntimateCheckFailCount > 1)
+			if (IntimateCheckFailCount > 0)
 				DTSleep_PersuadeFailOftenMessage.ShowAsHelpMessage("Rest", 6.0, 30.0, 1)
 			else
 				DTSleep_PersuadeFailLocMessage.ShowAsHelpMessage("Rest", 6.0, 30.0, 1)
@@ -2255,7 +2284,7 @@ bool Function ActivatePlayerSleepForBed(ObjectReference bedRef, bool isSpecialAn
 		(DTSleep_HealthRecoverQuestP as DTSleep_HealthRecoverQuestScript).SetBedTypeCamping()
 		
 		
-	elseIf (DTSleep_SettingNapOnly.GetValue() > 0.0 || !moveToBed)
+	elseIf (DTSleep_SettingNapOnly.GetValue() > 0.0 || !moveToBed)		; move normally true, but caller may force place in bed even for quick sleep
 	
 		doActivateBed = false
 		
@@ -2492,7 +2521,7 @@ endFunction
 int Function ChanceForIntimateSceneAdjDance(int chance)
 	if (chance == 500)
 		; version check
-		return 1692
+		return 2152
 	endIf
 	; v2+ hug/kiss instead of dance
 	
@@ -2505,15 +2534,15 @@ int Function ChanceForIntimateSceneAdjChair(int chance)
 	
 	if (chance > 5)
 		if (DressData.PlayerGender == 0)
-			chance -= 10
+			chance -= 12
 		else
 			; female advantage for SavageCabbage or submissive role
 			chance -= 5
 		endIf
 		if (chance < 5)
 			chance = 5
-		elseIf (chance > 85)
-			chance = 85
+		elseIf (chance > 90)
+			chance = 90
 		endIf
 	endIf
 	
@@ -2522,49 +2551,50 @@ endFunction
 
 int Function ChanceForIntimateCompanionAdj(Actor companionRef)
 
+	int result = 0
 	if (companionRef != None)
 		if ((DTSConditionals as DTSleep_Conditionals).NoraSpouseRef != None && companionRef == (DTSConditionals as DTSleep_Conditionals).NoraSpouseRef)
 			; bonus for Nora spouse - she is also a rank higher as if romanced
 			CompanionActorScript compAct = companionRef as CompanionActorScript
 			if (compAct.IsRomantic() || companionRef.GetValue(CA_AffinityAV) >= 1000.0)
 				;Debug.Trace(myScriptName + " Nora bonus romanced")
-				return 40
+				result = 40
 			else
-				return 20
+				result = 20
 			endIf
 			
 		elseIf ((DTSConditionals as DTSleep_Conditionals).DualSurvivorsNateRef != None && companionRef == (DTSConditionals as DTSleep_Conditionals).DualSurvivorsNateRef)
 			CompanionActorScript compAct = companionRef as CompanionActorScript
 			if (compAct.IsRomantic() || companionRef.GetValue(CA_AffinityAV) >= 1000.0)
-				return 40
+				result = 40
 			else
-				return 20
+				result = 20
 			endIf
 		elseIf ((DTSConditionals as DTSleep_Conditionals).InsaneIvyRef != None && companionRef == (DTSConditionals as DTSleep_Conditionals).InsaneIvyRef)
-			return 32
+			result = 36
 		elseIf (companionRef == CurieRef)
-			return 16
+			result = 16
 		elseIf (companionRef == CompanionDanseRef)
-			if (IntimateCompanionSecRef != None && SceneData.SecondMaleRole != None)
-				return 3
-			endIf
-			return 16
+			result = 12
+		elseIf (companionRef == GetHeatherActor())
+			; heather gets rank of 5 for full romanced even without ring
+			result = 8
 		endIf
 	endIf
 	if (IntimateCompanionSecRef != None)
 		; v2.13 - companion affinity -- reduce chance instead of forbid
 		if ((DTSleep_IntimateAffinityQuest as DTSleep_IntimateAffinityQuestScript).CompanionHatesIntimateOtherPublic(IntimateCompanionSecRef))
-			return -40
+			result -= 40
 		elseIf ((DTSleep_IntimateAffinityQuest as DTSleep_IntimateAffinityQuestScript).CompanionHatesIntimateOtherPublic(IntimateCompanionRef))
-			return -32
+			result -= 32
 		elseIf (SceneData.SecondFemaleRole != None)
-			return -9
+			result -= 9
 		elseIf (SceneData.SecondMaleRole != None)
-			return -15
+			result -= 15
 		endIf
 	endIf
 
-	return 0
+	return result
 endFunction
 
 ; may take 0.25 - 0.35 seconds 
@@ -2600,11 +2630,17 @@ endFunction
 IntimateChancePair Function ChanceForIntimateScene(IntimateCompanionSet companionSet, ObjectReference bedRef, Form baseBedForm, float gameTime, int companionGender, IntimateLocationHourSet locHourChance, bool failReset = false, int sexAppealScore = -1, bool sameLoverAsLast = false, bool playerIsNaked = false, bool forHugs = false)
 	
 	IntimateChancePair result = new IntimateChancePair
-	int baseChance = -36
+	int baseChance = -34
 	if (forHugs)
-		baseChance = -28
+		baseChance = -4
 	elseIf (DTSleep_AdultContentOn.GetValue() <= 1.0)
+		baseChance = -28
+	elseIf (IsAdultAnimationAvailable() == false)
 		baseChance = -30
+	endIf
+	if (DTSleep_SettingNapOnly.GetValue() <= 0.0)
+		; no sleep bonus available so adjust
+		baseChance += 6
 	endIf
 	Actor companionRef = companionSet.CompanionActor
 	int companionRelRank = companionSet.RelationRank
@@ -2654,7 +2690,7 @@ IntimateChancePair Function ChanceForIntimateScene(IntimateCompanionSet companio
 		sexAppealFraction = Math.Floor(sexAppealScore * 0.4444) - 2	; 4/9 - 2
 	endIf
 	
-	result.SexAppeal = sexAppealScore   ; generally -20 to 150
+	result.SexAppeal = sexAppealScore   ; generally -20 to 200
 	chance += result.SexAppeal
 	
 	; ----------- companion ----------
@@ -2784,6 +2820,7 @@ IntimateChancePair Function ChanceForIntimateScene(IntimateCompanionSet companio
 	chance += specialsChance
 	; ------------------------------
 	
+	; Torture device adjustment
 	int bedFurnitureType = 0
 	if (baseBedForm != None && (DTSleep_PilloryList.HasForm(baseBedForm) || DTSleep_TortureDList.HasForm(baseBedForm)))
 		if (DressData.PlayerGender == 1)
@@ -3343,7 +3380,7 @@ IntimateLocationHourSet Function ChanceForIntimateSceneByLocationHour(ObjectRefe
 								
 								elseIf (heatherActor != None && heatherActor != companionRef && heatherActor == ac)
 									if (ac.GetSleepState() < 3)
-										if (IsHeatherInLove())
+										if (IsHeatherInLove() >= 1)
 											nearbyLoverCount += 1
 										else
 											nearbyActorCount += 1
@@ -3546,6 +3583,7 @@ IntimateLocationHourSet Function ChanceForIntimateSceneByLocationHour(ObjectRefe
 	
 	if (creatureType > 0 && creatureType != CreatureTypeSynth && hourChance > 0)
 		hourChance += 1
+	
 	endIf
 	
 	if (checkWeather && !indoors)
@@ -3554,7 +3592,7 @@ IntimateLocationHourSet Function ChanceForIntimateSceneByLocationHour(ObjectRefe
 		wClass = wScore.wClass
 		weatherChance = wScore.Score
 		if (creatureType > 0 && weatherChance < 0)
-			weatherChance += 2
+			weatherChance = 0
 		endIf
 		
 	endIf
@@ -3679,19 +3717,20 @@ int Function ChanceForIntimateSceneByLastTime(int companionRelRank, float gameTi
 		endIf
 	
 	elseIf (IntimateCheckFailCount > 0 && companionRelRank > 1)
-		
-		if (hoursSinceLastFail < 3.0)
+			
+		if (hoursSinceLastFail < 4.0)
 			if (companionRelRank > 3)
-				chanceFails = -52
+				chanceFails = -64 + Math.Floor(11.00 * hoursSinceLastFail)
 			else
-				chanceFails = -82
+				chanceFails = -92 + Math.Floor(28.00 * hoursSinceLastFail)
 			endIf
 			
-		elseIf (exp > 0)	
-		
+		elseIf (exp > 0)
+
 			if (IntimateCheckFailCount == 1)
 				chanceFails = -7
 			elseIf (IntimateCheckFailCount < 4)
+				
 				chanceFails = -3 - (IntimateCheckFailCount * 4)
 			else
 				chanceFails = -20
@@ -3717,14 +3756,14 @@ int Function ChanceForIntimateSceneByLastTime(int companionRelRank, float gameTi
 	elseIf (hoursSinceLastFail < 3.0)
 		chanceFails = -28 + Math.Floor(9.3333 * hoursSinceLastFail)
 		
-	elseIf ((gameTime - IntimateCheckLastDogFailTime) < 3.0)
-		hoursSinceLastFail = DTSleep_CommonF.GetGameTimeHoursDifference(gameTime, IntimateCheckLastDogFailTime)
-		
-		if (hoursSinceLastFail < 1.67)
-			; recent fail with self/dog 
-		
-			chanceFails = -20
-		endIf
+	;elseIf ((gameTime - IntimateCheckLastDogFailTime) < 3.0)
+	;	hoursSinceLastFail = DTSleep_CommonF.GetGameTimeHoursDifference(gameTime, IntimateCheckLastDogFailTime)
+	;	
+	;	if (hoursSinceLastFail < 1.67)
+	;		; recent fail with self/dog 
+	;	
+	;		chanceFails = -20
+	;	endIf
 	endIf
 	if (IntimateSucPrevTime <= 0.0)
 		IntimateSucPrevTime = DTSleep_IntimateTime.GetValue() - 1.0
@@ -3804,7 +3843,7 @@ int Function ChanceForIntimateSceneByLastTime(int companionRelRank, float gameTi
 		chanceSince = 4 + ((dailyFactor * (daysSinceLastIntimate - 1.62)) as int)
 
 		
-		if (daysSinceLastIntimate > 2.0 && failReset)
+		if (daysSinceLastIntimate > 1.333 && failReset)
 			if (IntimateCheckFailCount > 0)
 				IntimateCheckFailCount -= 1
 			endIf
@@ -3901,7 +3940,10 @@ int Function CompanionRelationRankForActor(Actor actorRef)
 			;if (heatherActor.GetDistance(PlayerRef) < 1800.0)
 				; Heather doesn't use relationship rank
 				int relationRank = 2
-				If (IsHeatherInLove())
+				int heatherLove = IsHeatherInLove()
+				if (heatherLove >= 2)
+					relationRank = 5
+				elseIf (heatherLove == 1)
 					relationRank = 4
 				endIf
 				return relationRank
@@ -4245,7 +4287,7 @@ IntimateBedFoundSet Function FindBedForCompanion(Actor aCompanionRef, ObjectRefe
 		closeBedRef = None
 	endIf
 
-	DTDebug(" FindBed for Companion: found close/quest beds: " + closeBedRef + " / " + aBedRef, 1)
+	DTDebug(" FindBed for Companion: " + aCompanionRef + ", found close/quest beds: " + closeBedRef + " / " + aBedRef, 1)
 	
 	if (closeBedRef != None && closeBedRef != aBedRef)
 		
@@ -4364,7 +4406,7 @@ Actor Function GetCompanionInLoveUsingBed(ObjectReference bedRef)
 		
 			if (DTSleep_CommonF.IsActorOnBed(heatherActor, bedRef))
 				; Heather doesn't use relationship
-				if (IsHeatherInLove())
+				if (IsHeatherInLove() >= 1)
 					
 					return heatherActor
 				endIf
@@ -4459,14 +4501,19 @@ endFunction
 IntimateCompanionSet Function GetCompanionCustomInLoveOfActor(Actor anActor)
 
 	IntimateCompanionSet result = new IntimateCompanionSet
+	result.Gender = -1
 	
 	if ((DTSConditionals as DTSleep_Conditionals).IsHeatherCompanionActive)
 		
 		Actor heatherActor = GetHeatherActor()
 		if (heatherActor == anActor)
-			if (!heatherActor.WornHasKeyword(ArmorTypePower) && IsHeatherInLove())
+			int heatherLove = IsHeatherInLove()
+			if (!heatherActor.WornHasKeyword(ArmorTypePower) && heatherLove >= 1)
 				result.CompanionActor = heatherActor
 				result.RelationRank = 4
+				if (heatherLove >= 2)
+					result.RelationRank = 5
+				endIf
 				result.Gender = 1
 				if (heatherActor.IsInPowerArmor())
 					result.PowerArmorFlag = true
@@ -4635,8 +4682,9 @@ endFunction
 ; only returns companion in power armor if Danse or main companion if no other companion found 
 ;  -- includes Heather, Barb
 ;  - considers sit/sleep states otherwise returns highest rank
+;  - genderOverride: if player preference both genders, this forces specific gender  (v2.15)
 ;
-IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNudeSuit, int minRank = 3)
+IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNudeSuit, int minRank = 3, int genderOverride = -1)
 	IntimateCompanionSet result = new IntimateCompanionSet
 	;Actor companionActor = None
 	int topRelationRank = -1
@@ -4646,6 +4694,10 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 	bool mainCompanionPA = false		; return if no other companions available and main in power armor to report busy-reminder
 	int mainCompanionRank = 0
 	int prefGender = DTSleep_SettingGenderPref.GetValueInt()
+	if (genderOverride >= 0 && genderOverride <= 1 && prefGender == 2)
+		prefGender = genderOverride
+	endIf
+	result.Gender = -1
 	
 	; note: Ada from DLCRobot starts as IsInfatuated - so ensure is not a robot
 	
@@ -4669,6 +4721,7 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 					elseIf (loverActor.IsInPowerArmor())
 						result.PowerArmorFlag = true
 					endIf
+					;result.Gender = (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).GetGenderForActor(loverActor)
 				endIf
 			endIf
 		endIf
@@ -4859,6 +4912,7 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 									
 									if (!sitting && !sleeping)
 										; ready now
+										;result.Gender = (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).GetGenderForActor(aCompanion)
 										return result
 									else
 										topRelBusy = true
@@ -4918,7 +4972,8 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 						
 					endIf
 					
-					if (IsHeatherInLove())
+					int heatherLove = IsHeatherInLove()
+					if (heatherLove >= 1)
 						bool sitting = false
 						bool sleeping = false
 						bool okayToSelect = true
@@ -4946,9 +5001,14 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 						; if found a companion only replace if not sitting or sleeping
 						if (okayToSelect && (topRelationRank < 4 || topRelBusy))
 							topRelationRank = 4
+							if (heatherLove >= 2)
+								topRelationRank = 5
+							endIf
 							result.CompanionActor = heatherActor
 							result.RelationRank = topRelationRank
 							result.PowerArmorFlag = paBug
+							result.RequiresNudeSuit = true
+							result.Gender = 1
 							if (!sitting && !sleeping)
 								; only return if not sleeping in case another companion found
 								return result
@@ -5002,6 +5062,7 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 							result.CompanionActor = barbActor
 							result.RelationRank = topRelationRank
 							result.PowerArmorFlag = paBug
+							result.Gender = 1
 							if (!sitting && !sleeping)
 								; only return if not sleeping
 								return result
@@ -5161,7 +5222,7 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 		;result.RelationRank = 0
 	endIf
 
-	if (result.CompanionActor != None)
+	if (result.CompanionActor != None && result.Gender < 0)
 		result.Gender = (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).GetGenderForActor(result.CompanionActor)
 	endIf
 	
@@ -5196,7 +5257,10 @@ int Function GetRelationRankActor(Actor actorRef, bool isTrueLove)
 	elseIf (actorRef == StrongCompanionRef)
 		return 1	; base
 	elseIf ((DTSConditionals as DTSleep_Conditionals).IsHeatherCompanionActive && actorRef == GetHeatherActor())
-		if (isTrueLove || IsHeatherInLove())
+		int heatherLove = IsHeatherInLove()
+		if (heatherLove >= 2)
+			return 5
+		elseIf (isTrueLove || heatherLove >= 1)
 			return romanceRank
 		endIf
 		
@@ -5407,6 +5471,7 @@ Function HandleOnExitFurniture(ObjectReference bedRef)
 		SetDogmeatFollow()
 	endIf
 	
+	Utility.Wait(0.1)
 	(DTSleep_HealthRecoverQuestP as DTSleep_HealthRecoverQuestScript).PlayerWellRested = false
 	SleepBedNapHourCount = 0
 	SleepBedUsesBlock = false
@@ -5418,7 +5483,7 @@ Function HandleOnExitFurniture(ObjectReference bedRef)
 	
 	float timeToWait = 5.4
 	if (bedRef.HasKeyword(AnimFurnFloorBedAnims))  ; what about slow-side exit?
-		timeToWait = 7.25
+		timeToWait += 1.90
 	endIf
 
 	StartTimer(timeToWait, ExitBedHandleTimerID)
@@ -5759,9 +5824,11 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 				;
 				if (!SceneData.IsCreatureType && DTSleep_AdultContentOn.GetValue() >= 2.0 && DTSleep_SettingLover2.GetValue() >= 1.0 && !SceneData.CompanionInPowerArmor)
 				
-					; v2.13 -- allow jealous type and reduce chance instead 
-					;if (!(DTSleep_IntimateAffinityQuest as DTSleep_IntimateAffinityQuestScript).CompanionHatesIntimateOtherPublic(IntimateCompanionRef))
-				
+					; v2.14 - disallow AAF for power-armor-flag
+					if (!IsAAFReady() || !nearCompanion.PowerArmorFlag)
+						; v2.13 -- allow jealous type and reduce chance instead 
+						;if (!(DTSleep_IntimateAffinityQuest as DTSleep_IntimateAffinityQuestScript).CompanionHatesIntimateOtherPublic(IntimateCompanionRef))
+					
 						int extraLoverReady = (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).GetFurnitureSupportExtraActorForPacks(targetRef, basebedForm, None)
 						DTDebug("extraLoverReady " + extraLoverReady + " for bed ", 2)
 						if (extraLoverReady >= 0)
@@ -5782,7 +5849,7 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 								SetExtraLovePartners(loverType)
 							endIf
 						endIf
-					;endIf
+					endIf
 				endIf
 				; ------------------------end partner set
 				
@@ -5909,13 +5976,13 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 									chanceForScene = ChanceForIntimateScene(nearCompanion, targetRef, baseBedForm, gameTime, companionGender, locHourChance, true, sexAppealScore, sameLover)
 								endIf
 								if (pickStyle <= 1)
-									chanceForScene.Chance += 8
-									if (chanceForScene.Chance > 96)
-										chanceForScene.Chance = 96
+									chanceForScene.Chance += 15
+									if (chanceForScene.Chance > 100)
+										chanceForScene.Chance = 100
 									endIf
 									
 								else
-									chanceForScene.Chance -= 5
+									chanceForScene.Chance -= 7
 									if (chanceForScene.Chance < 5)
 										chanceForScene.Chance = 5
 									endIf
@@ -6094,7 +6161,7 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 						
 					elseIf (chanceForScene.Chance >= 5)
 						
-						PlayerRef.SayCustom(PlayerHackFailSubtype, None, randomChance > 50) 
+						PlayerRef.SayCustom(PlayerHackFailSubtype, None, randomChance > 50)
 						
 						; only mark fail if chance and no more often than 3/4 hours
 						
@@ -6161,13 +6228,22 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 					
 					if (!dogmeatScene && ((gameTime - IntimateCheckLastFailTime) > 0.16667))     
 						
-						IntimateCheckFailCount += 1
+						if (IntimateCheckFailCount < 6)
+							IntimateCheckFailCount += 1
+						endIf
 						IntimateCheckLastFailTime = gameTime
 						LoverBonus(false)
 						
-						if (DTSleep_SettingNotifications.GetValue() > 0.0 && PersuadeTutorialFailShown < 1)
-						
-							self.MessageOnRestTipID = OnRestMsgTipFailPersuadeID
+						if (DTSleep_SettingNotifications.GetValue() > 0.0)
+							if (PersuadeTutorialFailShown < 1)
+								; show first tip
+								self.MessageOnRestTipID = OnRestMsgTipFailPersuadeID
+								
+							elseIf (IntimateCheckFailCount >= 4)
+								; v2.14 - show tip - reset to 1 to display again
+								PersuadeTutorialFailShown = 1
+								self.MessageOnRestTipID = OnRestMsgTipFailPersuadeID
+							endIf
 						endIf
 					endIf
 					Utility.Wait(0.2)
@@ -6201,7 +6277,6 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 						IntimateCompanionRef.FollowerFollow()
 						IntimateCompanionRef = None
 						doFade = false
-						
 					endIf
 					
 				elseIf (animPacks.Length > 0 && (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).GetTimeForPlayID(1001) != 169.27)
@@ -6266,10 +6341,14 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 			endIf
 			
 			; check to clear 2nd lover if not needed
-			if (DTSleep_CompIntimateLover2Alias != None && SceneData.SecondFemaleRole == None && SceneData.SecondMaleRole == None)
-				DTSleep_CompIntimateLover2Alias.Clear()
+			if (SceneData.SecondFemaleRole == None && SceneData.SecondMaleRole == None)
+				if (DTSleep_CompIntimateLover2Alias != None)
+					DTSleep_CompIntimateLover2Alias.Clear()
+				endIf
 				if (IntimateCompanionSecRef != None)
-					IntimateCompanionSecRef.RemoveFromFaction(DTSleep_IntimateFaction)
+					if (IntimateCompanionSecRef.IsInFaction(DTSleep_IntimateFaction))
+						IntimateCompanionSecRef.RemoveFromFaction(DTSleep_IntimateFaction)
+					endIf
 					IntimateCompanionSecRef.EvaluatePackage()
 					IntimateCompanionSecRef = None
 				endIf
@@ -6281,6 +6360,7 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 				
 				if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlayActionIntimateSeq(sequenceID))
 					noPreBedAnim = false
+					RegisterForRemoteEvent(targetRef, "OnActivate")			; watch for NPC activate
 					RegisterForCustomEvent((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript), "IntimateSequenceDoneEvent")
 					SetStartSpectators(targetRef)
 					
@@ -6340,9 +6420,9 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 			DTDebug(" on no-intimate list - " + basebedForm, 1)
 			;cancledScene = true
 			noPreBedAnim = true
-			if (DTSleep_SettingWarnLoverBusy.GetValue() > 0.0 || DTSleep_SettingNotifications.GetValue() > 0.0)
+			if (DTSleep_SettingWarnLoverBusy.GetValue() > 0.0)
 				DTSleep_BadBedIntimateMessage.Show()
-				Utility.Wait(1.1)
+				Utility.Wait(1.7)
 			endIf
 			
 		endIf
@@ -6426,6 +6506,13 @@ Function HandlePlayerActivateOutfitContainer(ObjectReference akTarget, bool forB
 				if (forBed && (akTarget as DTSleep_OutfitContainerScript).HasStoredOutfit != 2)
 					; a precaution to make sure only get sleep outfit for bed
 					doGet = false
+				elseIf (forBed)
+					; v2.14 - skip get if wearing PJs
+					if ((DressData.PlayerEquippedSlot58IsSleepwear || DressData.PlayerEquippedSlotFXIsSleepwear))
+						doGet = false
+					elseIf (DressData.PlayerEquippedSleepwearItem != None)
+						doGet = false
+					endIf
 				endIf
 
 				if (undressCheck && DTSleep_PlayerUndressed.GetValue() > 0.0)
@@ -6454,8 +6541,8 @@ Function HandlePlayerActivateOutfitContainer(ObjectReference akTarget, bool forB
 
 			endIf
 		else
-			;   clothing, no companion, no winter, no companion nudeSuit, no bed, no Pip-boy, no drop sleepwear
 			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).AltFemBodyEnabled = false
+			;   clothing, no companion, no winter, no companion nudeSuit, no bed, no Pip-boy, no drop sleepwear, carryBonus
 			SetUndressForManualStop(true, None, false, false, None, false, false, forBed)  
 		endIf
 		
@@ -6501,7 +6588,7 @@ Function HandlePlayerActivateOutfitContainer(ObjectReference akTarget, bool forB
 	
 EndFunction
 
-; specialFurn: <0 = any chair, 1 = pillory, 2 = chair supporting sex, 3 = desk
+; specialFurn: <0 = any chair, 1 = pillory, 2 = chair supporting sex, 3 = desk, 4 = PA Repair station
 ;
 Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialFurn)
 
@@ -6586,6 +6673,19 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 		else
 			recheckFurnUse = true			; recheck again to cancel if actor gets too close
 		endIf
+	elseIf (specialFurn == 4)
+		int pasCheck = IsPAStationOpen(akFurniture)
+		if (pasCheck <= 0)
+			if (DTSleep_SettingNotifications.GetValue() > 0.0)
+				if (pasCheck >= -1)
+					DTSleep_PilloryBusyMessage.Show()
+				elseIf (pasCheck == -2)
+					DTSleep_PAStationPANearMessage.Show()
+				endIf
+			endIf
+			
+			return
+		endIf
 	endIf
 	
 	if (daysSinceFail < 0.047)
@@ -6629,13 +6729,18 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 	
 	if (DTSleep_AdultContentOn.GetValue() <= 1.0 || TestVersion == -3 || (DTSConditionals as DTSleep_Conditionals).ImaPCMod == false)
 		hugsOnly = true
-		; v2.10 - just use internal hugs 
-		;if ((DTSConditionals as DTSleep_Conditionals).IsAtomicLustActive && IsAAFReady())
-		;	animPacks[0] = 5
-		;endIf
+		animPacks[0] = 0
+		
 	elseIf (isPillory && akFurniture.HasKeyword((DTSConditionals as DTSleep_Conditionals).ZaZPilloryKW))
 		if ((DTSConditionals as DTSleep_Conditionals).ImaPCMod)
 			animPacks[0] = 8
+		endIf
+	elseIf (specialFurn == 4)
+		if ((DTSConditionals as DTSleep_Conditionals).IsAtomicLustActive)
+			animPacks[0] = 5
+		else
+			hugsOnly = true
+			animPacks[0] = 0
 		endIf
 		
 	elseIf (specialFurn > 0 && (DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive)
@@ -6658,10 +6763,22 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 	; ------ get companion --- 
 	;
 	int minRank = 3
+	int genderPref = -2
 	if (DTSleep_SettingIntimate.GetValue() >= 2.0)
 		minRank = 2
 	endIf
-	nearCompanion = GetCompanionNearbyHighestRelationRank(true, minRank)
+	if (isPillory || specialFurn >= 3)
+		; force pillory, desk, and sometimes PA to opposite gender for search
+		int playerGender = (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).GetGenderForActor(PlayerRef)
+		if (playerGender == 1)
+			if (specialFurn != 4)		; allow FF
+				genderPref = 0
+			endIf
+		else
+			genderPref = 1
+		endIf
+	endIf
+	nearCompanion = GetCompanionNearbyHighestRelationRank(true, minRank, genderPref)
 	
 	; ------ check companion 
 	; 
@@ -6679,7 +6796,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 			endIf
 			
 		elseIf (nearCompanion.CompanionActor == StrongCompanionRef)
-			if (!isPillory)
+			if (!isPillory && specialFurn != 4)
 				companionCompatible = true
 				
 				if (DTSleep_AdultContentOn.GetValue() >= 2.0 && (DTSConditionals as DTSleep_Conditionals).ImaPCMod && TestVersion == -2)
@@ -6708,7 +6825,9 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 	
 	if (companionCompatible)
 	
-
+		if (nearCompanion.Gender < 0)
+			nearCompanion.Gender = (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).GetGenderForActor(nearCompanion.CompanionActor)
+		endIf
 		nearCompanion.CompanionActor.AddToFaction(DTSleep_IntimateFaction)
 
 		; same lover check before update SceneData
@@ -6766,9 +6885,15 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 				endIf
 				
 			elseIf (SceneData.SameGender)
+				; TODO: check here for new animationpacks supporting chairs FMF or same-gender
 				if (isPillory)
 					companionReady = false
 					IntimateCompanionRef = None
+				elseIf (specialFurn == 4)
+					if (nearCompanion.Gender == 0)
+						hugsOnly = true
+						animPacks[0] = 0
+					endIf
 				else
 					hugsOnly = true
 					animPacks[0] = 0
@@ -6838,7 +6963,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 		;   so if primary lover is same gender need to swap roles for scene to include 2nd lover,
 		;   but swap after passing check!
 		;
-		if (!hugsOnly && !doDance && !SceneData.IsCreatureType && DTSleep_AdultContentOn.GetValue() >= 2.0 && DTSleep_SettingLover2.GetValue() >= 1.0)
+		if (!hugsOnly && !doDance && specialFurn != 4 && !SceneData.IsCreatureType && DTSleep_AdultContentOn.GetValue() >= 2.0 && DTSleep_SettingLover2.GetValue() >= 1.0)
 			if (!isPillory || animPacks[0] == 7)
 				; v2.13 - allow jealous type and reduce chance instead 
 				;if (!(DTSleep_IntimateAffinityQuest as DTSleep_IntimateAffinityQuestScript).CompanionHatesIntimateOtherPublic(IntimateCompanionRef))
@@ -6958,6 +7083,9 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 						endIf
 					endIf
 					
+				elseIf (specialFurn == 4)
+					checkVal = ShowPAStationPrompt(checkVal, nearCompanion, sexAppealScore, chanceForScene.Chance, locHourChance, gameTime)
+					
 				elseIf (specialFurn == 3)
 					checkVal = ShowDeskPrompt(checkVal, nearCompanion, sexAppealScore, chanceForScene.Chance, locHourChance, gameTime)
 					
@@ -7069,7 +7197,12 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 		bool luckRoll = false
 		
 		if (doDance)
-			SetExtraLovePartners()
+			if (IntimateCompanionRef != None && IntimateCompanionRef.GetSitState() >= 2)
+				; no dance for seated companion
+				IntimateCompanionRef = None
+			else
+				SetExtraLovePartners(-1, false)		; any gender, no seated lovers 
+			endIf
 			randomChance = 1
 		elseIf (testPassEnabled)
 			randomChance = 1
@@ -7108,14 +7241,13 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 				IntimacyTestCount += 1
 			elseIf (!doDance)
 				PlayerRef.SayCustom(PlayerLockResultSubtype, None, randomChance > 50) ; speak in head if rand > 50
-			
-				; for hugs limit intimate progress to once per day
 				
 				if (hugsOnly)
 					if (hoursSinceLastFail < 12.0)
 						IntimateCheckLastFailTime -= 12.0	; set-back fail-time to avoid penalize bed intimacy
 					endIf
 					if (IntimateCheckFailCount > 0)
+						; hugs reduce fails
 						IntimateCheckFailCount -= 1
 					endIf
 					IntimateLastEmbraceTime = gameTime	 	; always record time
@@ -7193,9 +7325,12 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 					
 						if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlayActionIntimateSeq(sequenceID))
 							noPreBedAnim = false
+							RegisterForRemoteEvent(furnToPlayObj, "OnActivate")			; watch for NPC activate
 							RegisterForCustomEvent((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript), "IntimateSequenceDoneEvent")
-							
-							SetStartSpectators(furnToPlayObj)
+							if (specialFurn < 4)
+								; spectators ignore radius on PA station so skip
+								SetStartSpectators(furnToPlayObj)
+							endIf
 						else
 							noPreBedAnim = true
 							
@@ -7288,7 +7423,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 		WakeStopIntimQuest(true)
 		IntimateCompanionRef = None
 		
-		if (OkaySitOnSeat(akFurniture, furnBaseForm))
+		if (specialFurn < 3 && OkaySitOnSeat(akFurniture, furnBaseForm))
 			SetUndressForRespectSit(akFurniture)
 				
 		elseIf (DTSleep_SettingNotifications.GetValue() > 0.0)
@@ -7298,7 +7433,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 		; no companion ready
 		EnablePlayerControlsSleep()
 		
-		if (isPillory)
+		if (isPillory || specialFurn >= 3)
 			if (DTSleep_SettingWarnLoverBusy.GetValue() > 0.0)
 				DTSleep_PersuadePilloryNoneMsg.Show()
 			endIf
@@ -7390,6 +7525,18 @@ Function HandlePlayerSleepStop(ObjectReference akBed, bool observeWinter = false
 	int napComp = DTSleep_SettingNapComp.GetValueInt()
 	int napOnly = DTSleep_SettingNapOnly.GetValueInt()
 	
+	if (DTSleep_PlayerUndressed.GetValueInt() <= 0)
+		; dressed - clear second
+		if (IntimateCompanionSecRef != None)
+			if (IntimateCompanionSecRef.IsInFaction(DTSleep_IntimateFaction))
+				IntimateCompanionSecRef.RemoveFromFaction(DTSleep_IntimateFaction)
+			endIf
+			IntimateCompanionSecRef.EvaluatePackage()
+			IntimateCompanionSecRef = None
+		endIf
+		(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).CompanionSecondRef = None
+	endIf
+	
 	if (napComp > 2)
 		napComp = 1
 		DTSleep_SettingNapComp.SetValueInt(1)
@@ -7432,10 +7579,18 @@ Function HandlePlayerSleepStop(ObjectReference akBed, bool observeWinter = false
 	SleepBedRegistered = None
 	
 	if (moveToBed)
-		if (!OkayToSleepLocationBed(akBed))
+		if (akBed == None)
 			isBedBusy = true
+			DTDebug(" HandlePlayerSleepStop - bed is None!", 1)
+			
+		elseIf (!OkayToSleepLocationBed(akBed))
+			isBedBusy = true
+			
 		elseIf (akBed.IsFurnitureMarkerInUse(0) || akBed.IsFurnitureMarkerInUse(1))
 			; player can't get into double-bed if NPC using marker 0 or 1
+			isBedBusy = true
+			; ------------------------
+			; is this a problem?
 			if (IsFurnitureActuallyInUse(akBed))	; v1.92
 				isBedBusy = true
 			endIf
@@ -7446,22 +7601,26 @@ Function HandlePlayerSleepStop(ObjectReference akBed, bool observeWinter = false
 		endIf
 	endIf
 		
-	if (isBedBusy)
+	if (isBedBusy || akBed == None)
 		; too late to catch companion - mark busy
 
 		DTSleep_BedBusyMessage.Show()
 		
 		DTSleep_PlayerUsingBed.SetValue(0.0)
 		
-		if (DTSleep_PlayerUndressed.GetValue() < 1.0)
+		if (DTSleep_PlayerUndressed.GetValue() > 0.0)
 			SetUndressStop(true)
 		endIf
 		MainQSceneScriptP.GoSceneViewDone(false)
 		EnablePlayerControlsSleep()
 		
-		
 		if (isFadedOut)
 			FadeInFast(false)
+		endIf
+		
+		; happy notice - which otherwise displays in bed - v2.14 added here for bed busy
+		if (self.SleepLoverBonusOnSleepID > 0)
+			StartTimer(5.5, LoverBonusAddTimerID)
 		endIf
 	else
 		; bed not busy 
@@ -7628,16 +7787,24 @@ Function HandlePlayerSleepStop(ObjectReference akBed, bool observeWinter = false
 							; get nearest humans and check if on DTSleep_CompanionRomanceList or custom companion
 							DTDebug(" looking for 2nd companion for bed-time ", 2)
 							
-							IntimateCompanionSet[] nearbyCompsArray = GetCompanionNearbyLoversArray(3, IntimateCompanionRef)
+							if (IntimateCompanionSecRef == None)
+								; v2.14 - changed to handle after intimacy so we don't break existing undressed companion
+								;  find then clear if not needed
+								IntimateCompanionSet[] nearbyCompsArray = GetCompanionNearbyLoversArray(3, IntimateCompanionRef)
 							
-							if (nearbyCompsArray.Length > 0 && nearbyCompsArray[0].CompanionActor != IntimateCompanionRef)
+								if (nearbyCompsArray.Length > 0 && nearbyCompsArray[0].CompanionActor != IntimateCompanionRef)
+								
+									IntimateCompanionSecRef = nearbyCompsArray[0].CompanionActor
+								endIf
+							endIf
 							
-								IntimateBedFoundSet anotherBedFound = FindBedForCompanion(nearbyCompsArray[0].CompanionActor, nearbyCompsArray[0].CompanionActor as ObjectReference, SleepBedCompanionUseRef, SleepBedInUseRef)
+							if (IntimateCompanionSecRef != None)
+							
+								IntimateBedFoundSet anotherBedFound = FindBedForCompanion(IntimateCompanionSecRef, IntimateCompanionSecRef as ObjectReference, SleepBedCompanionUseRef, SleepBedInUseRef)
 								if (anotherBedFound != None && anotherBedFound.BedFoundRef != None)
 									
 									if (anotherBedFound.BedFoundRef != SleepBedInUseRef && anotherBedFound.BedFoundRef != SleepBedCompanionUseRef)
 									
-										IntimateCompanionSecRef = nearbyCompsArray[0].CompanionActor
 										DTSleep_CompSecondSleepAlias.ForceRefTo(IntimateCompanionSecRef)
 										Utility.Wait(0.1)
 										
@@ -7648,12 +7815,17 @@ Function HandlePlayerSleepStop(ObjectReference akBed, bool observeWinter = false
 										DTDebug(" cancel 2nd lover goto-bed---2nd bed (" + anotherBedFound.BedFoundRef + ")already occupied: " + SleepBedInUseRef + ", " + SleepBedCompanionUseRef, 2)
 										DTSleep_CompBedSecondRefAlias.Clear()
 										DTSleep_CompSecondSleepAlias.Clear()
+										IntimateCompanionSecRef = None
+										(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).CompanionSecondRef = None
 									endIf
 									
 								elseIf (DTSleep_CompSecondSleepAlias != None)
 									DTSleep_CompBedSecondRefAlias.Clear()
 									DTSleep_CompSecondSleepAlias.Clear()
+									IntimateCompanionSecRef = None
+									(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).CompanionSecondRef = None
 								endIf
+	
 							elseIf (DTSleep_CompSecondSleepAlias != None)
 								DTSleep_CompBedSecondRefAlias.Clear()
 								DTSleep_CompSecondSleepAlias.Clear()
@@ -7681,11 +7853,13 @@ Function HandlePlayerSleepStop(ObjectReference akBed, bool observeWinter = false
 					self.MessageOnRestID = OnRestMsgCompBedNotFound
 					; no bed, no undress
 					IntimateCompanionRef = None
+					IntimateCompanionSecRef = None
 					IntimateCompanionRef.EvaluatePackage(false)
 				endIf
 			elseIf (SleepBedCompanionUseRef == None)
 				; cancel companion undress since not going to bed
 				IntimateCompanionRef = None
+				IntimateCompanionSecRef = None
 			endIf
 			
 			; check Dogmeat
@@ -7801,9 +7975,13 @@ Function HandlePlayerSleepStop(ObjectReference akBed, bool observeWinter = false
 			endIf
 		endIf
 		
-		UnregisterForMenuOpenCloseEvent("WorkshopMenu")
-
-		SetPlayerAndCompanionBedTime(SleepBedInUseRef, SleepBedCompanionUseRef, false, observeWinter, isFadedOut, moveToBed, playerNaked)
+		if (SleepBedInUseRef != None)
+			UnregisterForMenuOpenCloseEvent("WorkshopMenu")
+			SetPlayerAndCompanionBedTime(SleepBedInUseRef, SleepBedCompanionUseRef, false, observeWinter, isFadedOut, moveToBed, playerNaked)
+		else
+			DTDebug("HandlePlayerSleepStop -- SleepBedInUseRef is None - skip Set bedtime", 1)
+			UnregisterForCustomEvent((DTSleep_HealthRecoverQuestP as DTSleep_HealthRecoverQuestScript), "RestInterruptionEvent")
+		endIf
 	endIf
 	
 	return
@@ -7849,6 +8027,8 @@ Function HandleUndressCheck(Actor companionActor = None, bool companionRequiresN
 endFunction
 
 Function InitSleepQuest(bool silent = false)
+	
+	DTSleep_SettingModActive.SetValue(1.0)
 	
 	Location currentLoc = PlayerRef.GetCurrentLocation()
 	if (currentLoc != Vault111Loc)
@@ -7908,7 +8088,7 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 	; SceneData.AnimationSet: 5+ for AAF, 
 	;   1 = original Leito (positioned 70 apart)
 	;   2 = Crazy Gun
-	;   5 = Atomic Lust
+	;   5 = Atomic Lust & Mutated Lust
 	;   6 = Leito v2
 	;   7 = SavageCabbages
 	;	8 = ZaZOut4
@@ -7916,6 +8096,7 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 
 	bool aafEnabled = IsAAFReady()
 	bool hasAtomicLustAnims = false
+	bool hasMutatedLustAnims = false
 	bool hasCrazyGunAnims = false
 	bool hasLeitoAnims = false
 	bool hasSavageCabbageAnims = false
@@ -8057,6 +8238,11 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 				elseIf (hasLeitoV2Anims)
 					animSets.Add(6)
 				endIf
+			endIf
+			
+			if ((DTSConditionals as DTSleep_Conditionals).IsMutatedLustActive)
+				animSetCount += 1
+				animSets.Add(5)
 			endIf
 			SceneData.PreferStandOnly = true
 			
@@ -8893,23 +9079,32 @@ int Function IsCompanionActorReadyForScene(IntimateCompanionSet intimateActor, b
 EndFunction
 
 
-bool Function IsHeatherInLove()
+int Function IsHeatherInLove()
 
 	if ((DTSConditionals as DTSleep_Conditionals).IsHeatherCompInLove)
-		return true
+		return 2
 	else
 		Quest heatherCoreQuest = Game.GetFormFromFile(0x0300C9BA, "llamaCompanionHeather.esp") as Quest
 		if (heatherCoreQuest != None)
-			if (heatherCoreQuest.GetStageDone(751) || heatherCoreQuest.GetStageDone(1001))
+			if (heatherCoreQuest.GetStageDone(1002))
+				(DTSConditionals as DTSleep_Conditionals).IsHeatherCompInLove = false
+				return 0			; v2.14 - player chose not romantic
 			
+			elseIf (heatherCoreQuest.GetStageDone(1001))
+				; full romance - flag
 				(DTSConditionals as DTSleep_Conditionals).IsHeatherCompInLove = true
 				
-				return true
+				return 2
+			elseIf (heatherCoreQuest.GetStageDone(751))
+				; idolize and heather flirts
+				; v2.14 - do not mark flag in case player chooses to end relationship
+				
+				return 1
 			endIf
 		endIf
 	endIf
 	
-	return false
+	return 0
 EndFunction
 
 bool Function IsNWSBarbInLove()
@@ -8922,6 +9117,39 @@ bool Function IsNWSBarbInLove()
 	endIf
 	
 	return false
+endFunction
+
+; caller expected to have checked IsFurnitureInUse
+; return -2 for power armor furniture nearby, -1 for NPC nearby
+;
+int Function IsPAStationOpen(ObjectReference akFurniture)
+	if (akFurniture != None)
+		; assume a Power Armor Repair Station -- is a frame nearby?
+		
+		if (IsFurnitureActuallyInUse(akFurniture, true))
+			return -1
+		else
+			ObjectReference[] paFrameArray = akFurniture.FindAllReferencesWithKeyword(FurnitureTypePowerArmorKY, 96.0)
+			
+			if (paFrameArray.Length > 0)
+				int i = 0
+				while (i < paFrameArray.Length)
+				
+					ObjectReference paFrameRef = paFrameArray[i] as ObjectReference
+					if (paFrameRef != None && paFrameRef.IsEnabled())
+						DTDebug(" IsPAStationOpen-false  found power armor furniture at distance " + paFrameRef.GetDistance(akFurniture), 1)
+						return -2
+					endIf
+					
+					i += 1
+				endWhile
+			endIf
+		endIf
+		
+		return 1
+	endIf
+
+	return 0
 endFunction
 
 ; returns true if always undress--private location or undress location--meaning override observe winter
@@ -9153,6 +9381,7 @@ Function LoverBonusEmbrace(bool isAdd, bool notify = false)
 	if (isAdd)
 		if (!PlayerRef.HasPerk(DTSleep_LoversEmbraceHugPerk))
 			PlayerRef.AddPerk(DTSleep_LoversEmbraceHugPerk)
+	
 			if (notify)
 				DTSleep_LoversEmbraceHugMsg.Show()
 			endIf
@@ -9380,11 +9609,11 @@ bool Function OkaySitOnSeat(ObjectReference akFurniture, Form furnBaseForm = Non
 	endIf
 	if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsObjBenchSofa(akFurniture, furnBaseForm))
 		if (akFurniture.IsFurnitureMarkerInUse(0, true) && akFurniture.IsFurnitureMarkerInUse(1, true))
-			Debug.Trace(myScriptName + " bench/couch 2 markers in use")
+			;Debug.Trace(myScriptName + " bench/couch 2 markers in use")
 			okayToSit = false
 		endIf
 	else
-		Debug.Trace(myScriptName + " chair (not bench) in use")
+		;Debug.Trace(myScriptName + " chair (not bench) in use")
 		okayToSit = false
 	endIf
 
@@ -10259,6 +10488,18 @@ Function ResetAll()
 
 EndFunction
 
+Function ResetHelpTips()
+
+	PersuadeTutorialFailShown = 0
+	TipSleepModeDisplayCount = 1
+	PersuadeTutorialXFFShown = 0
+	PersuadeTutorialSuccessShown = 0
+	
+	StartTimer(64.0, CustomCameraTipTimerID)
+	StartTimer(200.0, IntroRestNotShowTipTimerID)
+
+endFunction
+
 Function ResetSceneData()
 	SceneData.BackupMaleRole = SceneData.MaleRole
 	SceneData.BackupFemaleRole = SceneData.FemaleRole
@@ -10326,16 +10567,16 @@ bool Function SetDogmeatFollow()
 	return false
 endFunction
 
-Function SetExtraLovePartners(int forIntimateSecond = -1)
+Function SetExtraLovePartners(int forIntimateSecond = -1, bool seatedOK = true)
 
-	DTDebug("check extra loversl (" + forIntimateSecond + ")...", 2)
+	DTDebug("check extra loversl (" + forIntimateSecond + ") with lover " + IntimateCompanionRef + " and current SecondRoles: " + SceneData.SecondMaleRole + ", " + SceneData.SecondFemaleRole, 2)
 	if (DTSleep_SettingLover2.GetValue() <= 0.0)
 		return
 	endIf
-	ObjectReference[] actorArray = PlayerRef.FindAllReferencesWithKeyword(DTSleep_ActorKYList.GetAt(0), 1100.0)
+	ObjectReference[] actorArray = PlayerRef.FindAllReferencesWithKeyword(DTSleep_ActorKYList.GetAt(0), 720.0)
 	
 	Actor heatherActor = GetHeatherActor()
-	Actor barbActor = GetNWSBarbActor()		
+	Actor barbActor = GetNWSBarbActor()	
 	int aCnt = 0
 	
 	SceneData.SecondFemaleRole = None
@@ -10346,7 +10587,7 @@ Function SetExtraLovePartners(int forIntimateSecond = -1)
 		
 		if (ac != None && ac != PlayerRef && ac.IsEnabled())
 		
-			DTDebug("checking enabled actor " + ac, 2)
+			DTDebug("checking enabled extra actor " + ac, 2)
 
 			if ((DTSConditionals as DTSleep_Conditionals).IsWorkShop02DLCActive && ac.HasKeyword((DTSConditionals as DTSleep_Conditionals).DLC05ArmorRackKY))
 				; do nothing -
@@ -10354,44 +10595,49 @@ Function SetExtraLovePartners(int forIntimateSecond = -1)
 			
 			elseIf (!ac.IsDead() && !ac.IsUnconscious() && ac.GetSleepState() < 3 && !ac.WornHasKeyword(ArmorTypePower) && (!IsAAFReady() || !ac.IsInPowerArmor()))
 			
-				CompanionActorScript aCompanion = GetCompanionOfActor(ac)
-				
-				if (aCompanion != None && ac != IntimateCompanionRef)
-		
-					; make certain partner is not the jealous type
-					if ((DTSleep_IntimateAffinityQuest as DTSleep_IntimateAffinityQuestScript).CompanionHatesIntimateOtherPublic(ac) == false)
-				
-						bool isPartner = false
-						if (aCompanion.IsRomantic())
-							isPartner = true
-						elseIf (aCompanion.IsInFatuated())
-							isPartner = true
-						elseIf (DTSleep_CompanionRomanceList.HasForm(ac as Form) && aCompanion.GetValue(CA_AffinityAV) >= 1000.0)
-							isPartner = true
-						elseIf (PlayerHasPerkOfCompanion(ac))
-							isPartner = true
-						endIf
-						if (isPartner)
-								
-							if ((DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).GetGenderForActor(ac) == 1)
-								if (SceneData.SecondFemaleRole == None)
-									SceneData.SecondFemaleRole = ac
-								endIf
-							elseIf (SceneData.SecondMaleRole == None)
-								SceneData.SecondMaleRole = ac
-							endIf
-						endIf
-					endIf
-				elseIf (SceneData.SecondFemaleRole == None && heatherActor != None && heatherActor == ac)
+				if (seatedOK || ac.GetSitState() < 2)
+			
+					CompanionActorScript aCompanion = GetCompanionOfActor(ac)
 					
-					if (IsHeatherInLove())
+					if (aCompanion != None && ac != IntimateCompanionRef)
+					
+						DTDebug("checking companion " + ac, 2)
+			
+						; make certain partner is not the jealous type   -- v2.13: jealous okay
+						;if ((DTSleep_IntimateAffinityQuest as DTSleep_IntimateAffinityQuestScript).CompanionHatesIntimateOtherPublic(ac) == false)
+					
+							bool isPartner = false
+							if (aCompanion.IsRomantic())
+								isPartner = true
+							elseIf (aCompanion.IsInFatuated())
+								isPartner = true
+							elseIf (DTSleep_CompanionRomanceList.HasForm(ac as Form) && aCompanion.GetValue(CA_AffinityAV) >= 1000.0)
+								isPartner = true
+							elseIf (PlayerHasPerkOfCompanion(ac))
+								isPartner = true
+							endIf
+							if (isPartner)
+									
+								if ((DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).GetGenderForActor(ac) == 1)
+									if (SceneData.SecondFemaleRole == None)
+										SceneData.SecondFemaleRole = ac
+									endIf
+								elseIf (SceneData.SecondMaleRole == None)
+									SceneData.SecondMaleRole = ac
+								endIf
+							endIf
+						;endIf
+					elseIf (SceneData.SecondFemaleRole == None && heatherActor != None && heatherActor == ac && heatherActor != IntimateCompanionRef)
 						
-						SceneData.SecondFemaleRole = ac
-					endIf
-				
-				elseIf (SceneData.SecondFemaleRole == None && barbActor != None && barbActor == ac)
-					if (IsNWSBarbInLove())
-						SceneData.SecondFemaleRole = ac
+						if (IsHeatherInLove() >= 1)
+							
+							SceneData.SecondFemaleRole = ac
+						endIf
+					
+					elseIf (SceneData.SecondFemaleRole == None && barbActor != None && barbActor == ac && barbActor != IntimateCompanionRef)
+						if (IsNWSBarbInLove())
+							SceneData.SecondFemaleRole = ac
+						endIf
 					endIf
 				endIf
 			endIf
@@ -10401,9 +10647,53 @@ Function SetExtraLovePartners(int forIntimateSecond = -1)
 	endWhile
 	
 	; check second actors to set ready
-	if (forIntimateSecond >= 0)
-		if ((forIntimateSecond == 0 || forIntimateSecond == 2) && SceneData.SecondMaleRole != None)
-			Debug.Trace(myScriptName + " adding 2nd lover M:" + SceneData.SecondMaleRole)
+	; 0=FMM, 1=FMF, 2=M/F (FMM or FMF)
+	;
+	if (forIntimateSecond >= 0 && (SceneData.SecondMaleRole != None || SceneData.SecondFemaleRole != None))
+		int playerGender = (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).GetGenderForActor(PlayerRef)
+		int companGender = (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).GetGenderForActor(IntimateCompanionRef)
+		int setForGender = -1		; gender needed
+		
+		; v2.14 fixes for missing order of companions
+		
+		if (forIntimateSecond == 0)
+			; FMM case
+			if (playerGender == 0 && companGender == 0)
+				if (SceneData.SecondFemaleRole != None)
+					setForGender = 1	; MM need F
+				endIf
+				
+			elseIf (playerGender != companGender && SceneData.SecondMaleRole != None)
+				setForGender = 0		; FM need M
+			endIf
+			
+		elseIf (forIntimateSecond >= 1)
+			; FMF case - need FMF pattern (if player female, need male and female)
+			int genderCF = 0	; companion gender (= m) looking for female - default for female player
+			int genderCM = 1	; companion gender (= f) looking for male
+			
+			if (playerGender == 0)	; male player, flip
+				genderCF = 1
+				genderCM = 0
+			endIf
+			
+			if (companGender == genderCF && SceneData.SecondFemaleRole != None)
+				setForGender = 1
+				
+			elseIf (companGender == genderCM && SceneData.SecondMaleRole != None)
+				setForGender = 0
+				
+			elseIf (forIntimateSecond == 2 && companGender == 0)
+				; FMM (companion must be male or would have been matched above)
+				if (playerGender == 1 && SceneData.SecondMaleRole != None)		
+					setForGender = 0
+				elseIf (playerGender == 0 && SceneData.SecondFemaleRole != None)
+					setForGender = 1
+				endIf	
+			endIf
+		endIf
+		
+		if (setForGender == 0)
 			if (DTSleep_CompIntimateLover2Alias != None)
 				IntimateCompanionSecRef = SceneData.SecondMaleRole
 				
@@ -10411,9 +10701,8 @@ Function SetExtraLovePartners(int forIntimateSecond = -1)
 				SceneData.SecondMaleRole = None
 			endIf
 			SceneData.SecondFemaleRole = None
-			
-		elseIf (forIntimateSecond >= 1 && SceneData.SecondFemaleRole != None)
-			Debug.Trace(myScriptName + " adding 2nd lover F:" + SceneData.SecondFemaleRole)
+				
+		elseIf (setForGender == 1)
 			if (DTSleep_CompIntimateLover2Alias != None)
 				IntimateCompanionSecRef = SceneData.SecondFemaleRole
 			elseIf (SceneData.SecondFemaleRole.GetSitState() < 2)
@@ -10546,6 +10835,12 @@ int Function RestoreTestSettings(float oldVersion = 0.0)
 		endIf
 	endIf
 	
+	if (oldVersion < 2.14)
+		if (IntimateCheckFailCount > 2)
+			IntimateCheckFailCount = 2
+		endIf
+	endIf
+	
 	return count
 endFunction
 
@@ -10559,7 +10854,7 @@ Function SetAffinityForCreature(int creatureType)
 		self.SleepIntimateSceneAffinityOnSleepID = 1
 	endIf
 	CheckCompanionIntimateAffinity()
-	Utility.Wait(0.6)
+	Utility.Wait(1.0)
 
 endFunction
 
@@ -10652,6 +10947,8 @@ endFunction
 ;
 Function SetPlayerAndCompanionBedTime(ObjectReference akBed, ObjectReference akCompanionBed, bool companionReqNudeSuit, bool observeWinter = true, bool isFadedOut = false, bool moveToBed = true, bool playerNaked = false)
 	
+	bool undressOK = true
+	
 	; must check in case of load game 
 	if (akBed == None || DTSleep_PlayerUsingBed.GetValue() <= 0.5)
 	
@@ -10700,11 +10997,11 @@ Function SetPlayerAndCompanionBedTime(ObjectReference akBed, ObjectReference akC
 			observeWinter = false
 		endIf
 		
-		SetUndressForBed(akBed, IntimateCompanionRef, akCompanionBed, observeWinter, companionReqNudeSuit, playerNaked)
+		undressOK = SetUndressForBed(akBed, IntimateCompanionRef, akCompanionBed, observeWinter, companionReqNudeSuit, playerNaked)
 	endIf
 	
 	bool findTwinBed = true
-	if (SleepBedCompanionUseRef != None && SleepBedCompanionUseRef != SleepBedInUseRef)
+	if (undressOK && SleepBedCompanionUseRef != None && SleepBedCompanionUseRef != SleepBedInUseRef)
 		if (SleepBedCompanionUseRef.GetDistance(SleepBedInUseRef) < 150.0)
 			findTwinBed = false
 			
@@ -10724,7 +11021,7 @@ Function SetPlayerAndCompanionBedTime(ObjectReference akBed, ObjectReference akC
 		endIf
 	endIf
 	
-	if (findTwinBed)
+	if (undressOK && findTwinBed)
 		; test if a twin-bed to mark to keep track of activation - not same-level to look for bunk
 		ObjectReference testBed = DTSleep_CommonF.FindNearestAnyBedFromObject(akBed, DTSleep_BedList, akBed, 220.0, false)
 		
@@ -11040,6 +11337,7 @@ EndFunction
 IntimateCompanionSet Function SetSceneForDogmeat()
 
 	IntimateCompanionSet nearCompanion = new IntimateCompanionSet
+	nearCompanion.Gender = -1
 	
 	if (IsDogPlaySettingsOn() && PlayerHasActiveDogmeatCompanion.GetValueInt() > 0 && DogmeatCompanionAlias != None && PlayerRef.HasPerk(LoneWanderer01))
 			
@@ -11151,20 +11449,22 @@ endFunction
 
 bool Function SetUndressForRespectSit(ObjectReference akFurniture, Actor companionActor = None)
 	
-	if (akFurniture != None)
-		akFurniture.Activate(PlayerRef)
+	; v2.15 - check combat and if activate success
+	if (akFurniture != None && !PlayerRef.IsInCombat())
+		if (akFurniture.Activate(PlayerRef))
 		
-		if (DTSleep_SettingUndress.GetValue() >= 1.0)
-			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).EnableCarryBonus = true
-			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).SuspendEquipStore = false
-			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).PlayerIsAroused = false
-			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).AltFemBodyEnabled = false
-			
-			IntimateWeatherScoreSet wScore = ChanceForIntimateSceneWeatherScore()
-			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).WeatherClass = wScore.wClass
-			
-			; includeHatsOutside false to keep on outdoors
-			return (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).StartForFurnitureExitRespect(akFurniture, companionActor, false)
+			if (DTSleep_SettingUndress.GetValue() >= 1.0)
+				(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).EnableCarryBonus = true
+				(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).SuspendEquipStore = false
+				(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).PlayerIsAroused = false
+				(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).AltFemBodyEnabled = false
+				
+				IntimateWeatherScoreSet wScore = ChanceForIntimateSceneWeatherScore()
+				(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).WeatherClass = wScore.wClass
+				
+				; includeHatsOutside false to keep on outdoors
+				return (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).StartForFurnitureExitRespect(akFurniture, companionActor, false)
+			endIf
 		endIf
 	endIf
 
@@ -11252,18 +11552,26 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 			endIf
 			
 			if (IntimateCompanionSecRef != None)
-				; must swap before get scene picking
-				DTDebug(" 2nd lover ready, check for swaps...", 2)
-				CheckSwapSceneRolesForSameGender()
+				if (IntimateCompanionSecRef == IntimateCompanionRef)
+					IntimateCompanionSecRef = None
+					DTDebug(" 2nd lover same as main lover removed  - " + IntimateCompanionRef, 2)
+				else
+					; must swap before get scene picking
+					DTDebug(" 2nd lover ready, check for swaps...", 2)
+					CheckSwapSceneRolesForSameGender()
+				endIf
 			endIf
 		
 			; also sets SceneData.AnimationSet if valid ID found and may clear 2nd lovers if not needed
 			seqID = (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetAnimationPacksAndGetSceneID(animPacks)
 			
+			; TODO: check this
 			;animationZeX = (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).AnimationSetSupportsZeX(SceneData.AnimationSet)
 			
-			if (aafIsReady && SceneData.AnimationSet == 5 && arousalAngle >= 0 && seqID < 540)
-				arousalAngle = 0
+			if (aafIsReady && arousalAngle >= 0)
+				if (SceneData.AnimationSet == 5 || SceneData.AnimationSet == 8)
+					arousalAngle = 0
+				endIf
 			else
 				arousalAngle = -1
 			endIf
@@ -11294,6 +11602,14 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 	endIf
 	
 	; 5. check set for camera
+	if (!lowCam)
+		int baseID = DTSleep_CommonF.BaseIDForFullSequenceID(seqID)
+		DTDebug(" set lowcam for base-id " + baseID, 2)
+		if (baseID < 50)
+			lowCam = true	; force for non-stand scenes
+		endIf
+	endIf
+	
 	if (SceneData.AnimationSet >= 5 && SceneData.AnimationSet < 100)
 		if (aafIsReady)
 			if (DTSleep_SettingAAF.GetValueInt() >= 2)
@@ -11335,7 +11651,7 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 			FadeOutFast(false)
 		endIf
 		
-		; set 2nd lover
+		; set 2nd lover if any
 		(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).CompanionSecondRef = IntimateCompanionSecRef
 		
 		Utility.Wait(0.08)
@@ -11380,10 +11696,19 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 			endIf
 		endIf
 		
+		(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).ForceEVBNude = false
+		
 		if (aafIsReady)
-			if (includeClothing && arousalAngle >=0 && DressData.PlayerGender == 0 && adultContentVal >= 2 && animationZeX)
-				
-				arousalAngle = (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).SetPlayerArousedLevel(arousalAngle)
+			if (includeClothing && arousalAngle >=0 && DressData.PlayerGender == 0 && adultContentVal >= 2)
+				bool forceEVB = false
+				if (SceneData.AnimationSet == 5 || SceneData.AnimationSet == 6 || SceneData.AnimationSet == 8)
+					if (seqID >= 800 && seqID < 900)
+						(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).ForceEVBNude = true
+					elseIf (seqID >= 600 && seqID < 700)
+						(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).ForceEVBNude = true
+					endIf
+					arousalAngle = (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).SetPlayerArousedLevel(arousalAngle)
+				endIf
 			endIf
 		endIf
 		
@@ -11453,7 +11778,7 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 				SceneData.ToyFromContainer = false
 			endIf
 		endIf
-	elseIf (SceneData.AnimationSet == 5 && DTSleep_PlayerUndressed.GetValue() > 0.0)
+	elseIf (SceneData.AnimationSet == 5 && DTSleep_SettingUndress.GetValue() > 0.0)
 		; no undress - let's do hats
 		(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).StartForManualStopRespect(IntimateCompanionRef)
 		;SetUndressForManualStop(false, companionRef, false, true, None, false)
@@ -11597,7 +11922,7 @@ int Function ShowIntimatePrompt(int checkVal, IntimateCompanionSet nearCompanion
 		
 	elseIf (locHourChance.LocTypeName == "crime-area")
 	
-		checkVal = DTSleep_IntimateCheckCrimeMsg.Show(sexAppealScore)
+		checkVal = DTSleep_IntimateCheckCrimeMsg.Show(sexAppealScore, daysSinceLastIntimate)
 		
 	; -------------------- hour limits, holidays, and addiction warnings -----------
 		
@@ -11998,19 +12323,24 @@ int Function ShowChairPrompt(int checkVal, IntimateCompanionSet nearCompanion, i
 			endIf
 		endIf
 		
-		return ShowFurnitureSpecPrompt(basicMsg, DTSleep_ChairCheckBeginMsg, DTSleep_ChairCheckShowChanceMsg, DTSleep_ChairCheckDogRecentMsg, DTSleep_ChairCheckDogNPCMsg, checkVal, nearCompanion, sexAppealScore, totalChance, locHourChance, gameTime)
+		return ShowFurnitureSpecPrompt(basicMsg, DTSleep_ChairCheckBeginMsg, DTSleep_ChairCheckShowChanceMsg, DTSleep_ChairCheckDogRecentMsg, DTSleep_ChairCheckDogNPCMsg, checkVal, nearCompanion, sexAppealScore, totalChance, locHourChance, gameTime, true)
 	endIf	
 	
-	return ShowFurnitureSpecPrompt(DTSleep_ChairCheckMsg, DTSleep_ChairCheckBeginMsg, DTSleep_ChairCheckShowChanceMsg, DTSleep_ChairCheckRecentMsg, DTSleep_ChairCheckNPCMsg, checkVal, nearCompanion, sexAppealScore, totalChance, locHourChance, gameTime)
+	return ShowFurnitureSpecPrompt(DTSleep_ChairCheckMsg, DTSleep_ChairCheckBeginMsg, DTSleep_ChairCheckShowChanceMsg, DTSleep_ChairCheckRecentMsg, DTSleep_ChairCheckNPCMsg, checkVal, nearCompanion, sexAppealScore, totalChance, locHourChance, gameTime, true)
 endFunction
 
 int Function ShowDeskPrompt(int checkVal, IntimateCompanionSet nearCompanion, int sexAppealScore, float totalChance, IntimateLocationHourSet locHourChance, float gameTime)
 
-	return ShowFurnitureSpecPrompt(DTSleep_DeskCheckMsg, DTSleep_DeskCheckBeginMsg, DTSleep_DeskCheckShowChanceMsg, DTSleep_DeskCheckRecentMsg, DTSleep_DeskCheckNPCMsg, checkVal, nearCompanion, sexAppealScore, totalChance, locHourChance, gameTime)
+	return ShowFurnitureSpecPrompt(DTSleep_DeskCheckMsg, DTSleep_DeskCheckBeginMsg, DTSleep_DeskCheckShowChanceMsg, DTSleep_DeskCheckRecentMsg, DTSleep_DeskCheckNPCMsg, checkVal, nearCompanion, sexAppealScore, totalChance, locHourChance, gameTime, false)
 
 endFunction
 
-int Function ShowFurnitureSpecPrompt(Message prompt, Message promptBegin, Message promptChance, Message promptRecent, Message promptNPCWarn, int checkVal, IntimateCompanionSet nearCompanion, int sexAppealScore, float totalChance, IntimateLocationHourSet locHourChance, float gameTime)
+int Function ShowPAStationPrompt(int checkVal, IntimateCompanionSet nearCompanion, int sexAppealScore, float totalChance, IntimateLocationHourSet locHourChance, float gameTime)
+
+	return ShowFurnitureSpecPrompt(DTSleep_PASCheckMsg, DTSleep_PASCheckBeginMsg, DTSleep_PASCheckShowChanceMsg, DTSleep_PASCheckRecentMsg, DTSleep_PASCheckNPCMsg, checkVal, nearCompanion, sexAppealScore, totalChance, locHourChance, gameTime, false)
+endFunction
+
+int Function ShowFurnitureSpecPrompt(Message prompt, Message promptBegin, Message promptChance, Message promptRecent, Message promptNPCWarn, int checkVal, IntimateCompanionSet nearCompanion, int sexAppealScore, float totalChance, IntimateLocationHourSet locHourChance, float gameTime, bool isChair)
 
 	float hoursSinceLastFail = DTSleep_CommonF.GetGameTimeHoursDifference(gameTime, IntimateCheckLastFailTime)
 	float hoursSinceLastIntimate = DTSleep_CommonF.GetGameTimeHoursDifference(gameTime, IntimateLastTime)
@@ -12054,7 +12384,11 @@ int Function ShowFurnitureSpecPrompt(Message prompt, Message promptBegin, Messag
 	
 	elseIf (locHourChance.LocTypeName == "crime-area")
 	
-		checkVal = DTSleep_ChairCheckCrimeMsg.Show(sexAppealScore)
+		if (isChair)
+			checkVal = DTSleep_ChairCheckCrimeMsg.Show(sexAppealScore, daysSinceLastIntimate)
+		else
+			checkVal = DTSleep_FurnUseCheckCrimeMsg.Show(sexAppealScore, daysSinceLastIntimate)
+		endIf
 	
 	elseIf (showBeginnerPrompt)
 	
@@ -12081,7 +12415,7 @@ endFunction
 
 int Function ShowPilloryPrompt(int checkVal, IntimateCompanionSet nearCompanion, int sexAppealScore, float totalChance, IntimateLocationHourSet locHourChance, float gameTime)
 	
-	return ShowFurnitureSpecPrompt(DTSleep_PilloryCheckMsg, DTSleep_PilloryCheckBeginMsg, DTSleep_PilloryCheckShowChanceMsg, DTSleep_PilloryCheckRecentMsg, DTSleep_PilloryCheckNPCMsg, checkVal, nearCompanion, sexAppealScore, totalChance, locHourChance, gameTime)
+	return ShowFurnitureSpecPrompt(DTSleep_PilloryCheckMsg, DTSleep_PilloryCheckBeginMsg, DTSleep_PilloryCheckShowChanceMsg, DTSleep_PilloryCheckRecentMsg, DTSleep_PilloryCheckNPCMsg, checkVal, nearCompanion, sexAppealScore, totalChance, locHourChance, gameTime, false)
 endFunction
 
 Function Shutdown(bool completely = false)
@@ -12234,6 +12568,7 @@ Function TestModeOutput()
 		Debug.Trace(myScriptName + " =====================================================================")
 		Debug.Trace(myScriptName + "         ----- TEST MODE ---- conditionals ----------")
 		Debug.Trace(myScriptName + "  gamesetRConv: " + (DTSConditionals as DTSleep_Conditionals).HasGamesetReducedConv)
+		Debug.Trace(myScriptName + "hasModReqSleep: " + (DTSConditionals as DTSleep_Conditionals).HasModReqNormSleep)
 		Debug.Trace(myScriptName + " DLC NukaWorld: " + (DTSConditionals as DTSleep_Conditionals).IsNukaWorldDLCActive)
 		Debug.Trace(myScriptName + "     DLC Robot: " + (DTSConditionals as DTSleep_Conditionals).IsRobotDLCActive)
 		Debug.Trace(myScriptName + "     DLC Coast: " + (DTSConditionals as DTSleep_Conditionals).IsCoastDLCActive)
@@ -12257,6 +12592,7 @@ Function TestModeOutput()
 		Debug.Trace(myScriptName + "           AAF: " + (DTSConditionals as DTSleep_Conditionals).IsAAFActive)
 		Debug.Trace(myScriptName + "   Atomic Lust: " + (DTSConditionals as DTSleep_Conditionals).IsAtomicLustActive)
 		Debug.Trace(myScriptName + "   Atomic vers: " + (DTSConditionals as DTSleep_Conditionals).AtomicLustVers)
+		Debug.Trace(myScriptName + "  Mutated Lust: " + (DTSConditionals as DTSleep_Conditionals).IsMutatedLustActive)
 		Debug.Trace(myScriptName + " LeFO4Anim AAF: " + (DTSConditionals as DTSleep_Conditionals).IsLeitoAAFActive)
 		Debug.Trace(myScriptName + " SavageCabbage: " + (DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive)
 		Debug.Trace(myScriptName + "      Campsite: " + (DTSConditionals as DTSleep_Conditionals).IsCampsiteActive)

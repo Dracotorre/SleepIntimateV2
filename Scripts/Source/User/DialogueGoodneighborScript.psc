@@ -41,6 +41,17 @@ GlobalVariable property DTSleep_SettingIntimate auto Const Mandatory
 { setting to get intimate with lover after waking }
 GlobalVariable property DTSleep_SettingAAF auto const
 GlobalVariable property DTSleep_IsLeitoActive auto const
+; ------------- added v2.14 - original markers too close to wall
+ObjectReference Property DTSleep_HotelRexPlayerMarkerREF Auto
+ObjectReference Property DTSleep_HotelRexMagnoliaMarkerREF Auto
+
+int property ScenePick auto conditional
+
+bool property DateBusy = false auto hidden
+bool property DoPimaryDateFinish = false auto hidden
+ObjectReference property OurBedRef = None auto hidden
+float property IntimateTime = 0.0 auto hidden
+
 
 ; ============  "Date Magnolia" patch - leave commented out unless building for patch plugin
 ;Quest Property LNMagnoliaAndPlayerConvince Auto Const
@@ -66,13 +77,25 @@ Event DTSleep_IntimateAnimQuestScript.IntimateSequenceDoneEvent(DTSleep_Intimate
 			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).StopAll(false)
 		endIf
 		
+		
 		(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).StopAll()
 		
-		DTSleep_MagnoliaScene.SetValue(1.0)
+		DateBusy = false
 		
-		Utility.Wait(1.0)
-		MagnoliaDateFinish(Game.GetPlayer())
-
+		if (DoPimaryDateFinish)
+		
+			DTSleep_MagnoliaScene.SetValue(1.0)
+			Utility.Wait(1.0)
+			MagnoliaDateFinish(Game.GetPlayer())
+		else
+			Game.FadeOutGame(False, True, 0.0, 2.0)
+		endIf
+		
+		if (DTSleep_SettingAAF != None && DTSleep_SettingAAF.GetValue() == -5.0)
+			DTSleep_SettingAAF.SetValue(1.0)	; turn back on
+		endIf
+		
+		ScenePick = 0
 	endIf
 	
 EndEvent
@@ -135,9 +158,9 @@ Function GetPlayerHighestSpecial()
 	EndWhile
 EndFunction
 
-
-
 Function MagnoliaDate()
+	DoPimaryDateFinish = true						; the first date so we finish
+	OurBedRef = HotelRexfordPlayerBed2REF			; at the Hotel Rex
 	; modified by moving to global script level
 	myLayer = InputEnableLayer.Create()
 	Actor myPlayer = Game.GetPlayer()
@@ -145,14 +168,35 @@ Function MagnoliaDate()
 
 	myLayer.DisablePlayerControls()
 	Game.FadeOutGame(True, True, 0.0, 3.0, True)
-	Utility.Wait(5.0)
+	Utility.Wait(3.0)
 	;Game.PassTime(4)
 
 	Utility.Wait(0.1)
-	MagnoliaREF.moveto(HotelMagnoliaMarkerREF)
-	myPlayer.Moveto(HotelPlayerMarkerREF)
+	; use Sleep Intimate markers if available since regular markers too close to wall causing animation issues
+	if (DTSleep_HotelRexMagnoliaMarkerREF != None && DTSleep_HotelRexPlayerMarkerREF != None)
+		MagnoliaREF.Moveto(DTSleep_HotelRexMagnoliaMarkerREF)
+		myPlayer.Moveto(DTSleep_HotelRexPlayerMarkerREF)
+	else
+		MagnoliaREF.Moveto(HotelMagnoliaMarkerREF)
+		myPlayer.Moveto(HotelPlayerMarkerREF)
+	endIf
+	MagnoliaREF.SetRestrained()
 	
 	; ====== begin DTSleep =======
+	ScenePick = 0
+	MagnoliaDateSI(myPlayer)
+	
+	; remainder moved to MagnoliaDateFinish
+	; ======  end DTSleep  =======
+EndFunction
+
+; characters expected to bo positioned and OurBedRef set
+; "Dating Magnolia" patch may call this function, so there is a wait at end to let function run until animated scene finishes
+;
+Function MagnoliaDateSI(Actor myPlayer)
+	
+	Actor MagnoliaREF = Magnolia.GetActorRef()
+	DateBusy = true
 	bool doPlayAdultAnim = false
 	bool noPreBedAnim = true
 	bool adultOn = false
@@ -160,121 +204,218 @@ Function MagnoliaDate()
 	bool includeClothing = false
 	int scenID = 0
 	
-	;Game.FadeOutGame(True, True, 0.0, 1.0, True)
-	;Utility.Wait(0.33)
+	Utility.Wait(0.5)
+	Game.FadeOutGame(True, True, 0.0, 1.0, True)		; does not always work after teleport fade-in
+	Utility.Wait(0.2)
 	
-	if (DTSleep_AdultContentOn.GetValue() >= 2.0 && DTSConditionals.ImaPCMod)
+	if (DTSleep_AdultContentOn != None && DTSleep_AdultContentOn.GetValue() >= 2.0 && DTSConditionals != None && DTSConditionals.ImaPCMod)
 		adultOn = true
 	endIf
 	
-	SceneData.MaleRole = myPlayer
-	SceneData.FemaleRole = MagnoliaREF
-	SceneData.HasToyEquipped = false
-	SceneData.SameGender = false
-	SceneData.AnimationSet = 0
+	if (SceneData != None && DTSleep_IntimateAnimQuestP != None)
+		SceneData.MaleRole = myPlayer
+		SceneData.FemaleRole = MagnoliaREF
+		SceneData.SameGender = false
+		SceneData.PreferStandOnly = true
+		SceneData.IsUsingCreature = false
+		SceneData.MaleRoleGender = 0
+		SceneData.ToyArmor = None
+		SceneData.HasToyAvailable = false
+		SceneData.HasToyEquipped = false
+		SceneData.ToyFromContainer = false
+		SceneData.IsUsingCreature = false
+		SceneData.IsCreatureType = 0
+		SceneData.MaleRoleCompanionIndex = -1
+		SceneData.CurrentLoverScenCount = 0
+		SceneData.CompanionBribeType = 0
+		SceneData.FemaleRaceHasTail = false
+		SceneData.CompanionInPowerArmor = false
+		SceneData.SecondFemaleRole = None
+		SceneData.SecondMaleRole = None
+		SceneData.AnimationSet = 0
+	else
+		adultOn = false
+		modSafe = false
+	endIf
 	
-	if (DTSleep_SettingIntimate.GetValue() > 0.0 && DTSleep_SettingUndress.GetValue() > 0.0)
+	if ((myPlayer.GetBaseObject() as ActorBase).GetSex() == 1)
+		SceneData.SameGender = true
+		SceneData.MaleRoleGender = 1
+	endIf
 	
+	if (DTSleep_IntimateAnimQuestP != None && DTSleep_SettingIntimate != None && DTSleep_SettingIntimate.GetValue() > 0.0 && DTSleep_SettingUndress.GetValue() > 0.0)
+	
+		(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).FadeOutSec(0.5, false)		; make sure fade-to-black
+		
 		if (adultOn)
-			if (DTSConditionals.IsAAFActive && DTSConditionals.IsF4SE && DTSleep_SettingAAF.GetValue() > 0.0 && DTSConditionals.IsAtomicLustActive)
-				SceneData.AnimationSet = 5
-				SceneData.PreferStandOnly = true
-				scenID = 548
+		
+			float timeSinceLast = 10.0
+			if (IntimateTime > 0.1)
+				timeSinceLast = Utility.GetCurrentGameTime() - IntimateTime
+			endIf
+			
+			if (timeSinceLast > 0.20 && ScenePick == 50 && SceneData.MaleRoleGender == 0 && DTSConditionals.IsLeitoActive)
 				doPlayAdultAnim = true
 				
-			elseIf (DTSConditionals.IsLeitoActive && DTSleep_IsLeitoActive.GetValueInt() >= 1)
-				if (DTSConditionals.IsLeitoAAFActive == false)
-					SceneData.AnimationSet = 1
+				if (DTSConditionals.IsLeitoAAFActive)
+					SceneData.AnimationSet = 6
 					includeClothing = true
-					scenID = Utility.RandomInt(152, 153)
-					
-				elseIf (DTSleep_IsLeitoActive.GetValueInt() >= 4)
-					SceneData.AnimationSet = 1
-					includeClothing = true
-					scenID = Utility.RandomInt(152, 153)
+					scenID = 650
 				else
-					adultOn = false
+					SceneData.AnimationSet = 1
+					includeClothing = true
+					scenID = 150
+				endIf
+			elseIf (timeSinceLast > 0.33 && DTSConditionals.IsAtomicLustActive && Utility.RandomInt(1,5) > 3)
+				if (SceneData.SameGender)
+					
+					scenID = 504
+				else
+					scenID = 547
+				endIf
+				SceneData.AnimationSet = 5
+				doPlayAdultAnim = true
+				
+			elseIf (timeSinceLast > 0.50 && DTSConditionals.IsLeitoActive && DTSleep_IsLeitoActive.GetValueInt() >= 1)
+				doPlayAdultAnim = true
+				
+				if (DTSConditionals.IsLeitoAAFActive)
+					SceneData.AnimationSet = 6
+					includeClothing = true
+					if (SceneData.SameGender)
+						scenID = Utility.RandomInt(652, 653)
+					else
+						scenID = Utility.RandomInt(650, 654)
+					endIf
+					
+				else
+					SceneData.AnimationSet = 1
+					includeClothing = true
+					if (SceneData.SameGender)
+						scenID = Utility.RandomInt(152, 153)
+					else
+						scenID = Utility.RandomInt(152, 154)
+					endIf
 				endIf
 			else
 				adultOn = false
 			endIf
-		endIf
-		if (!DTSleep_IntimateUndressQuestP.IsRunning())
-			DTSleep_IntimateUndressQuestP.Start()
-		endIf
-		
-		if (adultOn)
-			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).StartForManualStop(includeClothing, MagnoliaREF, false, true, None)
-		else
-			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).StartForManualStopRespect(MagnoliaREF)
-		endIf
-		
-		MainQSceneScriptP.GoSceneViewStart(0)
-		
-		
-		if (DTSConditionals.IsPlayerCommentsActive)
-			GlobalVariable gv = DTSConditionals.ModPlayerCommentsGlobDisabled
-			if (gv && gv.GetValueInt() <= 0)
-				modSafe = false
-			endIf
-		endIf
-		
-		if (modSafe && adultOn)
 			
-			if (SceneData.AnimationSet == 1)
+			if (SceneData.AnimationSet == 1 || SceneData.AnimationSet == 6)
 			
-				if ((myPlayer.GetBaseObject() as ActorBase).GetSex() == 1)
-				
-					SceneData.SameGender = true
+				if (SceneData.SameGender)
 					Armor strapOn = (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).GetStrapOnForActor(myPlayer, true)
-					if (strapOn)
+					if (strapOn != None)
 						doPlayAdultAnim = true
 						SceneData.ToyArmor = strapOn
 						SceneData.HasToyAvailable = true
 						SceneData.HasToyEquipped = false
+					else
+						adultOn = false
 					endIf
 				else
 					doPlayAdultAnim = true
 				endIf
 			endIf
 		endIf
+		if (!DTSleep_IntimateUndressQuestP.IsRunning())
+			DTSleep_IntimateUndressQuestP.Start()
+		endIf
+		
+		if (adultOn && doPlayAdultAnim)
+			
+			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).StartForManualStop(includeClothing, MagnoliaREF, false, true, None)
+		else
+			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).StartForManualStopRespect(MagnoliaREF)
+		endIf
+		
+		if (DTSConditionals.IsPlayerCommentsActive)
+			GlobalVariable gv = DTSConditionals.ModPlayerCommentsGlobDisabled
+			if (gv != None && gv.GetValueInt() <= 0)
+				modSafe = false
+				SceneData.AnimationSet = 0
+			endIf
+		endIf
+		
+		if (adultOn && SceneData.AnimationSet == 5)
+			MainQSceneScriptP.CamHeightOffset = -24.0
+			MainQSceneScriptP.GoSceneViewStart(1)
+		else
+			MainQSceneScriptP.GoSceneViewStart(0)
+		endIf
 		
 		Utility.Wait(0.2)
 	endIf
 	
-	if (modSafe && doPlayAdultAnim && DTSConditionals.ImaPCMod)
+	MagnoliaREF.SetRestrained(false)
+	
+	if (modSafe && adultOn && doPlayAdultAnim && DTSleep_IntimateAnimQuestP != None && DTSConditionals.ImaPCMod)
 		
+		if (DTSleep_SettingAAF != None && DTSleep_SettingAAF.GetValue() >= 1.0)
+			DTSleep_SettingAAF.SetValue(-5.0)	; force off
+		endIf
 		(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlaceInBedOnFinish = false
 		
-		(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).StartForActorsAndBed(myPlayer, MagnoliaREF, HotelRexfordPlayerBed2REF, true, true)
+		(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).StartForActorsAndBed(myPlayer, MagnoliaREF, OurBedRef, true, true)
 		
 		if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlayActionIntimateSeq(scenID))
+			noPreBedAnim = false
+			IntimateTime = Utility.GetCurrentGameTime()
+			RegisterForCustomEvent((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript), "IntimateSequenceDoneEvent")
+			
+		elseIf ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlayActionDancing()) 
 			noPreBedAnim = false
 			RegisterForCustomEvent((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript), "IntimateSequenceDoneEvent")
 		else
 			Debug.Trace("[DTSleep DialogueGoodneighborScript] IAnim returned false!")
 		endIf
 		
-	elseIf (modSafe && DTSleep_SettingIntimate.GetValue() > 0.0)
+	elseIf (modSafe && DTSleep_SettingIntimate.GetValue() > 0.0 && DTSleep_IntimateAnimQuestP != None)
 		
 		(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlaceInBedOnFinish = false
 		
-		(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).StartForActorsAndBed(myPlayer, MagnoliaREF, HotelRexfordPlayerBed2REF, false, true)
+		(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).StartForActorsAndBed(myPlayer, MagnoliaREF, OurBedRef, true, true)
 		
-		if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlayActionDancing())
+		; original markers too close too wall so dance instead
+		if (DoPimaryDateFinish && DTSleep_HotelRexPlayerMarkerREF == None)
+			if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlayActionDancing()) 
+				noPreBedAnim = false
+				RegisterForCustomEvent((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript), "IntimateSequenceDoneEvent")
+			endIf
+		elseIf ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlayActionHugs()) 
 			noPreBedAnim = false
 			RegisterForCustomEvent((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript), "IntimateSequenceDoneEvent")
 		endIf
 	endIf
 	
+	ScenePick = 0
+	
 	if (noPreBedAnim)
-		(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).StopAll(false)
+		if (DTSleep_IntimateUndressQuestP != None)
+			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).StopAll(false)
+		endIf
+		if (DTSleep_SettingAAF != None && DTSleep_SettingAAF.GetValue() == -5.0)
+			DTSleep_SettingAAF.SetValue(1.0)	; turn back on
+		endIf
 		Utility.Wait(0.4)
-		MagnoliaDateFinish(myPlayer)
+		DateBusy = false
+		if (DoPimaryDateFinish)
+			MagnoliaDateFinish(myPlayer)
+		else
+			Game.FadeOutGame(False, True, 0.0, 3.0)
+		endIf
+	else
+		Game.FadeOutGame(False, True, 0.0, 3.0)
 	endIf
 	
-	; remainder moved to MagnoliaDateFinish
-	; ======  end DTSleep  =======
+	if (!DoPimaryDateFinish)
+		; wait for anim event-done
+		int i = 0
+		while (i < 120 && DateBusy)
+			Utility.Wait(1.0)
+			i += 1
+		endWhile
+	endIf
 		
 EndFunction
 
@@ -296,4 +437,5 @@ Function MagnoliaDateFinish(Actor myPlayer)
 	myLayer.EnablePlayerControls()
 	myLayer.Delete()
 	myLayer = None
+	DoPimaryDateFinish = false
 EndFunction

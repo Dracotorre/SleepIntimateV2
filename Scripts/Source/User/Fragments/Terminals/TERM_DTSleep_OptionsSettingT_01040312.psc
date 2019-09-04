@@ -377,6 +377,14 @@ pDTSleep_SettingDogRestrain.SetValue(0.0)
 EndFunction
 ;END FRAGMENT
 
+;BEGIN FRAGMENT Fragment_Terminal_43
+Function Fragment_Terminal_43(ObjectReference akTerminalRef)
+;BEGIN CODE
+(pDTSleep_MainQuest as DTSleep_MainQuestScript).ResetHelpTips()
+;END CODE
+EndFunction
+;END FRAGMENT
+
 ;BEGIN FRAGMENT Fragment_Terminal_44
 Function Fragment_Terminal_44(ObjectReference akTerminalRef)
 ;BEGIN CODE

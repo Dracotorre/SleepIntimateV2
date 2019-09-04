@@ -30,6 +30,15 @@ EndFunction
  
 ; *************** Functions ************
 
+int Function BaseIDForFullSequenceID(int seqID) global
+	if (seqID >= 100)
+		int hundredNum = Math.Floor(seqID as float / 100.0)
+		hundredNum = hundredNum * 100
+		seqID -= hundredNum
+	endIf
+	return seqID
+endFunction
+
 Form[] Function CopyFormArray(Form[] formArray) global
 
 	Form[] resultArray = new Form[0]

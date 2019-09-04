@@ -23,9 +23,11 @@ Quest property RobotMQ105Quest = None auto conditional hidden
 Actor property RobotAdaRef = None auto conditional hidden
 
 ; mod compatibility 
+bool property HasModReqNormSleep = false auto conditional hidden
 Actor property NoraSpouseRef = None auto conditional hidden
 Actor property DualSurvivorsNateRef = None auto conditional hidden
 Actor property InsaneIvyRef = None auto conditional hidden
+Location property DepravityHotelRexLoc = None auto conditional hidden
 bool property IsSMMActive = false auto conditional hidden
 bool property IsAWKCRActive = false auto conditional hidden
 bool property IsAFTActive = false auto conditional hidden
@@ -44,6 +46,7 @@ bool property IsAAFActive = false auto conditional hidden
 bool property IsEFFActive = false auto conditional hidden
 bool property IsAtomicLustActive = false auto conditional hidden
 float property AtomicLustVers = 0.0 auto conditional hidden
+bool property IsMutatedLustActive = false auto conditional hidden
 bool property IsHoloboyActive = false auto conditional hidden
 bool property IsGrayAnimsActive = false auto conditional hidden
 bool property IsSavageCabbageActive = false auto conditional hidden
@@ -74,6 +77,7 @@ bool property IsLetsDanceActive = false auto conditional hidden
 bool property IsFusionCityActive = false auto conditional hidden
 bool property IsPlayerCommentsActive = false auto conditional hidden
 bool property IsSnapBedsActive = false auto conditional hidden
+bool property IsScavversBackPackActive = false auto conditional hidden
 int property HasGenderSwappedPerks = -1 auto conditional hidden
 GlobalVariable property ModPlayerCommentsGlobDisabled = None auto conditional hidden
 GlobalVariable property ModPlayerCommentsGlobMisc = None auto conditional hidden

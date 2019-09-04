@@ -47,6 +47,13 @@ int Function CheckLocation(Location aLoc)
 	
 	int index = DTSleep_IntimateTourLocList.Find(aLoc as Form)
 	
+	if (index < 0 && (DTSConditionals as DTSleep_Conditionals).DepravityHotelRexLoc != None)
+		if (aLoc == (DTSConditionals as DTSleep_Conditionals).DepravityHotelRexLoc)
+			; Hotel Rexford is stage 80
+			index = 7
+		endIf
+	endIf
+	
 	if (index >= 0)
 		
 		if (index < 13)

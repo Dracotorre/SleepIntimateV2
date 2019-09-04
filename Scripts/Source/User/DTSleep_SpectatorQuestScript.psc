@@ -320,7 +320,7 @@ Function ProcessReactionForActor(Actor actorRef)
 	
 	Idle rIdle = IdleShrug
 	
-	if (actorRef.WornHasKeyword(ArmorTypePowerKY))
+	if (actorRef.WornHasKeyword(ArmorTypePowerKY) || actorRef.GetSitState() >= 2)
 		return
 	endIf
 	

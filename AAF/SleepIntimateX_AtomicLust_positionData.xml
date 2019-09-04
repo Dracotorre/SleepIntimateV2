@@ -13,6 +13,9 @@
 <position id="DTSIX_509_S1" animation="Atomic Reversed Cowgirl (Vault Bed)" isHidden="true"/>
 <position id="DTSIX_509_S2" animation="Atomic Reversed Cowgirl (Vault Bed) Orgasm" isHidden="true"/>
 
+<position id="DTSIX_510_S1" animation="Atomic Spork" isHidden="true"/>
+<position id="DTSIX_510_S2" animation="Atomic Spork II" isHidden="true"/>
+
 <position id="DTSIX_548_S1" animation="Atomic Embrace" isHidden="true"/>
 
 <position id="DTSIX_549_S1" animation="Atomic Embrace" isHidden="true"/>
@@ -38,6 +41,12 @@
 
 <position id="DTSIXFMM_552_S1" animation="Atomic Threesome 2" isHidden="true"/>
 
+
+<!--- chair/PA furniture -->
+
+<position id="DTSIX_536_S1" animation="Atomic Cunnilingus PA" isHidden="true"/>
+<position id="DTSIX_537_S1" animation="Atomic Cunnilingus Alt PA" isHidden="true"/>
+
 <position id="DTSIX_538_S1" animation="Atomic Blowjob (Player House Chair)" isHidden="true"/>
 
 
@@ -50,3 +59,4 @@
 <position id="DTSIXF_540_S2" animation="Atomic Fingering 2 (Sitting)" isHidden="true"/>
 
 <position id="DTSIXF_541_S1" animation="Atomic Fingering (Laying)" isHidden="true"/>
+

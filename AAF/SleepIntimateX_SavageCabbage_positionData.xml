@@ -117,10 +117,10 @@
 
 <position id="DTSIX_739_S1" animation="FM-LapDance01-01LapDance" isHidden="true"/>
 
-<position id="DTSIXFF_739_S1" animation="SIXFF_SC_FF-LapDance01-01LapDance" isHidden="true"/>
+<position id="DTSIXFF_739_S1" animation="FM-LapDance01-01LapDance" isHidden="true"/>
 
-<position id="DTSIXFF_740_S1" animation="SIXFF_SC_FF-Dance02-01TwerkStart" isHidden="true"//>
-<position id="DTSIXFF_740_S2" animation="SIXFF_SC_FF-Dance03-01TwerkStart" isHidden="true"//>
+<position id="DTSIXFF_740_S1" animation="F-Dance02-01TwerkStart" isHidden="true"/>
+<position id="DTSIXFF_740_S2" animation="F-Dance03-01TwerkStart" isHidden="true"/>
 
 
 <position id="DTSIXFMM_704_S1" animation="FMM-Bed01-01Handjob-Doggy" isHidden="true"/>

@@ -208,10 +208,8 @@ Event AAF:AAF_API.OnAnimationStart(AAF:AAF_API akSender, Var[] akArgs)
 			Game.FadeOutGame(false, true, 0.0, 1.1)
 		endIf
 		if (SceneData.AnimationSet == 5)
-			if (SequenceID == 547)
-				PlayAtomicLustContinuedSequence(547)
-			elseIf (SequenceID == 546)
-				PlayAtomicLustContinuedSequence(546)
+			if (SequenceID >= 546 && SequenceID <= 547)
+				PlayAtomicLustContinuedSequence(SequenceID)
 			else
 				Utility.Wait(30.1)
 				MySceneStatus = 2
@@ -462,10 +460,8 @@ bool Function PlaySequence()
 			;endIf
 		
 			if (SequenceID < 600)
-				if (SequenceID == 547)
-					PlayAtomicLustStages(547)
-				elseIf (SequenceID == 546)
-					PlayAtomicLustStages(546)
+				if (SequenceID >= 546 && SequenceID <= 547)
+					PlayAtomicLustStages(SequenceID)
 					
 				elseIf (SequenceID == 549)
 					AStageItem[] seqArr = CreateSeqArrayForID(SequenceID, 4, None, false)
@@ -595,7 +591,7 @@ Function StopAnimationSequence(bool canceledScene = false, bool startedOK = true
 	endIf
 	
 	; this must go before marking scene done (5)
-	if (SceneData.AnimationSet > 5)
+	if (SceneData.AnimationSet >= 5)
 		if (SceneData.MaleRole != None)
 			if ((SceneData.MaleRole.GetLeveledActorBase() as ActorBase).GetSex() == 0)
 				RemoveLeitoGuns(SceneData.MaleRole)
@@ -648,6 +644,9 @@ Function PlaySingleStageScene(string positionStr, float duration, ObjectReferenc
 	if (SceneData.SecondMaleRole != None)
 		actors.Add(SceneData.SecondMaleRole)
 	endIf
+	if (SceneData.SecondFemaleRole != None)
+		actors.Add(SceneData.SecondFemaleRole)
+	endIf
 	if (SceneData.CompanionInPowerArmor)
 		actors = New Actor [1]
 		actors[0] = MainActor
@@ -694,6 +693,8 @@ Function PlayAtomicScene()
 		fullID = true
 	elseIf (SequenceID >= 550 && SequenceID <= 552)
 		fullID = true
+	elseIf (SequenceID >= 560)
+		fullID = true
 	endIf
 	String positionStr = CreateSeqPositionStr(SequenceID, 1, fullID)
 	
@@ -711,7 +712,7 @@ Function PlayAtomicScene()
 			armGun == GetLeitoGun(1)
 		endIf
 	endIf
-	if (SequenceID >= 505 && SequenceID <= 509)
+	if (SequenceID >= 505 && SequenceID <= 510)
 		armGun = GetLeitoGun(0)
 	elseIf (SequenceID >= 540 && SequenceID <= 541)
 		objRef = MainActor
@@ -722,6 +723,12 @@ Function PlayAtomicScene()
 		timer = 18.0
 	elseIf (SequenceID >= 550 && SequenceID <= 552)
 		armGun = GetLeitoGun(0)
+	elseIf (SequenceID >= 560)
+		if (SequenceID == 563)
+			armGun = GetLeitoGun(1)
+		else
+			armGun = GetLeitoGun(0)
+		endIf
 	endIf
 
 	PlaySingleStageScene(positionStr, timer, objRef, armGun)
@@ -843,7 +850,7 @@ endFunction
 ; 0 = normal, 1 = up, 2 = down
 Armor Function GetArmorNudeGun(int kind)
 	; AAF morphs should only need forward??
-	Debug.Trace("[DTSleep_PlayAAF] GetArmorNudeGun start kind = " + kind)
+	;Debug.Trace("[DTSleep_PlayAAF] GetArmorNudeGun start kind = " + kind)
 	Armor gun = None
 	if (kind < 0)
 		return None
@@ -851,8 +858,12 @@ Armor Function GetArmorNudeGun(int kind)
 	if (!Debug.GetPlatformName() as bool)
 		return None
 	endIf
-	; only allow Atomic Lust
-	if (SequenceID < 503 || SequenceID > 540)
+	; only allow Atomic Lust and Leito
+	if (SequenceID < 503)
+		return None
+	elseIf (SequenceID >= 700 && SequenceID < 800)
+		return None
+	elseIf (SequenceID >= 900)
 		return None
 	endIf
 	
@@ -862,6 +873,9 @@ Armor Function GetArmorNudeGun(int kind)
 	if (SceneData.IsCreatureType == 1)
 		evbVal = 2
 		bt2Val = -1
+	elseIf (SceneData.AnimationSet == 8)		; BodyTalk2 incompatible
+		bt2Val = -1
+		evbVal = 2
 	elseIf (DTSConditionals.IsUniquePlayerMaleActive && evbVal > 0 && SceneData.MaleRole == PlayerRef)
 		bt2Val = -1
 	endIf
@@ -876,7 +890,7 @@ Armor Function GetArmorNudeGun(int kind)
 		kind = 0
 	endIf
 	
-	Debug.Trace("[DTSleep_PlayAAF] GetArmorNudeGun kind = " + kind)
+	;Debug.Trace("[DTSleep_PlayAAF] GetArmorNudeGun kind = " + kind)
 	
 	if ((evbVal > 0 || bt2Val > 0) && SceneData.IsCreatureType != 2)
 	
@@ -1018,7 +1032,12 @@ Function PlaySequenceSCStages()
 		endIf
 	endIf
 	
-	PlayPairSequenceLists(SceneData.MaleRole, SceneData.FemaleRole, SceneData.SecondMaleRole, seqArr, true)
+	Actor otherActor = SceneData.SecondMaleRole
+	if (SceneData.SecondFemaleRole != None)
+		otherActor = SceneData.SecondFemaleRole
+	endIf
+	
+	PlayPairSequenceLists(SceneData.MaleRole, SceneData.FemaleRole, otherActor, seqArr, true)
 endFunction
 
 Function PlaySequenceGrayStages()
