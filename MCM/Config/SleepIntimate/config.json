@@ -174,6 +174,18 @@
 			}
 		},
 		{
+			"id": "MCM_SettingIncludeExtSlots:Rest",
+			"text": "Undress Extended Slots",
+			"type": "dropdown",
+			"help": "Set to Never to ignore armor body slots 55-61, or set to Situation to includes these slots unless an exception for the situation",
+			"valueOptions": {
+				"options": ["Never", "Situational"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|14BAEA",
+				"propertyName": "DTSleep_SettingIncludeExtSlots"
+			}
+		},
+		{
 			"id": "MCM_SettingSave:Rest",
 			"text": "Save-on-exit Bed",
 			"type": "dropdown",

@@ -74,6 +74,7 @@ GlobalVariable property DTSleep_SettingPackOnGround auto const
 GlobalVariable property DTSleep_DebugMode auto const
 GlobalVariable property DTSleep_IUndressStat auto
 GlobalVariable property DTSleep_SettingAltFemBody auto	; added v2.12 for alternate female body
+GlobalVariable property DTSleep_SettingIncludeExtSlots auto
 EndGroup
 
 Group B_Lists
@@ -344,13 +345,13 @@ endFunction
 bool Function IsSummerSeason()
 	int month = GameMonth.GetValueInt()
 	if (month == 6)
-		if (GameDay.GetValueInt() > 16)
+		if (GameDay.GetValueInt() > 23)
 			return true
 		endIf
 	elseIf (month >= 7 && month <= 8)
 		return true
 	elseIf (month == 9)
-		if (GameDay.GetValueInt() < 23)
+		if (GameDay.GetValueInt() < 16)
 			return true
 		endIf
 	endIf
@@ -362,13 +363,13 @@ bool Function IsWinterSeason()
 	; winter outdoors check
 	int month = GameMonth.GetValueInt()
 	if (month == 11)
-		if (GameDay.GetValueInt() > 11)
+		if (GameDay.GetValueInt() > 23)
 			return true
 		endIf
 	elseIf (month == 12 || month <= 2)
 		return true
 	elseIf (month == 3)
-		if (GameDay.GetValueInt() < 14)
+		if (GameDay.GetValueInt() < 11)
 			return true
 		endIf
 	endIf
@@ -596,26 +597,12 @@ bool Function StartForBedWake(bool includeClothing, ObjectReference mainBedRef, 
 				endIf
 			endIf
 			
-			if (DTSleep_PlayerUndressed.GetValue() == -2.0)
-			
-				; never started undress.... ??
-				;Debug.Trace(myScriptName + " player never started undress... force now")
-				if (includeClothing)
-					CancelTimer(UndressPlayerClothingPipboyTimerID)
-					CancelTimer(UndressPlayerClothingTimerID)
-				else
-					CancelTimer(UndressPlayerNoClothingTimerID)
-				endIf
-				
-				UndressActor(PlayerRef, 1, includeClothing, false, includePipBoy)		
-			endIf
-			
 			; -- sync --
 			; wait for player undress
-			int wCount = 50
+			int wCount = 72
 			
 			while (DTSleep_PlayerUndressed.GetValue() < 1.0 && wCount > 0)
-				Utility.WaitMenuMode(0.1)
+				Utility.WaitMenuMode(0.2)
 				
 				wCount -= 1
 			endWhile
@@ -884,6 +871,8 @@ bool Function StartForManualStop(bool includeClothing, Actor companionActorRef, 
 		includeClothing = true
 		observeWinter = false
 		needInitEquipMon = true
+		ResetPlayerDressData()		; v2.16
+		
 		if (includePipBoy)
 			UndressedForType = 5
 		else
@@ -953,32 +942,12 @@ bool Function StartForManualStop(bool includeClothing, Actor companionActorRef, 
 		; Companions finished
 	endIf
 	
-	int wCount = 20
-	while (DTSleep_PlayerUndressed.GetValue() == -2.0 && wCount > 0)
-		Utility.WaitMenuMode(0.1)
-		wCount -= 1
-	endWhile
-	
-	if (DTSleep_PlayerUndressed.GetValue() == -2.0)
-	
-		; never started undress...
-		DTDebug("... never started undress for player... - start now", 2)
-		if (includePipBoy)
-			CancelTimer(UndressPlayerAllTimerID)
-		else
-			CancelTimer(UndressPlayerNoPipTimerID)
-		endIf
-		
-		UndressActor(PlayerRef, 0, includeClothing, includeExceptions, includePipBoy)
-		
-	endIf
-	
 	; --- sync ---
 	; wait for player to finish undress
-	wCount = 50
+	int wCount = 74
 	
 	while (DTSleep_PlayerUndressed.GetValue() < 1.0 && wCount > 0)
-		Utility.WaitMenuMode(0.1)
+		Utility.WaitMenuMode(0.2)
 		wCount -= 1
 	endWhile
 	;
@@ -2673,6 +2642,7 @@ Function ResetCompanionDressData()
 endFunction
 
 Function ResetPlayerDressData()
+	DTSleep_SettingIncludeExtSlots.SetValueInt(1)	; force
 	DressData.PlayerBackPackNoGOModel = false
 	DressData.PlayerHasArmorAllEquipped = false
 	DressData.PlayerHasExtraClothingEquipped = false
@@ -3289,6 +3259,9 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 				 
 	
 	if (actorRef == PlayerRef)
+	
+		DTSleep_PlayerUndressed.SetValue(-1.0)   ; flag started
+		
 		PlayerEquippedArrayUpdated = false
 		if (equipMonInitLevel >= 5)
 			; get the starting equipped list - use for faster checking of extra armors and clothing lists
@@ -3329,8 +3302,6 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 	
 	if (actorRef == PlayerRef)
 	
-		DTSleep_PlayerUndressed.SetValue(-1.0)   ; flag started
-
 		if ((DTSleep_UndressPAlias as DTSleep_EquipMonitor).StoringPlayerEquipment == false)
 		
 			(DTSleep_UndressPAlias as DTSleep_EquipMonitor).BeginStorePlayerEquipment()
@@ -4002,34 +3973,33 @@ Function UndressActorArmorExtendedSlots(Actor actorRef, bool forBed, bool includ
 	if (actorRef == PlayerRef && pipPadSlot != 25)
 		if (includeExceptions)
 			bool isStrapOn = false
-			;if (actorRef == PlayerRef)
-				if (DressData.PlayerEquippedStrapOnItem)
-					if (DTSleep_ArmorSlot55List.HasForm(DressData.PlayerEquippedStrapOnItem as Form))
-						isStrapOn = true
-					endIf
+			bool isException = false
+
+			if (DressData.PlayerEquippedStrapOnItem)
+				if (DTSleep_ArmorSlot55List.HasForm(DressData.PlayerEquippedStrapOnItem as Form))
+					isStrapOn = true
 				endIf
-			;elseIf (actorRef == CompanionRef && DressData.CompanionGender == 1 && DressData.CompanionDressValid && DressData.CompanionLastEquippedStrapOnItem)
-			;	isStrapOn = true
-			;elseIf (IsActorWearingSlot55Exceptions(actorRef))
-			;	if (actorRef == CompanionRef && DressData.CompanionEquippedStrapOnItem != None)
-			;		isStrapOn = true
-			;	endIf
-			;endIf
+			elseIf (IsActorWearingSlot55Exceptions(actorRef))		;v2.16 exception list
+				isException = true
+			endIf
 			
-			if (!isStrapOn)
+			if (!isStrapOn && !isException && DTSleep_SettingIncludeExtSlots.GetValue() > 0.0)
 				actorRef.UnequipItemSlot(25)
 			endIf
 		elseIf (DTSleep_EquipMonInit.GetValue() < 5.0 || !IsActorWearingSlot55Exceptions(actorRef))
-			actorRef.UnequipItemSlot(25)
+			if (DTSleep_SettingIncludeExtSlots.GetValue() > 0.0)
+				actorRef.UnequipItemSlot(25)
+			endIf
 		endIf
+		; else ignore companion slot 55
 	endIf
 	
 	; 56 - Atom Girl Panty, Ranger Bandoleer, TeddyBear BackPack, AnSBackpack, Butterfly wings, AWK-Harness, AWK-Bandoleer, TheKite_MilitiaWoman Overcoat, Azar Holstered
-	if (pipPadSlot != 26 && actorRef == PlayerRef)
+	if (pipPadSlot != 26 && actorRef == PlayerRef && DTSleep_SettingIncludeExtSlots.GetValue() > 0.0)
 		actorRef.UnequipItemSlot(26)
 	endIf
 	; 57 - Atom Girl Skirt, ProvisionorBackPack, Field Scribe Backpack-full, ***AWK-Belt***, AWK-Vest, AWK-MeleeOnHip, Azar Holstered
-	if (pipPadSlot != 27 && actorRef == PlayerRef)
+	if (pipPadSlot != 27 && actorRef == PlayerRef && DTSleep_SettingIncludeExtSlots.GetValue() > 0.0)
 		actorRef.UnequipItemSlot(27)
 	endIf
 	
@@ -4044,7 +4014,9 @@ Function UndressActorArmorExtendedSlots(Actor actorRef, bool forBed, bool includ
 				placeAtFeet = true
 			endIf
 
-			UndressActorArmorSlot58(actorRef, placeAtFeet)
+			if (DTSleep_SettingIncludeExtSlots.GetValue() > 0.0)
+				UndressActorArmorSlot58(actorRef, placeAtFeet)
+			endIf
 		endIf
 	endIf
 	
@@ -4054,7 +4026,9 @@ Function UndressActorArmorExtendedSlots(Actor actorRef, bool forBed, bool includ
 	if (pipPadSlot != 31)
 		if (includeExceptions || hasSleepWearMainOutfit || !IsActorWearingSlot61Exceptions(actorRef))
 			
-			UndressActorArmorSlotFX(actorRef, includeExceptions)
+			if (DTSleep_SettingIncludeExtSlots.GetValue() > 0.0)
+				UndressActorArmorSlotFX(actorRef, includeExceptions)
+			endIf
 		endIf
 	endIf
 	
@@ -4393,11 +4367,11 @@ Function UndressActorCompanionDressNudeSuit(Actor actorRef, bool hasSleepMainOut
 	endIf
 	Utility.WaitMenuMode(0.10)
 	
-	if (DressData.CompanionNudeSuit == None && DTSleep_SettingAltFemBody.GetValue() >= 1.0 && AltFemBodyEnabled && DTSleep_AdultContentOn.GetValue() >= 2.0 && GetGenderForActor(actorRef) == 1)
+	if (actorRef == CompanionRef && DressData.CompanionNudeSuit == None && DTSleep_SettingAltFemBody.GetValue() >= 1.0 && AltFemBodyEnabled && DTSleep_AdultContentOn.GetValue() >= 2.0 && GetGenderForActor(actorRef) == 1)
 		
 		actorRef.EquipItem(DTSleep_AltFemNudeBody, true, true)
 		
-	elseIf (DressData.CompanionRequiresNudeSuit)
+	elseIf (actorRef == CompanionRef && DressData.CompanionRequiresNudeSuit)
 	
 		; prevent actor from bumping nude-suit (EquipItem true on 1st parameter)
 		; sleep clothing may not bump nude-suits - check to remove before equip sleepwear

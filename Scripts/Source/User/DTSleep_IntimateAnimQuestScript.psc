@@ -17,18 +17,19 @@ ScriptName DTSleep_IntimateAnimQuestScript extends Quest
 ;
 ;
 ; sequence IDs
-; <90 - generic game idles
-;  90 -  99 - hugs/kisses included in Sleep Intimate; idles provided by TheRealRufgt
-; 100 - 149 - Leito bed sequences 
-; 150 - 199 - Leito standing sequences
-; 200 - 249 - Crazy gun bed idles
-; 250 - 299 - Crazy gun stand idles
-; 300 - 499 - reserved
-; 500 - 599	- "Atomic Lust" AAF or AAC
-; 600 - 599 - Leito v2 AAF or AAC
-; 700 - 799 - SavageCabbage AAF or AAC
-; 800 - 899 - ZaZout4 AAF or AAC
-; 
+;  <90 - generic game idles
+;   90 -  99 - hugs/kisses included in Sleep Intimate; idles provided by TheRealRufgt
+;  100 - 149 - Leito bed sequences 
+;  150 - 199 - Leito standing sequences
+;  200 - 249 - Crazy gun bed idles
+;  250 - 299 - Crazy gun stand idles
+;  300 - 499 - reserved
+;  500 - 599 - "Atomic Lust" and "Mutated lust" AAF or AAC
+;  600 - 599 - Leito v2 AAF or AAC
+;  700 - 799 - SavageCabbage AAF or AAC
+;  800 - 899 - ZaZout4 AAF or AAC
+;  900 - 999 - Graymod
+;
 ; positioning -
 ; NPC positioning works best if near target and free of obstructions
 ;
@@ -426,13 +427,23 @@ int Function GetFurnitureSupportExtraActorForPacks(ObjectReference aFurnObjRef, 
 					if ((DTSConditionals as DTSleep_Conditionals).AtomicLustVers >= 2.43)
 						return 2
 					elseIf ((DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive)
+						;if ((DTSConditionals as DTSleep_Conditionals).IsBP70Active)
+						;	return 2
+						;endIf
 						return 0
+					;elseIf ((DTSConditionals as DTSleep_Conditionals).IsBP70Active)
+					;	return 1
 					endIf
 					
 				elseIf (DTSleep_CommonF.IsIntegerInArray(5, packs))
 					return 2
 				elseIf (DTSleep_CommonF.IsIntegerInArray(7, packs))
+					if (DTSleep_CommonF.IsIntegerInArray(10, packs))
+						return 2
+					endIf
 					return 0
+				elseIf (DTSleep_CommonF.IsIntegerInArray(10, packs))
+					return 1
 				endIf
 			endIf
 		elseIf (aFurnObjRef.HasKeyword(AnimFurnCouchKY))
@@ -1080,7 +1091,8 @@ Function FadeAndPlay(int id, bool mainActorIsMaleRole = true)
 	;endIf
 	
 	; check clone and AAF setting 
-	if (id >= 500 && IsAAFEnabled())
+	if (id >= 500 && id < 1000 && IsAAFEnabled())
+		; packs 10 and above no support for AAF
 		playAAF = true
 	
 	elseIf (SceneOkayToClonePlayer(id))
@@ -1093,7 +1105,7 @@ Function FadeAndPlay(int id, bool mainActorIsMaleRole = true)
 	
 	if (SleepBedRef != None)
 	
-		if (id < 1000)
+		if (id < 1200)
 			; position markers and actors on bed
 			if (id >= 546 && id < 550 && !FadeEnable && playAAF)
 				seqGoodToGo = true
@@ -1468,7 +1480,7 @@ float Function GetTimeForPlayID(int id)
 	float waitSecX2 = SceneData.WaitSecs + SceneData.WaitSecs
 	float waitSecX4 = waitSecX2 + waitSecX2
 	
-	if (id == 1001)
+	if (id == 6001)
 		return 169.27
 	endIf
 
@@ -1526,13 +1538,16 @@ float Function GetTimeForPlayID(int id)
 			return 32.0
 		endIf
 		
-		int endurance = (MainActorRef.GetValue(EnduranceAV) as int) ; no clothing bonus since naked
+		int endurance = 2
+		if (MainActorRef != None)
+			endurance = (MainActorRef.GetValue(EnduranceAV) as int) ; no clothing bonus since naked
+		endIf
 			
 		if (endurance >= 9 && id != 547 && id != 546)
 			;int enduRand = Utility.RandomInt(5, endurance)
 			int enduRand = (DT_RandomQuestP as DT_RandomQuestScript).GetNextInRangePublic(5, endurance)
 			
-			if ((id < 200 || id >= 600) && endurance >= 13 && enduRand > 10)
+			if ((id < 200 || id >= 600) && id < 700 && endurance >= 13 && enduRand > 10)
 				DTSleep_IntimateSceneLen.SetValueInt(4)
 				baseSec += (waitSecX4 + waitSecX2)
 				
@@ -2294,7 +2309,7 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 			; this overall attempt -- if placing actors near bed fails then try on bed
 			while (attemptCount > 0)
 			
-				if (id < 1000)
+				if (id < 1200)
 					
 					if (!mainActorIsMaleRole && IsSleepingBag(SleepBedRef))
 						onFloorOK = true
@@ -2307,6 +2322,8 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 						; AAF - do not move player character - move other character or mainNode
 						if (MainActorPositionByCaller)
 							if (id > 505 && id < 700)
+								onFloorOK = true
+							elseIf (id >= 1000)
 								onFloorOK = true
 							endIf
 							
@@ -2767,6 +2784,8 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 								if (isFloorBed)
 									zOffset = 6.0
 									placeOnBedSimple = true
+								;else
+								;	forceMainActorPosition = true ; force spot
 								endIf
 							endIf
 						elseIf (id >= 770 && id < 777)
@@ -2785,7 +2804,8 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 							
 							placeOnBedSimple = true
 							markerIsBed = true
-						elseIf (id >= 900)
+							
+						elseIf (id >= 900 && id < 1000)
 							placeOnBedSimple = true
 							zOffset = PositionMarkerOnBedZAdjustForSceneID(id)
 							if (id == 903)
@@ -2795,6 +2815,18 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 								markerIsBed = true
 								yOffset = 0.0
 							endIf
+						;elseIf (id >= 1000)
+						;	
+						;	if (id < 1050 && !MainActorPositionByCaller)
+						;		placeOnBedSimple = true
+						;		if (id == 1040)
+						;			markerIsBed = true
+						;		else
+						;			yOffset = -42.0
+						;		endIf
+						;	elseIf (id >= 1050 && id <= 1051)
+						;		forceMainActorPosition = true
+						;	endIf
 						endIf
 						
 						if (placeOnBedSimple)
@@ -2985,6 +3017,7 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 							endIf
 							
 							if (id >= 500 && mainNodeOnBed)
+								
 								; AAF and AAC moves so precision not necessary
 								seqGoodToGo = true
 								attemptCount = 0
@@ -4105,7 +4138,7 @@ endFunction
 
 bool Function SceneIDIsGroupPlay(int sid)
 	
-	if (sid >= 700)
+	if (sid >= 700 && sid < 800)
 		if (sid == 704 || sid == 706 || sid == 707 || sid == 735 || sid == 737 || sid == 751 || sid == 758)
 			return true
 		endIf
@@ -4285,6 +4318,8 @@ bool Function SceneIDAtPlayerPosition(int sid)
 	elseIf (sid >= 760 && sid <= 764)
 		return true
 	elseIf (sid >= 770 && sid <= 773)
+		return true
+	elseIf (sid >= 1050 && sid < 1060)
 		return true
 	endIf
 

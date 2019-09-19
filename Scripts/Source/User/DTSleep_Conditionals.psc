@@ -46,6 +46,7 @@ bool property IsAAFActive = false auto conditional hidden
 bool property IsEFFActive = false auto conditional hidden
 bool property IsAtomicLustActive = false auto conditional hidden
 float property AtomicLustVers = 0.0 auto conditional hidden
+bool property IsBP70Active = false auto conditional hidden
 bool property IsMutatedLustActive = false auto conditional hidden
 bool property IsHoloboyActive = false auto conditional hidden
 bool property IsGrayAnimsActive = false auto conditional hidden

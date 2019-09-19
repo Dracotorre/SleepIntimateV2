@@ -670,7 +670,7 @@ Function PlayAnimAtStage(DTAACSceneStageStruct stage, Actor mActor, Actor fActor
 			PlaySingleStage(mActor, fActor, oActor, a2, a1, a3, waitSecs)
 			
 		else
-			Debug.Trace("[DTSleep_PlayAAC] missing idles for stage " + stage.StageNum + " formIDs: (" + stage.MAnimFormID + "," + stage.FAnimFormID + " for plugin " + stage.PluginName)
+			Debug.Trace("[DTSleep_PlayAAC] missing idles for stage " + stage.StageNum + " formIDs: (" + stage.MAnimFormID + "," + stage.FAnimFormID + ") for plugin " + stage.PluginName)
 		endIf
 	else
 		Debug.Trace("[DTSleep_PlayAAC] nothing to play for stage " + stage)

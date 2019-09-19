@@ -229,8 +229,9 @@ endFunction
 Function StopAllCancel()
 	
 	if (!IsDone)
+		;Debug.Trace("[DTSleep_HealthRec] StopAllCancel HourCount = " + HourCount)
 		IsDone = true
-		if (HourCount >= 6)
+		if (HourCount >= 5)
 			if (HourCount >= 7)
 				HandleStop(true, true)		;v2.13 allow full recover for 7+ hours
 			else
@@ -311,10 +312,11 @@ float Function AdvanceTime(float hourToNext = 0.33330) ;float hourToNext = 0.250
 endFunction
 
 ; player might have skipped time! check to make sure and adjust as needed
-; returns true if still in game-time
+; returns number of hours inremented or zero for error--out of game-time --- v2.16: changed from bool to int to handle skip-time
 ;
-bool Function CheckGameHourIncrement()
-
+int Function CheckGameHourIncrement()
+	int result = 1
+	
 	if (HourCount < 0)
 		InitHourCount()
 		int napOnly = DTSleep_SettingNapOnly.GetValueInt()
@@ -341,7 +343,7 @@ bool Function CheckGameHourIncrement()
 	float currentGameTime = Utility.GetCurrentGameTime()
 	float hourDiff = GetHoursDifference(currentGameTime, LastGameTimeHourUpdate)
 	
-	if (hourDiff > 1.5)
+	if (hourDiff >= 2.0)			 
 		
 		if (currentGameTime < LastGameTimeHourUpdate)
 			; so we went backwards?
@@ -349,18 +351,21 @@ bool Function CheckGameHourIncrement()
 			if (HourCount < 1)
 				HourCount = 1
 			endIf
+			result = 0
 			Debug.Trace("[DTSleep_HealthRec] time went backwards by " + hourDiff + " hours!!")
 		else
-			HourCount += (hourDiff as int)
-			Debug.Trace("[DTSleep_HealthRec] time skipped ahead by " + hourDiff + " hours.")
+			result = Math.Floor(hourDiff)			; v2.16 - return increment
+			HourCount += (result - 1)				; already incremented 1
+			
+			if (DTSleep_DebugMode.GetValueInt() >= 1)
+				Debug.Trace("[DTSleep_HealthRec] time skipped ahead by " + hourDiff + " hours-- set HourCount = " + HourCount)
+			endIf
 		endIf
-		
-		return false
 	endIf
 	
 	LastGameTimeHourUpdate = currentGameTime
 
-	return true
+	return result
 	
 endFunction
 
@@ -388,30 +393,36 @@ Function CheckTimeScale()
 	; v1.61 - no scale if player over-encumbered
 	if (napSpeed >= 2 && !PlayerRef.IsOverEncumbered() && HourCount <= 4 && DTSleep_PlayerUsingBed.GetValue() >= 1.0)
 
-		if (napSpeed == 3)
-			int curVal = TimeScale.GetValueInt()			; get current - may have changed since original recorded
-			if (curVal < 20)
-				; speed up for players using longer hours so final hour reduced to 3 minutes real-time
-				IncreaseTimeScale(20)
-			endIf
-		elseIf (napSpeed == 2)
-			; TimeScale adjust
-			int curVal = TimeScale.GetValueInt()			; get current - may have changed since init
-			
-			if (curVal < TimeScaleSpeedVal)
-				int timeScaleVal = TimeScaleSpeedVal
-				int timeScaleSettingVal = DTSleep_SettingFastTime.GetValueInt()
-				
-				if (timeScaleSettingVal > 0)
-					if (timeScaleSettingVal == 1)
-						timeScaleVal = 50
-					elseIf (timeScaleSettingVal >= 2)
-						; risky? -- game-hour = real-time minute
-						timeScaleVal = 60
-					endIf
+		float curTime = Utility.GetCurrentGameTime()
+		float hoursSinceStart = GetHoursDifference(RestStartedTime, curTime)
+		if (hoursSinceStart < 1.50)				; v2.16 - prevent time-scale change if skipped time
+			if (napSpeed == 3)
+				int curVal = TimeScale.GetValueInt()			; get current - may have changed since original recorded
+				if (curVal < 20)
+					; speed up for players using longer hours so final hour reduced to 3 minutes real-time
+					IncreaseTimeScale(20)
 				endIf
-				IncreaseTimeScale(timeScaleVal)
+			elseIf (napSpeed == 2)
+				; TimeScale adjust
+				int curVal = TimeScale.GetValueInt()			; get current - may have changed since init
+				
+				if (curVal < TimeScaleSpeedVal)
+					int timeScaleVal = TimeScaleSpeedVal
+					int timeScaleSettingVal = DTSleep_SettingFastTime.GetValueInt()
+					
+					if (timeScaleSettingVal > 0)
+						if (timeScaleSettingVal == 1)
+							timeScaleVal = 50
+						elseIf (timeScaleSettingVal >= 2)
+							; risky? -- game-hour = real-time minute
+							timeScaleVal = 60
+						endIf
+					endIf
+					IncreaseTimeScale(timeScaleVal)
+				endIf
 			endIf
+		elseIf (DTSleep_DebugMode.GetValue() >= 1.0)
+			Debug.Trace("[DTSleep_HealthRec] not adjusting time-scale due to skipped hours " + hoursSinceStart)
 		endIf
 	endIf
 		
@@ -451,32 +462,38 @@ Function InitHourCount(bool resetHours = false)
 	HourCount = 0
 	
 	int lastSleepHours = DTSleep_HRLastSleepHourCount.GetValueInt()
+	float curTime = Utility.GetCurrentGameTime()
 	
-	if (DTSleep_SettingNapOnly.GetValue() >= 1.0 && lastSleepHours >= 2)
-		float hoursSince = GetHoursDifference(DTSleep_HRLastSleepTime.GetValue(), LastGameTimeHourUpdate)
-		int upperLim = 5
-		
-		if (hoursSince < 2.5)
-			if (resetHours)
-				HourCount = lastSleepHours
+	if (curTime > RestStartedTime)
+		if (DTSleep_SettingNapOnly.GetValue() >= 1.0 && lastSleepHours >= 2)
+			float hoursSince = GetHoursDifference(DTSleep_HRLastSleepTime.GetValue(), LastGameTimeHourUpdate)
+			int upperLim = 5
+			
+			if (hoursSince < 2.5)
+				if (resetHours)
+					HourCount = lastSleepHours
+					
+				elseIf (lastSleepHours >= upperLim)
+					HourCount = upperLim - 1
+					GoodSleep = false
+				else
+					HourCount = lastSleepHours - 1
+				endIf
 				
-			elseIf (lastSleepHours >= upperLim)
-				HourCount = upperLim - 1
-				GoodSleep = false
-			else
-				HourCount = lastSleepHours - 1
+				if (!GoodSleep && HourCount >= PoorSleepHourLimit)
+					PoorSleepHourLimit = HourCount + 1
+				endIf
+				
+				if (DTSleep_SettingTestMode.GetValueInt() > 0 && DTSleep_DebugMode.GetValue() >= 2.0)
+					Debug.Trace("[DTSleep_HealthRec] resume-sleep init setting HourCount " + HourCount)
+				endIf
+			elseIf (hoursSince < 8.0 && lastSleepHours >= 5)
+				HourCount = 1
 			endIf
-			
-			if (!GoodSleep && HourCount >= PoorSleepHourLimit)
-				PoorSleepHourLimit = HourCount + 1
-			endIf
-			
-			if (DTSleep_SettingTestMode.GetValueInt() > 0 && DTSleep_DebugMode.GetValue() >= 2.0)
-				Debug.Trace("[DTSleep_HealthRec] resume-sleep init setting HourCount " + HourCount)
-			endIf
-		elseIf (hoursSince < 8.0 && lastSleepHours >= 5)
-			HourCount = 1
 		endIf
+		
+	elseIf (curTime < RestStartedTime)
+		Debug.Trace("[DTSleep_HealthRec] InitHourCount detected went backward in time!! ")
 	endIf
 endFunction
 
@@ -638,6 +655,7 @@ Function PlayerNapRecover(float fractionVal = 0.03333, float nextTimerHours = 0.
 		endIf
 		
 		int hourLimit = 5
+		
 		if (BedType == SleepBedOwnID)
 			hourLimit = 6
 		endIf
@@ -665,7 +683,7 @@ Function PlayerNapRecover(float fractionVal = 0.03333, float nextTimerHours = 0.
 	elseIf (DTSleep_PlayerUsingBed.GetValue() <= 0.0)
 		; apparently player left bed
 		;SendRestInterruptEvent(0)
-		
+		;Debug.Trace("[DTSleep_HealthRec] player not using bed -- cancel now")
 		StopAllCancel()
 		
 	elseIf (!GoodSleep && FastSleepStatus == 1)
@@ -679,7 +697,7 @@ endFunction
 
 Function PlayerNapRecoverFatigue()
 
-	bool normalHour = CheckGameHourIncrement()	; always increment HourCount
+	int hourIncCount = CheckGameHourIncrement()	; always increment HourCount  - v2.16 changed from bool to int hour-increment
 	
 	if (DTSleep_PlayerUsingBed.GetValue() > 0.0 && DTSleep_SettingNapRecover.GetValue() > 0.0)
 	
@@ -692,12 +710,16 @@ Function PlayerNapRecoverFatigue()
 				;Debug.Trace("[DTSleep_HealthRec] HC_SleepEffect: " + sleepEffectVal)
 				
 				int limit = 2
-				if (normalHour && HourCount >= 5)
+				if (hourIncCount > 0 && HourCount >= 5)
 					limit = 1
 				endIf
 				
-				if (sleepEffectVal > limit)
-					sleepEffectVal -= 1
+				if (sleepEffectVal > limit)				
+					; decrement by hours to handle skip-time like "Sleep Together Anywhere" --v2.16
+					sleepEffectVal -= hourIncCount
+					if (sleepEffectVal < limit)
+						sleepEffectVal = limit
+					endIf
 					PlayerRef.SetValue(HC_SleepEffectAV, sleepEffectVal as float)
 				endIf
 			endIf
@@ -710,11 +732,17 @@ Function PlayerNapRecoverFatigue()
 			
 			if (curVal > 0)
 				int rank = 0
-				int val = curVal - 10
+				int remVal = 10
+				int divVal = 5
+				if (hourIncCount > 1)
+					remVal = hourIncCount * 10
+					divVal = 5 * hourIncCount
+				endIf
+				int val = curVal - remVal
 				if (val < 0)
 					val = 0
 				else
-					rank = val / 5
+					rank = val / divVal
 				endIf
 				
 				PlayerRef.SetValue(HC_AdrenalineAV, val as float)
@@ -856,7 +884,7 @@ endFunction
 Function PlayerNapRecoverFinal(int recoverLevel)
 
 	if (DTSleep_SettingTestMode.GetValueInt() > 0 && DTSleep_DebugMode.GetValue() >= 1.0)
-		Debug.Trace("[DTSleep_HealthRec] RecoverFinal full? " + recoverLevel)
+		Debug.Trace("[DTSleep_HealthRec] RecoverFinal full? " + recoverLevel + " for HourCount " + HourCount + " with GoodSleep? " + GoodSleep)
 	endIf
 	
 	if (GoodSleep && Game.GetDifficulty() >= 6 && DTSleep_SettingNapRecover.GetValue() > 0.0)
