@@ -150,20 +150,6 @@ bool Function IsAllowedLover(Actor akActor)
 					return false
 				endIf
 				
-				CompanionActorScript unkActor = akActor as CompanionActorScript
-				if (unkActor != None)
-					float affinity = unkActor.GetValue(CA_AffinityAV)
-					if (affinity > 0.0)
-					
-						if (affinity > 900.0)
-							Debug.Trace("[DTSleep_TrueLoveQuest] Accepted for affinity (" + affinity + ") of UNKNOWN companion = " + akActor)
-							return true
-						endIf
-						Debug.Trace("[DTSleep_TrueLoveQuest] REFUSED for low affinity (" + affinity + ") of UNKNOWN companion = " + akActor)
-						return false
-					endIf
-				endIf
-				
 				; actor found in collection, but if custom companion doesn't use affinity system
 				;  must keep looking
 			endIf
@@ -179,6 +165,20 @@ bool Function IsAllowedLover(Actor akActor)
 			return true
 		endIf
 		return false
+	endIf
+	
+	CompanionActorScript unkActor = akActor as CompanionActorScript
+	if (unkActor != None)
+		float affinity = unkActor.GetValue(CA_AffinityAV)
+		if (affinity > 0.0)
+		
+			if (affinity > 900.0)
+				Debug.Trace("[DTSleep_TrueLoveQuest] Accepted for affinity (" + affinity + ") of UNKNOWN companion = " + akActor)
+				return true
+			endIf
+			Debug.Trace("[DTSleep_TrueLoveQuest] REFUSED for low affinity (" + affinity + ") of UNKNOWN companion = " + akActor)
+			return false
+		endIf
 	endIf
 	
 	; uncertain how best to handle custom companion not using affinity

@@ -92,6 +92,8 @@ FormList property DTSleep_ArmorSlot58List auto const
 { slot 58 armor clothing to remain on for sleep }
 FormList property DTSleep_ArmorSlotFXList auto const
 { slot 61-FX armor clothing to remain on for sleep }
+FormList property DTSleep_ArmorSlotULegList auto const
+{ clothing remain on for sleep }
 FormList property DTSleep_StrapOnList auto const
 FormList property DTSleep_ArmorBackPacksList auto const
 FormList property DTSleep_ArmorBackPacksnoGOList auto const
@@ -2262,6 +2264,42 @@ bool Function IsActorWearingSlot61Exceptions(Actor actorRef)
 	return false
 EndFunction
 
+
+bool Function IsActorWearingSlotULegExepction(Actor actorRef)
+	if (actorRef == None)
+		Debug.Trace(myScriptName + " IsActorWearingSlotULegExceptions - actor is None!!")
+		return false
+	endIf
+	
+	if (DTSleep_EquipMonInit.GetValue() >= 5.0)
+		if (actorRef == PlayerRef)
+			return DressData.PlayerEquippedULegItem as bool 
+			
+		elseIf (actorRef == CompanionRef)
+			if (DressData.CompanionEquippedULegItem != None)
+				if (DressData.CompanionDressValid || actorRef.IsEquipped(DressData.CompanionEquippedULegItem))
+					return true
+				else
+					DressData.CompanionEquippedULegItem = None
+				endIf
+			endIf
+		endIf
+	
+	endIf
+	
+	Armor item = GetArmorForActorWearingClothingOnList(actorRef, DTSleep_ArmorSlotULegList)
+	if (item != None)
+		if (actorRef == CompanionRef && DressData.CompanionActor)
+			DressData.CompanionEquippedULegItem = item
+		endIf
+		
+		return true
+	endIf
+	
+	
+	return false
+EndFunction
+
 bool Function PlaceFormItemAtActorFeet(Form item, Actor atActor)
 	if (item && atActor)
 		if (!PlacedArmorObjRefArray)
@@ -3476,9 +3514,9 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 				actorRef.UnequipItemSlot(3) ; 33 - full body outfit
 				; wait for a mod item event
 				Utility.WaitMenuMode(0.12)
+				
+				UndressActorArmorInnerSlots(actorRef, includeExceptions)	; v2.17 - moved as part of intimate outfit
 			endIf
-			
-			UndressActorArmorInnerSlots(actorRef)
 			
 		elseIf (includeExceptions || !actorWearingArmorAll)  ; companion
 			if (actorRef == CompanionRef)
@@ -3813,16 +3851,18 @@ int Function UndressActorArmorForListFromArray(Actor actorRef, FormList armorLis
 	return count
 endFunction
 
-Function UndressActorArmorInnerSlots(Actor actorRef)
+Function UndressActorArmorInnerSlots(Actor actorRef, bool includeExceptions)
 		
 	actorRef.UnequipItemSlot(4) 	; 34 - left hand 
 	actorRef.UnequipItemSlot(5)
 	
 	; normally considered under-armor clothing pieces
 	actorRef.UnequipItemSlot(6) 	; 36 - u-torso !!!(AWK-Bracelet)!!
-	actorRef.UnequipItemSlot(7) 	; 37 - u-L arm  AWK-Jacket, Cross overcoats
+	if (includeExceptions || !IsActorWearingSlotULegExepction(actorRef))
+		actorRef.UnequipItemSlot(7) 	; 37 - u-L arm  AWK-Jacket, Cross overcoats
+		actorRef.UnequipItemSlot(9) 	; 39 - u-L leg  CROSS-Bos boots, AWK-*OnHip
+	endIf
 	actorRef.UnequipItemSlot(8)
-	actorRef.UnequipItemSlot(9) 	; 39 - u-L leg  CROSS-Bos boots, AWK-*OnHip
 	actorRef.UnequipItemSlot(10)
 endFunction
 

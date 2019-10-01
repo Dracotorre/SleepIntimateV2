@@ -324,7 +324,7 @@ ObjectReference Function FindNearestOpenBedFromObject(ObjectReference fromObj, F
 endFunction
 
 ObjectReference Function FindNearestObjectInListFromObjRef(FormList list, ObjectReference fromObjRef, float radius) global
-	if (list && fromObjRef != None)
+	if (list != None && fromObjRef != None)
 		;
 		;ObjectReference objRef = Game.FindClosestReferenceOfAnyTypeInListFromRef(list, fromObjRef, radius)
 		;if (objRef != None && objRef.IsEnabled())

@@ -647,7 +647,7 @@ Function PlaySingleStageScene(string positionStr, float duration, ObjectReferenc
 	if (SceneData.SecondFemaleRole != None)
 		actors.Add(SceneData.SecondFemaleRole)
 	endIf
-	if (SceneData.CompanionInPowerArmor)
+	if (SceneData.CompanionInPowerArmor || SceneData.IsCreatureType == 3)	; v2.17 - added synth
 		actors = New Actor [1]
 		actors[0] = MainActor
 	endIf
@@ -745,6 +745,10 @@ Function PlayAtomicLustStages(int sid)
 		actors[1] = MainActor
 	else
 		actors[1] = SecondActor												
+		actors[0] = MainActor
+	endIf
+	if (SceneData.CompanionInPowerArmor || SceneData.IsCreatureType == 3)	; v2.17 added 
+		actors = New Actor [1]
 		actors[0] = MainActor
 	endIf
 	
@@ -1228,6 +1232,10 @@ Function PlayPairSequenceLists(Actor mActor, Actor fActor, Actor oActor, AStageI
 
 		actors[1] = mActor   ; place 2nd position											
 		actors[0] = fActor
+		if (SceneData.CompanionInPowerArmor || SceneData.IsCreatureType == 3)	; v2.17 - added
+			actors = New Actor [1]
+			actors[0] = MainActor
+		endIf
 		
 		AAF:AAF_API:SceneSettings aafSettings = AAF_API.GetSceneSettings()
 

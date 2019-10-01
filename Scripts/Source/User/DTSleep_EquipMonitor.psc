@@ -77,6 +77,7 @@ FormList property DTSleep_ArmorSlot58List auto const
 { slot 58 armor clothing  }
 FormList property DTSleep_ArmorSlotFXList auto const
 { slot 61-FX armor clothing }
+FormList property DTSleep_ArmorSlotULegList auto const
 FormList property DTSleep_StrapOnList auto const
 FormList property DTSleep_ArmorBackPacksList auto const
 FormList property DTSleep_ArmorBackPacksnoGOList auto const
@@ -1277,6 +1278,8 @@ Function SetCompanionDataMatchArmorToArmor(Armor matchItem, Armor toItem)
 			else
 				DressData.CompanionEquippedSlotFXIsSleepwear = false
 			endIf
+		elseIf (DressData.CompanionLastEquippedULegItem == matchItem)
+			DressData.CompanionEquippedULegItem = toItem
 
 		elseIf (DTSleep_ArmorExtraClothingList && DTSleep_ArmorExtraClothingList.HasForm(matchItem))
 			if (toItem == None)
@@ -1424,6 +1427,9 @@ Function SetCompanionDressDataMatchingFormToArmor(Form matchForm, Armor toItem)
 			else
 				DressData.CompanionEquippedSlotFXIsSleepwear = false
 			endIf
+		elseIf (DTSleep_ArmorSlotULegList != None && DTSleep_ArmorSlotULegList.HasForm(matchForm))
+			DressData.CompanionLastEquippedULegItem = DressData.CompanionEquippedULegItem
+			DressData.CompanionEquippedULegItem = toItem
 			
 		else
 			; includes sleepwear
@@ -1596,7 +1602,9 @@ Function SetDressDataMatchArmorToArmor(Armor matchItem, Armor toItem)
 			else
 				DressData.PlayerEquippedSlotFXIsSleepwear = false
 			endIf
-
+		elseIf (DressData.PlayerLastEquippedULegItem == matchitem)
+			DressData.PlayerEquippedULegItem = toItem
+			
 		elseIf (DTSleep_ArmorExtraClothingList && DTSleep_ArmorExtraClothingList.HasForm(matchItem))
 			if (toItem == None)
 				PlayerExtraClothingCount -= 1
@@ -1748,8 +1756,11 @@ Function SetDressDataMatchingFormToArmor(Form matchForm, Armor toItem)
 			if (toItem && DTSleep_SleepAttireFemale && DTSleep_SleepAttireFemale.HasForm(matchForm))
 				DressData.PlayerEquippedSlotFXIsSleepwear = true
 			else
-				DressData.PlayerEquippedSlotFxIsSleepwear = false
+				DressData.PlayerEquippedSlotFXIsSleepwear = false
 			endIf
+		elseIf (DTSleep_ArmorSlotULegList != None && DTSleep_ArmorSlotULegList.HasForm(matchForm))
+			DressData.PlayerLastEquippedULegItem = DressData.PlayerEquippedULegItem
+			DressData.PLayerEquippedULegItem = toItem
 			
 		else
 			; includes sleepwear

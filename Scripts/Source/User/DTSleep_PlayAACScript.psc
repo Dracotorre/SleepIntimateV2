@@ -113,17 +113,25 @@ Event OnEffectStart(Actor akfActor, Actor akmActor)
 	LastGunBIndex = -1
 	MaleRoleSex = -1
 	ThirdActor = None
+	bool secondActorOkay = true
 	
 	if (SceneData.IsCreatureType == 2)
 		MaleRoleSex = 0
 	endIf
 	
+	if (SceneData.CompanionInPowerArmor)
+		secondActorOkay = false
+	elseIf (SceneData.IsCreatureType == 3)	; v2.17 - added synth
+		if (SequenceID >= 100)
+			secondActorOkay = false
+		endIf
+	endIf
 	
 	if (akfActor != None && akfActor != akmActor)
 		MainActor = akmActor
 		MainActorOriginMarkRef = DTSleep_CommonF.PlaceFormAtObjectRef(DTSleep_MainNode, MainActor)
 		
-		if (SceneData.CompanionInPowerArmor == false)
+		if (secondActorOkay)
 			if (SceneData.MaleRole == MainActor)
 				SecondActor = SceneData.FemaleRole
 			else

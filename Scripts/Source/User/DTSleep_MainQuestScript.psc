@@ -256,6 +256,8 @@ GlobalVariable property DTSleep_SettingGenderPref auto const
 { Male, Female, Both, Faithful}
 ;GlobalVariable property DTSleep_SettingPickPos auto const
 GlobalVariable property DTSleep_SettingChairsEnabled auto
+GlobalVariable property DTSleep_SettingSynthHuman auto
+{ set to 1 to force Valentine or other Gen-2 synths to be like Gen-3 human body }
 EndGroup
 
 Group C_GameData
@@ -340,6 +342,7 @@ FormList property DTSleep_BedCellNoRestList auto const
 { cells that have bad beds listed above }
 FormList property DTSleep_BadSheltersList auto const
 { placed beds can't animate rest due to obstructions etc }
+FormList property DTSleep_BadShelterLocationList auto const
 FormList property DTSleep_IntimacyChanceMEList auto const
 { magic effects granting better chance - keep list very short }
 FormList property DTSleep_ActorKYList auto const
@@ -2685,6 +2688,12 @@ IntimateChancePair Function ChanceForIntimateScene(IntimateCompanionSet companio
 	
 	if (sexAppealScore < 0)
 		sexAppealScore = PlayerSexAppeal(playerIsNaked, companionGender, creatureType)
+	endIf
+	
+	if (IntimacySceneCount > 8999)
+		result.Chance = 95
+		result.SexAppeal = sexAppealScore
+		return result
 	endIf
 	
 	int sexAppealFraction = 1
@@ -5602,6 +5611,8 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 		Location currentLoc = (SleepPlayerAlias as DTSleep_PlayerAliasScript).CurrentLocation
 		
 		if (lastPlankLoc != None && lastPlankLoc == currentLoc)
+			pickStyle = 2				; v2.17 - no room on bed for sex animation
+			
 			Quest rentQuest = (DTSConditionals as DTSleep_Conditionals).FarHarborBedRentQuest
 			if (rentQuest != None && rentQuest.IsRunning())
 				
@@ -5609,6 +5620,8 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 			endIf
 		endIf
 	endIf
+	
+	
 	
 	; ------ get companion --- 
 	;
@@ -6029,7 +6042,7 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 							if (chanceForScene.Chance == 0)
 								chanceForScene = ChanceForIntimateScene(nearCompanion, targetRef, baseBedForm, gameTime, companionGender, locHourChance, true, sexAppealScore, sameLover)
 							endIf
-							if (checkVal == 1)
+							if (pickStyle < 0 && checkVal == 1)
 								
 								; v1.70 -- show style-pick menu - pickspot chosen from menu
 								Utility.Wait(1.0)
@@ -6063,6 +6076,9 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 								endIf
 							elseIf (!sleepSafe && adultScenesAvailable)
 								; no room on bed
+								pickSpotSelected = true
+							elseIf (pickStyle == 2 && adultScenesAvailable)
+								; v2.17 - some beds have no room on bed so force pickspot
 								pickSpotSelected = true
 							endIf
 							
@@ -6673,7 +6689,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 	IntimateCompanionRef = None
 	Form furnBaseForm = None
 	;ObjectReference akPillory = None
-	ObjectReference tableObjRef = None
+	ObjectReference propObjRef = None
 	ObjectReference furnToPlayObj = akFurniture
 	bool companionReady = false
 	bool cancledScene = false
@@ -6789,17 +6805,23 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 	
 	; extras available? - set sexStyle level for menu
 	if (specialFurn == 2)
-		; search for nearby tables
+		; search for nearby tables and other props
 		FormList searchlist = (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).DTSleep_IntimatePoolTableList
-		tableObjRef = DTSleep_CommonF.FindNearestObjectInListFromObjRef(searchlist, akFurniture, 600.0)
+		propObjRef = DTSleep_CommonF.FindNearestObjectInListFromObjRef(searchlist, akFurniture, 600.0)
 		
-		if (tableObjRef != None)
+		if (propObjRef != None)
 			DTSleep_SexStyleLevel.SetValue(2.0)
 		else
-			searchlist = CombinedTableFormList()
-			tableObjRef = DTSleep_CommonF.FindNearestObjectInListFromObjRef(searchlist, akFurniture, 350.0)
-			if (tableObjRef != None)
-				DTSleep_SexStyleLevel.SetValue(1.0)
+			searchlist = (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).DTSleep_IntimateMotorcycleList
+			propObjRef = DTSleep_CommonF.FindNearestObjectInListFromObjRef(searchlist, akFurniture, 600.0)
+			if (propObjRef != None)
+				DTSleep_SexStyleLevel.SetValue(3.0)
+			else
+				searchlist = CombinedTableFormList()
+				propObjRef = DTSleep_CommonF.FindNearestObjectInListFromObjRef(searchlist, akFurniture, 375.0)
+				if (propObjRef != None)
+					DTSleep_SexStyleLevel.SetValue(1.0)
+				endIf
 			endIf
 		endIf
 	endIf
@@ -7184,12 +7206,12 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 					elseIf (checkVal >= 4)
 						; picked a table
 						checkVal = 0
-						if (tableObjRef != None)
-							furnToPlayObj = tableObjRef
+						if (propObjRef != None)
+							furnToPlayObj = propObjRef
 						endIf
 						pickSpot = false
 						pickedOtherFurniture = true
-						DTSleep_OtherFurnitureRefAlias.ForceRefTo(tableObjRef)
+						DTSleep_OtherFurnitureRefAlias.ForceRefTo(propObjRef)
 					endIf
 				endIf
 				
@@ -8208,33 +8230,29 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 	
 		DTDebug("IntimateAnimPacksPick powerArmorFlag?" + powerArmorFlag + " inPowerArmor? " + SceneData.CompanionInPowerArmor + " stylePicked? " + stylePicked, 2)
 		
-		if (SceneData.CompanionInPowerArmor)
-			; intended for Danse in power armor]
+		if (SceneData.CompanionInPowerArmor || SceneData.IsCreatureType == CreatureTypeSynth)	; v2.17 - added synth condition
+			; intended for Danse in power armor or synth
 			
 			if ((DTSConditionals as DTSleep_Conditionals).IsAtomicLustActive)		; not AAF
 				hasAtomicLustAnims = true
 				animSetCount += 1
 			endIf
-			if (!aafEnabled)
 				
-				if (playerSex == 1 && (DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive && DTSleep_BedsBigDoubleList.HasForm(baseBedForm))
-					; solo for Danse in PA limited to scene
-					hasSavageCabbageAnims = true
-					animSetCount += 1
-				endIf
-				if ((DTSConditionals as DTSleep_Conditionals).IsGrayAnimsActive)
-					hasGrayAnims = true
-					animSetCount += 1
-				endIf
-				;if ((DTSConditionals as DTSleep_Conditionals).IsBP70Active && !baseBedForm.HasKeyword(AnimFurnFloorBedAnims))
-				;	hasBP70Anims = true
-				;	animSetCount += 1
-				;endIf
-				if ((DTSConditionals as DTSleep_Conditionals).IsCrazyAnimGunActive)
-					hasCrazyGunAnims = true
-					animSetCount += 1
-				endIf
+			if (playerSex == 1 && (DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive && DTSleep_BedsBigDoubleList.HasForm(baseBedForm))
+				; solo for Danse in PA limited to scene
+				hasSavageCabbageAnims = true
+				animSetCount += 1
 			endIf
+			if ((DTSConditionals as DTSleep_Conditionals).IsGrayAnimsActive)
+				hasGrayAnims = true
+				animSetCount += 1
+			endIf
+			
+			; does not work??
+			;if ((DTSConditionals as DTSleep_Conditionals).IsCrazyAnimGunActive)
+			;	hasCrazyGunAnims = true
+			;	animSetCount += 1
+			;endIf
 		else
 			; no power armor
 			if ((DTSConditionals as DTSleep_Conditionals).IsLeitoActive && DTSleep_IsLeitoActive.GetValue() >= 1.0)
@@ -8617,8 +8635,10 @@ bool Function IsCompanionRaceCompatible(Actor companionActor, ActorBase compBase
 				; v1.08 - Xbox-only / non-adult scenes to support romanced Nick Valentine mod
 				; v1.60 - also XOXO
 				; v1.67 - any by included creature type to check
-				SceneData.IsUsingCreature = true
-				SceneData.IsCreatureType = CreatureTypeSynth
+				if (DTSleep_SettingSynthHuman.GetValue() <= 0.0)		; v2.17
+					SceneData.IsUsingCreature = true
+					SceneData.IsCreatureType = CreatureTypeSynth
+				endIf
 				
 				return true
 
@@ -9371,29 +9391,55 @@ endFunction
 
 bool Function IsUnsafeToRestBed(ObjectReference akBed)
 	
+	; The Tent_Forest01 search stopped working so also test cells where tent resides
 	if (akBed.HasKeyword(AnimFurnFloorBedAnims) || (DTSConditionals as DTSleep_Conditionals).IsSnapBedsActive)
+	
+		Location currentLoc = (SleepPlayerAlias as DTSleep_PlayerAliasScript).CurrentLocation
 		
-		ObjectReference closestShelter = DTSleep_CommonF.FindNearestObjectInListFromObjRef(DTSleep_BadSheltersList, akBed, 160.0)
-		if (closestShelter)
-			DTDebug(" found bad shelter " + closestShelter + " near bed " + akBed + " distance: " + closestShelter.GetDistance(akbed), 2)
+		ObjectReference closestShelter = Game.FindClosestReferenceOfAnyTypeInListFromRef(DTSleep_BadSheltersList, akBed, 460.0)
+		;ObjectReference closestShelter =;DTSleep_CommonF.FindNearestObjectInListFromObjRef(DTSleep_BadSheltersList, akBed, 160.0)
+		if (closestShelter != None)
+			if (akBed.GetDistance(closestShelter) < 160.0)
+				
+				DTDebug(" found bad shelter " + closestShelter + " near bed " + akBed + " distance: " + closestShelter.GetDistance(akbed), 1)
 			
-			return true
+				return true
+			else
+				; too far - no cell check
+				DTDebug(" found bad shelter " + closestShelter + " outside range of bed " + akBed + " distance: " + closestShelter.GetDistance(akbed), 1)
+				
+				return false
+			endIf
+		elseIf (currentLoc != None && DTSleep_BadShelterLocationList.HasForm(currentLoc as Form))
+			; check positions of known bad tents
+			float bedX = akBed.GetPositionX()
+			float bedY = akBed.GetPositionY()
+			
+			Debug.Trace(myScriptName + " UnsafeToRest check bed at X = " + bedX + ", Y = " + bedY) ;TODO
+			
+			if (bedX > 81650.0 && bedX < 81760.0 && bedY > 96450.0 && bedY < 96550.0)		;fish plant
+				return true
+			elseIf (bedX > 30900.0 && bedX < 31000.0 && bedY > -88400.0 && bedY < -88280.0)	; quincyRuins5
+				return true
+			elseIf (bedX > 75390.0 && bedX < 75500.0 && bedY > -68200.0 && bedY < -6800.0)	; spectacleIsland
+				return true
+			endIf
 		endIf
 		
 		Cell currentCell = akBed.GetParentCell()
-		if (currentCell != None)
-			
+		if (currentCell != None)			
 			if (DTSleep_BedCellNoRestList.HasForm(currentCell as Form))
-				Form baseForm = akBed.GetBaseObject()
 				
-				if (baseForm && DTSleep_BedPlacedNoRestList.HasForm(baseForm))
-					DTDebug(" on no-rest bed list " + akBed + " in Cell " + currentCell, 2)
+				Form baseForm = akBed.GetBaseObject()
+				DTDebug(" UnsafeToRest in a bad cell, check bed " + baseForm, 1)
+
+				if (baseForm != None && DTSleep_BedPlacedNoRestList.HasForm(baseForm))
+					DTDebug(" on no-rest bed list " + akBed + " in Cell " + currentCell, 1)
 
 					return true
 				endIf
 			endIf
 		endIf
-		
 	endIf
 	
 	return false
@@ -9844,8 +9890,12 @@ int Function PlayerSexAppeal(bool isNaked, int companionGender, int creatureType
 	endIf
 	
 	if (exp > 0)
-		if (exp >= 306)
-			result = 90
+		if (exp >= 5000)
+			result = 200
+		elseIf (exp >= 2500)
+			result = 190
+		elseIf (exp >= 1000)
+			result = 178
 		elseIf (exp > 100)
 			result = (64.0 + ((exp - 98) * 0.1250)) as int
 			
@@ -9890,8 +9940,8 @@ int Function PlayerSexAppeal(bool isNaked, int companionGender, int creatureType
 	int levelChance = 0
 	
 	; v2 - player level bonus for having experienced the Commonwealth
-	if (playerLevel >= 48)
-		levelChance = 24
+	if (playerLevel >= 64)
+		levelChance = 32
 	elseIf (playerLevel >= 2 && playerLevel < 4)
 		levelChance = 1
 	elseIf (playerLevel >= 4)
@@ -9908,6 +9958,9 @@ int Function PlayerSexAppeal(bool isNaked, int companionGender, int creatureType
 	int charismaAdj = 21
 	float charismaScale = 1.0
 	int charisma = (PlayerRef.GetValue(CharismaAV) as int)
+	if (charisma > 30)
+		charisma = 30
+	endIf
 	
 	if (charisma > 7)
 		; above pivot then scale down bonus with exp or creature
@@ -11239,7 +11292,7 @@ Function SetProgressIntimacy(int sexAppealScore = -1, int creatureType = 0, int 
 		Utility.Wait(0.7)
 	endIf
 	
-	if (!SceneData.CompanionInPowerArmor)
+	if (!SceneData.CompanionInPowerArmor && SceneData.IsCreatureType != CreatureTypeSynth)
 		if ((DTSConditionals as DTSleep_Conditionals).NoraSpouseRef != None && IntimateCompanionRef == (DTSConditionals as DTSleep_Conditionals).NoraSpouseRef)
 			; no disease
 		elseIf ((DTSConditionals as DTSleep_Conditionals).DualSurvivorsNateRef != None && IntimateCompanionRef == (DTSConditionals as DTSleep_Conditionals).DualSurvivorsNateRef)
@@ -11332,16 +11385,19 @@ Function SetProgressIntimacy(int sexAppealScore = -1, int creatureType = 0, int 
 		
 		if (creatureType == 0 || creatureType == CreatureTypeSynth)
 		
-			IntimacySceneCount += 1
-			exp = IntimacySceneCount
-		
+			if (IntimacySceneCount < 9999)
+				IntimacySceneCount += 1
+				exp = IntimacySceneCount
+			endIf
 			DTSleep_IntimateEXP.SetValueInt(IntimacySceneCount)
 		
 		elseIf (creatureType == CreatureTypeStrong)
 		
 			; Strong EXP 
-			IntimacySMCount += 1
-			exp = IntimacySMCount
+			if (IntimacySMCount < 9999)
+				IntimacySMCount += 1
+				exp = IntimacySMCount
+			endIf
 			DTSleep_IntimateStrongExp.SetValueInt(IntimacySMCount)
 		endIf
 		
@@ -11396,8 +11452,9 @@ Function SetProgressIntimacy(int sexAppealScore = -1, int creatureType = 0, int 
 		if (DTSleep_IntimateDogEXP.GetValueInt() >= IntimateDogTrainEXPLimit || hoursSinceDogPlay > IntimateDogTrainHourLimit)
 		
 			DTSleep_IntimateDogTime.SetValue(intimateTime)
-		
-			IntimacyDogCount += 1
+			if (IntimacyDogCount < 9999)
+				IntimacyDogCount += 1
+			endIf
 			DTSleep_IntimateDogEXP.SetValueInt(IntimacyDogCount)					; record self/dog-play EXP
 			
 			; update training quest
@@ -11872,7 +11929,7 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 		
 			SetUndressForManualStop(true, None, false, false, bedRef, includePipboy)
 			
-		elseIf (SceneData.CompanionInPowerArmor)
+		elseIf (SceneData.CompanionInPowerArmor || SceneData.IsCreatureType == CreatureTypeSynth)		; v2.17 - added synth
 		
 			SetUndressForManualStop(includeClothing, None, false, false, bedRef, includePipboy)
 		else
@@ -12664,7 +12721,6 @@ Function TestModeOutput()
 		Debug.Trace(myScriptName + "    ----------- TEST MODE --- settings -------")
 		Debug.Trace(myScriptName + "     AdultMode: " + DTSleep_AdultContentOn.GetValue())
 		Debug.Trace(myScriptName + " AdultLeitoEVB: " + DTSleep_IsLeitoActive.GetValue())
-		Debug.Trace(myScriptName + "       ZaZOut4: " + (SleepPlayerAlias as DTSleep_PlayerAliasScript).DTSleep_IsZaZOut.GetValue())
 		Debug.Trace(myScriptName + "        AAF on: " + DTSleep_SettingAAF.GetValue())
 		Debug.Trace(myScriptName + "   SeeYouSleep: " + DTSleep_IsSYSCWActive.GetValue() + " / " + DTSleep_SettingPrefSYSC.GetValue())
 		Debug.Trace(myScriptName + "  Cancel Scene: " + DTSleep_SettingCancelScene.GetValue())
@@ -12672,6 +12728,7 @@ Function TestModeOutput()
 		Debug.Trace(myScriptName + "  Dog Restrain: " + DTSleep_SettingDogRestrain.GetValue())
 		Debug.Trace(myScriptName + "      Intimate: " + DTSleep_SettingIntimate.GetValue())
 		Debug.Trace(myScriptName + "       Undress: " + DTSleep_SettingUndress.GetValue())
+		Debug.Trace(myScriptName + "        Chairs: " + DTSleep_SettingChairsEnabled.GetValue())
 		Debug.Trace(myScriptName + "        Camera: " + DTSleep_SettingCamera2.GetValue())
 		Debug.Trace(myScriptName + "Immersive Rest: " + DTSleep_SettingNapOnly.GetValue())
 		Debug.Trace(myScriptName + "      nap-comp: " + DTSleep_SettingNapComp.GetValue())
@@ -12681,9 +12738,25 @@ Function TestModeOutput()
 		Debug.Trace(myScriptName + "      nap-Save: " + DTSleep_SettingSave.GetValue())
 		Debug.Trace(myScriptName + "   Gender Pref: " + DTSleep_SettingGenderPref.GetValue())
 		Debug.Trace(myScriptName + "        Lover2: " + DTSleep_SettingLover2.GetValue())
+		Debug.Trace(myScriptName + "    AltFemBody: " + (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).DTSleep_SettingAltFemBody.GetValue())
+		Debug.Trace(myScriptName + "  EVB Best-fit: " + (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).DTSleep_SettingUseLeitoGun.GetValue())
+		Debug.Trace(myScriptName + "BodyTalk2 swap: " + (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).DTSleep_SettingUseBT2Gun.GetValue())
+		Debug.Trace(myScriptName + "SynthGen2-to-3: " + DTSleep_SettingSynthHuman.GetValue())
 		
 	
 		Debug.Trace(myScriptName + " =====================================================================")
+		Debug.Trace(myScriptName + "         ----- TEST MODE ---- Animation Packs -------")
+		Debug.Trace(myScriptName + "     LeFO4Anim: " + (DTSConditionals as DTSleep_Conditionals).IsLeitoActive)
+		Debug.Trace(myScriptName + "      CrazyGun: " + (DTSConditionals as DTSleep_Conditionals).IsCrazyAnimGunActive)
+		Debug.Trace(myScriptName + "           AAF: " + (DTSConditionals as DTSleep_Conditionals).IsAAFActive)
+		Debug.Trace(myScriptName + "   Atomic Lust: " + (DTSConditionals as DTSleep_Conditionals).IsAtomicLustActive)
+		Debug.Trace(myScriptName + "   Atomic vers: " + (DTSConditionals as DTSleep_Conditionals).AtomicLustVers)
+		Debug.Trace(myScriptName + "  Mutated Lust: " + (DTSConditionals as DTSleep_Conditionals).IsMutatedLustActive)
+		Debug.Trace(myScriptName + " LeFO4Anim AAF: " + (DTSConditionals as DTSleep_Conditionals).IsLeitoAAFActive)
+		Debug.Trace(myScriptName + " SavageCabbage: " + (DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive)
+		Debug.Trace(myScriptName + "       ZaZOut4: " + (SleepPlayerAlias as DTSleep_PlayerAliasScript).DTSleep_IsZaZOut.GetValue())
+		Debug.Trace(myScriptName + "       GrayMod: " + (DTSConditionals as DTSleep_Conditionals).IsGrayAnimsActive)
+		
 		Debug.Trace(myScriptName + "         ----- TEST MODE ---- conditionals ----------")
 		Debug.Trace(myScriptName + "  gamesetRConv: " + (DTSConditionals as DTSleep_Conditionals).HasGamesetReducedConv)
 		Debug.Trace(myScriptName + "hasModReqSleep: " + (DTSConditionals as DTSleep_Conditionals).HasModReqNormSleep)
@@ -12705,14 +12778,6 @@ Function TestModeOutput()
 		Debug.Trace(myScriptName + "    RangerGear: " + (DTSConditionals as DTSleep_Conditionals).IsRangerGearActive)
 		Debug.Trace(myScriptName + "ProvisBackpack: " + (DTSConditionals as DTSleep_Conditionals).IsProvisionerBackPackActive)
 		Debug.Trace(myScriptName + "         VIOso: " + (DTSConditionals as DTSleep_Conditionals).IsVioStrapOnActive)
-		Debug.Trace(myScriptName + "     LeFO4Anim: " + (DTSConditionals as DTSleep_Conditionals).IsLeitoActive)
-		Debug.Trace(myScriptName + "      CrazyGun: " + (DTSConditionals as DTSleep_Conditionals).IsCrazyAnimGunActive)
-		Debug.Trace(myScriptName + "           AAF: " + (DTSConditionals as DTSleep_Conditionals).IsAAFActive)
-		Debug.Trace(myScriptName + "   Atomic Lust: " + (DTSConditionals as DTSleep_Conditionals).IsAtomicLustActive)
-		Debug.Trace(myScriptName + "   Atomic vers: " + (DTSConditionals as DTSleep_Conditionals).AtomicLustVers)
-		Debug.Trace(myScriptName + "  Mutated Lust: " + (DTSConditionals as DTSleep_Conditionals).IsMutatedLustActive)
-		Debug.Trace(myScriptName + " LeFO4Anim AAF: " + (DTSConditionals as DTSleep_Conditionals).IsLeitoAAFActive)
-		Debug.Trace(myScriptName + " SavageCabbage: " + (DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive)
 		Debug.Trace(myScriptName + "      Campsite: " + (DTSConditionals as DTSleep_Conditionals).IsCampsiteActive)
 		Debug.Trace(myScriptName + "BasementLiving: " + (DTSConditionals as DTSleep_Conditionals).IsBasementLivingActive)
 		Debug.Trace(myScriptName + "     LetsDance: " + (DTSConditionals as DTSleep_Conditionals).IsLetsDanceActive)

@@ -59,6 +59,7 @@ bool property PlayerEquippedSlot58IsSleepwear = false auto conditional hidden
 { if slot 58 is a sleepwear item }
 Armor property PlayerEquippedSlotFXItem auto conditional hidden
 { slot 61 FX item  }
+Armor property PlayerEquippedULegItem auto conditional hidden
 bool property PlayerEquippedSlotFXIsSleepwear auto conditional hidden
 { if slot 61/FX is a sleepwear item }
 Armor property PlayerEquippedStrapOnItem auto conditional hidden
@@ -85,6 +86,7 @@ bool property PlayerLastEquippedSlot58IsSleepwear = false auto conditional hidde
 { if last slot 58 is a sleepwear item }
 Armor property PlayerLastEquippedSlotFXItem auto conditional hidden
 { last slot 61 FX item  }
+Armor property PlayerLastEquippedULegItem auto conditional hidden
 bool property PlayerLastEquippedSlotFXIsSleepwear = false auto conditional hidden
 { if last slot 61/FX is a sleepwear item }
 Armor property PlayerLastEquippedStrapOnItem auto conditional hidden
@@ -126,6 +128,7 @@ Armor property CompanionEquippedSlot55Item auto conditional hidden
 Armor property CompanionEquippedSlot58Item auto conditional hidden
 Armor property CompanionEquippedSlotFXItem auto conditional hidden
 { slot 61 FX item  }
+Armor property CompanionEquippedULegItem auto conditional hidden
 Armor property CompanionEquippedStrapOnItem auto conditional hidden
 Armor property CompanionEquippedIntimateAttireItem = None auto conditional hidden
 
@@ -152,6 +155,7 @@ Armor property CompanionLastEquippedSlot55Item auto conditional hidden
 Armor property CompanionLastEquippedSlot58Item auto conditional hidden
 Armor property CompanionLastEquippedSlotFXItem auto conditional hidden
 { slot 61 FX item  }
+Armor property CompanionLastEquippedULegItem auto conditional hidden
 Armor property CompanionLastEquippedStrapOnItem auto conditional hidden
 Armor property CompanionLastEquippedIntimateAttireItem = None auto conditional hidden
 Armor property CompanionLastEquippedGlassesItem auto conditional hidden

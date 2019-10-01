@@ -50,6 +50,7 @@ bool property IsBP70Active = false auto conditional hidden
 bool property IsMutatedLustActive = false auto conditional hidden
 bool property IsHoloboyActive = false auto conditional hidden
 bool property IsGrayAnimsActive = false auto conditional hidden
+bool property IsLocksmithActive = false auto conditional hidden
 bool property IsSavageCabbageActive = false auto conditional hidden
 bool property IsConquestActive = false auto conditional hidden
 Keyword property ConquestWorkshopKW = None auto conditional hidden

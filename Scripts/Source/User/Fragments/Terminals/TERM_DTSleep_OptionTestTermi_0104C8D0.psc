@@ -113,6 +113,22 @@ pDTSleep_SettingAACV.SetValue(2.0)
 EndFunction
 ;END FRAGMENT
 
+;BEGIN FRAGMENT Fragment_Terminal_15
+Function Fragment_Terminal_15(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingSynthHuman.SetValue(0.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_16
+Function Fragment_Terminal_16(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingSynthHuman.SetValue(1.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
 ;END FRAGMENT CODE - Do not edit anything between this and the begin comment
 
 Quest Property pDTSleep_MainQuest Auto Const Mandatory
@@ -124,3 +140,5 @@ GlobalVariable Property pDTSleep_SceneTestMode Auto Const Mandatory
 GlobalVariable Property pDTSleep_SettingFastTime Auto Const Mandatory
 
 GlobalVariable Property pDTSleep_SettingAACV Auto Const Mandatory
+
+GlobalVariable Property pDTSleep_SettingSynthHuman Auto Const Mandatory
