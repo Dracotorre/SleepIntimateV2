@@ -23,6 +23,7 @@ ReferenceAlias property DTSleep_TrueLoveAlias auto const
 RefCollectionAlias property ActiveCompanionCollectionAlias auto const
 ActorValue property CA_AffinityAV auto const
 
+GlobalVariable property DTSleep_SettingModActive auto const
 GlobalVariable property DTSleep_SettingIntimate auto const		; not currently used; could limit non-romance companions per this setting, but let's allow it
 GlobalVariable property DTSleep_SettingTestMode auto const				
 FormList property DTSleep_ModCompanionActorList auto const		; known custom companions (Heather, Barb) stored here
@@ -47,13 +48,13 @@ bool property PreparingToStop auto hidden
 int PrepStopTimerID = 11 const
 
 Event OnQuestInit()
-	;Debug.Trace("[DTSleep_TrueLoveQuest] started")
-	if ((DTSConditionals as DTSleep_Conditionals).LoverRingEquipCount > 0)
+
+	if (DTSleep_SettingModActive.GetValue() > 0 && (DTSConditionals as DTSleep_Conditionals).LoverRingEquipCount > 0)
 		self.SetStage(10)
 		SetObjectiveDisplayed(10, true)		; mark quest journal with ring owner's name
 		; keep going until stopped, and a fragment hides the journal entry
 	else
-		Debug.Trace("[DTSleep_TrueLoveQuest] OnInit -- ring count is zero! - stop quest")
+		Debug.Trace("[DTSleep_TrueLoveQuest] OnInit -- mod inactive or ring count is zero! - stop quest")
 		Utility.WaitMenuMode(0.1)
 		self.Stop()
 	endIf

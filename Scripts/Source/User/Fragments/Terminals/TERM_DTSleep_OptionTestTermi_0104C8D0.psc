@@ -116,7 +116,7 @@ EndFunction
 ;BEGIN FRAGMENT Fragment_Terminal_15
 Function Fragment_Terminal_15(ObjectReference akTerminalRef)
 ;BEGIN CODE
-pDTSleep_SettingSynthHuman.SetValue(0.0)
+pDTSleep_SettingSynthHuman.SetValue(2.0)
 ;END CODE
 EndFunction
 ;END FRAGMENT
@@ -125,6 +125,14 @@ EndFunction
 Function Fragment_Terminal_16(ObjectReference akTerminalRef)
 ;BEGIN CODE
 pDTSleep_SettingSynthHuman.SetValue(1.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_17
+Function Fragment_Terminal_17(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingSynthHuman.SetValue(0.0)
 ;END CODE
 EndFunction
 ;END FRAGMENT

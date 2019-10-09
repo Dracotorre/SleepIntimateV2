@@ -323,7 +323,7 @@ ObjectReference Function FindNearestOpenBedFromObject(ObjectReference fromObj, F
 	return None
 endFunction
 
-ObjectReference Function FindNearestObjectInListFromObjRef(FormList list, ObjectReference fromObjRef, float radius) global
+ObjectReference Function FindNearestObjectInListFromObjRef(FormList list, ObjectReference fromObjRef, float radius, bool onSamePlane = false) global
 	if (list != None && fromObjRef != None)
 		;
 		;ObjectReference objRef = Game.FindClosestReferenceOfAnyTypeInListFromRef(list, fromObjRef, radius)
@@ -333,7 +333,9 @@ ObjectReference Function FindNearestObjectInListFromObjRef(FormList list, Object
 		float closestDist = 10000.0
 		int closestIDX = -1
 		ObjectReference[] nearObjArr = fromObjRef.FindAllReferencesOfType(list, radius)
-		if (nearObjArr != None)
+		if (nearObjArr.Length > 0)
+		
+			Point3DOrient ptFrom = PointOfObject(fromObjRef)
 			int index = 0
 			while (index < nearObjArr.Length)
 				ObjectReference objRef = nearObjArr[index]
@@ -341,8 +343,16 @@ ObjectReference Function FindNearestObjectInListFromObjRef(FormList list, Object
 					
 					float dist = DistanceBetweenObjects(fromObjRef, objRef)
 					if (dist < closestDist)
-						closestDist = dist
-						closestIDX = index
+						if (onSamePlane)
+							Point3DOrient ptObj = PointOfObject(objRef)
+							if (ptObj.Z > (ptFrom.Z - 20.0) && ptObj.Z < (ptFrom.Z + 20.0))
+								closestDist = dist
+								closestIDX = index
+							endIf
+						else
+							closestDist = dist
+							closestIDX = index
+						endIf
 					endIf
 				endIf
 			

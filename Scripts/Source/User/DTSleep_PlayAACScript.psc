@@ -27,6 +27,7 @@ GlobalVariable property DTSleep_IntimateSceneLen auto
 GlobalVariable property DTSleep_IntimateDogEXP auto
 GlobalVariable property DTSleep_SettingUseLeitoGun auto const
 GlobalVariable property DTSleep_SettingUseBT2Gun auto const
+GlobalVariable property DTSleep_SettingSynthHuman auto const
 EndGroup
 
 Group A_GameData
@@ -43,6 +44,7 @@ Keyword property PlayerHackFailSubtype auto const
 ;FormList property DTSleep_StrapOnList auto const
 FormList property DTSleep_LeitoGunList auto const
 FormList property DTSleep_BT2GunList auto const
+FormList property DTSleep_LeitoGunSynthList auto const
 Armor property DTSleep_NudeSuitPlayerUp auto const
 ;Armor property DTSleep_LeitoNudeDogmeat auto const
 ;Armor property SkinDogmeat auto const
@@ -125,18 +127,17 @@ Event OnEffectStart(Actor akfActor, Actor akmActor)
 		if (SequenceID >= 100)
 			secondActorOkay = false
 		endIf
+	elseIf (SceneData.MaleRole != akfActor && SceneData.FemaleRole != akfActor)
+		secondActorOkay = false
+	elseIf (akfActor == akmActor)
+		secondActorOkay = false
 	endIf
 	
 	if (akfActor != None && akfActor != akmActor)
-		MainActor = akmActor
-		MainActorOriginMarkRef = DTSleep_CommonF.PlaceFormAtObjectRef(DTSleep_MainNode, MainActor)
 		
 		if (secondActorOkay)
-			if (SceneData.MaleRole == MainActor)
-				SecondActor = SceneData.FemaleRole
-			else
-				SecondActor = SceneData.MaleRole
-			endIf
+			MainActor = akmActor
+			SecondActor = akfActor
 			
 			SecondActorOriginMarkRef = DTSleep_CommonF.PlaceFormAtObjectRef(DTSleep_MainNode, SecondActor)
 			SecondActor.SetAnimationVariableBool("bHumanoidFootIKDisable", true)
@@ -159,9 +160,14 @@ Event OnEffectStart(Actor akfActor, Actor akmActor)
 			endIf
 			
 			CheckRemoveSecondActorWeapon(0.2)
+		else
+			Debug.Trace("[DTSleep_PlayAAC] secondActor not okay --- single actor start " + akfActor)
+			MainActor = akfActor
 		endIf
 		
+		MainActorOriginMarkRef = DTSleep_CommonF.PlaceFormAtObjectRef(DTSleep_MainNode, MainActor)
 	else
+		Debug.Trace("[DTSleep_PlayAAC] single actor start " + akfActor)
 		MainActor = akfActor
 	endIf
 
@@ -350,6 +356,7 @@ Armor Function GetArmorNudeGun(int kind)
 	endIf
 	int evbVal = DTSleep_SettingUseLeitoGun.GetValueInt()
 	int bt2Val = DTSleep_SettingUseBT2Gun.GetValueInt()
+	int synthVal = DTSleep_SettingSynthHuman.GetValueInt()
 	
 	if (SceneData.IsCreatureType == 1)
 		evbVal = 2
@@ -357,14 +364,20 @@ Armor Function GetArmorNudeGun(int kind)
 	elseIf (SceneData.AnimationSet == 8)
 		bt2Val = -1
 		evbVal = 2
+		synthVal = 1
 	elseIf (DTSConditionals.IsUniquePlayerMaleActive && evbVal > 0 && SceneData.MaleRole == PlayerRef)
 		bt2Val = -1
 	endIf
 	
 	if (kind > 0 && evbVal == 1)
 		kind = 0
-	elseIf (kind > 0 && SceneData.AnimationSet == 5 && bt2Val > 0)
-		kind = 0
+	elseIf (kind > 0 && bt2Val > 0)
+		if (SceneData.AnimationSet == 5)
+			; these animate penis so only need base
+			if (SequenceID >= 503 && SequenceID < 551)
+				kind = 0
+			endIf
+		endIf
 	endIf
 	
 	if ((evbVal > 0 || bt2Val > 0) && SceneData.IsCreatureType != 2)
@@ -382,7 +395,14 @@ Armor Function GetArmorNudeGun(int kind)
 		endIf
 		
 		if (kind >= 0)
-			if (bt2Val <= 0 && DTSleep_LeitoGunList != None && DTSleep_LeitoGunlist.GetSize() > kind)
+			;Debug.Trace("[DTSleep_PlayAAC] get nude-armor-gun kind = " + kind)
+			if (SceneData.IsCreatureType == 4)
+				if (synthVal >= 2 && DTSleep_BT2GunList.GetSize() > (kind + 3))
+					gun = DTSleep_BT2GunList.GetAt(kind + 3) as Armor
+				elseIf (DTSleep_LeitoGunSynthList != None && DTSleep_LeitoGunSynthList.GetSize() > kind)
+					gun = DTSleep_LeitoGunSynthList.GetAt(kind) as Armor
+				endIf
+			elseIf (bt2Val <= 0 && DTSleep_LeitoGunList != None && DTSleep_LeitoGunlist.GetSize() > kind)
 				gun = DTSleep_LeitoGunList.GetAt(kind) as Armor
 			elseIf (bt2Val > 0 && DTSleep_BT2GunList != None && DTSleep_BT2GunList.GetSize() > kind)
 				; Atomic Lust animates the skeleton for BodyTalk so limit to kind = 0
@@ -410,10 +430,24 @@ Function InitSceneAndPlay()
 	int longScene = 0
 	int genders = -1		; FM, 0 = MM, 1 = FF
 	int otherActor = 0
+	bool forceEVB = true
 	DTAACSceneStageStruct[] seqStagesArray = None
+	
+	if (SceneData.AnimationSet == 7 && DTSleep_SettingUseBT2Gun.GetValueInt() > 0)
+		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.10)
+			forceEVB = false
+		endIf
+	endIf
 	
 	if (SceneData.CompanionInPowerArmor)
 		longScene = -1
+	elseIf (SequenceID == 737 || SequenceID == 765)
+		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.1)
+			longScene = 1
+			if (SequenceID == 737 && DTSleep_IntimateSceneLen.GetValueInt() >= 3)
+				longScene = 2
+			endIf
+		endIf
 	elseIf (DTSleep_IntimateSceneLen.GetValueInt() >= 3)
 		longScene = 1
 	endIf
@@ -433,8 +467,8 @@ Function InitSceneAndPlay()
 		endIf
 	endIf
 	
-	if (SequenceID >= 500 && DTSConditionals.ImaPCMod)	
-		seqStagesArray = DTSleep_AACcatScript.GetSeqCatArrayForSequenceID(SequenceID, longScene, genders, otherActor)
+	if (SequenceID >= 500 && DTSConditionals.ImaPCMod)
+		seqStagesArray = DTSleep_AACcatScript.GetSeqCatArrayForSequenceID(SequenceID, longScene, genders, otherActor, forceEVB)
 	endIf
 	
 	SceneRunning = 1
@@ -629,13 +663,13 @@ endFunction
 
 Function PlayAnimAtStage(DTAACSceneStageStruct stage, Actor mActor, Actor fActor, Actor oActor, float waitSecs)
 
-	if (mActor != None && fActor != None && stage.MAnimFormID > 0 && stage.FAnimFormID > 0 && SceneRunning > 0)
+	if (fActor != None && stage.FAnimFormID > 0 && SceneRunning > 0)
 	
 		if (stage.StageTime > 0.0)
 			waitSecs = stage.StageTime
 		endIf
 		
-		if (SecondActor == None)
+		if (SecondActor == None && mActor != None && fActor != None)
 			if (MainActor == mActor)
 				fActor = None
 			else
@@ -645,15 +679,18 @@ Function PlayAnimAtStage(DTAACSceneStageStruct stage, Actor mActor, Actor fActor
 		
 		;Debug.Trace("[DTSleep_PlayAAC] stage " + stage.StageNum + ", waitSecs = " + waitSecs)
 		
-		Idle a2 = Game.GetFormFromFile(stage.MAnimFormID, stage.PluginName) as Idle
+		Idle a2 = None
 		Idle a1 = Game.GetFormFromFile(stage.FAnimFormID, stage.PluginName) as Idle
 		Idle a3 = None
 		
+		if (stage.MAnimFormID > 0)
+			a2 = Game.GetFormFromFile(stage.MAnimFormID, stage.PluginName) as Idle
+		endIf
 		if (stage.OAnimFormID > 0)
 			a3 = Game.GetFormFromFile(stage.OAnimFormID, stage.PluginName) as Idle
 		endIf
 		
-		if (a1 != None && a2 != None)
+		if (a1 != None)
 		
 			if (stage.ArmorNudeAGun != LastGunAIndex)
 				LastGunAIndex = stage.ArmorNudeAGun
@@ -688,13 +725,13 @@ endFunction
 
 Function PlaySingleStage(Actor mActor, Actor fActor, Actor oActor, Idle mIdle, Idle fIdle, Idle oIdle, float waitSecs)
 
-	if (mActor != none || fActor != None)
+	if (mActor != None || fActor != None)
 	
 		;Debug.Trace("[DTSleep_PlayAAC] play idles " + mIdle + ", " + fIdle + " mActor: " + mActor + ", fActor: " + fActor)
 			
-		if (mIdle != None && fIdle != None)
+		if (fIdle != None)
 
-			if (mActor != None)
+			if (mActor != None && mIdle != None)
 				mActor.PlayIdle(mIdle)
 			endIf
 			if (fActor != none)
@@ -740,6 +777,9 @@ EndFunction
 Function RemoveBT2Guns(Actor aActor)
 	if (DTSleep_BT2GunList != None)
 		int len = DTSleep_BT2GunList.GetSize()
+		if (len > 3 && DTSleep_SettingSynthHuman.GetValueInt() < 2)
+			len = 3
+		endIf
 		int idx = 0
 		while (idx < len)
 			Armor gun = DTSleep_BT2GunList.GetAt(idx) as Armor

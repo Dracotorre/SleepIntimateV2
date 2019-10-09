@@ -44,6 +44,7 @@ Actor property MacCreadyRef auto const
 Actor property CompanionDeaconRef auto const
 Actor property CompanionX6Ref auto const
 Actor property CompanionStrongRef auto const
+Actor property CompanionValentineRef auto const
 Quest property DTSleep_IntimateAnimQuestP auto const
 
 Static property DTSleep_DummyNode auto const
@@ -133,6 +134,9 @@ Armor property DTSleep_LeitoGunNudeUp_Forw auto const
 Armor property DTSleep_PlayerNudeRing auto const
 Armor property DTSleep_PlayerNudeBodyNoPipBoy auto const
 Armor property DTSleep_AltFemNudeBody auto const			; added v2.12
+Armor property DTSleep_SkinSynthGen2DirtyNude auto const
+Armor property DTSleep_SkinSynthGen2BT2Nude auto const
+{ not currently used }
 EndGroup
 
 Group D_Settings
@@ -142,6 +146,7 @@ GlobalVariable property DTSleep_SettingUseBT2Gun auto const
 GlobalVariable property DTSleep_AdultContentOn auto const
 GlobalVariable property DTSleep_SettingUndressGlasses auto const
 GlobalVariable property DTSleep_SettingUndressPipboy auto const		; only for backup to check disabled status - caller decides for regular use
+GlobalVariable property DTSleep_SettingSynthHuman auto const
 EndGroup
 
 ; -------
@@ -1179,6 +1184,9 @@ Function CheckAndEquipMainSleepOutfit(Actor actorRef)
 			
 		elseIf (actorRef == CompanionRef && DressData.CompanionEquippedSleepwearItem == None)
 		
+			if (actorRef == CompanionValentineRef)
+				RedressActorRemoveNudeSuits(actorRef, DTSleep_SkinSynthGen2DirtyNude, "synth2 nude-armor")
+			endIf
 			; assume nude-ring knocked sleepwear off
 			RedressActorRemoveNudeSuits(actorRef, DTSleep_NudeRing, " nude ring ")
 			RedressActorRemoveNudeSuits(actorRef, DTSleep_NudeRingNoHands, " nude ring no-hands ")
@@ -1248,6 +1256,11 @@ Function CheckNudeSuitsRemoved()
 		DTDebug(" CheckNudeSuitsRemoved ...", 2)
 		
 		if (CompanionRef != None)
+			if (CompanionRef == CompanionValentineRef)
+
+				RedressActorRemoveNudeSuits(CompanionRef, DTSleep_SkinSynthGen2DirtyNude, "Recheck-synth2-nude-armor", false)
+			endIf
+			
 			RedressActorRemoveNudeSuits(CompanionRef, DTSleep_NudeRingArmorOuter, " Recheck-nudeRingArmorOut", false)
 			RedressActorRemoveNudeSuits(CompanionRef, DTSleep_NudeRing, " Recheck-nudeRing ", false)
 			RedressActorRemoveNudeSuits(CompanionRef, DTSleep_NudeRingNoHands, " Recheck-nudeRingNoHands ", false)
@@ -1256,6 +1269,10 @@ Function CheckNudeSuitsRemoved()
 			CheckRemoveLeitoGuns(CompanionRef)
 		endIf
 		if (CompanionSecondRef != None && UndressedForType == 0)
+			if (CompanionSecondRef == CompanionValentineRef)
+
+				RedressActorRemoveNudeSuits(CompanionSecondRef, DTSleep_SkinSynthGen2DirtyNude, "Recheck-synth2-nude-armor", false)
+			endIf
 			RedressActorRemoveNudeSuits(CompanionSecondRef, DTSleep_NudeRingArmorOuter, " Recheck-nudeRingArmorOut", false)
 			RedressActorRemoveNudeSuits(CompanionSecondRef, DTSleep_NudeRing, " Recheck-nudeRing ", false)
 			RedressActorRemoveNudeSuits(CompanionSecondRef, DTSleep_NudeRingNoHands, " Recheck-nudeRingNoHands ", false)
@@ -1329,6 +1346,10 @@ bool Function CheckRemoveAllNudeSuits(Actor actorRef, bool checkCustom = true)
 	else
 		DTDebug("checking nude suit for " + actorRef, 2)
 		; check both anyway
+		if (actorRef == CompanionValentineRef)
+
+			RedressActorRemoveNudeSuits(actorRef, DTSleep_SkinSynthGen2DirtyNude, " synthGen2 nude-armor")
+		endIf
 		RedressActorRemoveNudeSuits(actorRef, DTSleep_NudeRing, " nude ring ")
 		
 		RedressActorRemoveNudeSuits(actorRef, DTSleep_NudeRingArmorOuter, " nude ring-ArmorOut")
@@ -1419,6 +1440,8 @@ int Function GetGenderForActor(Actor actorRef)
 		gender = 0
 	elseIf (actorRef == CompanionStrongRef)
 		gender = 0
+	elseIf (actorRef == CompanionValentineRef)
+		gender = 0
 	else
 		; Curie synth shows as gen2-Valentine, male gender -- set above
 		; Ada is female, but human-mod could possibly set male 
@@ -1477,28 +1500,28 @@ Armor Function GetCustomNudeSuitForCompanion(Actor actorRef)
 	
 		int armorIndex = -1
 		
-		if ((DTSConditionals as DTSleep_Conditionals).IsUniqueFollowerFemActive)
-			if (actorRef == CaitRef)
-				armorIndex = 0
-			elseIf (actorRef == CurieRef)
-				armorIndex = 1
-			elseIf (actorRef == PiperRef)
-				armorIndex = 2
-			endIf
-			
-			if (armorIndex >= 0)
-				armorIndex += (DTSConditionals as DTSleep_Conditionals).ModUniqueFollowerFemBodyBaseIndex
-			endIf
-		endIf
+		;if ((DTSConditionals as DTSleep_Conditionals).IsUniqueFollowerFemActive)
+		;	if (actorRef == CaitRef)
+		;		armorIndex = 0
+		;	elseIf (actorRef == CurieRef)
+		;		armorIndex = 1
+		;	elseIf (actorRef == PiperRef)
+		;		armorIndex = 2
+		;	endIf
+		;	
+		;	if (armorIndex >= 0)
+		;		armorIndex += (DTSConditionals as DTSleep_Conditionals).ModUniqueFollowerFemBodyBaseIndex
+		;	endIf
+		;endIf
 		
-		if (armorIndex < 0 && (DTSConditionals as DTSleep_Conditionals).IsUniqueFollowerMaleActive)
-			
-			armorIndex = GetCompanionLeitoArmorIndexPublic(actorRef)
-			
-			if (armorIndex >= 0)
-				armorIndex += (DTSConditionals as DTSleep_Conditionals).ModUniqueFollowerMaleBodyBaseIndex
-			endIf
-		endIf
+		;if (armorIndex < 0 && (DTSConditionals as DTSleep_Conditionals).IsUniqueFollowerMaleActive)
+		;	
+		;	armorIndex = GetCompanionLeitoArmorIndexPublic(actorRef)
+		;	
+		;	if (armorIndex >= 0)
+		;		armorIndex += (DTSConditionals as DTSleep_Conditionals).ModUniqueFollowerMaleBodyBaseIndex
+		;	endIf
+		;endIf
 			
 		if (armorIndex < 0 && (DTSConditionals as DTSleep_Conditionals).IsHeatherCompanionActive)
 			if (actorRef == GetHeatherActor())
@@ -2514,6 +2537,8 @@ Function RedressActor(Actor actorRef, Form[] equippedFormArray, bool slowly = tr
 				RedressActorRemoveNudeSuits(actorRef, DTSleep_NudeRingNoHands, " nude ring-no-hands ", false)
 			elseIf (item == DressData.CompanionNudeSuit)
 				RedressActorRemoveNudeSuits(actorRef, DressData.CompanionNudeSuit, " custom nude suit ", false)
+			elseIf (item == DTSleep_SkinSynthGen2DirtyNude)
+				RedressActorRemoveNudeSuits(actorRef, DTSleep_SkinSynthGen2DirtyNude, " synthGen2 nude suit", false)
 			elseIf (item == DTSleep_NudeSuitPlayerUp)
 				RedressActorRemoveNudeSuits(actorRef, DTSleep_NudeSuitPlayerUp, " playerNudeSuit-Up", false)
 			elseIf (item == DTSleep_LeitoGunNudeUp_UP)
@@ -3470,7 +3495,11 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 			; TODO - v2.14
 			if (includeExceptions && actorRef == CompanionRef && DressData.CompanionNudeSuit == None)
 				; v2.14 - knock it all off
-				actorRef.EquipItem(DTSleep_NudeRing, true, true)
+				if (actorRef == CompanionValentineRef)
+					actorRef.EquipItem(DTSleep_SkinSynthGen2DirtyNude, true, true)
+				else
+					actorRef.EquipItem(DTSleep_NudeRing, true, true)
+				endIf
 			else
 				actorRef.EquipItem(DTSleep_NudeRingArmorOuter, false, true)		; allow removal, silent
 			endIf
@@ -3517,6 +3546,8 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 				
 				UndressActorArmorInnerSlots(actorRef, includeExceptions)	; v2.17 - moved as part of intimate outfit
 			endIf
+			actorRef.UnequipItemSlot(4) 	; 34 - left hand
+			actorRef.UnequipItemSlot(5)
 			
 		elseIf (includeExceptions || !actorWearingArmorAll)  ; companion
 			if (actorRef == CompanionRef)
@@ -3858,12 +3889,13 @@ Function UndressActorArmorInnerSlots(Actor actorRef, bool includeExceptions)
 	
 	; normally considered under-armor clothing pieces
 	actorRef.UnequipItemSlot(6) 	; 36 - u-torso !!!(AWK-Bracelet)!!
-	if (includeExceptions || !IsActorWearingSlotULegExepction(actorRef))
+	if (includeExceptions || IsSummerSeason() || !IsActorWearingSlotULegExepction(actorRef))
 		actorRef.UnequipItemSlot(7) 	; 37 - u-L arm  AWK-Jacket, Cross overcoats
 		actorRef.UnequipItemSlot(9) 	; 39 - u-L leg  CROSS-Bos boots, AWK-*OnHip
+		actorRef.UnequipItemSlot(10)
 	endIf
-	actorRef.UnequipItemSlot(8)
-	actorRef.UnequipItemSlot(10)
+	actorRef.UnequipItemSlot(8) ; u-R arm
+	
 endFunction
 
 ;
@@ -4416,7 +4448,11 @@ Function UndressActorCompanionDressNudeSuit(Actor actorRef, bool hasSleepMainOut
 		; prevent actor from bumping nude-suit (EquipItem true on 1st parameter)
 		; sleep clothing may not bump nude-suits - check to remove before equip sleepwear
 		
-		if (DressData.CompanionNudeSuit == None)
+		if (actorRef == CompanionValentineRef)
+			DTDebug(" equip synth2 nude-armor on " + actorRef, 2)
+			actorRef.EquipItem(DTSleep_SkinSynthGen2DirtyNude, true, true)
+		
+		elseIf (DressData.CompanionNudeSuit == None)
 			DTDebug(" equip default Nude Suit on " + actorRef, 2)
 			
 			actorRef.EquipItem(DTSleep_NudeSuit, true, true)   ; prevent NPC main outfit auto-equip
@@ -4431,6 +4467,10 @@ Function UndressActorCompanionDressNudeSuit(Actor actorRef, bool hasSleepMainOut
 			actorRef.EquipItem(DressData.CompanionNudeSuit, true, true) ; prevent NPC main outfit auto-equip
 			Utility.WaitMenuMode(0.15)
 		endIf
+	elseIf (actorRef == CompanionValentineRef)
+		DTDebug(" equip synth2 nude-armor on " + actorRef, 2)
+
+		actorRef.EquipItem(DTSleep_SkinSynthGen2DirtyNude, true, true)
 	else
 		DTDebug(" equip Nude Ring on " + actorRef, 2)
 		

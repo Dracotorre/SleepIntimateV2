@@ -18,6 +18,8 @@ DTSleep_Conditionals property DTSConditionals auto const Mandatory
 Quest property DTSleep_TrueLoveQuest auto const
 ReferenceAlias property DTSleep_TrueLoveAlias auto const 
 Faction property DTSleep_LoverRingFaction auto const
+Message property DTSleep_RingNoLoveMsg auto const
+GlobalVariable property DTSleep_SettingNotifications auto const
 
 
 ; -------------- events 
@@ -54,6 +56,10 @@ Event OnEquipped(Actor akActor)
 			else
 				DTSleep_TrueLoveQuest.Start()
 			endIf
+		endIf
+	elseIf (DTSleep_RingNoLoveMsg != None)
+		if (DTSleep_SettingNotifications == None || DTSleep_SettingNotifications.GetValue() >= 1.0)
+			DTSleep_RingNoLoveMsg.Show()
 		endIf
 	endIf
 endEvent

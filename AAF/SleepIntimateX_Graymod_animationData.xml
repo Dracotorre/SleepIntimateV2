@@ -1,0 +1,217 @@
+<meta title="Graymod_animationData.xml" version="1.0" dataSet="animation"/>
+<defaults source="AAF_GrayAnimations.esp"/>
+
+
+<animation id="SIX_Gray_Spanking02_S1" frames="300">
+	<actor>
+		<idle form="0100268f" id="GraySpanking02S01F"/>
+	</actor>
+	<actor>
+		<idle form="01002690" id="GraySpanking02S01M"/>
+	</actor>
+</animation>
+
+<animation id="SIX_Gray_Spanking02_S2" frames="300">
+	<actor>
+		<idle form="01002691" id="GraySpanking02S02F"/>
+	</actor>
+	<actor>
+		<idle form="01002692" id="GraySpanking02S02M"/>
+	</actor>
+</animation>
+
+<animation id="SIX_Gray_Spanking02_S3" frames="300">
+	<actor>
+		<idle form="01002693" id="GraySpanking02S03F"/>
+	</actor>
+	<actor>
+		<idle form="01002694" id="GraySpanking02S03M"/>
+	</actor>
+</animation>
+
+<animation id="SIX_Gray_Spanking02_S4" frames="300">
+	<actor>
+		<idle form="01002695" id="GraySpanking02S04F"/>
+	</actor>
+	<actor>
+		<idle form="01002696" id="GraySpanking02S04M"/>
+	</actor>
+</animation>
+
+<animation id="SIX_Gray_Missionary02_S1" frames="300">
+	<actor gender="F">
+		<idle form="01002677" id="GrayMissionary02S01F"/>
+	</actor>
+	<actor gender="M">
+		<idle form="01002678" id="GrayMissionary02S01M"/>
+	</actor>
+</animation>
+
+<animation id="SIX_Gray_Missionary02_S2" frames="300">
+	<actor gender="F">
+		<idle form="01002679" id="GrayMissionary02S02F"/>
+	</actor>
+	<actor gender="M">
+		<idle form="0100267a" id="GrayMissionary02S02M"/>
+	</actor>
+</animation>
+
+<animation id="SIX_Gray_Missionary02_S3" frames="300">
+	<actor gender="F">
+		<idle form="0100267b" id="GrayMissionary02S03F"/>
+	</actor>
+	<actor gender="M">
+		<idle form="0100267c" id="GrayMissionary02S03M"/>
+	</actor>
+</animation>
+
+<animation id="SIX_Gray_Missionary02_S4" frames="300">
+	<actor gender="F" stopOverlaySet="Vaginal">
+		<idle form="0100267d" id="GrayMissionary02S04F"/>
+	</actor>
+	<actor gender="M">
+		<idle form="0100267e" id="GrayMissionary02S04M"/>
+	</actor>
+</animation>
+
+<animation id="SIX_Gray_Missionary02FF_S1" frames="300">
+	<actor gender="F">
+		<idle form="01002677" id="GrayMissionary02S01F"/>
+	</actor>
+	<actor gender="F">
+		<idle form="0100544D" id="GrayMissionary02S01MF"/>
+		<!-- <value path="action" value="FF_activity"/> -->
+	</actor>
+</animation>
+
+<animation id="SIX_Gray_Missionary02FF_S2" frames="300">
+	<actor gender="F">
+		<idle form="01002679" id="GrayMissionary02S02F"/>
+	</actor>
+	<actor gender="F">
+		<idle form="0100544E" id="GrayMissionary02S02MF"/>
+		<!-- <value path="action" value="FF_activity"/> -->
+	</actor>
+</animation>
+
+<animation id="SIX_Gray_Missionary02FF_S3" frames="300">
+	<actor gender="F">
+		<idle form="0100267b" id="GrayMissionary02S03F"/>
+	</actor>
+	<actor gender="F">
+		<idle form="0100544F" id="GrayMissionary02S03MF"/>
+		<!-- <value path="action" value="FF_activity"/> -->
+	</actor>
+</animation>
+
+<animation id="SIX_Gray_Missionary02FF_S4" frames="300">
+	<actor gender="F">
+		<idle form="0100267d" id="GrayMissionary02S04F"/>
+	</actor>
+	<actor gender="F">
+		<idle form="01005450" id="GrayMissionary02S04MF"/>
+		<!-- <value path="action" value="FF_activity"/> -->
+	</actor>
+</animation>
+
+<animation id="SIX_Gray_Doggy01_S1" frames="300">
+	<actor gender="F">
+		<idle form="0100267f" id="GrayDoggy01S01F"/>
+	</actor>
+	<actor gender="M">
+		<idle form="01002680" id="GrayDoggy01S01M"/>
+	</actor>
+</animation>
+
+<animation id="SIX_Gray_Doggy01_S2" frames="300">
+	<actor gender="F">
+		<idle form="01002681" id="GrayDoggy01S02F"/>
+	</actor>
+	<actor gender="M">
+		<idle form="01002682" id="GrayDoggy01S02M"/>
+	</actor>
+</animation>
+
+<animation id="SIX_Gray_Doggy01_S3" frames="300">
+	<actor gender="F">
+		<idle form="01002683" id="GrayDoggy01S03F"/>
+	</actor>
+	<actor gender="M">
+		<idle form="01002684" id="GrayDoggy01S03M"/>
+	</actor>
+</animation>
+
+<animation id="SIX_Gray_Doggy01_S4" frames="300">
+	<actor gender="F" stopOverlaySet="Anal">
+		<idle form="01002685" id="GrayDoggy01S04F"/>
+	</actor>
+	<actor gender="M">
+		<idle form="01002686" id="GrayDoggy01S04M"/>
+	</actor>
+</animation>
+
+<animation id="SIX_Gray_Doggy01FF_S1" frames="300">
+	<actor gender="F">
+		<idle form="0100267f" id="GrayDoggy01S01F"/>
+	</actor>
+	<actor gender="F">
+		<idle form="01005bea" id="GrayDoggy01S01MF"/>
+		<!-- <value path="action" value="FF_activity"/> -->
+	</actor>
+</animation>
+
+<animation id="SIX_Gray_Doggy01FF_S2" frames="300">
+	<actor gender="F">
+		<idle form="01002681" id="GrayDoggy01S02F"/>
+	</actor>
+	<actor gender="F">
+		<idle form="01005beb" id="GrayDoggy01S02MF"/>
+		<!-- <value path="action" value="FF_activity"/> -->
+	</actor>
+</animation>
+
+<animation id="SIX_Gray_Doggy01FF_S3" frames="300">
+	<actor gender="F">
+		<idle form="01002683" id="GrayDoggy01S03F"/>
+	</actor>
+	<actor gender="F">
+		<idle form="01005bec" id="GrayDoggy01S03MF"/>
+		<!-- <value path="action" value="FF_activity"/> -->
+	</actor>
+</animation>
+
+<animation id="SIX_Gray_Doggy01FF_S4" frames="300">
+	<actor gender="F">
+		<idle form="01002685" id="GrayDoggy01S04F"/>
+	</actor>
+	<actor gender="F">
+		<idle form="01005bed" id="GrayDoggy01S04MF"/>
+		<!-- <value path="action" value="FF_activity"/> -->
+	</actor>
+</animation>
+
+<!-- Solo Animations -->
+
+<animation id="SIX_Gray_Bent_m" frames="300">
+	<actor>
+		<idle form="010063A7" id="GrayBentMast"/>
+	</actor>
+</animation>
+
+<animation id="SIX_Gray_Facedown_m" frames="300">
+	<actor>
+		<idle form="010063b0" id="GrayFacedownMast"/>
+	</actor>
+</animation>
+
+<animation id="SIX_Gray_Hogtie_m" frames="300">
+	<actor>
+		<idle form="01005c02" id="GrayHogtieMast"/>
+	</actor>
+</animation>
+
+<animation id="SIX_Gray_Side_m" frames="300">
+	<actor>
+		<idle form="010063b9" id="GraySideMast"/>
+	</actor>
+</animation>

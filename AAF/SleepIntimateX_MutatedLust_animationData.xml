@@ -1,0 +1,25 @@
+<meta title="SleepIntimateX_MutatedLust_animationData.xml" version="2.18" dataSet="animation"/>
+<defaults source="Mutated Lust.esp"/>
+
+
+<animation id="SIX_ML_SupermutantBlowjob" frames="300">
+	<actor gender="F">
+		<idle form="01000F9B"/>
+	</actor>
+	<actor gender="M" skeleton="Supermutant">
+		<idle form="01000F9C"/>
+		<!--<value path="morph" value="Erection Up" to="0.1"/> -->
+	</actor>
+</animation>
+
+
+
+<animation id="SIX_ML_SupermutantPenisLick" frames="195">
+	<actor gender="F">
+		<idle form="01004C70"/>
+		<!--<value path="action" value="addTongue" loop="true" frames="97.5"/>-->
+	</actor>
+	<actor gender="M" skeleton="Supermutant">
+		<idle form="01004C71"/>
+	</actor>
+</animation>

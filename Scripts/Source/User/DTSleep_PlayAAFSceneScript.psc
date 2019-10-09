@@ -35,6 +35,7 @@ Scriptname DTSleep_PlayAAFSceneScript extends Quest
 ; AAF uses a doppelganger borrowing player-character armor items which is then returned afterward
 ; and rather late.
 ;
+import DTSleep_AACcatScript
 
 ; holds info for single stage of sequence
 Struct AStageItem
@@ -60,6 +61,7 @@ GlobalVariable property DTSleep_SettingAAF auto const
 GlobalVariable property DTSleep_SettingUseLeitoGun auto const
 GlobalVariable property DTSleep_SettingUseBT2Gun auto const
 { if using erection 'gun' nude body for male }
+GlobalVariable property DTSleep_SettingSynthHuman auto const
 GlobalVariable property DTSleep_AAFTestTipShown auto	; time last shown
 EndGroup
 
@@ -71,6 +73,7 @@ DTSleep_SceneData property SceneData auto const
 FormList property DTSleep_LeitoGunList auto const
 { nude male body sets with erection 'gun' aimed - use when need to replace AAF morph }
 FormList property DTSleep_BT2GunList auto const
+FormList property DTSleep_LeitoGunSynthList auto const
 ;Armor property DTSleep_NudeSuitPlayerUp auto const
 Message property DTSleep_TestModeIDMessage auto const   ; reminds in test mode - could activate AAF interface to see ID
 Message property DTSleep_AAFGUIReminderMsg auto const
@@ -92,6 +95,7 @@ bool property MSceneFadeEnabled auto hidden
 CustomEvent SleepIntAAFPlayDoneEvent
 
 InputEnableLayer DTSleepPlaySceneInputLayer
+DTAACSceneStageStruct[] MySeqStagesArray = None
 
 AStageItem[] MyPositionIDArray
 int SeqLimitTimerID = 101 const
@@ -115,6 +119,7 @@ Event OnQuestInit()
 	MyMaleRoleGender = -1
 	MainActor = None
 	SecondActor = None
+	MySeqStagesArray = None
 EndEvent
 
 Event OnTimer(int aiTimerID)
@@ -207,27 +212,13 @@ Event AAF:AAF_API.OnAnimationStart(AAF:AAF_API akSender, Var[] akArgs)
 		if (MSceneFadeEnabled)
 			Game.FadeOutGame(false, true, 0.0, 1.1)
 		endIf
-		if (SceneData.AnimationSet == 5)
-			if (SequenceID >= 546 && SequenceID <= 547)
-				PlayAtomicLustContinuedSequence(SequenceID)
-			else
-				Utility.Wait(30.1)
-				MySceneStatus = 2
-				StopAnimationSequence()
-			endIf
-		elseIf (CurrentSingleDuration > 4.0)
-			Utility.Wait(CurrentSingleDuration)
-			MySceneStatus = 2
-			StopAnimationSequence()
-			
-		elseIf (SequenceID < 660)
-			PlayPairContinuedSequence(SceneData.WaitSecs)
+		
+		if (SequenceID >= 600 && SequenceID < 660)
+			PlayLeitoPairContinuedSequence(SceneData.WaitSecs)
 		elseIf (SequenceID >= 660 && SequenceID < 700)
 			PlayLeitoStrongContinuedSequence()
-		elseIf (SequenceID == 712)
-			PlayPairContinuedSequence(8.4)
 		else
-			PlayPairContinuedSequence(SceneData.WaitSecs)
+			PlayAAContinuedSequence(SceneData.WaitSecs)
 		endIf
 		
 	elseIf (goodToGo <= -1)
@@ -286,7 +277,7 @@ bool Function StartupScenePublic(Actor aMainActor, Actor aSecondaryActor, Object
 		Debug.Trace("[DTSleep_PlayAAF] caster only play ")
 	endIf
 	
-	if (MainActor && DTSConditionals.IsF4SE && (Debug.GetPlatformName() as bool))
+	if (MainActor != None && DTSConditionals.IsF4SE && (Debug.GetPlatformName() as bool))
 		DTSleepPlaySceneInputLayer = InputEnableLayer.Create()
 		
 			;         SleepInputLayer                     move,  fight, camSw, look, snk, menu, act, journ, Vats, Favs, run
@@ -314,9 +305,6 @@ Function ChangeSettingsDefaultEnabled(bool defaultOn)
 			if (MSceneFadeEnabled)
 				AAF_API.ChangeSetting("walk_timeout", "60")
 			endIf
-			if (DTSleep_SettingAAF.GetValueInt() < 2)
-				AAF_API.ChangeSetting("hide_error_messages", "false")  ; restore
-			endIf
 		else
 			AAF_API.ChangeSetting("disable_equipment_handling", "true")
 			if (DTSleep_SettingAAF.GetValueInt() >= 2)
@@ -325,9 +313,8 @@ Function ChangeSettingsDefaultEnabled(bool defaultOn)
 				endIf
 			else
 				if (MSceneFadeEnabled)
-					AAF_API.ChangeSetting("walk_timeout", "2")
+					AAF_API.ChangeSetting("walk_timeout", "0")
 				endIf
-				AAF_API.ChangeSetting("hide_error_messages", "true")  ; hide when using fade
 			endIf
 		endIf
 	endIf
@@ -412,6 +399,24 @@ bool Function PlaySequence()
 		return false
 	endIf
 	
+	int longScene = 0
+	int genders = -1		; FM, 0 = MM, 1 = FF
+	int otherActor = 0
+	
+	
+	if (SceneData.CompanionInPowerArmor)
+		longScene = -1
+	elseIf (DTSleep_IntimateSceneLen.GetValueInt() >= 3)
+		longScene = 1
+	endIf
+	if (SceneData.SecondMaleRole != None || SceneData.SecondFemaleRole != None)
+		otherActor = 1
+	endIf
+	
+	if (SceneData.SameGender && !SceneData.HasToyEquipped)
+		genders = SceneData.MaleRoleGender
+	endIf
+	
 	InitAAFAPI()
 	
 	MySceneStatus = 0
@@ -429,6 +434,7 @@ bool Function PlaySequence()
 	
 		bool mActorReady = true
 		bool fActorReady = true
+		bool forceEVB = true
 		if (SceneData.MaleRole.HasKeyWord(AAF_API.AAF_ActorLocked) || SceneData.MaleRole.HasKeyword(AAF_API.AAF_ActorBusy))
 			mActorReady = false
 			
@@ -442,6 +448,11 @@ bool Function PlaySequence()
 				
 			elseIf (IsActorLockingEnabled())
 				fActorReady = AAF_API.SetActorLocked(SceneData.FemaleRole, true)
+			endIf
+		endIf
+		if (SceneData.AnimationSet == 7 && DTSleep_SettingUseBT2Gun.GetValueInt() > 0)
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.10)
+				forceEVB = false
 			endIf
 		endIf
 		
@@ -458,46 +469,39 @@ bool Function PlaySequence()
 			;		SceneData.MaleRole.AddKeyword(AAF_API.AAF_GenderOverride_Male)
 			;	endIf
 			;endIf
-		
+			
 			if (SequenceID < 600)
-				if (SequenceID >= 546 && SequenceID <= 547)
-					PlayAtomicLustStages(SequenceID)
-					
-				elseIf (SequenceID == 549)
-					AStageItem[] seqArr = CreateSeqArrayForID(SequenceID, 4, None, false)
-
-					PlayPairSequenceLists(SceneData.MaleRole, SceneData.FemaleRole, None, seqArr, false)
+				if (SequenceID >= 546 && SequenceID <= 549)
+					PlayAASequence()
 				else
 					PlayAtomicScene()
 				endIf
-			elseIf (SequenceID < 660)
+			elseIf (SequenceID >= 600 && SequenceID < 660)
 				PlaySequenceLeitoStages()
 			elseIf (SequenceID < 670)
 				PlaySequenceLeitoStrongStages()
-			elseIf (SequenceID == 739)
-				; has both FM and FF variations - Create sets string for us
-				PlaySingleStageScene(CreateSeqPositionStr(739, 1), 32.0, SceneData.MaleMarker, GetLeitoGun(1))
-			elseIf (SequenceID == 751 || SequenceID == 755)
-				PlaySingleStageScene(CreateSeqPositionStr(SequenceID, 1), 32.0, SceneData.MaleMarker, GetLeitoGun(0))
-			elseIf (SequenceID == 754)
-				PlaySingleStageScene(CreateSeqPositionStr(SequenceID, 1), 32.0, SceneData.MaleMarker, GetLeitoGun(1))
-			elseIf (SequenceID < 800)
-				PlaySequenceSCStages()
-			elseIf (SequenceID < 900)
-				PlaySequenceZaZStages()
-			elseIf (SequenceID < 1000)
-				PlaySequenceGrayStages()
 			else
-				Debug.Trace("[DTSleep_PlayAAF] invalid sequence ID " + SequenceID)
-			
-				if (MSceneFadeEnabled)
-					Game.FadeOutGame(false, true, 0.0, 1.25)
-				endIf
-				MySceneStatus = 9
-				SceneData.Interrupted = 9
-				StopAnimationSequence(false, false)
+				MySeqStagesArray = DTSleep_AACcatScript.GetSeqCatArrayForSequenceID(SequenceID, longScene, genders, otherActor, forceEVB)
 				
-				return false
+				if (MySeqStagesArray.Length == 1)
+					Armor arm1Gun = GetArmorNudeGun(MySeqStagesArray[0].ArmorNudeAGun)
+					Armor arm2Gun = GetArmorNudeGun(MySeqStagesArray[0].ArmorNudebGun)
+					;PlaySingleStageScene(CreateSeqPositionStr(SequenceID, MySeqStagesArray[0].StageNum), MySeqStagesArray[0].StageTime, SceneData.MaleMarker, arm1Gun, arm2Gun)
+					PlaySingleStageScene(MySeqStagesArray[0].PositionID, MySeqStagesArray[0].StageTime, SceneData.MaleMarker, GetArmorNudeGun(MySeqStagesArray[0].ArmorNudeAGun))
+				elseIf (MySeqStagesArray.Length > 1)
+					PlayAASequence()
+				else
+					Debug.Trace("[DTSleep_PlayAAF] invalid sequence ID " + SequenceID)
+				
+					if (MSceneFadeEnabled)
+						Game.FadeOutGame(false, true, 0.0, 1.25)
+					endIf
+					MySceneStatus = 9
+					SceneData.Interrupted = 9
+					StopAnimationSequence(false, false)
+					
+					return false
+				endIf
 			endIf
 		else
 			Debug.Trace("[DTSleep_PlayAAF] actors locked - cancel scene")
@@ -635,7 +639,7 @@ Function StopAnimationSequence(bool canceledScene = false, bool startedOK = true
 	StartTimer(3.3, ChangeSettingsAndStopTimerID) 
 endFunction
 
-Function PlaySingleStageScene(string positionStr, float duration, ObjectReference locObjRef, Armor armGun = None)
+Function PlaySingleStageScene(string positionStr, float duration, ObjectReference locObjRef, Armor armGun = None, Armor arm2Gun = None)
 
 	CurrentSingleDuration = duration
 	Actor[] actors = New Actor [2]
@@ -652,14 +656,17 @@ Function PlaySingleStageScene(string positionStr, float duration, ObjectReferenc
 		actors[0] = MainActor
 	endIf
 	
-	; cannot equip nude-armor on player
+	; can only equip on player before start scene
 	;
 	if (armGun != None)
-		if (SceneData.MaleRole != PlayerRef && SceneData.MaleRoleGender == 0)
+		if (SceneData.MaleRoleGender == 0)
 			CheckEquipActorArmGun(SceneData.MaleRole, armGun)
+			if (SceneData.MaleRole == PlayerRef)
+				Utility.Wait(0.33)
+			endIf
 		endIf
 		if (SceneData.SecondMaleRole != None)
-			CheckEquipActorArmGun(SceneData.SecondMaleRole, armGun)
+			CheckEquipActorArmGun(SceneData.SecondMaleRole, arm2Gun)
 		endIf
 	endIf
 
@@ -668,6 +675,9 @@ Function PlaySingleStageScene(string positionStr, float duration, ObjectReferenc
 	aafSettings.duration = duration
 	aafSettings.position = positionStr
 	aafSettings.locationObject = locObjRef
+	if (MSceneFadeEnabled)
+		aafSettings.skipWalk = true
+	endIf
 
 	RegisterForCustomEvent(AAF_API, "OnAnimationStart")
 	RegisterForCustomEvent(AAF_API, "OnAnimationStop") 
@@ -689,14 +699,8 @@ Function PlayAtomicScene()
 	float timer = 33.5
 	
 	bool fullID = false
-	if (SequenceID == 503 || SequenceID == 504 || SequenceID == 540)
-		fullID = true
-	elseIf (SequenceID >= 550 && SequenceID <= 552)
-		fullID = true
-	elseIf (SequenceID >= 560)
-		fullID = true
-	endIf
-	String positionStr = CreateSeqPositionStr(SequenceID, 1, fullID)
+	
+	String positionStr = CreateSeqPositionStr(SequenceID, 1)
 	
 	if (SceneData.MaleMarker != None)
 		objRef = SceneData.MaleMarker
@@ -707,74 +711,33 @@ Function PlayAtomicScene()
 	elseIf (SequenceID == 503 || SequenceID == 504 || SequenceID == 509 || SequenceID == 541)
 		objRef = BedInSceneRef
 		if (SceneData.SameGender && SceneData.MaleRoleGender == 0)
-			armGun = GetLeitoGun(0)
+			armGun = GetArmorNudeGun(0)
 		elseIf (SequenceID == 509)
-			armGun == GetLeitoGun(1)
+			armGun == GetArmorNudeGun(1)
 		endIf
 	endIf
 	if (SequenceID >= 505 && SequenceID <= 510)
-		armGun = GetLeitoGun(0)
+		armGun = GetArmorNudeGun(0)
 	elseIf (SequenceID >= 540 && SequenceID <= 541)
 		objRef = MainActor
 		if (MainActor == SceneData.MaleRole)
-			armGun = GetLeitoGun(0)
+			armGun = GetArmorNudeGun(0)
 		endIf
 	elseIf (SequenceID == 548)
 		timer = 18.0
 	elseIf (SequenceID >= 550 && SequenceID <= 552)
-		armGun = GetLeitoGun(0)
+		armGun = GetArmorNudeGun(0)
 	elseIf (SequenceID >= 560)
 		if (SequenceID == 563)
-			armGun = GetLeitoGun(1)
+			armGun = GetArmorNudeGun(1)
 		else
-			armGun = GetLeitoGun(0)
+			armGun = GetArmorNudeGun(0)
 		endIf
 	endIf
 
 	PlaySingleStageScene(positionStr, timer, objRef, armGun)
 	
 endFunction
-
-Function PlayAtomicLustStages(int sid)
-
-	string position = CreateSeqPositionStr(sid, 1, false)  ; shortID
-	
-	Actor[] actors = new Actor[2]
-	if (SceneData.MaleRole == MainActor)
-		actors[0] = SecondActor												
-		actors[1] = MainActor
-	else
-		actors[1] = SecondActor												
-		actors[0] = MainActor
-	endIf
-	if (SceneData.CompanionInPowerArmor || SceneData.IsCreatureType == 3)	; v2.17 added 
-		actors = New Actor [1]
-		actors[0] = MainActor
-	endIf
-	
-	AAF:AAF_API:SceneSettings aafSettings = AAF_API.GetSceneSettings()
-
-	aafSettings.duration = 20.5
-	aafSettings.position = position
-	if (SceneData.MaleMarker != None)
-		aafSettings.locationObject = SceneData.MaleMarker
-	elseIf (SceneData.FemaleMarker != None)
-		aafSettings.locationObject = SceneData.FemaleMarker
-	else
-		aafSettings.locationObject = SecondActor
-	endIf
-	
-	RegisterForCustomEvent(AAF_API, "OnAnimationStart")
-	RegisterForCustomEvent(AAF_API, "OnAnimationStop")
-	
-	MyStartSeqID = position
-	AAF_API.StartScene(actors, aafSettings)
-	; will continue on Event
-	
-	StartTimer(20.0, CheckSceneStartTimerID)
-
-endFunction
-
 
 ; *****************************************
 ; stage Sequence play functions
@@ -805,8 +768,9 @@ string Function CreateSeqBaseStr(bool fullStr = true)
 			else
 				baseStr = "DTSIXF_"
 			endIf
+		elseIf (SequenceID == 741)
+			baseStr = "DTSIXF_"
 		elseIf (SequenceID == 940)
-		
 			baseStr = "DTSIXF_"
 		
 		elseIf (SceneData.SameGender && SceneData.MaleRoleGender == 1)
@@ -840,46 +804,45 @@ string Function CreateSeqIDStageStr(int id, int stageNum)
 	return id + "_S" + stageNum
 endFunction
 
-string Function CreateSeqPositionStr(int seqId, int stageNum, bool fullStr = true)
+string Function CreateSeqPositionStr(int seqId, int stageNum)
+	bool fullStr = true
+	bool fullID = false
+	
+	if (seqId >= 500 && seqId < 560)
+		fullStr = false
+		if (seqId == 503 || seqId == 504 || seqId == 540)
+			fullStr = true
+		elseIf (seqId >= 550 && seqId <= 552)
+			fullStr = true
+		elseIf (seqId >= 560)
+			fullStr = true
+		endIf
+	endIf
+	
 	return CreateSeqBaseStr(fullStr) + CreateSeqIDStageStr(seqId, stageNum)
-endFunction
-
-; use if morph not available, but not on player's character which is a doppelganger
-; 0 = normal, 1 = up, 2 = down
-Armor Function GetLeitoGun(int kind)
-
-	return GetArmorNudeGun(kind)
 endFunction
 
 ; 0 = normal, 1 = up, 2 = down
 Armor Function GetArmorNudeGun(int kind)
-	; AAF morphs should only need forward??
 	;Debug.Trace("[DTSleep_PlayAAF] GetArmorNudeGun start kind = " + kind)
-	Armor gun = None
 	if (kind < 0)
 		return None
 	endIf
+	Armor gun = None
 	if (!Debug.GetPlatformName() as bool)
 		return None
 	endIf
-	; only allow Atomic Lust and Leito
-	if (SequenceID < 503)
-		return None
-	elseIf (SequenceID >= 700 && SequenceID < 800)
-		return None
-	elseIf (SequenceID >= 900)
-		return None
-	endIf
-	
+
 	int evbVal = DTSleep_SettingUseLeitoGun.GetValueInt()
 	int bt2Val = DTSleep_SettingUseBT2Gun.GetValueInt()
+	int synthVal = DTSleep_SettingSynthHuman.GetValueInt()
 	
 	if (SceneData.IsCreatureType == 1)
 		evbVal = 2
 		bt2Val = -1
 	elseIf (SceneData.AnimationSet == 8)		; BodyTalk2 incompatible
 		bt2Val = -1
-		evbVal = 2
+		synthVal = 1
 	elseIf (DTSConditionals.IsUniquePlayerMaleActive && evbVal > 0 && SceneData.MaleRole == PlayerRef)
 		bt2Val = -1
 	endIf
@@ -890,11 +853,11 @@ Armor Function GetArmorNudeGun(int kind)
 	
 	if (kind > 0 && evbVal == 1)
 		kind = 0
-	elseIf (SequenceID >= 503 && SequenceID < 540 && bt2Val > 0)
+	elseIf (SequenceID >= 503 && SequenceID < 551 && bt2Val > 0)
 		kind = 0
 	endIf
 	
-	;Debug.Trace("[DTSleep_PlayAAF] GetArmorNudeGun kind = " + kind)
+	Debug.Trace("[DTSleep_PlayAAF] GetArmorNudeGun kind = " + kind)
 	
 	if ((evbVal > 0 || bt2Val > 0) && SceneData.IsCreatureType != 2)
 	
@@ -911,7 +874,13 @@ Armor Function GetArmorNudeGun(int kind)
 		endIf
 		
 		if (kind >= 0)
-			if (bt2Val < 0 && DTSleep_LeitoGunList != None && DTSleep_LeitoGunlist.GetSize() > kind)
+			if (SceneData.IsCreatureType == 4)
+				if (synthVal >= 2 && DTSleep_BT2GunList.GetSize() > (kind + 3))
+					gun = DTSleep_BT2GunList.GetAt(kind + 3) as Armor
+				elseIf (DTSleep_LeitoGunSynthList != None && DTSleep_LeitoGunSynthList.GetSize() > kind)
+					gun = DTSleep_LeitoGunSynthList.GetAt(kind) as Armor
+				endIf
+			elseIf (bt2Val < 0 && DTSleep_LeitoGunList != None && DTSleep_LeitoGunlist.GetSize() > kind)
 				gun = DTSleep_LeitoGunList.GetAt(kind) as Armor
 			elseIf (bt2Val >= 0 && DTSleep_BT2GunList != None && DTSleep_BT2GunList.GetSize() > kind)
 				; Atomic Lust animates the skeleton for BodyTalk so limit to kind = 0
@@ -925,152 +894,168 @@ Armor Function GetArmorNudeGun(int kind)
 	return gun
 endFunction
 
-; SavageCabbages
-Function PlaySequenceSCStages()
-
-	int seqLen = 6
-	bool shortSeq = false
-	
-	if (DTSleep_IntimateSceneLen.GetValueInt() <= 0)
-		seqLen = 4
-		shortSeq = true
-	elseIf (SequenceID == 700 || SequenceID == 705 || SequenceID == 711)
-		seqLen = 4
-	elseIf (SequenceID == 703)
-		seqLen = 4
-	elseIf (SequenceID >= 735 && SequenceID <= 737)
-		seqLen = 4
-	elseIf (SequenceID == 753)
-		seqLen = 4
-	elseIf (SequenceID == 739)
-		seqLen = 1  ; in case of mistake - not a sequence 
-	elseIf (SequenceID == 740)
-		seqLen = 2
-	elseIf (SequenceID == 756)
-		seqLen = 7
-	elseIf (SequenceID == 751 || SequenceID == 754 || SequenceID == 755)
-		seqLen = 1 ; in case of mistake - not a sequence
-	elseIf (SequenceID == 752)
-		seqLen = 4
-	elseIf (SequenceID >= 758 && SequenceID < 764)
-		seqLen = 4
-	endIf
-	Armor gunStart = GetLeitoGun(0)
-	Armor gun2Start = GetLeitoGun(0)
-	if (SequenceID == 703)
-		gunStart = GetLeitoGun(1)
-	elseIf (SequenceID >= 735 && SequenceID <= 737)
-		if (SceneData.SecondMaleRole == None)
-			gunStart = GetLeitoGun(1)
-		endIf
-	elseIf (SequenceID >= 758 && SequenceID <= 760)
-		gunStart = GetLeitoGun(1)
-	elseIf (SequenceID == 764)
-		gunStart = GetLeitoGun(2)
-	endIf
-	
-	AStageItem[] seqArr = CreateSeqArrayForID(SequenceID, seqLen, gunStart)
-	seqArr[seqArr.Length - 1].StageTime = 10.0
-
-	if (SequenceID == 700)
-		seqArr[0].StageTime = 13.5
-		seqArr[3].StageTime = 7.0
-	elseIf (SequenceID == 701)
-		seqArr[0].StageTime = 14.0
-		seqArr[2].NudeArmorGun = GetLeitoGun(1)
-		seqArr[3].StageTime = 9.0
-	elseIf (SequenceID == 703)
-		seqArr[0].StageTime = 13.5
-		; TODO: ? replace with normal body for finale?
-		
-	elseIf (SequenceID == 704)
-		seqArr[1].NudeArmorGun = GetLeitoGun(1)
-		seqArr[2].NudeArmorGun = GetLeitoGun(1)
-		seqArr[3].NudeArmorGun = GetLeitoGun(1)
-		if (!shortSeq)
-			seqArr[4].NudeArmorGun = GetLeitoGun(1)
-		endIf
-	elseIf (SequenceID == 705)
-		seqArr[1].NudeArmorGun = GetLeitoGun(1)
-		seqArr[2].NudeArmorGun = GetLeitoGun(1)
-		seqArr[3].NudeArmorGun = GetLeitoGun(1)
-		seqArr[0].StageTime = 13.0
-		seqArr[1].StageTime = 8.2
-	elseIf (SequenceID == 756)
-		seqArr[0].StageTime = 12.5
-		seqArr[1].StageTime = 2.5
-		seqArr[4].NudeArmorGun = GetLeitoGun(1)
-		seqArr[5].NudeArmorGun = GetLeitoGun(1)
-		
-		
-	; ----- this was moved somewhere ??
-	;elseIf (SequenceID == 757 && SceneData.SecondMaleRole != None && Utility.RandomInt(1, 5) > 3)
-	;	seqArr[2].StageIDStr = CreateSeqPositionStr(757, 4)
-	;	seqArr[3].StageIDStr = CreateSeqPositionStr(757, 5)
-	; -------------
-	
-	elseIf (SequenceID == 758)
-		if (SceneData.SecondMaleRole == None)
-			seqArr[0].StageTime = 15.0
-			seqArr[1].StageTime = 22.0
-		else
-			seqArr[0].NudeArmorGun = GetLeitoGun(0)
-			seqArr[0].NudeArmorGunM2 = GetLeitoGun(0)
-		endIf
-	elseIf (SequenceID == 761)
-		seqArr[2].NudeArmorGun = GetLeitoGun(1)
-		seqArr[3].NudeArmorGun = GetLeitoGun(1)
-	elseIf (SequenceID == 763)
-		seqArr[0].NudeArmorGun = GetLeitoGun(1)
-		seqArr[3].NudeArmorGun = GetLeitoGun(2)
-	elseIf (SequenceID == 764)
-		seqArr[2].NudeArmorGun = GetLeitoGun(2)
-		if (!shortSeq)
-			seqArr[5].NudeArmorGun = GetLeitoGun(2)
-		endIf
-	elseIf (SequenceID == 766)
-		seqArr[3].NudeArmorGun = GetLeitoGun(1)
-		if (!shortSeq)
-			seqArr[4].NudeArmorGun = GetLeitoGun(1)
-			seqArr[5].NudeArmorGun = GetLeitoGun(1)
-		endIf
-	endIf
-	
+Function PlayAASequence()
 	Actor otherActor = SceneData.SecondMaleRole
 	if (SceneData.SecondFemaleRole != None)
 		otherActor = SceneData.SecondFemaleRole
 	endIf
-	
-	PlayPairSequenceLists(SceneData.MaleRole, SceneData.FemaleRole, otherActor, seqArr, true)
+
+	PlayAASequenceLists(SceneData.MaleRole, SceneData.FemaleRole, otherActor)
 endFunction
 
-Function PlaySequenceGrayStages()
+Function PlayAASequenceLists(Actor mActor, Actor fActor, Actor oActor)
 
-	Armor gunStart = GetLeitoGun(0)
-	AStageItem[] seqArr = CreateSeqArrayForID(SequenceID, 4, gunStart)
-	
-	PlayPairSequenceLists(SceneData.MaleRole, SceneData.FemaleRole, None, seqArr, true)
-endFunction
-
-Function PlaySequenceZaZStages()
-
-	Armor gunStart = GetLeitoGun(1)
-	AStageItem[] seqArr = CreateSeqArrayForID(SequenceID, 6, gunStart)
-	seqArr[seqArr.Length - 1].StageTime = 10.0
-	
-	if (SequenceID == 850)
-		seqArr[2].NudeArmorGun = GetLeitoGun(0)
-		seqArr[4].NudeArmorGun = GetLeitoGun(0)
-		seqArr[5].NudeArmorGun = GetLeitoGun(0)
-	else
-		seqArr = CreateSeqArrayForID(SequenceID, 6, GetLeitoGun(0))
-		if (SequenceID == 849)
-			seqArr[1].StageTime = 6.4
-			seqArr[3].StageTime = 6.4
+	if (MySeqStagesArray.Length > 0)
+		Armor armS1 = GetArmorNudeGun(MySeqStagesArray[0].ArmorNudeAGun)
+		
+		if (mActor != None && armS1 != None)
+			; can only equip on player before start scene
+			if (mActor == PlayerRef  && MySeqStagesArray.Length > 1)
+				if (MySeqStagesArray[0].ArmorNudeAGun == 1 && MySeqStagesArray[0].ArmorNudeAGun != 1)
+					armS1 = GetArmorNudeGun(MySeqStagesArray[1].ArmorNudeAGun)
+				endIf
+			endIf
+			CheckEquipActorArmGun(mActor, armS1)
+			if (SceneData.MaleRole == PlayerRef)
+				Utility.Wait(0.33)
+			endIf
 		endIf
-	endIf
+		
+		Actor[] actors = new Actor[2]
+		if (oActor != None)
+			actors = new Actor[3]
+			actors[2] = oActor
+			if (oActor != None && oActor == SceneData.SecondMaleRole && MySeqStagesArray[0].ArmorNudeBGun >= 0)
+				CheckEquipActorArmGun(SceneData.SecondMaleRole, GetArmorNudeGun(MySeqStagesArray[0].ArmorNudeBGun))
+			endIf
+		endIf
 
-	PlayPairSequenceLists(SceneData.MaleRole, SceneData.FemaleRole, None, seqArr, true)
+		actors[1] = mActor   ; place 2nd position											
+		actors[0] = fActor
+		if (SceneData.CompanionInPowerArmor || SceneData.IsCreatureType == 3)
+			; remove 2nd actor from scene
+			actors = New Actor [1]
+			actors[0] = MainActor
+		endIf
+		
+		AAF:AAF_API:SceneSettings aafSettings = AAF_API.GetSceneSettings()
+
+		aafSettings.duration = 10.0
+		aafSettings.position = MySeqStagesArray[0].PositionID
+		;aafSettings.position = CreateSeqPositionStr(SequenceID, 1)
+		if (MSceneFadeEnabled)
+			aafSettings.skipWalk = true
+		endIf
+		
+		if (SceneData.MaleMarker != None)
+			aafSettings.locationObject = SceneData.MaleMarker
+		elseIf (SceneData.FemaleMarker != None)
+			aafSettings.locationObject = SceneData.FemaleMarker
+		else
+			aafSettings.locationObject = SecondActor
+		endIf
+		if (MySeqStagesArray[0].StageTime > 0.0)
+			aafSettings.duration = MySeqStagesArray[0].StageTime
+		endIf
+		
+		if (DTSleep_SettingTestMode.GetValue() > 0.0 && DTSleep_DebugMode.GetValue() >= 1.0)
+			;TODO remove
+			Debug.Trace("[DTSleep_PlayAAF_Seq] start AASeq position ID " + aafSettings.position + " at Loc " + aafSettings.locationObject + " with sceneLen " + DTSleep_IntimateSceneLen.GetValueInt() + " and scene count " + MySeqStagesArray.Length + " and actor count " + actors.Length)
+		endIf
+		RegisterForCustomEvent(AAF_API, "OnAnimationStart")
+		RegisterForCustomEvent(AAF_API, "OnAnimationStop")
+	
+		MyStartSeqID = aafSettings.position
+		
+		AAF_API.StartScene(actors, aafSettings)
+		; will continue on Event
+		
+		StartTimer(20.0, CheckSceneStartTimerID)
+	endIf
+endFunction
+
+Function PlayAAContinuedSequence(float waitSecs)
+
+	int seqCount = 1
+	int seqTotalCount = 0
+	int seqLen = MySeqStagesArray.Length
+	int pingPongCount = DTSleep_IntimateSceneLen.GetValueInt() - 1
+	float loopWaitSecs = waitSecs
+	float startSecs = 9.1
+	if (MySeqStagesArray[0].StageTime > 0.0)
+		startSecs = MySeqStagesArray[0].StageTime
+	endIf
+	if (seqLen <= 2)
+		pingPongCount = 0
+	elseIf (startSecs <= 13.0 && waitSecs < 13.0 && seqLen <= 5)
+		pingPongCount += 1
+	endIf
+	Armor armGunLast = GetArmorNudeGun(MySeqStagesArray[0].ArmorNudeAGun)
+	Armor armGunM2Last = GetArmorNudeGun(MySeqStagesArray[0].ArmorNudeBGun)
+	
+	;Debug.Trace("[DTSleep_PlayAAF] play AAContinued; Interrupted? " + SceneData.Interrupted)
+	
+	Utility.Wait(startSecs - 0.8)
+	
+	while (seqCount < seqLen && SceneData.Interrupted <= 0)
+	
+		; armor?
+		if (seqCount >= 1 && seqCount < seqLen - 1)
+			
+			Armor armGun = GetArmorNudeGun(MySeqStagesArray[seqCount].ArmorNudeAGun)
+			Armor armGunM2 = GetArmorNudeGun(MySeqStagesArray[seqCount].ArmorNudeBGun)
+			
+			if (armGun != None && armGun != armGunLast)
+				if (SceneData.MaleRole != PlayerRef && SceneData.MaleRoleGender == 0)
+					armGunLast = armGun
+					CheckEquipActorArmGun(SceneData.MaleRole, armGun)
+				endIf
+			endIf
+			if (SceneData.SecondMaleRole != None && armGunM2 != None && armGunM2 != armGunM2Last)
+				armGunM2Last = armGunM2
+				CheckEquipActorArmGun(SceneData.SecondMaleRole, armGunM2)
+			endIf
+		endIf
+		
+		; wait time
+		if (MySeqStagesArray[seqCount].StageTime > 0.0)
+			loopWaitSecs = MySeqStagesArray[seqCount].StageTime
+		elseIf (seqCount == seqLen - 1)
+			loopWaitSecs = 5.75
+		elseIf (seqCount == 0)
+			loopWaitSecs = startSecs
+		else
+			loopWaitSecs = waitSecs
+		endIf
+		
+		if (seqCount > 0)
+			;PlayPosition(CreateSeqPositionStr(SequenceID, MySeqStagesArray[seqCount].StageNum), loopWaitSecs)
+			PlayPosition(MySeqStagesArray[seqCount].PositionID, loopWaitSecs)
+		endIf
+		
+		if (pingPongCount > 0 && seqCount == (seqLen - 2))
+			pingPongCount -= 1
+			seqCount = seqLen - 4
+		endIf
+		
+		Utility.Wait(loopWaitSecs - 0.2)
+
+		seqCount += 1
+		seqTotalCount += 1
+	endWhile
+	
+	MySceneStatus = 2
+	StopAnimationSequence()
+endFunction
+
+Function PlayPosition(string posStr, float duration)
+	
+	;Debug.Trace("[DTSleep_PlayAAF] PlayPosition " + posStr)
+	AAF:AAF_API:PositionSettings posSettings = AAF_API.GetPositionSettings()
+	posSettings.position = posStr
+	posSettings.duration = (duration + 0.2)
+	
+	AAF_API.ChangePosition(MainActor, posSettings)
 endFunction
 
 Function PlaySequenceLeitoStages()
@@ -1081,7 +1066,7 @@ Function PlaySequenceLeitoStages()
 		seqLen = 6
 	endIf
 	
-	Armor gunStart = GetLeitoGun(0)
+	Armor gunStart = GetArmorNudeGun(0)
 	AStageItem[] seqArr = CreateSeqArrayForID(SequenceID, seqLen, gunStart, false)
 	AStageItem[] seqExtraArr = CreateSeqArrayForID(SequenceID, 4, gunStart, false)
 	
@@ -1091,12 +1076,12 @@ Function PlaySequenceLeitoStages()
 		if (SceneData.MaleRole && SceneData.FemaleRole)
 			if (SequenceID <= 600)
 				if (SceneData.MaleRole != PlayerRef)
-					gunStart = GetLeitoGun(1)
+					gunStart = GetArmorNudeGun(1)
 					seqExtraArr = CreateSeqArrayForID(601, 4, gunStart, false)
 					seqArr = CreateSeqArrayForID(601, 4, gunStart, false)
 				endIf
 			elseIf (SequenceID == 601)
-				gunStart = GetLeitoGun(1)
+				gunStart = GetArmorNudeGun(1)
 				seqExtraArr = CreateSeqArrayForID(601, 4, gunStart, false)
 				seqArr = CreateSeqArrayForID(601, 4, gunStart, false)
 
@@ -1105,54 +1090,54 @@ Function PlaySequenceLeitoStages()
 				
 			elseIf (SequenceID == 604)
 				if (SceneData.MaleRole != PlayerRef)
-					;gunStart = GetLeitoGun(0)
-					seqArr[1].NudeArmorGun = GetLeitoGun(1)
-					seqExtraArr[1].NudeArmorGun = GetLeitoGun(1)
+					;gunStart = GetArmorNudeGun(0)
+					seqArr[1].NudeArmorGun = GetArmorNudeGun(1)
+					seqExtraArr[1].NudeArmorGun = GetArmorNudeGun(1)
 				endIf
 			elseIf (SequenceID == 605)
 				; cowgirl
-				;gunStart = GetLeitoGun(0)
+				;gunStart = GetArmorNudeGun(0)
 				seqExtraArr = CreateSeqArrayForID(607, 4, gunStart, false)
 
 			elseIf (SequenceID >= 606 && SequenceID <= 607)
-				seqArr[0].NudeArmorGun = GetLeitoGun(2)
-				seqArr[1].NudeArmorGun = GetLeitoGun(2)
-				seqArr[2].NudeArmorGun = GetLeitoGun(2)
-				seqArr[3].NudeArmorGun = GetLeitoGun(2)
-				seqExtraArr = CreateSeqArrayForID(607, 4, GetLeitoGun(2), false)
+				seqArr[0].NudeArmorGun = GetArmorNudeGun(2)
+				seqArr[1].NudeArmorGun = GetArmorNudeGun(2)
+				seqArr[2].NudeArmorGun = GetArmorNudeGun(2)
+				seqArr[3].NudeArmorGun = GetArmorNudeGun(2)
+				seqExtraArr = CreateSeqArrayForID(607, 4, GetArmorNudeGun(2), false)
 
 			elseIf (SequenceID >= 608 && SequenceID <= 609)
-				seqArr[0].NudeArmorGun = GetLeitoGun(1)
-				seqArr[1].NudeArmorGun = GetLeitoGun(1)
-				seqArr[2].NudeArmorGun = GetLeitoGun(1)
-				seqArr[3].NudeArmorGun = GetLeitoGun(1)
-				seqExtraArr = CreateSeqArrayForID(609, 4, GetLeitoGun(1), false)
+				seqArr[0].NudeArmorGun = GetArmorNudeGun(1)
+				seqArr[1].NudeArmorGun = GetArmorNudeGun(1)
+				seqArr[2].NudeArmorGun = GetArmorNudeGun(1)
+				seqArr[3].NudeArmorGun = GetArmorNudeGun(1)
+				seqExtraArr = CreateSeqArrayForID(609, 4, GetArmorNudeGun(1), false)
 			elseIf (SequenceID >= 610)
-				seqArr[0].NudeArmorGun = GetLeitoGun(1)
-				seqArr[1].NudeArmorGun = GetLeitoGun(1)
-				seqArr[2].NudeArmorGun = GetLeitoGun(1)
-				seqArr[3].NudeArmorGun = GetLeitoGun(1)
-				seqExtraArr = CreateSeqArrayForID(610, 4, GetLeitoGun(1), false)
+				seqArr[0].NudeArmorGun = GetArmorNudeGun(1)
+				seqArr[1].NudeArmorGun = GetArmorNudeGun(1)
+				seqArr[2].NudeArmorGun = GetArmorNudeGun(1)
+				seqArr[3].NudeArmorGun = GetArmorNudeGun(1)
+				seqExtraArr = CreateSeqArrayForID(610, 4, GetArmorNudeGun(1), false)
 			endIf
 		endIf
 	elseIf (SequenceID == 650)
 		if (SceneData.HasToyEquipped == false)
-			;gunStart = GetLeitoGun(0)
+			;gunStart = GetArmorNudeGun(0)
 		else
-			seqArr = CreateSeqArrayForID(651, 4, GetLeitoGun(1), false)
-			seqExtraArr = CreateSeqArrayForID(651, 4, GetLeitoGun(1), false)
+			seqArr = CreateSeqArrayForID(651, 4, GetArmorNudeGun(1), false)
+			seqExtraArr = CreateSeqArrayForID(651, 4, GetArmorNudeGun(1), false)
 		endIf
 	elseIf (SequenceID == 651)
-		gunStart = GetLeitoGun(1)
+		gunStart = GetArmorNudeGun(1)
 		seqArr = CreateSeqArrayForID(651, 4, gunStart, false)
 		seqExtraArr = CreateSeqArrayForID(651, 4, gunStart, false)
 
 	elseIf (SequenceID == 653)
-		seqArr[0].NudeArmorGun = GetLeitoGun(1)
-		seqExtraArr[0].NudeArmorGun = GetLeitoGun(1)
+		seqArr[0].NudeArmorGun = GetArmorNudeGun(1)
+		seqExtraArr[0].NudeArmorGun = GetArmorNudeGun(1)
 
 	elseIf (SequenceID >= 654 && SequenceID < 660)
-		gunStart = GetLeitoGun(1)
+		gunStart = GetArmorNudeGun(1)
 		seqArr = CreateSeqArrayForID(651, 4, gunStart, false)
 		seqExtraArr = CreateSeqArrayForID(651, 4, gunStart, false)
 	endIf
@@ -1163,51 +1148,12 @@ Function PlaySequenceLeitoStages()
 		seqArr[5] = seqExtraArr[3]
 	endIf
 	
-	PlayPairSequenceLists(SceneData.MaleRole, SceneData.FemaleRole, None, seqArr)
+	PlayLeitoPairSequenceLists(SceneData.MaleRole, SceneData.FemaleRole, None, seqArr)
 
-endFunction
-
-Function PlaySequenceLeitoStrongStages()
-	
-	string position = CreateSeqPositionStr(SequenceID, 1)
-	Armor gunStart = GetLeitoGun(0)
-	if (SequenceID == 660 || SequenceID == 663)
-		gunStart = GetLeitoGun(1)
-	endIf
-	
-	if (gunStart != None)
-		SecondActor.EquipItem(gunStart, true, true)
-	endIf
-	
-	Actor[] actors = new Actor[2]
-	actors[1] = SecondActor												
-	actors[0] = MainActor
-	
-	AAF:AAF_API:SceneSettings aafSettings = AAF_API.GetSceneSettings()
-
-	aafSettings.duration = 9.6
-	aafSettings.position = position
-	if (SceneData.MaleMarker != None)
-		aafSettings.locationObject = SceneData.MaleMarker
-	elseIf (SceneData.FemaleMarker != None)
-		aafSettings.locationObject = SceneData.FemaleMarker
-	else
-		aafSettings.locationObject = SecondActor
-	endIf
-	
-	RegisterForCustomEvent(AAF_API, "OnAnimationStart")
-	RegisterForCustomEvent(AAF_API, "OnAnimationStop")
-	
-	MyStartSeqID = position
-	AAF_API.StartScene(actors, aafSettings)
-	; will continue on Event
-	
-	StartTimer(20.0, CheckSceneStartTimerID)
-	
 endFunction
 
 ; mActor is considered dominate
-Function PlayPairSequenceLists(Actor mActor, Actor fActor, Actor oActor, AStageItem[] positionIDArr, bool useBedLocation = false)
+Function PlayLeitoPairSequenceLists(Actor mActor, Actor fActor, Actor oActor, AStageItem[] positionIDArr, bool useBedLocation = false)
 	
 	if (mActor != None && fActor != None && positionIDArr != None && positionIDArr.Length > 0)
 	
@@ -1215,10 +1161,19 @@ Function PlayPairSequenceLists(Actor mActor, Actor fActor, Actor oActor, AStageI
 		
 		MyPositionIDArray = positionIDArr
 	
-		; cannot equip nude-armor on player
+		; can only equip on player before scene start
 		;
-		if (mActor != PlayerRef && positionIDArr[0].NudeArmorGun != None)
+		if (positionIDArr[0].NudeArmorGun != None)
+			; can only equip on player before start scene
+			if (mActor == PlayerRef  && positionIDArr.Length > 1)
+				if (positionIDArr[0].NudeArmorGun != positionIDArr[1].NudeArmorGun)
+					armS1 = positionIDArr[1].NudeArmorGun
+				endIf
+			endIf
 			CheckEquipActorArmGun(mActor, armS1)
+			if (SceneData.MaleRole == PlayerRef)
+				Utility.Wait(0.33)
+			endIf
 		endIf
 
 		Actor[] actors = new Actor[2]
@@ -1277,45 +1232,8 @@ Function PlayPairSequenceLists(Actor mActor, Actor fActor, Actor oActor, AStageI
 	
 endFunction
 
-Function PlayAtomicLustContinuedSequence(int sid)
 
-	int seqCount = 0
-	int loopCount = 12 * (1 + DTSleep_IntimateSceneLen.GetValueInt())
-	float waitSecs = 1.267
-	
-	Utility.Wait(5.0)
-	PlayPosition(CreateSeqPositionStr(sid, 2, false), 2.0)
-	Utility.Wait(2.0)
-	PlayPosition(CreateSeqPositionStr(sid, 3, false), waitSecs)
-	Utility.Wait(waitSecs)
-	PlayPosition(CreateSeqPositionStr(sid, 4, false), 1.3)
-	Utility.Wait(1.3)
-	
-	; spank! or that other sequence
-	; each loop is 2.24 - 12x = 22.4 seconds
-	while (seqCount < loopCount && SceneData.Interrupted <= 0)
-		
-		PlayPosition(CreateSeqPositionStr(sid, 5, false), waitSecs - 0.01)
-		Utility.Wait(waitSecs)
-		PlayPosition(CreateSeqPositionStr(sid, 6, false), 0.59)
-		Utility.Wait(0.60)
-	
-		seqCount += 1
-	endWhile
-	
-	; return
-	PlayPosition(CreateSeqPositionStr(sid, 5, false), waitSecs)
-	Utility.Wait(waitSecs)
-	PlayPosition(CreateSeqPositionStr(sid, 4, false), 1.5)
-	Utility.Wait(1.5)
-	PlayPosition(CreateSeqPositionStr(sid, 3, false), 3.0)
-	Utility.Wait(2.9)
-	
-	MySceneStatus = 2
-	StopAnimationSequence()
-endFunction
-
-Function PlayPairContinuedSequence(float waitSecs)
+Function PlayLeitoPairContinuedSequence(float waitSecs)
 
 	int seqCount = 1
 	int seqTotalCount = 0
@@ -1396,13 +1314,45 @@ Function PlayPairContinuedSequence(float waitSecs)
 	StopAnimationSequence()
 endFunction
 
-Function PlayPosition(string posStr, float duration)
+Function PlaySequenceLeitoStrongStages()
 	
-	AAF:AAF_API:PositionSettings posSettings = AAF_API.GetPositionSettings()
-	posSettings.position = posStr
-	posSettings.duration = (duration + 0.2)
-	AAF_API.ChangePosition(MainActor, posSettings)
+	string position = CreateSeqPositionStr(SequenceID, 1)
+	Armor gunStart = GetArmorNudeGun(0)
+	if (SequenceID == 660 || SequenceID == 663)
+		gunStart = GetArmorNudeGun(1)
+	endIf
+	
+	if (gunStart != None)
+		SecondActor.EquipItem(gunStart, true, true)
+	endIf
+	
+	Actor[] actors = new Actor[2]
+	actors[1] = SecondActor												
+	actors[0] = MainActor
+	
+	AAF:AAF_API:SceneSettings aafSettings = AAF_API.GetSceneSettings()
+
+	aafSettings.duration = 9.6
+	aafSettings.position = position
+	if (SceneData.MaleMarker != None)
+		aafSettings.locationObject = SceneData.MaleMarker
+	elseIf (SceneData.FemaleMarker != None)
+		aafSettings.locationObject = SceneData.FemaleMarker
+	else
+		aafSettings.locationObject = SecondActor
+	endIf
+	
+	RegisterForCustomEvent(AAF_API, "OnAnimationStart")
+	RegisterForCustomEvent(AAF_API, "OnAnimationStop")
+	
+	MyStartSeqID = position
+	AAF_API.StartScene(actors, aafSettings)
+	; will continue on Event
+	
+	StartTimer(20.0, CheckSceneStartTimerID)
+	
 endFunction
+
 
 Function PlayLeitoStrongContinuedSequence()
 
@@ -1426,8 +1376,8 @@ Function PlayStrongContinuedCarry(int sceneLen)
 
 	int sceneCount = 0
 	string posStr = CreateSeqPositionStr(663, 1)
-	Armor arm2 = GetLeitoGun(0)
-	Armor arm1 = GetLeitoGun(1)
+	Armor arm2 = GetArmorNudeGun(0)
+	Armor arm1 = GetArmorNudeGun(1)
 	
 	Utility.Wait(37.0)
 	
@@ -1480,8 +1430,8 @@ Function PlayStrongContinuedCarryReverse(int sceneLen)
 	
 	int sceneCount = 0
 	string posStr = CreateSeqPositionStr(663, 1)
-	Armor arm2 = GetLeitoGun(0)
-	Armor arm1 = GetLeitoGun(1)
+	Armor arm2 = GetArmorNudeGun(0)
+	Armor arm1 = GetArmorNudeGun(1)
 	Utility.Wait(37.5)
 	
 	while (sceneCount < sceneLen && SceneData.Interrupted <= 0)
@@ -1564,6 +1514,9 @@ EndFunction
 Function RemoveBT2Guns(Actor aActor)
 	if (DTSleep_BT2GunList != None)
 		int len = DTSleep_BT2GunList.GetSize()
+		if (len > 3 && DTSleep_SettingSynthHuman.GetValueInt() < 2)
+			len = 3
+		endIf
 		int idx = 0
 		while (idx < len)
 			Armor gun = DTSleep_BT2GunList.GetAt(idx) as Armor
