@@ -6794,7 +6794,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 	if (specialFurn == 2)
 		DTDebug("check for props...", 2)
 		; search for nearby tables and other props
-		propObjRef = DTSleep_CommonF.FindNearestObjectInListFromObjRef(DTSleep_IntimatePropList, akFurniture, 600.0)
+		propObjRef = DTSleep_CommonF.FindNearestObjectInListFromObjRef(DTSleep_IntimatePropList, akFurniture, 600.0)	
 		
 		if (propObjRef != None)
 			DTDebug(" found prop " + propObjRef, 2)
@@ -6808,7 +6808,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 				DTSleep_SexStyleLevel.SetValue(4.0)
 			endIf
 		else
-			propObjRef = DTSleep_CommonF.FindNearestObjectInListFromObjRef(DTSleep_IntimateTablesAllList, akFurniture, 375.0)
+			propObjRef = DTSleep_CommonF.FindNearestObjectInListFromObjRef(DTSleep_IntimateTablesAllList, akFurniture, 375.0, true) ;v2.19 limit to same plane
 			if (propObjRef != None)
 				DTSleep_SexStyleLevel.SetValue(1.0)
 			endIf
@@ -7196,22 +7196,22 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 						;if (DTSleep_AdultContentOn.GetValue() >= 2.0)
 						;	propObjRef = GetDanceProp(akFurniture)
 						;endIf
-						;if (propObjRef == None)
-						;	doDance = true
-						;	doSexyDance = false
-						;	animPacks[0] = 0
-						;	hugsOnly = true
-						;	pickSpot = false
-						;else
-							doDance = false
-							doSexyDance = true
-							animPacks[0] = 7
-							furnToPlayObj = propObjRef
+						if (propObjRef == None)
+							doDance = true
+							doSexyDance = false
+							animPacks[0] = 0
 							hugsOnly = true
-							pickspot = false
-							pickedOtherFurniture = 1
-							DTSleep_OtherFurnitureRefAlias.ForceRefTo(propObjRef)
-						;endIf
+							pickSpot = false
+						;else
+						;	doDance = false
+						;	doSexyDance = true
+						;	animPacks[0] = 7
+						;	furnToPlayObj = propObjRef
+						;	hugsOnly = true
+						;	pickspot = false
+						;	pickedOtherFurniture = 1
+						;	DTSleep_OtherFurnitureRefAlias.ForceRefTo(propObjRef)
+						endIf
 
 					elseIf (checkVal >= 4)
 						; picked a table or other prop
@@ -7225,7 +7225,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 						else
 							pickedOtherFurniture = 1
 						endIf
-						DTSleep_OtherFurnitureRefAlias.ForceRefTo(propObjRef)
+						DTSleep_OtherFurnitureRefAlias.ForceRefTo(furnToPlayObj)
 					endIf
 				endIf
 				
