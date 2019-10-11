@@ -460,6 +460,8 @@ bool Function StartForBedWake(bool includeClothing, ObjectReference mainBedRef, 
 	AltFemBodyEnabled = false
 	DTSleep_IUndressStat.SetValueInt(2)
 	EnableCarryBonusRemove = true
+	bool winterTime = IsWinterSeason()
+	bool indoors = IsActorIndoors(PlayerRef)
 	
 	CancelTimer(RecheckNudeSuitsTimerID)
 	
@@ -467,7 +469,7 @@ bool Function StartForBedWake(bool includeClothing, ObjectReference mainBedRef, 
 		if (mainBedRef != None && mainBedRef.HasKeyWord(DTSleep_OwnBedPrivateKY))
 			; no winter for private bed
 			observeWinter = false
-		else
+		elseIf (winterTime && !indoors)
 			; override for sleepwear check
 			playerIsNaked = false
 		endIf
@@ -541,9 +543,9 @@ bool Function StartForBedWake(bool includeClothing, ObjectReference mainBedRef, 
 	if (PlayerBedRef != None || CompanionBedRef != None)
 		PlacedArmorObjRefArray = new ObjectReference[0]
 		
-		if (!IsActorIndoors(PlayerRef))
+		if (!indoors)
 			if (includeClothing && observeWinter)
-				includeClothing = !IsWinterSeason()
+				includeClothing = !winterTime
 			elseIf (!includeClothing && WeatherClass < 2)
 				includeClothing = IsSummerSeason()
 			endIf
@@ -561,7 +563,6 @@ bool Function StartForBedWake(bool includeClothing, ObjectReference mainBedRef, 
 			; *** Undress Player ***
 			if (!needInitEquipMon && includeClothing && CompanionRef != None)
 			
-				;Debug.Trace(myScriptName + " start player undress timer...")
 				; okay to start new thread
 				if (includeClothing)
 					if (includePipBoy)
@@ -596,7 +597,7 @@ bool Function StartForBedWake(bool includeClothing, ObjectReference mainBedRef, 
 				
 				; must undress main companion first - now check 2nd
 				if (CompanionSecondRef != None)
-					Debug.Trace(myScriptName + " start for bed 2nd companion " + CompanionSecondRef)
+					;Debug.Trace(myScriptName + " start for bed 2nd companion " + CompanionSecondRef)
 					UndressActor(CompanionSecondRef, 1, includeClothing)
 					if (includeClothing)
 						SleepwearEquipForActor(CompanionSecondRef)
@@ -676,7 +677,6 @@ bool Function StartForCompanionSleepwear(Actor companionActorRef, bool companion
 	
 	CompanionSleepwearToRemoveSet = new SleepwearEquipSet
 	
-	;Debug.Trace(myScriptName + " starting manual undress to sleepwear for companion: " + companionActorRef)
 	
 	if (companionActorRef != DressData.CompanionActor)
 		ResetCompanionDressData()
@@ -687,7 +687,6 @@ bool Function StartForCompanionSleepwear(Actor companionActorRef, bool companion
 			if (CompanionSleepwearToRemoveSet != None)
 				CompanionSleepwearToRemoveSet.DidEquip = false
 				CompanionSleepwearToRemoveSet.SleepwearItem = DressData.CompanionEquippedSleepwearItem
-				;Debug.Trace(myScriptName + " already in sleepwear main outfit - return true")
 			endIf
 			
 			return true
@@ -700,7 +699,6 @@ bool Function StartForCompanionSleepwear(Actor companionActorRef, bool companion
 		if (CompanionSleepwearToRemoveSet != None)
 			CompanionSleepwearToRemoveSet.DidEquip = true
 			CompanionSleepwearToRemoveSet.SleepwearItem = DressData.CompanionEquippedSlot58Item
-			;Debug.Trace(myScriptName + " already in slot58 sleepwear - return true ")
 		endIf
 		
 		return true
@@ -815,8 +813,6 @@ bool Function StartForManualStopSleepwear(Actor companionActorRef, ObjectReferen
 			return true
 		endIf
 	endIf
-	
-	;Debug.Trace(myScriptName + " no sleep clothes - no start")
 	
 	return false
 endFunction
@@ -1017,8 +1013,6 @@ bool Function StartForManualStop(bool includeClothing, Actor companionActorRef, 
 		endIf
 	endIf
 	
-	;float timeElapse = Utility.GetCurrentRealTime() - timeStart
-	;Debug.Trace(myScriptName + " total undress time: " + timeElapse)
 	DTSleep_IUndressStat.SetValueInt(0)
 	
 	return true	
@@ -1500,28 +1494,28 @@ Armor Function GetCustomNudeSuitForCompanion(Actor actorRef)
 	
 		int armorIndex = -1
 		
-		;if ((DTSConditionals as DTSleep_Conditionals).IsUniqueFollowerFemActive)
-		;	if (actorRef == CaitRef)
-		;		armorIndex = 0
-		;	elseIf (actorRef == CurieRef)
-		;		armorIndex = 1
-		;	elseIf (actorRef == PiperRef)
-		;		armorIndex = 2
-		;	endIf
-		;	
-		;	if (armorIndex >= 0)
-		;		armorIndex += (DTSConditionals as DTSleep_Conditionals).ModUniqueFollowerFemBodyBaseIndex
-		;	endIf
-		;endIf
+		if ((DTSConditionals as DTSleep_Conditionals).IsUniqueFollowerFemActive)
+			if (actorRef == CaitRef)
+				armorIndex = 0
+			elseIf (actorRef == CurieRef)
+				armorIndex = 1
+			elseIf (actorRef == PiperRef)
+				armorIndex = 2
+			endIf
+			
+			if (armorIndex >= 0)
+				armorIndex += (DTSConditionals as DTSleep_Conditionals).ModUniqueFollowerFemBodyBaseIndex
+			endIf
+		endIf
 		
-		;if (armorIndex < 0 && (DTSConditionals as DTSleep_Conditionals).IsUniqueFollowerMaleActive)
-		;	
-		;	armorIndex = GetCompanionLeitoArmorIndexPublic(actorRef)
-		;	
-		;	if (armorIndex >= 0)
-		;		armorIndex += (DTSConditionals as DTSleep_Conditionals).ModUniqueFollowerMaleBodyBaseIndex
-		;	endIf
-		;endIf
+		if (armorIndex < 0 && (DTSConditionals as DTSleep_Conditionals).IsUniqueFollowerMaleActive)
+			
+			armorIndex = GetCompanionLeitoArmorIndexPublic(actorRef)
+			
+			if (armorIndex >= 0)
+				armorIndex += (DTSConditionals as DTSleep_Conditionals).ModUniqueFollowerMaleBodyBaseIndex
+			endIf
+		endIf
 			
 		if (armorIndex < 0 && (DTSConditionals as DTSleep_Conditionals).IsHeatherCompanionActive)
 			if (actorRef == GetHeatherActor())
@@ -2030,7 +2024,6 @@ bool Function IsActorWearingJacket(Actor actorRef)
 	if (actorRef != None)
 		if (DTSleep_EquipMonInit.GetValueInt() > 0)
 			if (actorRef == PlayerRef)
-				;Debug.Trace(myScriptName + " PlayerEquipJacket: " + DressData.PlayerEquippedJacketItem)
 				
 				return DressData.PlayerEquippedJacketItem as bool
 				
@@ -2042,7 +2035,7 @@ bool Function IsActorWearingJacket(Actor actorRef)
 				endIf
 			endIf
 		endIf
-		;Debug.Trace(myScriptName + " isActorWearingJacket list check " + actorRef)
+
 		Armor item = GetArmorForActorWearingClothingOnList(actorRef, DTSleep_ArmorJacketsClothingList)
 		if (item != None)
 			if (actorRef == CompanionRef && DressData.CompanionActor)
@@ -2236,7 +2229,6 @@ bool Function IsActorWearingSlot58Exceptions(Actor actorRef)
 				endIf
 			endIf
 		endIf
-		;Debug.Trace(myScriptName + " slot58 check list")
 		
 		Armor item = GetArmorForActorWearingClothingOnList(actorRef, DTSleep_ArmorSlot58List)
 		if (item != None)
@@ -2365,7 +2357,6 @@ bool Function PlaceFormItemAtBed(Form item, ObjectReference bedRef, Actor fromAc
 			ObjectReference placedObjRef = DTSleep_CommonF.PlaceFormAtObjectRef(item, mainNodeRef)
 			
 			if (placedObjRef != None)
-				;Debug.Trace(myScriptName + "  placing armor item relative to bed at X,Y,Z " + Point3DOrientToString(placeBedPoint))
 				placedObjRef.SetMotionType(placedObjRef.Motion_Keyframed) ; keep item from getting kicked about
 				PlacedArmorObjRefArray.Add(placedObjRef)
 				
@@ -2415,8 +2406,9 @@ bool Function PlaceFormNearFeet(Form item, Actor actorRef)
 	return result
 endFunction
 
+; cornerVal 0+ for beds, -1 for other furniture
 Point3DOrient Function PlacePointAtBed(ObjectReference bedRef, Actor fromActor, int cornerVal)
-
+	
 	Point3DOrient placeBedPoint = new Point3DOrient
 	if (bedRef && fromActor)
 		Point3DOrient ptBed = DTSleep_CommonF.PointOfObject(bedRef)
@@ -2429,6 +2421,9 @@ Point3DOrient Function PlacePointAtBed(ObjectReference bedRef, Actor fromActor, 
 
 			if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsObjBenchSofa(bedRef, None))	
 				xOff = 22.0
+			elseIf ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsObjShower(bedRef, None))
+				xOff = 25.0
+				yOff = 14.0 
 			endIf
 			placeBedPoint = DTSleep_CommonF.GetPointSeatPlace(ptBed, ptActor, xOff, yOff)
 		else
@@ -2489,7 +2484,10 @@ Function RedressActor(Actor actorRef, Form[] equippedFormArray, bool slowly = tr
 		endIf
 		
 	elseIf (actorRef == CompanionRef)
-		if (DTSleep_SettingAltFemBody.GetValueInt() >= 1 && AltFemBodyEnabled && GetGenderForActor(actorRef) == 1 && actorRef.GetItemCount(DTSleep_AltFemNudeBody) > 0)
+		if (actorRef == CompanionValentineRef && actorRef.GetItemCount(DTSleep_SkinSynthGen2DirtyNude) > 0)		; v2.19 added
+			RedressActorRemoveNudeSuits(actorRef, DTSleep_SkinSynthGen2DirtyNude, "synth2 nude-armor")
+		
+		elseIf (DTSleep_SettingAltFemBody.GetValueInt() >= 1 && AltFemBodyEnabled && GetGenderForActor(actorRef) == 1 && actorRef.GetItemCount(DTSleep_AltFemNudeBody) > 0)
 			RedressActorRemoveNudeSuits(actorRef, DTSleep_AltFemNudeBody, " player alt-fem nude-suit", true)
 		elseIf (DressData.CompanionNudeSuit != None)
 			RedressActorRemoveNudeSuits(CompanionRef, DressData.CompanionNudeSuit, " custom nude-suit ")
@@ -3495,7 +3493,7 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 			; TODO - v2.14
 			if (includeExceptions && actorRef == CompanionRef && DressData.CompanionNudeSuit == None)
 				; v2.14 - knock it all off
-				if (actorRef == CompanionValentineRef)
+				if (actorRef == CompanionValentineRef && DTSleep_SettingSynthHuman.GetValue() >= 1.0 && DTSleep_AdultContentOn.GetValue() >= 2.0)
 					actorRef.EquipItem(DTSleep_SkinSynthGen2DirtyNude, true, true)
 				else
 					actorRef.EquipItem(DTSleep_NudeRing, true, true)
@@ -4448,7 +4446,7 @@ Function UndressActorCompanionDressNudeSuit(Actor actorRef, bool hasSleepMainOut
 		; prevent actor from bumping nude-suit (EquipItem true on 1st parameter)
 		; sleep clothing may not bump nude-suits - check to remove before equip sleepwear
 		
-		if (actorRef == CompanionValentineRef)
+		if (actorRef == CompanionValentineRef && DTSleep_SettingSynthHuman.GetValue() >= 1.0 && DTSleep_AdultContentOn.GetValue() >= 2.0)
 			DTDebug(" equip synth2 nude-armor on " + actorRef, 2)
 			actorRef.EquipItem(DTSleep_SkinSynthGen2DirtyNude, true, true)
 		
@@ -4467,7 +4465,7 @@ Function UndressActorCompanionDressNudeSuit(Actor actorRef, bool hasSleepMainOut
 			actorRef.EquipItem(DressData.CompanionNudeSuit, true, true) ; prevent NPC main outfit auto-equip
 			Utility.WaitMenuMode(0.15)
 		endIf
-	elseIf (actorRef == CompanionValentineRef)
+	elseIf (actorRef == CompanionValentineRef && DTSleep_SettingSynthHuman.GetValue() >= 1.0 && DTSleep_AdultContentOn.GetValue() >= 2.0)
 		DTDebug(" equip synth2 nude-armor on " + actorRef, 2)
 
 		actorRef.EquipItem(DTSleep_SkinSynthGen2DirtyNude, true, true)

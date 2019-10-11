@@ -999,9 +999,6 @@ Function CheckRemoveToys()
 			
 				if (SceneData.MaleRole.GetItemCount(SceneData.ToyArmor) > 0)
 					SceneData.MaleRole.UnequipItem(SceneData.ToyArmor, false, true)
-					if (DTSleep_DebugMode.GetValue() > 0.0 && DTSleep_SettingTestMode.GetValue() > 0.0)
-						Debug.Trace(myScriptName + " removed ToyArmor from MaleRole ")
-					endIf
 					SceneData.HasToyEquipped = false   ; remove flag from Scene since we applied
 					HasToyEquipped = false
 					
@@ -2264,7 +2261,7 @@ bool Function PlayIntimateAACWithEndTimer(float timerSecs)
 				DTSleep_PlayAACSpell.Cast(MainActorRef as ObjectReference, SecondActorRef as ObjectReference)
 			endIf
 		else
-			Debug.Trace(MyScriptName + " PlayACC single-caster ") 
+			;Debug.Trace(MyScriptName + " PlayACC single-caster ") 
 			DTSleep_PlayAACSpell.Cast(MainActorRef as ObjectReference, MainActorRef as ObjectReference)
 		endIf
 	else
@@ -2287,7 +2284,7 @@ bool Function PlayIntimateLeitoAnimWithEndTimer(float timerSecs)
 	if (DTSleep_PlayLeitoTargetSpell != None)
 		if (Debug.GetPlatformName() as bool)
 
-			if (SecondActorRef != None && !SceneData.CompanionInPowerArmor && SceneData.IsUsingCreature != 3)
+			if (SecondActorRef != None && !SceneData.CompanionInPowerArmor && SceneData.IsCreatureType != 3)
 				SecondActorRef.PlayIdle(LooseIdleStop2)
 				Utility.Wait(0.333)
 				
@@ -2832,25 +2829,44 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 								endIf
 							
 							elseIf (id == 704 && SceneData.SecondMaleRole != None)
-								bedUseNodeMarker = true
+								bedUseNodeMarker = true	; adjust by furniture's orientation
 								markerIsBed = false
-								yOffset = -20.0
-								xOffset = -90.0
+								yOffset = -20.0			; distance
+								xOffset = -90.0			; angle when using bedUseNodeMarker (x-axis movement)
 							
 							elseIf (id == 734)
 								; federal couch adjustment - keep arms and shoulders from clipping
 								yOffset = 3.0
-								xOffset = -0.5
+								xOffset = 0.0
 								bedUseNodeMarker = true
 								markerIsBed = false
 								headingAngle = SleepBedRef.GetAngleZ() + 0.03
 							elseIf (id == 735)
 								; couch adjustment - keep arms and shoulders from clipping
 								yOffset = 6.25
-								xOffset = -1.0
+								xOffset = 0.0
 								bedUseNodeMarker = true
 								markerIsBed = false
 								headingAngle = SleepBedRef.GetAngleZ() + 0.03
+								
+							elseIf (id == 743)
+								; support longer dinner table
+								if (DTSleep_IntimateDiningTableList.GetSize() > 2)
+									Form baseTableForm = SleepBedRef.GetBaseObject() as Form
+									if (baseTableForm == DTSleep_IntimateDiningTableList.GetAt(2))
+										bedUseNodeMarker = true	; adjust by furniture's orientation
+										markerIsBed = false
+										yOffset = -50.0			; distance
+										xOffset = 0.0			; angle 
+										headingAngle = SleepBedRef.GetAngleZ() + 0.03
+									elseIf (baseTableForm == DTSleep_IntimateDiningTableList.GetAt(1))
+										bedUseNodeMarker = true	; adjust by furniture's orientation
+										markerIsBed = false
+										yOffset = -22.5			; distance
+										xOffset = 0.0			; angle 
+										headingAngle = SleepBedRef.GetAngleZ() + 0.03
+									endIf
+								endIf
 								
 							elseIf (id == 752)
 								; desk - chair centered gets in way, but move back since close to table
@@ -3028,11 +3044,11 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 									; mark node
 										
 									if (bedUseNodeMarker)
-										; v2.10 - fix offsets for orientation  -- was using MoveTo
+										; v2.10 - fix offsets for orientation -- yOffset is distance and xOffset is angle -- was using MoveTo
 										Point3DOrient ptOrig = DTSleep_CommonF.PointOfObject(SleepBedRef)
 										Point3DOrient ptTargetNode = DTSleep_CommonF.GetPointDistOnHeading(ptOrig, yOffset, xOffset)
 										
-										if (DTSleep_SettingTestMode.GetValue() > 0.0 && DTSleep_DebugMode.GetValue() >= 1.0) ;TODO remove
+										if (DTSleep_SettingTestMode.GetValue() > 0.0 && DTSleep_DebugMode.GetValue() >= 2.0) ;TODO remove
 											Debug.Trace(myScriptName + " chair point: " + DTSleep_CommonF.Point3DOrientToString(ptOrig) + ", placement offset: " + DTSleep_CommonF.Point3DOrientToString(ptTargetNode))
 										endIf
 										mainNode.MoveTo(SleepBedRef, ptTargetNode.X, ptTargetNode.Y, zOffset, true)
@@ -3141,9 +3157,7 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 								endIf
 								
 								Point3DOrient saPt = DTSleep_CommonF.GetPointDistOnHeading(ptMainActor, saDist)
-								if (DTSleep_SettingTestMode.GetValue() > 0.0 && DTSleep_DebugMode.GetValue() >= 2.0) ;TODO remove
-									Debug.Trace(myScriptName + " move SecondActor to MainActor")
-								endIf
+								
 								if (MainActorCloneRef != None)
 									SecondActorRef.MoveTo(MainActorCloneRef, saPt.X, saPt.Y, 0.0, true)
 									
@@ -3154,9 +3168,6 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 								ptDummyNode = DTSleep_CommonF.PointOfObject(SecondActorRef)
 								
 							else
-								if (DTSleep_SettingTestMode.GetValue() > 0.0 && DTSleep_DebugMode.GetValue() >= 2.0) ;TODO remove
-									Debug.Trace(myScriptName + " move SecondActor to dummy Node")
-								endIf
 								SecondActorRef.MoveTo(dummyNode, 0.0, 0.0, 0.0, true)
 								
 								;SceneData.MaleMarker = DTSleep_CommonF.PlaceFormAtObjectRef(DTSleep_MainNode, dummyNode, false, true, true)
@@ -3208,7 +3219,7 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 								int count = 2
 								
 								if (Math.Abs(ptMainActor.Z - ptSecActor.Z) > 1.5)
-									Debug.Trace(myScriptName + " correction for height ...")
+									;Debug.Trace(myScriptName + " correction for height ...")
 									; TODO: is this okay?
 									SecondActorRef.TranslateTo(ptSecActor.X + 0.01, ptSecActor.Y + 0.01, ptMainActor.Z, 0.0, 0.0, ptMainActor.Heading + 0.1, 400.0, 0.00000001)
 									Utility.Wait(0.5)
@@ -3326,9 +3337,9 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 											else
 												seqGoodToGo = false
 												attemptCount = 0
-												if (DTSleep_SettingTestMode.GetValue() > 0.0 && DTSleep_DebugMode.GetValue() >= 1.0)
-													Debug.Trace(MyScriptName + "--Companion bad comp-node distance!  " + secActNodeDistance)
-												endIf
+												;if (DTSleep_SettingTestMode.GetValue() > 0.0 && DTSleep_DebugMode.GetValue() >= 1.0)
+												;	Debug.Trace(MyScriptName + "--Companion bad comp-node distance!  " + secActNodeDistance)
+												;endIf
 											endif
 										else
 											attemptCount = 0
@@ -3438,7 +3449,7 @@ endFunction
 float Function PositionMarkerOnBedZAdjustForSceneID(int id)
 	
 	if (MainActorPositionByCaller)			; backup
-		Debug.Trace(myScriptName + " PositionMarkerOnBed not on bed--postioned by caller!!")
+		;Debug.Trace(myScriptName + " PositionMarkerOnBed not on bed--postioned by caller!!")
 		if (id >= 700 && id < 760)
 			return -44.0
 		endIf
@@ -3540,7 +3551,7 @@ bool Function ProcessMainActorClone()
 								MainActorOutfitArray.Add(gearList[i])
 							endIf
 						else
-							Debug.Trace(myScriptName + " skipping transfer to clone non-equipped item: " + item)
+							;Debug.Trace(myScriptName + " skipping transfer to clone non-equipped item: " + item)
 						endIf
 						
 						i += 1
@@ -4415,9 +4426,9 @@ Function MoveActorsToAACPositions(Actor mainActor, Actor secondActor, Actor thir
 		if (mainActor == MainActorRef)
 			if (DTSleep_CommonF.PositionObjsMatch(SceneData.MaleMarker, MainActorRef) == false)
 				; they really should
-				if (DTSleep_SettingTestMode.GetValue() > 0.0 && DTSleep_DebugMode.GetValue() >= 1.0)
-					Debug.Trace(myScriptName + "[PlayAAC] player not a clone and not located at marker --- moving marker to player")
-				endIf
+				;if (DTSleep_SettingTestMode.GetValue() > 0.0 && DTSleep_DebugMode.GetValue() >= 1.0)
+				;	Debug.Trace(myScriptName + "[PlayAAC] player not a clone and not located at marker --- moving marker to player")
+				;endIf
 				SceneData.MaleMarker.MoveTo(MainActorRef, 0.0, 0.0, 0.0, true)
 			endIf
 		else

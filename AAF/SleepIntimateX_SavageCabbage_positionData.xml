@@ -1,5 +1,5 @@
 <meta title="SleepIntimateX_SavageCabbage_positionData.xml" version="2.18" dataSet="position"/>
-<defaults startEquipmentSet="None" stopEquipmentSet="None" startMorphSet="ready" stopMorphSet="unReady"/>
+<defaults startEquipmentSet="None" stopEquipmentSet="None" />
 <!-- for use with SavageCabbage v1.1 -->
 
 

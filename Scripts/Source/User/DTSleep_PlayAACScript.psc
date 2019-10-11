@@ -473,7 +473,7 @@ Function InitSceneAndPlay()
 	
 	SceneRunning = 1
 	
-	if (seqStagesArray != None)
+	if (seqStagesArray.Length > 0)
 		; get initial offsets to position characters
 		angleM = seqStagesArray[0].MAngleOffset
 		angleF = seqStagesArray[0].FAngleOffset
@@ -751,9 +751,24 @@ endFunction
 Function RemoveLeitoGuns(Actor aActor)
 	;Debug.Trace("[DTSleep_PlayAAC] RemoveLeitoGuns")
 	
-	if (DTSleep_SettingUseBT2Gun.GetValueInt() > 0)
+	if (DTSleep_SettingUseBT2Gun.GetValueInt() > 0 || DTSleep_SettingSynthHuman.GetValueInt() >= 2)
 		RemoveBT2Guns(aActor)
 	endIf	
+	
+	if (DTSleep_SettingSynthHuman.GetValueInt() == 1 && SceneData.IsCreatureType == 4 && DTSleep_LeitoGunSynthList != None) ;v2.19
+		int j = 0
+		while (j < DTSleep_LeitoGunSynthList.GetSize())
+			Armor item = DTSleep_LeitoGunSynthList.GetAt(j) as Armor
+			if (item != None)
+				int count = aActor.GetItemCount(item)
+				if (count > 0)
+					aActor.UnequipItem(item as Form, false, true)
+					aActor.RemoveItem(item as Form, count, true, None)
+				endIf
+			endIf
+			j += 1
+		endWhile
+	endIf
 	
 	if (DTSleep_LeitoGunList != None && DTSleep_SettingUseLeitoGun.GetValueInt() > 0)
 	
@@ -777,7 +792,7 @@ EndFunction
 Function RemoveBT2Guns(Actor aActor)
 	if (DTSleep_BT2GunList != None)
 		int len = DTSleep_BT2GunList.GetSize()
-		if (len > 3 && DTSleep_SettingSynthHuman.GetValueInt() < 2)
+		if (len > 3 && DTSleep_SettingSynthHuman.GetValueInt() < 2 && SceneData.IsCreatureType != 4)
 			len = 3
 		endIf
 		int idx = 0

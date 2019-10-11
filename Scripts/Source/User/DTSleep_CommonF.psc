@@ -345,7 +345,7 @@ ObjectReference Function FindNearestObjectInListFromObjRef(FormList list, Object
 					if (dist < closestDist)
 						if (onSamePlane)
 							Point3DOrient ptObj = PointOfObject(objRef)
-							if (ptObj.Z > (ptFrom.Z - 20.0) && ptObj.Z < (ptFrom.Z + 20.0))
+							if (ptObj.Z > (ptFrom.Z - 32.0) && ptObj.Z < (ptFrom.Z + 32.0))
 								closestDist = dist
 								closestIDX = index
 							endIf

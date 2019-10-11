@@ -810,7 +810,7 @@ string Function CreateSeqPositionStr(int seqId, int stageNum)
 	
 	if (seqId >= 500 && seqId < 560)
 		fullStr = false
-		if (seqId == 503 || seqId == 504 || seqId == 540)
+		if (seqId == 503 || seqId == 504 || seqId == 540 || seqId == 541)	;v2.19 - added 541
 			fullStr = true
 		elseIf (seqId >= 550 && seqId <= 552)
 			fullStr = true
@@ -857,7 +857,7 @@ Armor Function GetArmorNudeGun(int kind)
 		kind = 0
 	endIf
 	
-	Debug.Trace("[DTSleep_PlayAAF] GetArmorNudeGun kind = " + kind)
+	;Debug.Trace("[DTSleep_PlayAAF] GetArmorNudeGun kind = " + kind)
 	
 	if ((evbVal > 0 || bt2Val > 0) && SceneData.IsCreatureType != 2)
 	
@@ -1209,7 +1209,7 @@ Function PlayLeitoPairSequenceLists(Actor mActor, Actor fActor, Actor oActor, AS
 			aafSettings.duration = positionIDArr[0].StageTime
 		endIf
 		
-		if (DTSleep_SettingTestMode.GetValue() > 0.0 && DTSleep_DebugMode.GetValue() >= 1.0)
+		if (DTSleep_SettingTestMode.GetValue() > 0.0 && DTSleep_DebugMode.GetValue() >= 2.0)
 			;TODO remove
 			Debug.Trace("[DTSleep_PlayAAF_Seq] start position ID " + positionIDArr[0].StageIDStr + " at Loc " + aafSettings.locationObject + " with sceneLen " + DTSleep_IntimateSceneLen.GetValueInt() + " and actor count " + actors.Length)
 		endIf
@@ -1486,8 +1486,26 @@ endFunction
 
 Function RemoveLeitoGuns(Actor aActor)
 	
-	if (DTSleep_SettingUseBT2Gun.GetValueInt() > 0)
+	if (DTSleep_SettingUseBT2Gun.GetValueInt() > 0 || DTSleep_SettingSynthHuman.GetValueInt() >= 2)
 		RemoveBT2Guns(aActor)
+	endIf
+	
+	if (DTSleep_SettingSynthHuman.GetValueInt() == 1 && SceneData.IsCreatureType == 4 && DTSleep_LeitoGunSynthList != None)
+		int j = 0
+		while (j < DTSleep_LeitoGunSynthList.GetSize())
+			Armor item = DTSleep_LeitoGunSynthList.GetAt(j) as Armor
+			if (item != None)
+				int count = aActor.GetItemCount(item)
+				if (count > 0)
+					if (DTSleep_SettingTestMode.GetValue() > 0.0 && DTSleep_DebugMode.GetValue() >= 1.0) ;TODO remove
+						Debug.Trace("[DTSleep_PlayAAF] removing synth nude gear: " + item)
+					endIf
+					aActor.UnequipItem(item as Form, false, true)
+					aActor.RemoveItem(item as Form, count, true, None)
+				endIf
+			endIf
+			j += 1
+		endWhile
 	endIf
 	
 	if (DTSleep_LeitoGunList != None)
@@ -1496,7 +1514,7 @@ Function RemoveLeitoGuns(Actor aActor)
 		int idx = 0
 		while (idx < len)
 			Armor gun = DTSleep_LeitoGunList.GetAt(idx) as Armor
-			if (gun)
+			if (gun != None)
 				int count = aActor.GetItemCount(gun)
 				if (count > 0)
 					if (DTSleep_SettingTestMode.GetValue() > 0.0 && DTSleep_DebugMode.GetValue() >= 2.0) ;TODO remove
@@ -1514,7 +1532,7 @@ EndFunction
 Function RemoveBT2Guns(Actor aActor)
 	if (DTSleep_BT2GunList != None)
 		int len = DTSleep_BT2GunList.GetSize()
-		if (len > 3 && DTSleep_SettingSynthHuman.GetValueInt() < 2)
+		if (len > 3 && DTSleep_SettingSynthHuman.GetValueInt() < 2 && SceneData.IsCreatureType != 4)
 			len = 3
 		endIf
 		int idx = 0

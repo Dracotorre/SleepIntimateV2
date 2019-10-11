@@ -1,5 +1,5 @@
 <meta title="SleepIntimateX_Leito_positionData.xml" version="2.1" dataSet="position"/>
-<defaults startEquipmentSet="None" stopEquipmentSet="None" startMorphSet="None" stopMorphSet="None" walkOffset="0,0,0"/> <!-- offset="0,50,180"/>-->
+<defaults startEquipmentSet="None" stopEquipmentSet="None" walkOffset="0,0,0"/> <!-- offset="0,50,180"/>-->
 
 <animationOffset actor="1" offset="0,0,0,180"/>
 <animationOffset actor="2" offset="0,0,0,180"/>

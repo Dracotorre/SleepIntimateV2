@@ -1299,7 +1299,7 @@ Event DTSleep_IntimateAnimQuestScript.IntimateSequenceDoneEvent(DTSleep_Intimate
 						; do not fade-in until bed unless...
 						; make sure okay to switch to bed--even if not in bed--so we know ready to move if not there yet
 						if ((DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).SetStopOnBedExit() == false)
-							Debug.Trace(myScriptName + " set undress SetStopOnBedExit failed... stopping undress")
+							;Debug.Trace(myScriptName + " set undress SetStopOnBedExit failed... stopping undress")
 							; fails if undress quest didn't have a bed - so get dressed now
 							
 							SetUndressStop(redressSlowly)
@@ -2573,7 +2573,6 @@ int Function ChanceForIntimateCompanionAdj(Actor companionRef)
 			; bonus for Nora spouse - she is also a rank higher as if romanced
 			CompanionActorScript compAct = companionRef as CompanionActorScript
 			if (compAct.IsRomantic() || companionRef.GetValue(CA_AffinityAV) >= 1000.0)
-				;Debug.Trace(myScriptName + " Nora bonus romanced")
 				result = 40
 			else
 				result = 20
@@ -2980,8 +2979,6 @@ int Function ChanceForIntimateSceneByHourOfDay(int companionRelRank, int sexEXP,
 		; vary by time best at 3.0
 		float hourScale = 6.0 - hourOfDay
 		hourScale = hourScale * 0.33333
-		
-		;Debug.Trace(myScriptName + " chance morn-hour scale: " + hourScale + " at hour: " + hourOfDay)
 		
 		chance += Math.Floor((nightBonus as float) * hourScale)
 	endIf
@@ -4626,7 +4623,6 @@ IntimateCompanionSet[] Function GetCompanionNearbyLoversArray(int minRank = 3, A
 	endIf
 	
 	ObjectReference[] actorArray = PlayerRef.FindAllReferencesWithKeyword(DTSleep_ActorKYList.GetAt(0), 900.0)
-	;Debug.Trace(myScriptName + " found nearby npc count " + actorArray.Length)
 	
 	while (actorArray != None && aCnt < actorArray.Length)
 		Actor ac = actorArray[aCnt] as Actor
@@ -8671,10 +8667,10 @@ bool Function IsCompanionRaceCompatible(Actor companionActor, ActorBase compBase
 				; v1.08 - Xbox-only / non-adult scenes to support romanced Nick Valentine mod
 				; v1.60 - also XOXO
 				; v1.67 - any by included creature type to check
-				if (DTSleep_SettingSynthHuman.GetValue() <= 0.0)		; v2.17
+				if (DTSleep_SettingSynthHuman.GetValue() <= 0.0 || DTSleep_AdultContentOn.GetValue() <= 1.0)
 					SceneData.IsUsingCreature = true
 					SceneData.IsCreatureType = CreatureTypeSynth
-				else
+				elseIf ((DTSConditionals as DTSleep_Conditionals).ImaPCMod)
 					SceneData.IsCreatureType = CreatureTypeSynthNude	; v2.18 - to use synthGen2 nude armors
 				endIf
 				
@@ -8924,7 +8920,7 @@ int Function IsCompanionActorReadyForScene(IntimateCompanionSet intimateActor, b
 			endIf
 			
 		elseIf (compActor.IsInScene())
-			Debug.Trace(myScriptName + " companion is busy in a scene ")
+			;Debug.Trace(myScriptName + " companion is busy in a scene ")
 			return -4
 			
 		elseIf (compActor.IsSneaking())
@@ -9453,8 +9449,6 @@ bool Function IsUnsafeToRestBed(ObjectReference akBed)
 			float bedX = akBed.GetPositionX()
 			float bedY = akBed.GetPositionY()
 			
-			Debug.Trace(myScriptName + " UnsafeToRest check bed at X = " + bedX + ", Y = " + bedY) ;TODO
-			
 			if (bedX > 81650.0 && bedX < 81760.0 && bedY > 96450.0 && bedY < 96550.0)		;fish plant
 				return true
 			elseIf (bedX > 30900.0 && bedX < 31000.0 && bedY > -88400.0 && bedY < -88280.0)	; quincyRuins5
@@ -9797,11 +9791,9 @@ bool Function OkaySitOnSeat(ObjectReference akFurniture, Form furnBaseForm = Non
 	endIf
 	if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsObjBenchSofa(akFurniture, furnBaseForm))
 		if (akFurniture.IsFurnitureMarkerInUse(0, true) && akFurniture.IsFurnitureMarkerInUse(1, true))
-			;Debug.Trace(myScriptName + " bench/couch 2 markers in use")
 			okayToSit = false
 		endIf
 	else
-		;Debug.Trace(myScriptName + " chair (not bench) in use")
 		okayToSit = false
 	endIf
 
