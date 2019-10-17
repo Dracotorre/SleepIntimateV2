@@ -545,6 +545,24 @@
 	</actor>
 </animation>
 
+<animation id="SIX_SC_FM-Armchair01-07ClimaxLoop" time="200">
+	<actor gender="F">
+		<idle form="26B80"/>
+	</actor>
+	<actor gender="M">
+		<idle form="26B81"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-Armchair01-08Finish" time="500">
+	<actor gender="F">
+		<idle form="26B82"/>
+	</actor>
+	<actor gender="M">
+		<idle form="26B83"/>
+	</actor>
+</animation>
+
 <animation id="SIX_SC_FM-Armchair02-01Tease" time="500">
 	<actor gender="F">
 		<idle form="263E5"/>

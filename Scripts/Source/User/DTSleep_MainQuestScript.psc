@@ -9700,32 +9700,39 @@ EndFunction
 
 int Function ModPlayerCommentsDisable()
 	
+	; note: the PCHT global and PHT global work differently and PHT needs not start/stop quest
 	if ((DTSConditionals as DTSleep_Conditionals).IsPlayerCommentsActive && !(DTSConditionals as DTSleep_Conditionals).ModPlayerCommentsDisabled)
-		
 		
 		if ((DTSConditionals as DTSleep_Conditionals).ModPlayerCommentsGlobDisabled != None)
 			GlobalVariable pcGV = (DTSConditionals as DTSleep_Conditionals).ModPlayerCommentsGlobDisabled
 			
-			int pcDisVal = pcGV.GetValueInt()
-
-			if (pcDisVal < 1)
-				DTDebug(" disable PCHT ", 1)
+			if (pcGV != None)
 				Quest pcQuest = ModGetPlayerCommentsQuest()
-				
-				if (pcQuest == None)
-					return -1
-					DTDebug("PCHT Quest is None!! ", 1)
-				else
+				int pcDisVal = pcGV.GetValueInt()
+
+				if (pcQuest != None && pcDisVal < 1)
+					DTDebug(" disable PCHT ", 1)
+
 					(DTSConditionals as DTSleep_Conditionals).ModPlayerCommentsDisabled = true
 					
+					DisablePlayerControlsSleep(-1)
 					DTSleep_ModPlayerCommentOffMsg.Show()
 					
 					pcQuest.Stop()
 					PlayerRef.ClearLookAt()
 					ModPlayerCommentSetGlobals(1.0)
 					Utility.Wait(2.25)
-					
+					DisablePlayerControlsSleep()
 					return 2
+				else
+					(DTSConditionals as DTSleep_Conditionals).ModPlayerCommentsDisabled = true
+					DisablePlayerControlsSleep(-1)
+					DTSleep_ModPlayerCommentOffMsg.Show()
+					pcGV.SetValueInt(0)
+					PlayerRef.ClearLookAt()
+					Utility.Wait(1.2)
+					DisablePlayerControlsSleep()
+					return 1
 				endIf
 			endIf
 		else
@@ -9737,18 +9744,25 @@ int Function ModPlayerCommentsDisable()
 endFunction
 
 int Function ModPlayerCommentsEnable()
+	; note: the PCHT global and PHT global work differently and PHT needs not start/stop quest
 	if ((DTSConditionals as DTSleep_Conditionals).ModPlayerCommentsDisabled)
 		Quest pcQuest = ModGetPlayerCommentsQuest()
 		(DTSConditionals as DTSleep_Conditionals).ModPlayerCommentsDisabled = false
-		if (pcQuest != None && !pcQuest.IsRunning())
-			DTDebug("enable PCHT quest...", 2)
-			DTSleep_ModPlayerCommentOnMsg.Show()
-			
-			PlayerRef.ClearLookAt()
-			ModPlayerCommentSetGlobals(0.0)
-			pcQuest.SetStage(0)
-			Utility.Wait(1.1)
+		if (pcQuest != None)
+			if (!pcQuest.IsRunning())
+				DTDebug("enable PCHT quest...", 2)
+				
+				PlayerRef.ClearLookAt()
+				ModPlayerCommentSetGlobals(0.0)
+				pcQuest.SetStage(0)
+			endIf
+		else
+			GlobalVariable pcGV = (DTSConditionals as DTSleep_Conditionals).ModPlayerCommentsGlobDisabled
+			pcGV.SetValueInt(1)
 		endIf
+		
+		DTSleep_ModPlayerCommentOnMsg.Show()
+		Utility.Wait(1.1)
 		
 		return 2
 	endIf

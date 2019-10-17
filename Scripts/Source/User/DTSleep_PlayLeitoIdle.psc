@@ -119,6 +119,8 @@ EndEvent
 ; second actor must be akfActor (target) and not player in two-person sequences
 ;
 Event OnEffectStart(Actor akfActor, Actor akmActor)
+
+	;Debug.Trace("[DTSleep_PlayLeitoIdle] OnEffectStart")
 	
 	SequenceID = DTSleep_IntimateIdleID.GetValueInt()
 	

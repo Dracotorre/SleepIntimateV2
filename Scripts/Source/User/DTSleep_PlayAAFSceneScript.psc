@@ -5,8 +5,9 @@ Scriptname DTSleep_PlayAAFSceneScript extends Quest
 ; script by DracoTorre
 ; Sleep Intimate
 ; https://www.dracotorre.com/mods/sleepintimate/
+; updated for Sleep Intimate v2.17 to use AACcat for all except Leito and some Atomic scenes
 ;
-; plays scene using Advanced Animation Framework (AAF) beta 38+
+; plays scene using Advanced Animation Framework (AAF) beta
 ;   - supports variable-length, multi-branching staged scenes controlled by script
 ;   - disables AAF undress/redress in favor of SleepIntimate undress expected before start
 ;   - scene chosen and setup by DTSleep_IntimateAnimQuestScript
@@ -20,6 +21,7 @@ Scriptname DTSleep_PlayAAFSceneScript extends Quest
 ;
 ; Atomic scenes require on XML for AtomicLust:
 ;	- SleepIntimateX_AtomicLust_positionData.xml
+;	- SleepIntimateX_AtomicLust_animationData.xml
 ;
 ; SavageCabbage scenes:
 ;	- SleepIntimateX_SavageCabbage_positionData.xml
@@ -31,8 +33,9 @@ Scriptname DTSleep_PlayAAFSceneScript extends Quest
 ;
 ; 50 Shades of Fallout by Gray scenes:
 ;   - SleepIntimateX_Graymod_positionData.xml
+;   - SleepIntimateX_Graymod_animationData.xml
 ;
-; AAF uses a doppelganger borrowing player-character armor items which is then returned afterward
+; note: AAF uses a doppelganger borrowing player-character armor items which is then returned afterward
 ; and rather late.
 ;
 import DTSleep_AACcatScript

@@ -2292,9 +2292,11 @@ bool Function PlayIntimateLeitoAnimWithEndTimer(float timerSecs)
 					;Debug.Trace(myScriptName + " play Leito on Clone")
 					DTSleep_PlayLeitoTargetSpell.Cast(MainActorCloneRef as ObjectReference, SecondActorRef as ObjectReference)
 				else
+					;Debug.Trace(myScriptName + " play Leito on player and " + SecondActorRef)
 					DTSleep_PlayLeitoTargetSpell.Cast(MainActorRef as ObjectReference, SecondActorRef as ObjectReference)
 				endIf
 			else
+				;Debug.Trace(myScriptName + " play Leito solo")
 				DTSleep_PlayLeitoTargetSpell.Cast(MainActorRef as ObjectReference, MainActorRef as ObjectReference)
 			endIf
 		else
@@ -4169,8 +4171,10 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 							if (packID == 1 || packID == 2 || IsMaleErectAngleRestrictedForPack(1, packID))
 								sidArray.Add(0)
 							endIf
-							if (packID == 1 || IsMaleErectAngleRestrictedForPack(0, packID))
-								sidArray.Add(1)
+							if (!SceneData.SameGender)	; v2.20 - bad fit for some devices
+								if (packID == 1 || IsMaleErectAngleRestrictedForPack(0, packID))
+									sidArray.Add(1)
+								endIf
 							endIf
 						endIf
 						

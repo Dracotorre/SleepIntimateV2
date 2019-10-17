@@ -127,6 +127,8 @@
 <position id="DTSIX_737_S4" animation="SIX_SC_FM-Armchair01-04Cowgirl" isHidden="true"/>
 <position id="DTSIX_737_S5" animation="SIX_SC_FM-Armchair01-05Cowgirl" isHidden="true"/>
 <position id="DTSIX_737_S6" animation="SIX_SC_FM-Armchair01-06Cowgirl" isHidden="true"/>
+<position id="DTSIX_737_S7" animation="SIX_SC_FM-Armchair01-07ClimaxLoop" isHidden="true"/>
+<position id="DTSIX_737_S8" animation="SIX_SC_FM-Armchair01-08Finish" isHidden="true"/>
 
 <position id="DTSIX_738_S1" animation="SIX_SC_FM-Armchair02-01Tease" isHidden="true"/>
 <position id="DTSIX_738_S2" animation="SIX_SC_FM-Armchair02-02Start" isHidden="true"/>
