@@ -64,7 +64,7 @@ EndFunction
 ;BEGIN FRAGMENT Fragment_Terminal_08
 Function Fragment_Terminal_08(ObjectReference akTerminalRef)
 ;BEGIN CODE
-pDTSleep_SettingTestMode.SetValue(-1.0)
+pDTSleep_SettingTestMode.SetValue(0.0)
 ;END CODE
 EndFunction
 ;END FRAGMENT

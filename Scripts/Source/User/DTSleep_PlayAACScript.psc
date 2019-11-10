@@ -592,6 +592,10 @@ Function PlaySequence(DTAACSceneStageStruct[] seqStagesArray)
 	if (MainActor == None || SceneData == None)
 		StopAnimationSequence()
 		return
+	elseIf (seqStagesArray.Length == 0)
+		Debug.Trace("DTSleep_PlayAAC] empty stage array!!!")
+		StopAnimationSequence()
+		return
 	endIf
 	
 	Armor gunArmor = None

@@ -4046,6 +4046,7 @@ int Function CheckCustomGear(int minCountShow = 0)
 	int changeCount = (SleepPlayerAlias as DTSleep_PlayerAliasScript).CheckCustomPlayerHomes()
 	changeCount += (SleepPlayerAlias as DTSleep_PlayerAliasScript).CheckCustomArmorsAndBackpacks()
 	changeCount += (SleepPlayerAlias as DTSleep_PlayerAliasScript).CheckUniquePlayerFollowers()
+	changeCount += (SleepPlayerAlias as DTSleep_PlayerAliasScript).CheckF4SEMCM()
 	
 	if (changeCount >= minCountShow)
 		DTSleep_ModScanUpdateMsg.Show(changeCount)
@@ -4485,26 +4486,29 @@ endFunction
 
 bool Function PlayerHasPerkOfCompanion(Actor aCompanion, ActorBase compBase = None)
 	
-	if (aCompanion == StrongCompanionRef)
-		return PlayerRef.HasPerk(CompStrongPerk)
-	elseIf (aCompanion == CompanionDeaconRef)
-		return PlayerRef.HasPerk(CompDeaconPerk)
-	elseIf (aCompanion == CompanionX6Ref)
-		return PlayerRef.HasPerk(CompX6Perk)
-	elseIf ((DTSConditionals as DTSleep_Conditionals).IsCoastDLCActive && aCompanion == (DTSConditionals as DTSleep_Conditionals).FarHarborDLCLongfellowRef)
-		return PlayerRef.HasPerk((DTSConditionals as DTSleep_Conditionals).FarHarborDLCLongfellowPerk)
-		
-	elseIf ((DTSConditionals as DTSleep_Conditionals).IsRobotDLCActive && aCompanion == (DTSConditionals as DTSleep_Conditionals).RobotAdaRef)
-		; Ada must be human and finished DLC main quest 
-		if (compBase == None)
-			compBase = aCompanion.GetActorBase()
-		endIf
-		if (compBase != None && compBase.GetRace() == HumanRace)
-			if ((DTSConditionals as DTSleep_Conditionals).RobotMQ105Quest != None && (DTSConditionals as DTSleep_Conditionals).RobotMQ105Quest.GetStageDone(1000))
-				return true
+	; v2.21 - ensure not hate
+	if (aCompanion.GetValue(CA_AffinityAV) >= 250)
+		if (aCompanion == StrongCompanionRef)
+			return PlayerRef.HasPerk(CompStrongPerk)
+		elseIf (aCompanion == CompanionDeaconRef)
+			return PlayerRef.HasPerk(CompDeaconPerk)
+		elseIf (aCompanion == CompanionX6Ref)
+			return PlayerRef.HasPerk(CompX6Perk)
+		elseIf ((DTSConditionals as DTSleep_Conditionals).IsCoastDLCActive && aCompanion == (DTSConditionals as DTSleep_Conditionals).FarHarborDLCLongfellowRef)
+			return PlayerRef.HasPerk((DTSConditionals as DTSleep_Conditionals).FarHarborDLCLongfellowPerk)
+			
+		elseIf ((DTSConditionals as DTSleep_Conditionals).IsRobotDLCActive && aCompanion == (DTSConditionals as DTSleep_Conditionals).RobotAdaRef)
+			; Ada must be human and finished DLC main quest 
+			if (compBase == None)
+				compBase = aCompanion.GetActorBase()
+			endIf
+			if (compBase != None && compBase.GetRace() == HumanRace)
+				if ((DTSConditionals as DTSleep_Conditionals).RobotMQ105Quest != None && (DTSConditionals as DTSleep_Conditionals).RobotMQ105Quest.GetStageDone(1000))
+					return true
+				endIf
 			endIf
 		endIf
-	endIf 
+	endIf
 	
 	return false
 endFunction
@@ -4723,11 +4727,13 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 					; ummm...
 					DTDebug("  lover's ring wearer, " + loverActor + " is... dead.", 1)
 				elseIf (!loverActor.IsUnconscious())
-					; check if customized companin on romance list
-					if (!DTSleep_CompanionRomanceList.HasForm(loverActor as Form))
-						CompanionActorScript aCompanion = loverActor as CompanionActorScript
-						if (aCompanion.IsRomantic())
-							DTSleep_CompanionRomanceList.AddForm(loverActor)
+					; check if custom companion on romance list - v2.21: limit to non-ExtraNPC and check affinity before adding to list in case of IsRomantic bug
+					if (loverActor != CompanionX6Ref && loverActor != CompanionDeaconRef && loverActor != (DTSConditionals as DTSleep_Conditionals).FarHarborDLCLongfellowRef)
+						if (!DTSleep_CompanionRomanceList.HasForm(loverActor as Form))
+							CompanionActorScript aCompanion = loverActor as CompanionActorScript
+							if (aCompanion != None && aCompanion.GetValue(CA_AffinityAV) >= 1000.0 && aCompanion.IsRomantic())
+								DTSleep_CompanionRomanceList.AddForm(loverActor)
+							endIf
 						endIf
 					endIf
 					result.CompanionActor = loverActor
@@ -8229,7 +8235,6 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 	;   7 = SavageCabbages
 	;	8 = ZaZOut4
 	;   9 = AAF_GrayAnimations
-	;  
 
 	bool aafEnabled = IsAAFReady()
 	bool hasAtomicLustAnims = false
@@ -8239,7 +8244,6 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 	bool hasSavageCabbageAnims = false
 	bool hasGrayAnims = false
 	bool hasLeitoV2Anims = false	; compatible with AAF, but cannot have old X_Anims patch due to shared file locations
-	;bool hasBP70Anims = false
 	int animSetCount = 0
 	int animSetFailCount = 0
 	int multiLoverGender = -1
@@ -8359,11 +8363,6 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 					animSetCount += 1
 				endIf
 			endIf
-			
-			;if ((DTSConditionals as DTSleep_Conditionals).IsBP70Active)
-			;	hasBP70Anims = true
-			;	animSetCount += 1
-			;endIf
 		endIf
 		
 	endIf  ; ------------------ done found packs 
@@ -8571,8 +8570,8 @@ bool Function IsAdultAnimationAvailable()
 			return true
 		elseIf ((DTSConditionals as DTSleep_Conditionals).IsGrayAnimsActive)
 			return true
-		;elseIf ((DTSConditionals as DTSleep_Conditionals).IsBP70Active)
-		;	return true
+		elseIf ((DTSConditionals as DTSleep_Conditionals).IsBP70Active)
+			return true
 		endIf
 	endIf
 	
@@ -11049,6 +11048,11 @@ int Function RestoreTestSettings(float oldVersion = 0.0)
 			Debug.Trace(myScriptName + " correction for TableList before size = " + beforeSize + ", and after size = " + afterSize)
 		endIf
 	endIf
+	
+	;if (DTSleep_SettingTestMode.GetValue() < 0.0)
+	;	DTSleep_SettingTestMode.SetValue(0.0)
+	;	count += 1
+	;endIf
 	
 	return count
 endFunction

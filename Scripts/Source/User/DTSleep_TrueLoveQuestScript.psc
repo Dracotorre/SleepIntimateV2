@@ -109,25 +109,57 @@ bool Function IsAllowedLover(Actor akActor)
 					CompanionActorScript aCompanion = ActiveCompanionCollectionAlias.GetAt(idx) as CompanionActorScript
 					if (aCompanion != None)
 						if (aCompanion.IsInfatuated() || aCompanion.IsRomantic())
+							
 							return true
-						elseIf (aCompanion.GetValue(CA_AffinityAV) >= 1000.0)
+						endIf
+						
+						float affinity = aCompanion.GetValue(CA_AffinityAV)
+						if (affinity >= 1000.0)
 							; in case of romance bug
 							return true
 						endIf
+						
+						; v2.21 if zero affinity and test mode, let continue
+						if (DTSleep_SettingTestMode.GetValue() > 0.0)
+							if (affinity >= 750.0)
+								return true
+							elseIf (affinity != 0.0)
+								return false
+							endIf
+						else
+							return false
+						endIf
+					else
+						Debug.Trace("[DTSleep_TrueLoveQuest] found UNKNOWN companion (failed CompanionActorScript) = " + activeComp + " in Active Companion list")
+						idx = count + 10
 					endif
-					return false	; found and known romance-ready companion - we are done
 					
+				; v2.21 - no Strong and extras must at least be a friend
 				elseIf (activeComp == StrongCompanionRef)
-					return PlayerRef.HasPerk(CompStrongPerk)
+					return false
 
 				elseIf (activeComp == CompanionDeaconRef)
-					return PlayerRef.HasPerk(CompDeaconPerk)
-
+					if (PlayerRef.HasPerk(CompDeaconPerk))
+						if (DTSleep_SettingTestMode.GetValue() > 0.0 || activeComp.GetValue(CA_AffinityAV) >= 250)
+							return true
+						endIf
+					endIf
+					return false
+					
 				elseIf (activeComp == CompanionX6Ref)
-					return PlayerRef.HasPerk(CompX6Perk)
+					if (PlayerRef.HasPerk(CompX6Perk))
+						if (DTSleep_SettingTestMode.GetValue() > 0.0 || activeComp.GetValue(CA_AffinityAV) >= 250)
+							return true
+						endIf
+					endIf
+					return false
 					
 				elseIf ((DTSConditionals as DTSleep_Conditionals).IsCoastDLCActive && activeComp == (DTSConditionals as DTSleep_Conditionals).FarHarborDLCLongfellowRef)
-					return PlayerRef.HasPerk((DTSConditionals as DTSleep_Conditionals).FarHarborDLCLongfellowPerk)
+					if (PlayerRef.HasPerk((DTSConditionals as DTSleep_Conditionals).FarHarborDLCLongfellowPerk))
+					
+						return (DTSleep_SettingTestMode.GetValue() > 0.0 || activeComp.GetValue(CA_AffinityAV) >= 250.0)
+					endIf
+					return false
 					
 				elseIf ((DTSConditionals as DTSleep_Conditionals).IsRobotDLCActive && activeComp == (DTSConditionals as DTSleep_Conditionals).RobotAdaRef)
 					
@@ -151,8 +183,9 @@ bool Function IsAllowedLover(Actor akActor)
 					return false
 				endIf
 				
-				; actor found in collection, but if custom companion doesn't use affinity system
-				;  must keep looking
+				; actor found in collection
+				;  exit loop, but do not return
+				idx = count + 10
 			endIf
 			
 			idx += 1
@@ -176,8 +209,15 @@ bool Function IsAllowedLover(Actor akActor)
 			if (affinity > 900.0)
 				Debug.Trace("[DTSleep_TrueLoveQuest] Accepted for affinity (" + affinity + ") of UNKNOWN companion = " + akActor)
 				return true
+			elseIf (DTSleep_SettingTestMode.GetValue() > 0.0 && affinity >= 750)
+				Debug.Trace("[DTSleep_TrueLoveQuest] Accepted for affinity (" + affinity + ") of UNKNOWN companion = " + akActor)
+				return true
 			endIf
 			Debug.Trace("[DTSleep_TrueLoveQuest] REFUSED for low affinity (" + affinity + ") of UNKNOWN companion = " + akActor)
+			return false
+		elseIf (affinity < 0.0)
+			;v2.21 - hated
+			Debug.Trace("[DTSleep_TrueLoveQuest] REFUSED for negative affinity (" + affinity + ") of UNKNOWN companion = " + akActor)
 			return false
 		endIf
 	endIf

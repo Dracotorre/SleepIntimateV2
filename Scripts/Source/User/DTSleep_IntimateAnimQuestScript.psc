@@ -24,10 +24,10 @@ ScriptName DTSleep_IntimateAnimQuestScript extends Quest
 ;  200 - 249 - Crazy gun bed idles
 ;  250 - 299 - Crazy gun stand idles
 ;  300 - 499 - reserved
-;  500 - 599 - "Atomic Lust" and "Mutated lust" AAF or AAC
-;  600 - 599 - Leito v2 AAF or AAC
-;  700 - 799 - SavageCabbage AAF or AAC
-;  800 - 899 - ZaZout4 AAF or AAC
+;  500 - 599 - "Atomic Lust" and "Mutated lust" 
+;  600 - 599 - Leito v2 
+;  700 - 799 - SavageCabbage 
+;  800 - 899 - ZaZout4 
 ;  900 - 999 - Graymod
 ;
 ; positioning -
@@ -2915,7 +2915,7 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 								forceMainActorPosition = true
 								
 							elseIf (id == 758)
-								yOffset = -5.0
+								yOffset = -1.0
 								xOffset = 0.0
 								markerIsBed = false
 								if (SceneData.SecondMaleRole != None)
@@ -2991,18 +2991,20 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 								markerIsBed = true
 								yOffset = 0.0
 							endIf
-						;elseIf (id >= 1000)
-						;	
-						;	if (id < 1050 && !MainActorPositionByCaller)
-						;		placeOnBedSimple = true
-						;		if (id == 1040)
-						;			markerIsBed = true
-						;		else
-						;			yOffset = -42.0
-						;		endIf
-						;	elseIf (id >= 1050 && id <= 1051)
-						;		forceMainActorPosition = true
-						;	endIf
+						elseIf (id >= 1000)
+							revHeading = false
+							if (id < 1050 && !MainActorPositionByCaller)
+								placeOnBedSimple = true
+								if (id == 1040)
+									markerIsBed = true
+								elseIf (id == 1001)
+									yOffset = 0.0
+								else
+									yOffset = -44.0
+								endIf
+							elseIf (id >= 1050 && id <= 1051)
+								forceMainActorPosition = true
+							endIf
 						endIf
 						
 						if (placeOnBedSimple)
@@ -4043,7 +4045,8 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 						endIf
 					endIf
 				elseIf (SceneData.SecondFemaleRole != None)
-					if (bedIsDouble && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.10)
+					; v2.21 - restrict positioned by caller to avoid standing in air
+					if (bedIsDouble && !MainActorPositionByCaller && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.10)
 						sidArray.Add(2)
 					endIf
 					
@@ -4367,7 +4370,11 @@ endFunction
 
 bool Function SceneIDIsGroupPlay(int sid)
 	
-	if (sid >= 700 && sid < 800)
+	if (sid >= 1000)
+		;if (sid == 1000 || sid == 1004 || sid == 1013 || sid == 1050)
+		;	return true
+		;endIf
+	elseIf (sid >= 700 && sid < 800)
 		if (sid >= 701 && sid <= 707 && sid != 703)
 			return true
 		elseIf (sid == 735 || sid == 737 || sid == 749 || sid == 756 || sid == 758)

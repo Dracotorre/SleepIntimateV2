@@ -126,7 +126,8 @@ Event OnEffectStart(Actor akfActor, Actor akmActor)
 	
 	if (SequenceID >= 600)
 		SequenceID = SequenceID - 500
-		if (DTSleep_SettingUseBT2Gun.GetValue() > 0 && SceneData.IsCreatureType <= 0)
+		; v2.21 - change to prefer EVB
+		if (DTSleep_SettingUseBT2Gun.GetValue() > 0.0 && SceneData.IsCreatureType <= 0 && DTSleep_SettingUseLeitoGun.GetValueInt() <= 0)
 			ArmGunBodyType = 2
 		else
 			ArmGunBodyType = 1
@@ -248,7 +249,9 @@ Armor Function GetArmorNudeGun(int kind)
 	if (!Debug.GetPlatformName() as bool)
 		return None
 	endIf
+	
 	int evbVal = DTSleep_SettingUseLeitoGun.GetValueInt()
+	
 	if (SceneData.IsCreatureType == 1)
 		evbVal = 2
 	elseIf (ArmGunBodyType == 2 && !DTSConditionals.IsUniquePlayerMaleActive)

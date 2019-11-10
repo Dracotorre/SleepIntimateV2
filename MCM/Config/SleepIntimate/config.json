@@ -98,6 +98,30 @@
 			}
 		},
 		{
+			"id": "MCM_SettingSortHolotape:Main",
+			"text": "Sort Holotape",
+			"type": "dropdown",
+			"help": "sort holotape near bottom or top of Misc",
+			"valueOptions": {
+				"options": ["Bottom", "Top"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|BA50E",
+				"propertyName": "DTSleep_SettingSortHolotape"
+			}
+		},
+		{
+			"id": "MCM_SettingTestMode:Main",
+			"text": "Test Mode",
+			"type": "dropdown",
+			"help": "for extra features or specific tests -- keep disabled for performance",
+			"valueOptions": {
+				"options": ["Disabled", "Enabled"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|40AAC",
+				"propertyName": "DTSleep_SettingTestMode"
+			}
+		},
+		{
 			"text": "Sleep and Undress for Bed",
 			"type": "section"
 		},
