@@ -457,9 +457,11 @@ int Function CheckBedOwnership(ObjectReference aBedRef, Form baseBedForm, Actor 
 									if (twinBed.IsFurnitureInUse())
 									
 										if (DTSleep_BedsBigDoubleList.HasForm(baseBedForm))
+											
 											if (testModeOn && DTSleep_DebugMode.GetValue() >= 1.0)
 												Debug.Trace("[DTSleep_BedOwn] double-bed (" + twinBed + ") in use; -11")
 											endIf
+											
 											return -11
 										else
 											msgChoice = ShowWarnForOtherOwner(twinBed, true)

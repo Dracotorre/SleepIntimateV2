@@ -66,6 +66,14 @@ Function Fragment_Terminal_11(ObjectReference akTerminalRef)
 EndFunction
 ;END FRAGMENT
 
+;BEGIN FRAGMENT Fragment_Terminal_18
+Function Fragment_Terminal_18(ObjectReference akTerminalRef)
+;BEGIN CODE
+(pDTSleep_MainQuest as DTSleep_MainQuestScript).RestoreSettingsDefault()
+;END CODE
+EndFunction
+;END FRAGMENT
+
 ;END FRAGMENT CODE - Do not edit anything between this and the begin comment
 
 GlobalVariable Property pDTSleep_SettingCamera Auto Const Mandatory

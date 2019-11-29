@@ -96,7 +96,7 @@ endEvent
 
 Event OnMenuOpenCloseEvent(string asMenuName, bool abOpening)
     if (asMenuName== "PipboyMenu")
-		Debug.Trace("[DTSleep_PlayAAC] Open menu - cancel scene")
+		;Debug.Trace("[DTSleep_PlayAAC] Open menu - cancel scene")
 		UnregisterForMenuOpenCloseEvent("PipboyMenu")
 		
 		Utility.Wait(1.5)
@@ -117,6 +117,8 @@ Event OnEffectStart(Actor akfActor, Actor akmActor)
 	ThirdActor = None
 	bool secondActorOkay = true
 	
+	;Debug.Trace("[DTSleep_PlayAAC] OnEffectStart....")
+	
 	if (SceneData.IsCreatureType == 2)
 		MaleRoleSex = 0
 	endIf
@@ -133,7 +135,11 @@ Event OnEffectStart(Actor akfActor, Actor akmActor)
 		secondActorOkay = false
 	endIf
 	
-	if (akfActor != None && akfActor != akmActor)
+	if (SequenceID == 741)
+		MainActor = akmActor
+		;Debug.Trace("[DTSleep_PlayAAC] single actor 741 start " + akmActor)
+	
+	elseIf (akfActor != None && akfActor != akmActor)
 		
 		if (secondActorOkay)
 			MainActor = akmActor
@@ -198,6 +204,8 @@ Event OnEffectStart(Actor akfActor, Actor akmActor)
 		InitSceneAndPlay()
 		
 	else
+		Debug.Trace("[DTSleep_PlayAAC] missing actor on start for sceneID " + SequenceID + "! cancel")
+		SceneData.Interrupted = 3
 		StopAnimationSequence()
 	endIf
 endEvent
@@ -441,7 +449,7 @@ Function InitSceneAndPlay()
 	
 	if (SceneData.CompanionInPowerArmor)
 		longScene = -1
-	elseIf (SequenceID == 737 || SequenceID == 765)
+	elseIf (SequenceID == 737 || SequenceID == 765 || SequenceID == 733)
 		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.1)
 			longScene = 1
 			if (SequenceID == 737 && DTSleep_IntimateSceneLen.GetValueInt() >= 3)

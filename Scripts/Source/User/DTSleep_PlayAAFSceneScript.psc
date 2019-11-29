@@ -848,6 +848,8 @@ Armor Function GetArmorNudeGun(int kind)
 		synthVal = 1
 	elseIf (DTSConditionals.IsUniquePlayerMaleActive && evbVal > 0 && SceneData.MaleRole == PlayerRef)
 		bt2Val = -1
+	elseIf (SceneData.AnimationSet == 6 && evbVal > 0)
+		bt2Val = -1
 	endIf
 	
 	if (evbVal <= 0 && bt2Val <= 0)

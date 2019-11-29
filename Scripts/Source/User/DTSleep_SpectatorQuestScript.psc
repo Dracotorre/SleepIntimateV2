@@ -4,7 +4,7 @@ Scriptname DTSleep_SpectatorQuestScript extends Quest
 ; DTSleep_SpectatorQuestScript for SleepIntimate
 ; by DracoTorre
 ; www.dracotorre.com/mods/sleepintimate/
-; https://github.com/Dracotorre/SleepIntimate
+; https://github.com/Dracotorre/SleepIntimateV2
 ;
 ; added v1.70 for v2 release
 ; 
@@ -30,6 +30,7 @@ Keyword property ArmorTypePowerKY auto const
 Keyword property WorkshopItemKeyword auto const
 ;GlobalVariable property DTSleep_AdultContentOn auto const
 GlobalVariable property DTSleep_SettingCrime auto const
+GlobalVariable property DTSleep_IntimateIdleID auto const
 Message property DTSleep_CrimeReportMessage auto const
 Faction property DTSleep_SpecatorComnFaction auto const
 Faction property DTSleep_SpecatorGuardFaction auto const
@@ -67,6 +68,7 @@ Event OnQuestInit()
 	AddAvailableNearbyNPCs()
 	; wait a few seconds to start reactions
 	CrimeReportGuardIndex = -1
+	
 	
 	StartTimer(120.0, CrowdEndLimitTimer)		; backup to make sure stops
 	
@@ -168,18 +170,20 @@ Function AddSpectator(Actor spectActor)
 	if (MSpectatorActorArray == None)
 		MSpectatorActorArray = new Actor[0]
 	endIf
-	if (spectActor != None && ActorOkayToSpectate(spectActor))
-	
-		int lim = 7
-		if (spectActor.GetSitState() < 2)
-			lim = 10
-		endIf
-	
-		if (Utility.RandomInt(5,12) > lim)
-			spectActor.AddToFaction(DTSleep_SpecatorComnFaction)
-			;Debug.Trace("[DTSleep_SpectatorQuest] adding spectator: " + spectActor)
-			MSpectatorActorArray.Add(spectActor)
-			DTSleep_CrowdRefCollAlias.AddRef(spectActor)
+	if (spectActor != None)
+
+		if (ActorOkayToSpectate(spectActor))
+			int lim = 7
+			if (spectActor.GetSitState() < 2)
+				lim = 10
+			endIf
+		
+			if (spectActor == SceneData.MaleRole || Utility.RandomInt(5,12) > lim)
+				spectActor.AddToFaction(DTSleep_SpecatorComnFaction)
+				;Debug.Trace("[DTSleep_SpectatorQuest] adding spectator: " + spectActor)
+				MSpectatorActorArray.Add(spectActor)
+				DTSleep_CrowdRefCollAlias.AddRef(spectActor)
+			endIf
 		endIf
 	endIf
 	
@@ -232,16 +236,18 @@ bool Function StopAll()
 					MGuardActorArray[index].ChangeAnimArchetype()
 					MGuardActorArray[index].EvaluatePackage()
 					
-					if (DTSleep_SettingCrime.GetValue() > 0.0 && !crimeCommitted)
-						int limit = charisma + luck
-						
-						if (limit <= 20 && Utility.RandomInt(6, 20) >= limit)
-							crimeCommitted = true
-							CrimeReportGuardIndex = index
-							; timer for warning message
-							StartTimer(3.0, CrimeReportMsgTimer)
-							; timer to give player a chance to react
-							StartTimer(5.6, CrimeReportedTimer)
+					if (SceneIsDance() == false)
+						if (DTSleep_SettingCrime.GetValue() > 0.0 && !crimeCommitted)
+							int limit = charisma + luck
+							
+							if (limit <= 20 && Utility.RandomInt(6, 20) >= limit)
+								crimeCommitted = true
+								CrimeReportGuardIndex = index
+								; timer for warning message
+								StartTimer(3.0, CrimeReportMsgTimer)
+								; timer to give player a chance to react
+								StartTimer(5.6, CrimeReportedTimer)
+							endIf
 						endIf
 					endIf
 				endIf
@@ -276,11 +282,15 @@ endFunction
 bool Function ActorOkayToSpectate(Actor aActorRef)
 
 	if (aActorRef != None && aActorRef.IsEnabled() && !aActorRef.IsDead() && !aActorRef.IsUnconscious() && aActorRef.GetSleepState() < 3)
+	
+		int sid = DTSleep_IntimateIdleID.GetValueInt()
+		if (aActorRef == SceneData.MaleRole && sid == 741)
+			return true
 		
-		if (aActorRef != SceneData.MaleRole && aActorRef != SceneData.FemaleRole && aActorRef != SceneData.SecondMaleRole && aActorRef != SceneData.SecondFemaleRole)
+		elseIf (aActorRef != SceneData.MaleRole && aActorRef != SceneData.FemaleRole && aActorRef != SceneData.SecondMaleRole && aActorRef != SceneData.SecondFemaleRole)
 		
-			; haters will not participate
-			if (!(DTSleep_IntimateAffinityQuestP as DTSleep_IntimateAffinityQuestScript).CompanionHatesIntimateOtherPublic(aActorRef))
+			; haters will not participate unless dance
+			if (SceneIsDance() || !(DTSleep_IntimateAffinityQuestP as DTSleep_IntimateAffinityQuestScript).CompanionHatesIntimateOtherPublic(aActorRef))
 				
 				ActorBase aBase = aActorRef.GetLeveledActorBase() as ActorBase
 				if (aBase != None)
@@ -346,4 +356,16 @@ Function ProcessReactionForActor(Actor actorRef)
 	
 	actorRef.PlayIdle(rIdle)
 
+endFunction
+
+bool Function SceneIsDance()
+
+	int sid = DTSleep_IntimateIdleID.GetValueInt()
+	if (sid >= 739 && sid < 741)
+		return true
+	elseIf (sid < 100)
+		return true
+	endIf
+
+	return false
 endFunction

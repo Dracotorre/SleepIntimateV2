@@ -9,14 +9,199 @@
       "align": "center",
       "type": "text"
     },
+	{
+      "text": "by DracoTorre - www.dracotorre.com/mods/sleepintimate/",
+      "align": "center",
+      "type": "text"
+    },
+	{
+      "text": "hug and kiss animations by TheRealRufgt used with permission",
+      "align": "center",
+      "type": "text"
+    },
     {
       "type": "spacer"
     },
+	{
+		"id": "MCM_SettingModMCMCtl:Main",
+		"text": "Sleep Intimate Start/Stop",
+		"type": "dropdown",
+		"help": "main mod stop and start - to stop exit MCM and in game confirm",
+		"valueOptions": {
+			"options": ["Stopped", "Started"],
+			"sourceType": "GlobalValue",
+			"sourceForm": "SleepIntimate.esp|1673D7",
+			"propertyName": "DTSleep_SettingModMCMCtl"
+			
+		}
+	},
     {
-	  "text": "Choose 'Rest' on bed to get started. Build workshop custom storage quick-dress to change outfit, or build an intimate bed with storage for sleep outfit.",
-      "type": "text",
-	  "align": "left"
+      "type": "spacer"
     },
+	{
+	  "type": "hiddenSwitcher",
+	  "text": "Invisible switcher for mod on",
+	  "groupControl": 3,
+	  "valueOptions": 
+	  {
+		"sourceType": "GlobalValue",
+		"sourceForm": "SleepIntimate.esp|1673D7",
+		"propertyName": "DTSleep_SettingModMCMCtl"
+	  }
+	},
+	{
+	  "type": "hiddenSwitcher",
+	  "text": "Invisible switcher undress system ready",
+	  "groupControl": 2,
+	  "valueOptions": 
+	  {
+		"sourceType": "PropertyValueInt",
+		"sourceForm": "SleepIntimate.esp|A56A2",
+		"propertyName": "MCMUndressReady"
+	  }
+	},
+	{
+	  "type": "hiddenSwitcher",
+	  "text": "Invisible switcher undress system not ready",
+	  "groupControl": 1,
+	  "valueOptions": 
+	  {
+		"sourceType": "PropertyValueInt",
+		"sourceForm": "SleepIntimate.esp|A56A2",
+		"propertyName": "MCMUndressNeedInit"
+	  }
+	},
+	{
+	  "type": "hiddenSwitcher",
+	  "text": "Invisible switcher adult ready",
+	  "groupControl": 10,
+	  "valueOptions": 
+	  {
+		"sourceType": "PropertyValueInt",
+		"sourceForm": "SleepIntimate.esp|A56A2",
+		"propertyName": "MCMAdultModsOn"
+	  }
+	},
+	{
+	  "type": "hiddenSwitcher",
+	  "text": "Invisible switcher adult not found",
+	  "groupControl": 9,
+	  "valueOptions": 
+	  {
+		"sourceType": "PropertyValueInt",
+		"sourceForm": "SleepIntimate.esp|A56A2",
+		"propertyName": "MCMAdultModsOff"
+	  }
+	},
+	{
+	  "type": "hiddenSwitcher",
+	  "text": "Invisible switcher AAF ready",
+	  "groupControl": 13,
+	  "valueOptions": 
+	  {
+		"sourceType": "PropertyValueInt",
+		"sourceForm": "SleepIntimate.esp|A56A2",
+		"propertyName": "MCMAAFReady"
+	  }
+	},
+	{
+	  "type": "hiddenSwitcher",
+	  "text": "Invisible switcher AAF enabled",
+	  "groupControl": 15,
+	  "valueOptions": 
+	  {
+		"sourceType": "PropertyValueInt",
+		"sourceForm": "SleepIntimate.esp|A56A2",
+		"propertyName": "MCMAAFEnabled"
+	  }
+	},
+	{
+	  "type": "hiddenSwitcher",
+	  "text": "Invisible switcher AAF disabled",
+	  "groupControl": 14,
+	  "valueOptions": 
+	  {
+		"sourceType": "PropertyValueInt",
+		"sourceForm": "SleepIntimate.esp|A56A2",
+		"propertyName": "MCMAAFDisabled"
+	  }
+	},
+    {
+	  "text": "*** no animation packs available ***",
+      "type": "text",
+	  "align": "center",
+	  "groupCondition": 9
+    },
+    {
+	  "text": "*** adult animation packs ready ***",
+      "type": "text",
+	  "align": "center",
+	  "groupCondition": 10
+    },
+    {
+	  "text": "*** AAF installed - using Standard Player ***",
+      "type": "text",
+	  "align": "center",
+	  "groupCondition": {"AND": [10, 13, 14]}
+    },
+    {
+	  "text": "*** AAF installed - using AAF Player ***",
+      "type": "text",
+	  "align": "center",
+	  "groupCondition": {"AND": [10, 13, 15]}
+    },
+	{
+	  "type": "spacer"
+	},
+	{
+	  "text": "(~Scan Mods For Content~)",
+	  "type": "button",
+	  "help": "if recently installed new mod check to see if has recognized armor, clothing, or locations - return to game to scan",
+	  "groupCondition": 3,
+	  "action": {
+		"type": "CallFunction",
+		"form": "SleepIntimate.esp|A56A2",
+		"scriptName": "DTSleep_MCMQuest",   
+		"function": "ScanModsForGear",
+		"params": [1.0]
+	  }
+	},
+    {
+      "type": "spacer"
+    },
+	{
+	  "text": "How to get started and initialize undress system",
+	  "type": "section",
+	  "groupCondition": 1
+	},
+    {
+	  "text": "Choose 'Rest' on bed to get started. Build workshop custom storage quick-dress to change outfit, or build an intimate bed with storage for sleep outfit. You may also initialize Undress System now using the button below.",
+      "type": "text",
+	  "align": "left",
+	  "groupCondition": 1
+    },
+    {
+      "type": "spacer",
+	  "groupCondition": 1
+    },
+	{
+	  "text": "(~Initialize Undress System~)",
+	  "type": "button",
+	  "help": "this will remove equipped gear and make your character naked to initialize Undress System",
+	  "groupCondition": {"AND": [1, 3]},
+	  "action": {
+		"type": "CallFunction",
+		"form": "SleepIntimate.esp|A56A2",
+		"scriptName": "DTSleep_MCMQuest",   
+		"function": "GoPlayerNaked",
+		"params": [1.0]
+	  }
+	},
+	{
+	  "text": "Undress system initialized and ready!",
+	  "type": "section",
+	  "groupCondition": 2
+	},
 	{
 	  "type": "spacer"
 	},
@@ -31,18 +216,6 @@
 	},
 	{
 	  "type": "spacer"
-	},
-	{
-	  "text": "What is intimate attempt chance based on as shown in prompt?",
-	  "type": "section"
-	},
-	{
-	  "text": "3 factors shown on prompt: Sex Appeal, time-since, and location score. Plus hidden bonuses which include special items, party drugs, or bonus help to get started. Time-since less than day is generally negative and increasingly positive after 24 hours until maximum at around 10 days. Location score includes bonus from special bed (Vault bed, double-bed, or intimate bed), bed ownership (yours or companion's), weather, season, hour of day, and nearby awake NPCs.",
-	  "type": "text",
-	  "align": "left"
-	},
-	{
-	  "type": "spacer"
 	}
   ],
   "pages": [
@@ -52,6 +225,110 @@
 		{
 			"text": "basic preferences - see holotape for advanced settings",
 			"type": "text"
+		},
+		{
+			"type": "spacer",
+			"numLines": 1
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher for mod on",
+		  "groupControl": 3,
+		  "valueOptions": 
+		  {
+			"sourceType": "GlobalValue",
+			"sourceForm": "SleepIntimate.esp|1673D7",
+			"propertyName": "DTSleep_SettingModMCMCtl"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher adult ready",
+		  "groupControl": 10,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMAdultModsOn"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher AAF ready",
+		  "groupControl": 13,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMAAFReady"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher adult not found",
+		  "groupControl": 9,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMAdultModsOff"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher adult seats on",
+		  "groupControl": 11,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMAdultSexSeatsOn"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher adult seats off",
+		  "groupControl": 12,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMAdultSexSeatsOff"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher Sleep-or-Save on",
+		  "groupControl": 14,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMSoSActiveOn"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher Sleep-or-Save off",
+		  "groupControl": 15,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMSoSActiveOff"
+		  }
+		},
+		{
+		  "text": "(~Restore Default Settings~)",
+		  "type": "button",
+		  "help": "restore most settings to their default values - return to game to confirm",
+		  "action": {
+			"type": "CallFunction",
+			"form": "SleepIntimate.esp|A56A2",
+			"scriptName": "DTSleep_MCMQuest",   
+			"function": "SetRestoreDefaults",
+			"params": [1.0]
+		  }
 		},
 		{
 			"type": "spacer",
@@ -114,6 +391,7 @@
 			"text": "Test Mode",
 			"type": "dropdown",
 			"help": "for extra features or specific tests -- keep disabled for performance",
+			"groupControl": 1,
 			"valueOptions": {
 				"options": ["Disabled", "Enabled"],
 				"sourceType": "GlobalValue",
@@ -186,18 +464,6 @@
 			}
 		},
 		{
-			"id": "MCM_SettingUndressGlasses:Rest",
-			"text": "Remove Eyewear",
-			"type": "dropdown",
-			"help": "Remove recognized eye-glasses, goggles, etc for bed-only, bed and intimate scenes, or never",
-			"valueOptions": {
-				"options": ["Never", "Bed-only", "Always"],
-				"sourceType": "GlobalValue",
-				"sourceForm": "SleepIntimate.esp|7E744",
-				"propertyName": "DTSleep_SettingUndressGlasses"
-			}
-		},
-		{
 			"id": "MCM_SettingIncludeExtSlots:Rest",
 			"text": "Undress Extended Slots",
 			"type": "dropdown",
@@ -246,6 +512,32 @@
 			}
 		},
 		{
+		  "text": "(~Sleep-or-Save Disable for Rest~)",
+		  "type": "button",
+		  "help": "disable Sleep-or-Save to show Rest on bed",
+		  "groupCondition": 14,
+		  "action": {
+			"type": "CallFunction",
+			"form": "SleepIntimate.esp|A56A2",
+			"scriptName": "DTSleep_MCMQuest",   
+			"function": "SleepOrSaveToggle",
+			"params": [1.0]
+		  }
+		},
+		{
+		  "text": "(~Sleep-or-Save Enable~)",
+		  "type": "button",
+		  "help": "enable Sleep-or-Save which will hide Rest on bed",
+		  "groupCondition": 15,
+		  "action": {
+			"type": "CallFunction",
+			"form": "SleepIntimate.esp|A56A2",
+			"scriptName": "DTSleep_MCMQuest",   
+			"function": "SleepOrSaveToggle",
+			"params": [1.0]
+		  }
+		},
+		{
 			"text": "Intimacy ",
 			"type": "section"
 		},
@@ -274,15 +566,54 @@
 			}
 		},
 		{
+			"id": "MCM_SettingTourEnabled:Intimacy",
+			"text": "Intimate Destinations Tour",
+			"type": "dropdown",
+			"help": "include tour quest - may be re-enabled to continue progress later",
+			"valueOptions": {
+				"options": ["Disabled", "Enabled"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|7A2DC",
+				"propertyName": "DTSleep_SettingTourEnabled"
+			}
+		},
+		{
 			"id": "MCM_SettingChairsEnabled:Intimacy",
 			"text": "Seat Scenes",
 			"type": "dropdown",
 			"help": "include benches, chairs, and sofas as places to embrace your love",
+			"groupCondition": {"AND": [10, 11]},
 			"valueOptions": {
 				"options": ["Disabled", "Enabled-Embrace", "Enabled-Intimate"],
 				"sourceType": "GlobalValue",
 				"sourceForm": "SleepIntimate.esp|104E52",
 				"propertyName": "DTSleep_SettingChairsEnabled"
+			}
+		},
+		{
+			"id": "MCM_SettingChairsEnabled:Intimacy",
+			"text": "Seat Scenes",
+			"type": "dropdown",
+			"help": "include benches, chairs, and sofas as places to embrace your love",
+			"groupCondition": 12,
+			"valueOptions": {
+				"options": ["Disabled", "Enabled-Embrace"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|104E52",
+				"propertyName": "DTSleep_SettingChairsEnabled"
+			}
+		},
+		{
+			"id": "MCM_SettingPilloryEnabled:Intimacy",
+			"text": "Torture Devices",
+			"type": "dropdown",
+			"help": "include pillory or other torture devices",
+			"groupCondition": 10,
+			"valueOptions": {
+				"options": ["Disabled", "Enabled"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|1046B5",
+				"propertyName": "DTSleep_SettingPilloryEnabled"
 			}
 		},
 		{
@@ -350,11 +681,51 @@
 			"text": "Intimate AAF Scenes",
 			"type": "dropdown",
 			"help": "play Advanced Animation Framework (AAF) API instead of standard player - requires extra files",
+			"groupCondition": {"AND": [10, 13]},
 			"valueOptions": {
 				"options": ["Disabled / Standard", "Enabled", "No-fade scene"],
 				"sourceType": "GlobalValue",
 				"sourceForm": "SleepIntimate.esp|C0043",
 				"propertyName": "DTSleep_SettingAAF"
+			}
+		},
+		{
+			"id": "MCM_SettingUseLeitoGun:Intimacy",
+			"text": "Leito EVB best-fit Male",
+			"type": "dropdown",
+			"help": "male nude-suit swap - leave enabled unless you are customizing for AAF morphs",
+			"groupCondition": 10,
+			"valueOptions": {
+				"options": ["Disabled", "Enabled-Basic", "Enabled-All (default)"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|42927",
+				"propertyName": "DTSleep_SettingUseLeitoGun"
+			}
+		},
+		{
+			"id": "MCM_SettingUseBT2Gun:Intimacy",
+			"text": "BodyTalk2 nude-suits",
+			"type": "dropdown",
+			"help": "male nude-suit swap - use BodySlide to build 3 suits: SI-BodyTalk2-V2-Erect, SI-BodyTalk2-V2-ErectDown, SI-BodyTalk2-V2-ErectUp",
+			"groupCondition": 10,
+			"valueOptions": {
+				"options": ["Disabled", "Enabled"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|13A94F",
+				"propertyName": "DTSleep_SettingUseBT2Gun"
+			}
+		},
+		{
+			"id": "MCM_SettingAltFemBody:Intimacy",
+			"text": "Female nude-suit",
+			"type": "dropdown",
+			"help": "enable to use alternate female body for sex scenes - see web instructions to build nude body",
+			"groupCondition": 10,
+			"valueOptions": {
+				"options": ["Disabled", "All Scenes", "ZeX-only Scenes"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|13FCED",
+				"propertyName": "DTSleep_SettingAltFemBody"
 			}
 		},
 		{
@@ -382,9 +753,159 @@
 			}
 		},
 		{
-			"text": "Backpack ",
-			"type": "section"
+			"id": "MCM_SettingSynthHuman:Intimacy",
+			"text": "Synth Romanced Body",
+			"type": "dropdown",
+			"help": "body style to use for romanced Valentine - EVB by ezfreee included; build BodyTalk2",
+			"groupCondition": 10,
+			"valueOptions": {
+				"options": ["Gen-2 (default)", "EVB", "BodyTalk2"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|153C1A",
+				"propertyName": "DTSleep_SettingSynthHuman"
+			}
+		}
+	  ]
+	},
+	{
+      "pageDisplayName": "Backpack",
+      "content": [
+        {
+		  "text": "When undressing for Rest or Relax, removal of recognized backpack or pouch will prevent becomming over-encumbered and optionally the pack will be placed on ground. Sleep Intimate recognizes several custom backpack mods, or you may add another using the mark button.",
+		  "type": "text",
+		  "align": "left"
 		},
+        {
+          "type": "spacer"
+        },
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher for mod on",
+		  "groupControl": 3,
+		  "valueOptions": 
+		  {
+			"sourceType": "GlobalValue",
+			"sourceForm": "SleepIntimate.esp|1673D7",
+			"propertyName": "DTSleep_SettingModMCMCtl"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher undress system ready",
+		  "groupControl": 2,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMUndressReady"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher undress system not ready",
+		  "groupControl": 1,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMUndressNeedInit"
+		  }
+		},
+        {
+          "text": "Not ready - Rest in bed or use quick-dress container to initialize",
+          "type": "section",
+		  "groupCondition": 1
+        },
+        {
+          "text": "Is pack or pouch recognized?",
+          "type": "section",
+		  "groupCondition": 2
+        },
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher for backpack visibility",
+		  "groupControl": 4,
+		  "valueOptions": 
+		  {
+			"sourceType": "GlobalValue",
+			"sourceForm": "SleepIntimate.esp|3AF47",
+			"propertyName": "DTSleep_PlayerEquipBackpackCount"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher for backpack visibility",
+		  "groupControl": 5,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMBackpackNotFound"
+		  }
+		},
+		{
+		  "text": "Your character has a backpack or pouch equipped.",
+		  "type": "text",
+		  "align": "left",
+          "groupCondition": {"AND": [2, 4]}
+		},
+		{
+		  "text": "No recognized backpack or pouch equipped.",
+		  "type": "text",
+		  "align": "left",
+          "groupCondition": {"AND": [2, 5]}
+		},
+        {
+          "type": "spacer"
+        },
+		{
+          "text": "Setup pack or pouch",
+          "type": "section"
+        },
+		{
+		  "text": "(~Mark Pack~)",
+		  "type": "button",
+		  "help": "select this, return to game and equip your pack or pouch.",
+		  "groupCondition": {"AND": [2, 3, 5]},
+		  "action": {
+			"type": "CallFunction",
+			"form": "SleepIntimate.esp|A56A2",
+			"scriptName": "DTSleep_MCMQuest",   
+			"function": "MarkBackpack",
+			"params": [1.0]
+		  }
+		},
+		{
+		  "text": "(~Un-Mark Pack~)",
+		  "type": "button",
+		  "help": "select this, exit MCM to un-mark equipped pack.",
+		  "groupCondition": {"AND": [2, 3, 4]},
+		  "action": {
+			"type": "CallFunction",
+			"form": "SleepIntimate.esp|A56A2",
+			"scriptName": "DTSleep_MCMQuest",   
+			"function": "MarkBackpack",
+			"params": [1.0]
+		  }
+		},
+        {
+          "type": "spacer"
+        },
+		{
+			"id": "MCM_UndressCarryBonus:Backpack",
+			"text": "Rest carry bonus",
+			"type": "dropdown",
+			"help": "backpack capacity to compensate when undressing for Rest",
+			"valueOptions": {
+				"options": ["50", "100", "300", "1000"],
+				"sourceType": "PropertyValueInt",
+				"sourceForm": "SleepIntimate.esp|A56A2",
+				"propertyName": "MCMBackpackCarry"
+			}
+		},
+        {
+          "type": "spacer"
+        },
 		{
 			"id": "MCM_SettingPackOnGround:Backpack",
 			"text": "Place on ground",
@@ -396,9 +917,894 @@
 				"sourceForm": "SleepIntimate.esp|12901C",
 				"propertyName": "DTSleep_SettingPackOnGround"
 			}
+		}
+	  ]
+	},
+	{
+      "pageDisplayName": "Sleep Clothes",
+      "content": [
+        {
+		  "text": "Rest on bed may automatically change into sleep clothes from inventory and redress after sleep. Lacy Underwear, Sporty Underwear, TBOS Sweatpants, and more recognized or assign your own outfit. Main body outfit works best.",
+		  "type": "text",
+		  "align": "left"
+		},
+        {
+          "type": "spacer"
+        },
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher for mod on",
+		  "groupControl": 3,
+		  "valueOptions": 
+		  {
+			"sourceType": "GlobalValue",
+			"sourceForm": "SleepIntimate.esp|1673D7",
+			"propertyName": "DTSleep_SettingModMCMCtl"
+		  }
 		},
 		{
-			"text": "TEST features ",
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher undress system ready",
+		  "groupControl": 2,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMUndressReady"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher undress system not ready",
+		  "groupControl": 1,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMUndressNeedInit"
+		  }
+		},
+        {
+          "text": "Not ready - Rest in bed or use quick-dress container to initialize",
+          "type": "section",
+		  "groupCondition": 1
+        },
+        {
+          "text": "Sleep clothes status",
+          "type": "section",
+		  "groupCondition": 2
+        },
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher sleep clothes equipped",
+		  "groupControl": 4,
+		  "valueOptions": 
+		  {
+			"sourceType": "GlobalValue",
+			"sourceForm": "SleepIntimate.esp|39872",
+			"propertyName": "DTSleep_PlayerEquipSleepwearCount"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher intimate outfit equipped",
+		  "groupControl": 5,
+		  "valueOptions": 
+		  {
+			"sourceType": "GlobalValue",
+			"sourceForm": "SleepIntimate.esp|3D552",
+			"propertyName": "DTSleep_PlayerEquipIntimateItemCount"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher no sleep clothes detected",
+		  "groupControl": 6,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMSleepClothesNotFound"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher adult ready",
+		  "groupControl": 10,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMAdultModsOn"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher player female",
+		  "groupControl": 12,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMPlayerFemale"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher strap-on found",
+		  "groupControl": 7,
+		  "groupCondition": {"AND": [2, 3, 10, 12]},
+		  "valueOptions": 
+		  {
+			"sourceType": "GlobalValue",
+			"sourceForm": "SleepIntimate.esp|3D551",
+			"propertyName": "DTSleep_PlayerEquipStrapOnCount"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher no strap-on",
+		  "groupControl": 8,
+		  "groupCondition": {"AND": [2, 3, 10, 12]},
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMStrapOnNotFound"
+		  }
+		},
+		{
+		  "text": "Sleep clothes equipped",
+		  "type": "text",
+		  "align": "left",
+          "groupCondition": {"AND": [2, 3, 4]}
+		},
+		{
+		  "text": "Intimate outfit equipped.",
+		  "type": "text",
+		  "align": "left",
+          "groupCondition": {"AND": [2, 3, 5]}
+		},
+		{
+		  "text": "No equipped sleep clothes found.",
+		  "type": "text",
+		  "align": "left",
+          "groupCondition": {"AND": [2, 3, 6]}
+		},
+		{
+		  "text": "strap-on item equipped.",
+		  "type": "text",
+		  "align": "left",
+          "groupCondition": {"AND": [2, 3, 7, 10, 12]}
+		},
+		{
+		  "text": "no strap-on item equipped.",
+		  "type": "text",
+		  "align": "left",
+          "groupCondition": {"AND": [2, 3, 8, 10, 12]}
+		},
+        {
+          "type": "spacer"
+        },
+		{
+          "text": "Assign or un-mark sleep clothing",
+          "type": "section"
+        },
+		{
+		  "text": "(~Mark Sleep Clothing~)",
+		  "type": "button",
+		  "help": "select this, exit MCM and equip your sleep outfit",
+		  "groupCondition": {"AND": [2, 3, 6]},
+		  "action": {
+			"type": "CallFunction",
+			"form": "SleepIntimate.esp|A56A2",
+			"scriptName": "DTSleep_MCMQuest",   
+			"function": "MarkSleepOutfit",
+			"params": [1.0]
+		  }
+		},
+		{
+		  "text": "(~Un-Mark Equipped Sleep Clothing~)",
+		  "type": "button",
+		  "help": "select this and exit MCM to finish un-mark currently equipped sleep outfit (does not un-mark bathrobes)",
+		  "groupCondition": {"AND": [2, 3, 4]},
+		  "action": {
+			"type": "CallFunction",
+			"form": "SleepIntimate.esp|A56A2",
+			"scriptName": "DTSleep_MCMQuest",   
+			"function": "MarkSleepOutfit",
+			"params": [1.0]
+		  }
+		},
+        {
+          "type": "spacer"
+        },
+		{
+		  "text": "(~Mark Intimate Outfit~)",
+		  "type": "button",
+		  "help": "Intimate outfit stays equipped for sex scenes. Most jewelry remains worn, so check your jewelry first. Exit MCM and equip your intimate outfit.",
+		  "groupCondition": {"AND": [2, 3, 6, 10]},
+		  "action": {
+			"type": "CallFunction",
+			"form": "SleepIntimate.esp|A56A2",
+			"scriptName": "DTSleep_MCMQuest",   
+			"function": "MarkIntimateOutfit",
+			"params": [1.0]
+		  }
+		},
+		{
+		  "text": "(~Un-Mark Intimate Outfit~)",
+		  "type": "button",
+		  "help": "Select this, exit MCM to un-mark equipped intimate item",
+		  "groupCondition": {"AND": [2, 3, 5, 10]},
+		  "action": {
+			"type": "CallFunction",
+			"form": "SleepIntimate.esp|A56A2",
+			"scriptName": "DTSleep_MCMQuest",   
+			"function": "MarkIntimateOutfit",
+			"params": [1.0]
+		  }
+		},
+        {
+          "type": "spacer"
+        },
+		{
+		  "text": "(~Mark Strap-On Item~)",
+		  "type": "button",
+		  "help": "a strap-on device will be auto-equipped when necessary for scene. Select, exit MCM and equip item to mark.",
+		  "groupCondition": {"AND": [2, 3, 8, 10, 12]},
+		  "action": {
+			"type": "CallFunction",
+			"form": "SleepIntimate.esp|A56A2",
+			"scriptName": "DTSleep_MCMQuest",   
+			"function": "MarkItemAsStrapOn",
+			"params": [1.0]
+		  }
+		},
+		{
+		  "text": "(~Un-Mark Strap-On Item~)",
+		  "type": "button",
+		  "help": "Select this, exit MCM to un-mark equipped strap-on item",
+		  "groupCondition": {"AND": [2, 3, 7, 10, 12]},
+		  "action": {
+			"type": "CallFunction",
+			"form": "SleepIntimate.esp|A56A2",
+			"scriptName": "DTSleep_MCMQuest",   
+			"function": "MarkItemAsStrapOn",
+			"params": [1.0]
+		  }
+		}
+	  ]
+	},
+	{
+      "pageDisplayName": "Overcoat / Jacket / Cloak",
+      "content": [
+        {
+		  "text": "Assign custom jacket (not part of main outfit) to unsure removes for Rest, and based on undress situational preference may remain for Relax outdoors depending on weather. Some custom jackets automatically recognized by Sleep Intimate.",
+		  "type": "text",
+		  "align": "left"
+		},
+        {
+          "type": "spacer"
+        },
+		{
+		  "text": "Ensure coat recognized here, especially jacket using non-standard body slot so undress system removes it as needed for scenes. Vest as torso armor should not need to be marked. If trouble with other armors, see Undress Check.",
+		  "type": "text",
+		  "align": "left"
+		},
+        {
+          "type": "spacer"
+        },
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher for mod on",
+		  "groupControl": 3,
+		  "valueOptions": 
+		  {
+			"sourceType": "GlobalValue",
+			"sourceForm": "SleepIntimate.esp|1673D7",
+			"propertyName": "DTSleep_SettingModMCMCtl"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher undress system ready",
+		  "groupControl": 2,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMUndressReady"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher undress system not ready",
+		  "groupControl": 1,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMUndressNeedInit"
+		  }
+		},
+        {
+          "text": "Not ready - Rest in bed or use quick-dress container to initialize",
+          "type": "section",
+		  "groupCondition": 1
+        },
+        {
+          "text": "Is jacket or coat recognized?",
+          "type": "section",
+		  "groupCondition": 2
+        },
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher one jacket found",
+		  "groupControl": 4,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMJacketOneFound"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher for no jacket found",
+		  "groupControl": 5,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMJacketNotFound"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher two jacket found",
+		  "groupControl": 6,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMJacketTwoFound"
+		  }
+		},
+		{
+		  "text": "Overcoat, jacket, or cloak equipped.",
+		  "type": "text",
+		  "align": "left",
+          "groupCondition": {"AND": [2, 4]}
+		},
+		{
+		  "text": "multiple overcoat, jacket, or cloak equipped.",
+		  "type": "text",
+		  "align": "left",
+          "groupCondition": {"AND": [2, 6]}
+		},
+		{
+		  "text": "No recognized overcoat or jacket equipped.",
+		  "type": "text",
+		  "align": "left",
+          "groupCondition": {"AND": [2, 5]}
+		},
+        {
+          "type": "spacer"
+        },
+		{
+          "text": "Setup Overcoat or Jacket or Cloak",
+          "type": "section"
+        },
+		{
+			"id": "MCM_SettingMultiJacketOn:Undress",
+			"text": "Multiple Coats Equipped",
+			"type": "dropdown",
+			"help": "allow multiple coats, cloaks, or jackets worn together, or prevent to auto-remove former jacket in different slot",
+			"valueOptions": {
+				"options": ["Prevent", "Allow", "Ignore"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|16B844",
+				"propertyName": "DTSleep_SettingMultiJacketOn"
+			}
+		},
+        {
+          "type": "spacer"
+        },
+		{
+		  "text": "(~Mark Overcoat or Jacket or Cloak~)",
+		  "type": "button",
+		  "help": "select this, return to game and equip your overcoat.",
+		  "groupCondition": {"AND": [2, 3, 5]},
+		  "action": {
+			"type": "CallFunction",
+			"form": "SleepIntimate.esp|A56A2",
+			"scriptName": "DTSleep_MCMQuest",   
+			"function": "MarkJacket",
+			"params": [1.0]
+		  }
+		},
+		{
+		  "text": "(~Un-Mark Overcoat or Jacket or Cloak~)",
+		  "type": "button",
+		  "help": "select this, exit MCM to un-mark equipped overcoat.",
+		  "groupCondition": {"AND": [2, 3, 4]},
+		  "action": {
+			"type": "CallFunction",
+			"form": "SleepIntimate.esp|A56A2",
+			"scriptName": "DTSleep_MCMQuest",   
+			"function": "MarkJacket",
+			"params": [1.0]
+		  }
+		}
+	  ]
+	},
+	{
+      "pageDisplayName": "Mask, Eye-wear, Accessories",
+      "content": [
+        {
+		  "text": "Assign mask as desired, review recognized jewelry and extra parts, set preferences, and set eye-wear preference.",
+		  "type": "text",
+		  "align": "left"
+		},
+        {
+          "type": "spacer"
+        },
+		{
+		  "text": "What are Extra Parts? Armor items using non-standard slots may not remove for sleep. Undress Check confirms undress and allows you to add more items to the Extra Parts list.",
+		  "type": "text",
+		  "align": "left"
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher for mod on",
+		  "groupControl": 3,
+		  "valueOptions": 
+		  {
+			"sourceType": "GlobalValue",
+			"sourceForm": "SleepIntimate.esp|1673D7",
+			"propertyName": "DTSleep_SettingModMCMCtl"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher undress system ready",
+		  "groupControl": 2,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMUndressReady"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher undress system not ready",
+		  "groupControl": 1,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMUndressNeedInit"
+		  }
+		},
+        {
+          "text": "Not ready - Rest in bed or use quick-dress container to initialize",
+          "type": "section",
+		  "groupCondition": 1
+        },
+        {
+          "text": "Review recognized accessories",
+          "type": "section",
+		  "groupCondition": 2
+        },
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher for mask",
+		  "groupControl": 4,
+		  "valueOptions": 
+		  {
+			"sourceType": "GlobalValue",
+			"sourceForm": "SleepIntimate.esp|42189",
+			"propertyName": "DTSleep_PlayerEquipMaskCount"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher for no mask found",
+		  "groupControl": 5,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMMaskNotFound"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher for necklace found",
+		  "groupControl": 6,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMNecklaceEquipped"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher for no necklace",
+		  "groupControl": 7,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMNecklaceNotFound"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher for extra parts equipped",
+		  "groupControl": 8,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMExtraPartsEquipped"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher for zero extra parts",
+		  "groupControl": 9,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMExtraPartsNotFound"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher player female",
+		  "groupControl": 12,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMPlayerFemale"
+		  }
+		},
+		{
+		  "text": "Mask equipped.",
+		  "type": "text",
+		  "align": "left",
+          "groupCondition": {"AND": [2, 4]}
+		},
+		{
+		  "text": "No mask equipped.",
+		  "type": "text",
+		  "align": "left",
+          "groupCondition": {"AND": [2, 5]}
+		},
+		{
+		  "text": "Chokers or Necklaces worn (small Sex Appeal bonus).",
+		  "type": "text",
+		  "align": "left",
+          "groupCondition": {"AND": [2, 6, 12]}
+		},
+		{
+		  "text": "No recognized choker or necklace worn.",
+		  "type": "text",
+		  "align": "left",
+          "groupCondition": {"AND": [2, 7, 12]}
+		},
+		{
+		  "text": "One or more extra parts or accessories equipped and will be removed for sleep.",
+		  "type": "text",
+		  "align": "left",
+          "groupCondition": {"AND": [2, 8]}
+		},
+		{
+		  "text": "No extra parts equipped.",
+		  "type": "text",
+		  "align": "left",
+          "groupCondition": {"AND": [2, 9]}
+		},
+        {
+          "type": "spacer"
+        },
+		{
+          "text": "Setup mask, adjust eye-wear preference",
+          "type": "section"
+        },
+		{
+		  "text": "(~Mark Mask~)",
+		  "type": "button",
+		  "help": "select this, return to game and equip your mask.",
+		  "groupCondition": {"AND": [2, 3, 5]},
+		  "action": {
+			"type": "CallFunction",
+			"form": "SleepIntimate.esp|A56A2",
+			"scriptName": "DTSleep_MCMQuest",   
+			"function": "MarkMask",
+			"params": [1.0]
+		  }
+		},
+		{
+		  "text": "(~Un-Mark Mask~)",
+		  "type": "button",
+		  "help": "select this, exit MCM to un-mark equipped mask.",
+		  "groupCondition": {"AND": [2, 3, 4]},
+		  "action": {
+			"type": "CallFunction",
+			"form": "SleepIntimate.esp|A56A2",
+			"scriptName": "DTSleep_MCMQuest",   
+			"function": "MarkMask",
+			"params": [1.0]
+		  }
+		},
+        {
+          "type": "spacer"
+        },
+		{
+			"id": "MCM_SettingUndressGlasses:Rest",
+			"text": "Remove Eye-wear",
+			"type": "dropdown",
+			"help": "Remove recognized eye-glasses, goggles, etc for bed-only, bed and intimate scenes, or never",
+			"valueOptions": {
+				"options": ["Never", "Bed-only", "Always"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|7E744",
+				"propertyName": "DTSleep_SettingUndressGlasses"
+			}
+		}
+	  ]
+	},
+	{
+      "pageDisplayName": "Undress Check",
+      "content": [
+        {
+		  "text": "Perform a complete undress. For any items still equipped you would like to remove for sleep, en-equip to add item to the Extra Parts list. Jewelry normally remains equipped, but you may mark it to force it off. A nearby romantic companion can be checked, too.",
+		  "type": "text",
+		  "align": "left"
+		},
+        {
+          "type": "spacer"
+        },
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher for mod on",
+		  "groupControl": 3,
+		  "valueOptions": 
+		  {
+			"sourceType": "GlobalValue",
+			"sourceForm": "SleepIntimate.esp|1673D7",
+			"propertyName": "DTSleep_SettingModMCMCtl"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher undress system ready",
+		  "groupControl": 2,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMUndressReady"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher for capture parts on",
+		  "groupControl": 10,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMUndressCheckStarted"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher for capture parts off",
+		  "groupControl": 11,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMUndressCheckStopped"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher for extra parts equipped",
+		  "groupControl": 8,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMExtraPartsEquipped"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher for zero extra parts",
+		  "groupControl": 9,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMExtraPartsNotFound"
+		  }
+		},
+		{
+		  "text": "1. be near an empty bed",
+		  "type": "text",
+		  "align": "left",
+		  "groupCondition": {"AND": [3, 11]}
+		},
+		{
+		  "text": "2. click the Start Undress Check button below",
+		  "type": "text",
+		  "align": "left",
+		  "groupCondition": {"AND": [3, 11]}
+		},
+		{
+		  "text": "3. exit MCM and on bed, activate Undress Check",
+		  "type": "text",
+		  "align": "left",
+		  "groupCondition": {"AND": [3, 11]}
+		},
+		{
+		  "text": "4. review prompt for instructions",
+		  "type": "text",
+		  "align": "left",
+		  "groupCondition": {"AND": [3, 11]}
+		},
+		{
+		  "text": "5. to finish and redress, activate Undress Check on bed again or return here and click Stop Undress Check",
+		  "type": "text",
+		  "align": "left",
+		  "groupCondition": {"AND": [3, 11]}
+		},
+        {
+          "type": "spacer"
+        },
+        {
+          "text": "Extra Parts recognized?",
+          "type": "section",
+		  "groupCondition": 2
+        },
+		{
+		  "text": "One or more extra parts or accessories equipped and will be removed for sleep.",
+		  "type": "text",
+		  "align": "left",
+          "groupCondition": {"AND": [2, 8]}
+		},
+		{
+		  "text": "No extra parts equipped.",
+		  "type": "text",
+		  "align": "left",
+          "groupCondition": {"AND": [2, 9]}
+		},
+        {
+          "type": "spacer"
+        },
+		{
+          "text": "Check Undress Tool - your character and companion",
+          "type": "section"
+        },
+		{
+		  "text": "(~Start Undress Check~)",
+		  "type": "button",
+		  "help": "exit MCM and activate bed Undress Check.",
+		  "groupCondition": {"AND": [3, 11]},
+		  "action": {
+			"type": "CallFunction",
+			"form": "SleepIntimate.esp|A56A2",
+			"scriptName": "DTSleep_MCMQuest",   
+			"function": "StartUndressCheck",
+			"params": [1.0]
+		  }
+		},
+		{
+		  "text": "(~Stop Undress Check~)",
+		  "type": "button",
+		  "help": "exit MCM to let character redress.",
+		  "groupCondition": {"AND": [3, 10]},
+		  "action": {
+			"type": "CallFunction",
+			"form": "SleepIntimate.esp|A56A2",
+			"scriptName": "DTSleep_MCMQuest",   
+			"function": "StopUndressCheck",
+			"params": [1.0]
+		  }
+		}
+	  ]
+	},
+	{
+      "pageDisplayName": "Test Features",
+      "content": [
+        {
+		  "text": "Alternate settings and features that may help find an issue. Some buttons require Test Mode enabled (General).",
+		  "type": "text",
+		  "align": "left"
+		},
+        {
+          "type": "spacer"
+        },
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher for mod on",
+		  "groupControl": 3,
+		  "valueOptions": 
+		  {
+			"sourceType": "GlobalValue",
+			"sourceForm": "SleepIntimate.esp|1673D7",
+			"propertyName": "DTSleep_SettingModMCMCtl"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher for Test Mode",
+		  "groupControl": 1,
+		  "valueOptions": 
+		  {
+			"sourceType": "GlobalValue",
+			"sourceForm": "SleepIntimate.esp|40AAC",
+			"propertyName": "DTSleep_SettingTestMode"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher undress ready",
+		  "groupControl": 4,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMUndressReady"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher for player dressed",
+		  "groupControl": 2,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMPlayerDressed"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher for companion dressed",
+		  "groupControl": 5,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMCompanionDressed"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher for companion undressed",
+		  "groupControl": 6,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMCompanionUndressed"
+		  }
+		},
+        {
+          "type": "spacer"
+        },
+		{
+			"text": "TEST settings ",
 			"type": "section"
 		},
 		{
@@ -424,18 +1830,81 @@
 				"sourceForm": "SleepIntimate.esp|10D73C",
 				"propertyName": "DTSleep_SettingAACV"
 			}
+		},
+		{
+		  "type": "spacer",
+		  "groupCondition": 3
+		},
+		{
+			"text": "TEST buttons (Test Mode enabled)",
+			"type": "section",
+			"groupCondition": {"AND": [1, 3]}
+		},
+		{
+		  "text": "(~Get Naked!~)",
+		  "type": "button",
+		  "help": "test if removes desired armor items - if not, see Undress Check",
+		  "groupCondition": {"AND": [1, 2, 3]},
+		  "action": {
+			"type": "CallFunction",
+			"form": "SleepIntimate.esp|A56A2",
+			"scriptName": "DTSleep_MCMQuest",   
+			"function": "GoPlayerNaked",
+			"params": [1.0]
+		  }
+		},
+		{
+		  "type": "spacer"
+		},
+		{
+		  "text": "(~Undress Lover for Sleep~)",
+		  "type": "button",
+		  "help": "test if companion undress and equips sleep outfit then return here to Redress Lover",
+		  "groupCondition": {"AND": [1, 2, 3, 4, 5]},
+		  "action": {
+			"type": "CallFunction",
+			"form": "SleepIntimate.esp|A56A2",
+			"scriptName": "DTSleep_MCMQuest",   
+			"function": "GoCompanionNaked",
+			"params": [1.0]
+		  }
+		},
+		{
+		  "text": "(~Redress Lover~)",
+		  "type": "button",
+		  "help": "redress companion",
+		  "groupCondition": {"AND": [1, 3, 6]},
+		  "action": {
+			"type": "CallFunction",
+			"form": "SleepIntimate.esp|A56A2",
+			"scriptName": "DTSleep_MCMQuest",   
+			"function": "GoCompanionRedress",
+			"params": [1.0]
+		  }
 		}
 	  ]
 	},
     {
-      "pageDisplayName": "Problems-Solutions",
+      "pageDisplayName": "Help and Troubleshooting",
       "content": [
+		{
+		  "text": "What is intimate attempt chance based on as shown in prompt?",
+		  "type": "section"
+		},
+		{
+		  "text": "3 factors shown on prompt: Sex Appeal, time-since, and location score. Plus hidden bonuses which include special items, party drugs, or bonus help to get started. Time-since less than day is generally negative and increasingly positive after 24 hours until maximum at around 10 days. Location score includes bonus from special bed (Vault bed, double-bed, or intimate bed), bed ownership (yours or companion's), weather, season, hour of day, and nearby awake NPCs.",
+		  "type": "text",
+		  "align": "left"
+		},
+		{
+		  "type": "spacer"
+		},
         {
           "text": "Camera after bed stays low or in wrong position",
           "type": "section"
         },
 		{
-		  "text": "Try toggle 1st/3rd-person view. If using another custom camera disable this custom camera in the MCM. When sleeping loading a save-game may cause camera to become stuck. Exit to main menu and load save again.",
+		  "text": "Try toggle 1st/3rd-person view, or crouch/sneak. If using another custom camera disable this custom camera in the MCM. When sleeping loading a save-game may cause camera to become stuck. Exit to main menu and load save again.",
 		  "type": "text",
 		  "align": "left"
 		},
@@ -447,7 +1916,7 @@
           "type": "section"
         },
 		{
-		  "text": "The 'Rest' will hide when in Power Armor, weapon drawn, sneaking, over-encumbered, or if bed marked incompatible by the mod. If only 'Sleep' may have another mod altering bed activation. If instead of 'Sleep' states, 'Awaken' then sneak or try activate bed to reset.",
+		  "text": "The 'Rest' will hide when in Power Armor, weapon drawn, sneaking, over-encumbered, or if bed marked incompatible by the mod. If only 'Sleep' may have another mod altering bed activation such as place-anywhere or set-private mod. If instead of 'Sleep' states, 'Awaken' then sneak or try activate bed to reset.",
 		  "type": "text",
 		  "align": "left"
 		},
@@ -459,7 +1928,7 @@
           "type": "section"
         },
 		{
-		  "text": "Sneak to regain controls. Beds require enough space on the sides and above for character to enter and exit. Avoid blue tarp-tent and other beds with low hanging obstructions.",
+		  "text": "Crouch/Sneak to regain controls. Beds require enough space on the sides and above for character to enter and exit. Avoid blue tarp-tent and other beds with low hanging obstructions.",
 		  "type": "text",
 		  "align": "left"
 		},
@@ -471,7 +1940,7 @@
           "type": "section"
         },
 		{
-		  "text": "Sneak to redress. May have accidentally activated a nearby furniture. Remember to activate same bed sleeping in to exit.",
+		  "text": "Crouch/Sneak to redress. May have accidentally activated a nearby furniture. Remember to activate same bed sleeping in to exit.",
 		  "type": "text",
 		  "align": "left"
 		},
@@ -560,7 +2029,7 @@
           "type": "section"
         },
 		{
-		  "text": "Enable demo for free intimacy check pass. Be ready at a bed or chair with romanced companion.",
+		  "text": "With SavageCabbage pack, choose Lap Dance at arm chair for easy pass or with female use Intimate Dance Pole having any follower. Otherwise you may enable demo for free intimacy check pass. Be ready at a bed or chair with romanced companion.",
 		  "type": "text",
 		  "align": "left"
 		},

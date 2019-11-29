@@ -170,6 +170,7 @@ int property UndressedForType = 0 auto hidden	; 1 for bed, 2 for manual-stop, 3 
 int property WeatherClass = 0 auto hidden
 bool property AltFemBodyEnabled = true auto hidden	; disable to prevent alternate female nude-suit equip
 bool property ForceEVBNude = false auto hidden
+bool property PlaceBackpackOkay = true auto hidden
 
 ; ********************************************
 ; ******           variables     ***********
@@ -711,6 +712,58 @@ bool Function StartForCompanionSleepwear(Actor companionActorRef, bool companion
 	return HandleStartForCompanionSleepwear()
 endFunction
 
+bool Function StartForGirlSexy(Actor companionActorRef, bool includeClothing, bool includePipBoy)
+
+	if (DTSleep_PlayerUndressed.GetValue() <= 0.0)
+		CancelTimer(RecheckNudeSuitsTimerID)
+		int playerGender = GetGenderForActor(PlayerRef)
+		
+		if (companionActorRef != None && !companionActorRef.WornHasKeyword(ArmorTypePower))
+			CompanionRef = companionActorRef
+		else
+			CompanionRef = None
+		endIf
+		
+		UndressedForType = 1
+		DTSleep_IUndressStat.SetValueInt(3)
+		EnableCarryBonusRemove = true
+		if (CompanionRef != None && CompanionRef != DressData.CompanionActor)
+			ResetCompanionDressData()
+		endIf
+		
+		PlayerEquippedArrayUpdated = false
+		CompanionEquippedArrayUpdated = false
+		
+		if (CompanionRef != None && DTSleep_EquipMonInit.GetValue() >= 5.0)
+			if (playerGender == 1)
+				UndressActorRespect(CompanionRef, true, true, false)		; not respectOnly to force all
+				Utility.Wait(0.1)
+			elseIf (includeClothing)
+				UndressActor(CompanionRef, 0, includeClothing, includeClothing, false)
+			else
+				UndressActorRespect(CompanionRef, true, true, false)
+			endIf
+		endIf
+		if (playerGender == 1)
+			UndressActor(PlayerRef, 0, includeClothing, includeClothing, includePipBoy)
+		elseIf (DTSleep_EquipMonInit.GetValue() >= 5.0)
+			UndressActorRespect(PlayerRef, true, true, false)
+		endIf
+		
+		if (includeClothing)
+			IsUndressAll = true
+		else
+			IsUndressAll = false
+		endIf
+		
+		DTSleep_PlayerUndressed.SetValue(1.0)
+		
+		return true
+	endIf
+
+	return false
+endFunction
+
 ;  hats, backpack, jacket if indoors/summer --- for hugs and such -v1.70
 ;	- for outdoors set includeHatsOutside false to keep on
 ;
@@ -721,40 +774,45 @@ bool Function StartForManualStopRespect(Actor companionActorRef, bool includeHat
 		return false
 	endIf
 	
-	CancelTimer(RecheckNudeSuitsTimerID)
+	if (DTSleep_PlayerUndressed.GetValue() <= 0.0)
 	
-	if (companionActorRef != None && !companionActorRef.WornHasKeyword(ArmorTypePower))
-		CompanionRef = companionActorRef
-	else
-		CompanionRef = None
-	endIf
-	if (CompanionSecondRef != None)
-		if (CompanionRef == None || CompanionSecondRef == CompanionRef)
-			CompanionSecondRef = None
-		elseIf (CompanionSecondRef.WornHasKeyword(ArmorTypePower))
-			CompanionSecondRef = None
+		CancelTimer(RecheckNudeSuitsTimerID)
+		
+		if (companionActorRef != None && !companionActorRef.WornHasKeyword(ArmorTypePower))
+			CompanionRef = companionActorRef
+		else
+			CompanionRef = None
 		endIf
+		if (CompanionSecondRef != None)
+			if (CompanionRef == None || CompanionSecondRef == CompanionRef)
+				CompanionSecondRef = None
+			elseIf (CompanionSecondRef.WornHasKeyword(ArmorTypePower))
+				CompanionSecondRef = None
+			endIf
+		endIf
+		UndressedForType = 1
+		DTSleep_IUndressStat.SetValueInt(3)
+		EnableCarryBonusRemove = true
+		if (CompanionRef != None && CompanionRef != DressData.CompanionActor)
+			ResetCompanionDressData()
+		endIf
+		
+		PlayerEquippedArrayUpdated = false
+		CompanionEquippedArrayUpdated = false
+		bool isIndoors = IsActorIndoors(PlayerRef)
+		
+		if (CompanionRef != None)
+			UndressActorRespect(CompanionRef, isIndoors, includeHatsOutside)
+		endIf
+		UndressActorRespect(PlayerRef, isIndoors, includeHatsOutside)
+		
+		IsUndressAll = false
+		DTSleep_PlayerUndressed.SetValue(1.0)
+		
+		return true
 	endIf
-	UndressedForType = 1
-	DTSleep_IUndressStat.SetValueInt(3)
-	EnableCarryBonusRemove = true
-	if (CompanionRef != None && CompanionRef != DressData.CompanionActor)
-		ResetCompanionDressData()
-	endIf
-	
-	PlayerEquippedArrayUpdated = false
-	CompanionEquippedArrayUpdated = false
-	bool isIndoors = IsActorIndoors(PlayerRef)
-	
-	if (CompanionRef != None)
-		UndressActorRespect(CompanionRef, isIndoors, includeHatsOutside)
-	endIf
-	UndressActorRespect(PlayerRef, isIndoors, includeHatsOutside)
-	
-	IsUndressAll = false
-	DTSleep_PlayerUndressed.SetValue(1.0)
 
-	return true
+	return false
 endFunction
 
 bool Function StartForFurnitureExitRespect(ObjectReference aFurnitureRef, Actor companionActorRef, bool includeHatsOutside = true)
@@ -1024,11 +1082,10 @@ bool Function StartForNeverRedress()
 	bool result = StartForManualStop(true, None, false)
 
 	; reset values as if never undressed
-	
+	DoneStopAll()
+	DressData.SearchListsDisabled = false
 	DTSleep_PlayerUndressed.SetValue(0.0)
-	
-	PlayerBedRef = None
-	CompanionBedRef = None
+	IsUndressAll = false
 	SuspendEquipStore = false
 	PlayerEquippedArmorFormArray.Clear()
 	
@@ -1067,6 +1124,8 @@ Function StopAll(bool redressSlowly, int resetEquipInitVal = -10)
 
 	elseIf (DTSleep_CompanionUndressed.GetValue() > 0.0 || (CompanionSleepwearToRemoveSet != None && CompanionSleepwearToRemoveSet.DidEquip))
 		
+		DTDebug(" Stop-All redress companion request", 1)
+		
 		if (!IsRedressing)
 			HandleRedressActors(false)
 			StartTimer(1.0, RecheckNudeSuitsTimerID)
@@ -1074,6 +1133,7 @@ Function StopAll(bool redressSlowly, int resetEquipInitVal = -10)
 	endIf
 	
 	SuspendEquipStore = false  ; should have been set false in Redress
+	PlaceBackpackOkay = true
 	
 	if (resetEquipInitVal > -5)
 		DTSleep_EquipMonInit.SetValueInt(resetEquipInitVal)
@@ -1737,6 +1797,9 @@ Function HandleRedressActors(bool slowly = true)
 		
 		SuspendEquipStore = false
 		Utility.WaitMenuMode(0.4)
+	elseIf (CompanionRef != None && !CompanionEquippedArrayUpdated)
+		Utility.Wait(0.1)
+		HandleGetUndressCompanionData()
 	endIf
 	
 	; companion first to thread if slowly
@@ -2025,13 +2088,19 @@ bool Function IsActorWearingJacket(Actor actorRef)
 		if (DTSleep_EquipMonInit.GetValueInt() > 0)
 			if (actorRef == PlayerRef)
 				
-				return DressData.PlayerEquippedJacketItem as bool
-				
-			elseIf (actorRef == CompanionRef && DressData.CompanionEquippedJacketItem != None)
-				if (DressData.CompanionDressValid || actorRef.IsEquipped(DressData.CompanionEquippedJacketItem))
+				if (DressData.PlayerEquippedJacketItem != None || DressData.PlayerEquippedJacketSecondItem != None)
 					return true
 				else
-					DressData.CompanionEquippedJacketItem = None
+					return false
+				endIf
+				
+			elseIf (actorRef == CompanionRef)
+				if (DressData.CompanionEquippedJacketItem != None || DressData.CompanionEquippedJacketSecondItem != None)
+					if (DressData.CompanionDressValid || actorRef.IsEquipped(DressData.CompanionEquippedJacketItem))
+						return true
+					else
+						DressData.CompanionEquippedJacketItem = None
+					endIf
 				endIf
 			endIf
 		endIf
@@ -3182,7 +3251,7 @@ EndFunction
 ;   - hats, glasses, masks, jacket, backpack
 ;   - outer-armors only if known items
 ;
-Function UndressActorRespect(Actor actorRef, bool isIndoors, bool remHatsOutside = true)
+Function UndressActorRespect(Actor actorRef, bool isIndoors, bool remHatsOutside = true, bool respectOnly = true)
 
 	; limited undress - avoid items that knock off entire outfit since we cannot know for certain
 	; if outfit covers many slots
@@ -3255,7 +3324,7 @@ Function UndressActorRespect(Actor actorRef, bool isIndoors, bool remHatsOutside
 		; jackets and armor together since some jackets go with armor (like Neiro's MojaveManhunter), and it's hot in summer
 		UndressJacketForActor(actorRef)
 		if (!IsActorWearingArmorAllException(actorRef, false))
-			UndressActorArmorOutSlots(actorRef, false, true)			; include upper, respect-only
+			UndressActorArmorOutSlots(actorRef, false, respectOnly) ; not skip upper
 		endIf
 		; no gloves - no list or keyword - cannot be certain by slot since may knock off entire outfit 
 	endIf
@@ -3429,10 +3498,9 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 
 	if (removeJacket && wearingJacket)
 		; remove jackets not removed by slot
-		
 		UndressJacketForActor(actorRef)
 		; wait for item event- CROSS-MojaveManhunter overcoat delays 0.20 to update mod-attach
-		Utility.WaitMenuMode(0.22)
+		Utility.WaitMenuMode(0.24)
 		
 	elseIf (!removeJacket && wearingJacket)
 		; wearing jacket, but we want to keep it on so skip torso and arm armors
@@ -3612,6 +3680,8 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 	
 	;  extra parts list
 	;
+	bool doResetExtraArmorsCount = false
+	
 	if (DTSleep_ArmorExtraPartsList != None && extraArmorosEnabled)
 		
 		if (equipMonInitLevel > 0)
@@ -3620,6 +3690,7 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 					if (equipMonInitLevel >= 5)
 						int cnt = UndressActorArmorForListFromArray(PlayerRef, DTSleep_ArmorExtraPartsList, playerEquipArray)
 						DTDebug("remove player extra parts count " + cnt, 2)
+						doResetExtraArmorsCount = true
 					else
 						UndressActorExtraArmorList(actorRef, DTSleep_ArmorExtraPartsList)
 					endIf
@@ -3683,16 +3754,13 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 			Utility.WaitMenuMode(0.3)
 			
 			; double-check torso armor - armors with auto-equip like Manhunter by Neiro may re-equip
-			if (!actorWearingArmorAll && !IsActorWearingSlot41Exceptions(actorRef))
+			if (!actorWearingArmorAll)
 				
-				if (!skipUpperOuterArmorSlots)
+				if (!skipUpperOuterArmorSlots && !IsActorWearingSlot41Exceptions(actorRef))
 					;DTDebug(myScriptName + " double-check player armor-41 removal", 2)
 					actorRef.UnequipItemSlot(11)
 				endIf
-				if (removeJacket && wearingJacket)
-					;DTDebug(myScriptName + " double-check jacket removal", 2)
-					UndressJacketForActor(actorRef)
-				endIf
+				
 			endIf
 			
 			if (DTSleep_SettingAltFemBody.GetValueInt() >= 1 && AltFemBodyEnabled && DTSleep_AdultContentOn.GetValue() >= 2.0 && DressData.PlayerGender == 1)
@@ -3701,6 +3769,12 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 			else
 				actorRef.UnequipItemSlot(3)
 			endIf
+		endIf
+		
+		; double check jacket - some include re-equip scripts
+		if (removeJacket && wearingJacket && DressData.PlayerEquippedJacketItem != None)
+			;DTDebug(myScriptName + " double-check jacket removal", 2)
+			UndressJacketForActor(actorRef)
 		endIf
 		
 		if (PlayerIsAroused && DressData.PlayerGender == 0 && includeClothing && includeExceptions && !hasSleepWearMainOutfit && (DTSConditionals as DTSleep_Conditionals).ImaPCMod)
@@ -3767,6 +3841,11 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 			endIf
 		endIf
 		
+		if (doResetExtraArmorsCount)
+			; in case of error
+			(DTSleep_UndressPAlias as DTSleep_EquipMonitor).SetExtraPartsCountEmpty()
+		endIf
+		
 		DTSleep_PlayerUndressed.SetValue(1.0)
 		if (includeClothing && includeExceptions)
 			DressData.PlayerHasArmorAllEquipped = false
@@ -3786,6 +3865,12 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 		
 		if (UndressedForType >= 5)
 			Utility.WaitMenuMode(1.67)
+		endIf
+		
+		; double check jacket - some include re-equip scripts
+		if (removeJacket && wearingJacket && DressData.CompanionEquippedJacketItem != None)
+			;DTDebug(myScriptName + " double-check jacket removal", 2)
+			UndressJacketForActor(actorRef)
 		endIf
 		
 		; 2nd companion goes second so may need to wait
@@ -3922,6 +4007,10 @@ Function UndressActorArmorOutSlots(Actor actorRef, bool skipUpper = false, bool 
 						actorRef.UnequipItem(DressData.CompanionEquippedArmorTorsoItem, false, true)
 					else
 						DressData.CompanionEquippedArmorTorsoItem = None
+						if (!respectOnly)		; v2.24
+							actorRef.EquipItem(DTSleep_NudeRingArmorOuter, true, true)
+							includeArms = false
+						endIf
 					endIf
 				elseIf (!respectOnly)
 					; v2.14 -- 2nd Companion - make sure stay off - no removal, silent
@@ -4332,7 +4421,7 @@ bool Function UndressActorBackPack(Actor actorRef, bool placeOnGround = true)
 			if (backpack != None)
 				foundPack = true
 				
-				if (placeOnGround)
+				if (placeOnGround && PlaceBackpackOkay)
 					
 					if (PlayerBedRef != None)
 						int cornerVal = 0
@@ -4657,6 +4746,14 @@ Armor Function UndressPlayerJacket(bool silent = false)
 		PlayerRef.UnequipItem(jacket, false, silent)
 		Utility.WaitMenuMode(0.1)
 	endIf
+	if (DressData.PlayerEquippedJacketSecondItem != None)
+		if (PlayerRef.GetItemCount(DressData.PlayerEquippedJacketSecondItem) > 0)
+			PlayerRef.UnequipItem(DressData.PlayerEquippedJacketSecondItem, false, silent)
+			Utility.Wait(0.1)
+		else
+			DressData.PlayerEquippedJacketSecondItem = None
+		endIf
+	endIf
 	
 	return jacket
 endFunction
@@ -4734,6 +4831,13 @@ Function UndressJacketForActor(Actor actorRef)
 				
 			elseIf (actorRef == CompanionRef && DressData.CompanionEquippedJacketItem != None && DressData.CompanionDressValid)
 				actorRef.UnequipItem(DressData.CompanionEquippedJacketItem, false, true)
+				if (DressData.CompanionEquippedJacketSecondItem != None)
+					if (actorRef.IsEquipped(DressData.CompanionEquippedJacketSecondItem))
+						actorRef.UnequipItem(DressData.CompanionEquippedJacketSecondItem, false, true)
+					else
+						DressData.CompanionEquippedJacketSecondItem = None
+					endIf
+				endIf
 			else
 				UndressActorExtraArmorList(actorRef, DTSleep_ArmorJacketsClothingList)
 			endIf

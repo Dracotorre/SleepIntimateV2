@@ -21,7 +21,7 @@ float Function GetHalfBedLength() global
 EndFunction
 
 float Function GetBedHeight() global
-	return 45.4    ; 45 for standard bed 
+	return 45.1    ; 45 for standard bed 
 EndFunction
 
 float Function GetLowBedHeight() global

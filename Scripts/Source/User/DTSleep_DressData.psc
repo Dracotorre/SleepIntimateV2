@@ -50,6 +50,8 @@ Armor property PlayerEquippedNecklaceItem auto conditional hidden
 { only necklace slot and for sex appeal - not all necklaces }
 Armor property PlayerEquippedJacketItem auto conditional hidden
 { jackets priority over slots }
+Armor property PlayerEquippedJacketSecondItem auto conditional hidden
+{ second jackets priority over slots }
 Armor property PlayerEquippedSleepwearItem auto conditional hidden
 { a sleep item of regular body slot only - see special slots }
 Armor property PlayerEquippedSlot41Item auto conditional hidden
@@ -121,6 +123,7 @@ Armor property CompanionEquippedBackpackItem auto conditional hidden
 Armor property CompanionEquippedCarryPouchItem auto conditional hidden
 { adds carry but not placed like backpack (Nuka Bear) }
 Armor property CompanionEquippedJacketItem auto conditional hidden
+Armor property CompanionEquippedJacketSecondItem auto conditional hidden
 Armor property CompanionEquippedSleepwearItem auto conditional hidden
 { a sleep item - may be duplicated in a custom slot here }
 Armor property CompanionEquippedSlot41Item auto conditional hidden

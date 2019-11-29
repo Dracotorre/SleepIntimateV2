@@ -34,6 +34,8 @@ GlobalVariable property DTSleep_CaptureMaskEnable auto
 GlobalVariable property DTSleep_CaptureExtraPartsEnable auto
 GlobalVariable property DTSleep_ExtraArmorsEnabled auto
 { only works when storing equipment }
+GlobalVariable property DTSleep_SettingMultiJacketOn auto const
+{ allow 2 jackets or force 2nd off }
 DTSleep_DressData property DressData auto const
 Message property DTSleep_SleepwearAddMsg auto const
 Message property DTSleep_SleepwearRemMsg auto const
@@ -124,6 +126,7 @@ int PlayerExtraClothingCount = 0
 int PlayerExtraPartsCount = 0
 int CompanionExtraClothingCount = 0
 int CompanionExtraPartsCount = 0
+int RemSecondJacketTimerID = 15 const
 
 Form[] EMPlayerEquippedArmorFormArray     		; list to re-equip after
 Form[] EMCompanionEquippedArmorFormArray		; list to re-equip after
@@ -136,6 +139,8 @@ Form[] MyPlayerNeedToUnEquipArray 	; unequip later
 Event OnTimer(int aiTimerID)
 	if (aiTimerID == 13)
 		StoreProcessPlayerNeedToUnEquip()
+	elseIf (aiTimerID == RemSecondJacketTimerID)
+		RemoveSecondJacket()
 	endIf
 EndEvent
 
@@ -148,6 +153,8 @@ Event OnItemEquipped(Form akBaseObject, ObjectReference akReference)
 		Utility.WaitMenuMode(0.05)
 		i += 1
 	endWhile
+	
+	
 
 	
 	if (akBaseObject as Armor && DTSleep_EquipMonInit.GetValue() >= 0.0)
@@ -260,7 +267,11 @@ Event OnItemEquipped(Form akBaseObject, ObjectReference akReference)
 				
 			elseIf (DTSleep_CaptureJacketEnable.GetValue() > 0.0 && DTSleep_EquipMonInit.GetValue() > 0.0)
 				if (ProcessJacketItem(akBaseObject))
-					DressData.PlayerEquippedJacketItem = akBaseObject as Armor
+					if (DressData.PlayerEquippedJacketItem != None && DressData.PlayerEquippedJacketSecondItem == None)
+						DressData.PlayerEquippedJacketSecondItem = akBaseObject as Armor
+					else
+						DressData.PlayerEquippedJacketItem = akBaseObject as Armor
+					endIf
 				else
 					SetArmorItem(akBaseObject as Armor)
 				endIf
@@ -273,6 +284,11 @@ Event OnItemEquipped(Form akBaseObject, ObjectReference akReference)
 		endIf
 		
 		UpdateClothingCounts()
+		
+		;Debug.Trace("[DTSleep_EquipMon] equipped " + akBaseObject)
+		;Debug.Trace("[DTSleep_EquipMon] EndEquip Jacket: " + DressData.PlayerEquippedJacketItem)
+		;Debug.Trace("[DTSleep_EquipMon] EndEquip Last: " + DressData.PlayerLastEquippedJacketItem)
+		;Debug.Trace("[DTSleep_EquipMon] EndEquip Second: " + DressData.PlayerEquippedJacketSecondItem)
 	endIf
 endEvent
 
@@ -561,6 +577,9 @@ Function ClearDressDataJackets(Armor item)
 	if (item != None)
 		if (item == DressData.PlayerEquippedJacketItem)
 			DressData.PlayerEquippedJacketItem = None
+		endIf
+		if (item == DressData.PlayerEquippedJacketSecondItem)
+			DressData.PlayerEquippedJacketSecondItem = None
 		endIf
 		if (item == DressData.PlayerLastEquippedJacketItem)
 			DressData.PlayerLastEquippedJacketItem = None
@@ -1090,6 +1109,74 @@ bool Function ProcessStrapOnItem(Form item)
 	return false
 endFunction
 
+Function CheckSwapClearSecondJacket()
+	if (DTSleep_SettingMultiJacketOn.GetValueInt() < 2)
+		if (DressData.PlayerLastEquippedJacketItem != None)
+			Actor playerRef = Game.GetPlayer()
+			if (playerRef.IsEquipped(DressData.PlayerLastEquippedJacketItem))
+				DressData.PlayerEquippedJacketSecondItem = DressData.PlayerLastEquippedJacketItem
+			else
+				DressData.PlayerEquippedJacketSecondItem = None
+			endIf
+		else
+			DressData.PlayerEquippedJacketSecondItem = None
+		endIf
+	else
+		DressData.PlayerEquippedJacketSecondItem = None
+	endIf
+endFunction
+
+Function CheckSwapJacketsForItem(Armor toItem)
+	int jacketPref = DTSleep_SettingMultiJacketOn.GetValueInt()
+	if (jacketPref == 1)
+		; allow 2 jackets
+		DressData.PlayerEquippedJacketSecondItem = toItem
+	elseIf (jacketPref >= 2)
+		; ignore - do old way
+		DressData.PlayerEquippedJacketItem = toItem
+	else
+		; swap
+		DressData.PlayerEquippedJacketSecondItem = DressData.PlayerEquippedJacketItem
+		DressData.PlayerEquippedJacketItem = toItem
+	endIf
+endFunction
+
+Function CheckSwapJacketsForCompanionItem(ARmor toItem)
+	int jacketPref = DTSleep_SettingMultiJacketOn.GetValueInt()
+	if (jacketPref < 2)
+		; allow 2 jackets
+		DressData.CompanionEquippedJacketSecondItem = toItem
+	else
+		; ignore - do old way
+		DressData.CompanionEquippedJacketItem = toItem
+	endIf
+
+endFunction
+
+Function RemoveSecondJacket()
+
+	if (DressData.PlayerEquippedJacketSecondItem != None)
+		bool lastSameAsSecond = false
+		bool lastSameAsMain = false
+		if (DressData.PlayerLastEquippedJacketItem == DressData.PlayerEquippedJacketSecondItem)
+			lastSameAsSecond = true
+		endIf
+		if (DressData.PlayerLastEquippedJacketItem == DressData.PlayerEquippedJacketItem)
+			lastSameAsMain = true
+		endIf
+		Actor playerRef = Game.GetPlayer()
+		if (playerRef.IsEquipped(DressData.PlayerEquippedJacketSecondItem))
+			
+			playerRef.UnequipItem(DressData.PlayerEquippedJacketSecondItem)
+		endIf
+		if (!lastSameAsSecond && !lastSameAsMain && DressData.PlayerLastEquippedJacketItem != None)
+			if (playerRef.GetItemCount(DressData.PlayerLastEquippedJacketItem) > 0 && playerRef.IsEquipped(DressData.PlayerLastEquippedJacketItem))
+				playerRef.UnequipItem(DressData.PlayerLastEquippedJacketItem)
+			endIf
+		endIf
+	endIf
+endFunction
+
 ; -------------------------------------
 
 ; player
@@ -1212,17 +1299,41 @@ Function SetCompanionDataMatchArmorToArmor(Armor matchItem, Armor toItem)
 		; jacket
 			
 		elseIf (DressData.CompanionEquippedJacketItem == matchItem)
+			if (DressData.CompanionEquippedJacketSecondItem == matchitem)
+				DressData.CompanionEquippedJacketSecondItem = None
+			endIf
 			DressData.CompanionLastEquippedJacketItem = DressData.CompanionEquippedJacketItem
 			DressData.CompanionEquippedJacketItem = toItem
 		elseIf (DressData.CompanionLastEquippedJacketItem == matchItem)
 			if (toItem != None)
 				; may use different slots - case overlap equip
-				DressData.CompanionEquippedJacketItem = toItem
+				if (DressData.CompanionEquippedJacketItem != None && DressData.CompanionEquippedJacketItem != toItem)
+					; v2.24 check preference
+					CheckSwapJacketsForCompanionItem(toItem)
+				else
+					; old way
+					DressData.CompanionEquippedJacketItem = toItem
+				endIf
+			endIf
+		elseIf (DressData.CompanionEquippedJacketSecondItem == matchitem)
+			if (toItem != None && DressData.CompanionEquippedJacketItem != None && toItem == DressData.CompanionEquippedJacketItem)
+				; matched, but already have on main so clear second
+				DressData.CompanionEquippedJacketSecondItem = None
+			elseIf (toItem == None)
+				DressData.CompanionEquippedJacketSecondItem = None
 			endIf
 		elseIf (DTSConditionals.AWKCRCloakKW != None && matchItem.HasKeyword(DTSConditionals.AWKCRCloakKW))
-			DressData.CompanionEquippedJacketItem = toItem
+			if (toItem != None && DressData.CompanionEquippedJacketItem != None && toItem != DressData.CompanionEquippedJacketItem)
+				CheckSwapJacketsForCompanionItem(toItem)
+			else
+				DressData.CompanionEquippedJacketItem = toItem
+			endIf
 		elseIf (DTSConditionals.AWKCRJacketKW != None && matchItem.HasKeyword(DTSConditionals.AWKCRJacketKW))
-			DressData.CompanionEquippedJacketItem = toItem
+			if (toItem != None && DressData.CompanionEquippedJacketItem != None && toItem != DressData.CompanionEquippedJacketItem)
+				CheckSwapJacketsForCompanionItem(toItem)
+			else
+				DressData.CompanionEquippedJacketItem = toItem
+			endIf
 			
 		elseIf (DressData.CompanionEquippedStrapOnItem == matchItem)
 			DressData.CompanionLastEquippedStrapOnItem = DressData.CompanionEquippedStrapOnItem
@@ -1318,6 +1429,14 @@ Function SetCompanionDataMatchArmorToArmor(Armor matchItem, Armor toItem)
 		elseIf (DTSleep_EquipMonInit.GetValue() >= 2.0 && !DressData.SearchListsDisabled)
 			
 			SetCompanionDressDataMatchingFormToArmor(matchItem as Form, toItem)
+		endIf
+		
+		; double-check jackets
+		if (DressData.CompanionEquippedJacketSecondItem != None)
+			if (DressData.CompanionEquippedJacketSecondItem == DressData.CompanionEquippedJacketItem)
+				; same jacket - remove 2nd
+				DressData.CompanionEquippedJacketSecondItem = None
+			endIf
 		endIf
 		
 	endIf
@@ -1442,7 +1561,7 @@ endFunction
 ; companion
 ; lists supported by base game
 Function SetCompanionDressDataBasicMatchFormToArmor(Form matchForm, Armor toItem)
-	if (matchForm)
+	if (matchForm != None)
 		;Debug.Trace("[DTSleep_EquipMon] SetDressDataBasic: " + matchform)
 		if (DTSleep_SleepAttireFemale && DTSleep_SleepAttireFemale.HasForm(matchForm))
 			DressData.CompanionLastEquippedSleepwearItem = DressData.CompanionEquippedSleepwearItem
@@ -1462,7 +1581,7 @@ endFunction
 
 ; player
 Function SetDressDataMatchArmorToArmor(Armor matchItem, Armor toItem)
-	if (matchitem)
+	if (matchitem != None)
 	; priority named before slots except sleepwear which marks in both
 		;Debug.Trace("[DTSleep_EquipMon] SetDressDataMatchArmor: " + matchItem + " set to " + toItem)
 		
@@ -1531,17 +1650,43 @@ Function SetDressDataMatchArmorToArmor(Armor matchItem, Armor toItem)
 		; jacket  - some jackets may not replace other jacket (different slots) -consider case removing old after equip new
 			
 		elseIf (DressData.PlayerEquippedJacketItem == matchItem)
+			if (DressData.PlayerEquippedJacketSecondItem == matchItem)
+				CheckSwapClearSecondJacket()
+			endIf
 			DressData.PlayerLastEquippedJacketItem = DressData.PlayerEquippedJacketItem
-			DressData.PlayerEquippedJacketItem = toItem 
+			DressData.PlayerEquippedJacketItem = toItem
+			
 		elseIf (DressData.PlayerLastEquippedJacketItem == matchItem)
 			if (toItem != None)
 				; do not null since unequip will match existing equipped by bump or by manual
+				if (DressData.PlayerEquippedJacketItem != None && DressData.PlayerEquippedJacketItem != toItem)
+					; v2.24 check preference
+					CheckSwapJacketsForItem(toItem)
+				else
+					; old way
+					DressData.PlayerEquippedJacketItem = toItem
+				endIf
+			endIf
+		elseIf (DressData.PlayerEquippedJacketSecondItem == matchitem)
+			if (toItem != None && DressData.PlayerEquippedJacketItem != None && toItem == DressData.PlayerEquippedJacketItem)
+				; matched, but already have on main so clear second
+				CheckSwapClearSecondJacket()
+			elseIf (toItem == None)
+				CheckSwapClearSecondJacket()
+			endIf
+			
+		elseIf (DTSConditionals.AWKCRCloakKW != None && matchItem.HasKeyword(DTSConditionals.AWKCRCloakKW))
+			if (toItem != None && DressData.PlayerEquippedJacketItem != None && toItem != DressData.PlayerEquippedJacketItem)
+				CheckSwapJacketsForItem(toItem)
+			else
 				DressData.PlayerEquippedJacketItem = toItem
 			endIf
-		elseIf (DTSConditionals.AWKCRCloakKW != None && matchItem.HasKeyword(DTSConditionals.AWKCRCloakKW))
-			DressData.PlayerEquippedJacketItem = toItem
 		elseIf (DTSConditionals.AWKCRJacketKW != None && matchItem.HasKeyword(DTSConditionals.AWKCRJacketKW))
-			DressData.PlayerEquippedJacketItem = toItem
+			if (toItem != None && DressData.PlayerEquippedJacketItem != None && toItem != DressData.PlayerEquippedJacketItem)
+				CheckSwapJacketsForItem(toItem)
+			else
+				DressData.PlayerEquippedJacketItem = toItem
+			endIf
 			
 		; strap-on
 		
@@ -1648,6 +1793,27 @@ Function SetDressDataMatchArmorToArmor(Armor matchItem, Armor toItem)
 			SetDressDataMatchingFormToArmor(matchItem as Form, toItem)
 		endIf
 		
+		; double-check jackets
+		if (DressData.PlayerEquippedJacketSecondItem != None)
+			if (DressData.PlayerEquippedJacketSecondItem == DressData.PlayerEquippedJacketItem)
+				; same jacket - remove 2nd
+				DressData.PlayerEquippedJacketSecondItem = None
+			else
+				int jacketPref = DTSleep_SettingMultiJacketOn.GetValueInt()
+				if (jacketPref >= 2)
+					; ignore preference - remove 2nd
+					if (DressData.PlayerEquippedJacketItem == None)
+						DressData.PlayerEquippedJacketItem = DressData.PlayerEquippedJacketSecondItem
+					endIf
+					DressData.PlayerEquippedJacketSecondItem = None
+					
+				elseIf (jacketPref <= 0 && DressData.PlayerEquippedJacketItem != None)
+					; prevent preference - have 2 jackets on
+					; okay for many jacket changes -- we check if equip and timer paused until exit menu, repeat resets timer
+					StartTimer(1.1, RemSecondJacketTimerID)
+				endIf
+			endIf
+		endIf
 		
 	endIf
 endFunction
@@ -1716,10 +1882,15 @@ Function SetDressDataMatchingFormToArmor(Form matchForm, Armor toItem)
 		
 			; watch for case: jacket previously equipped and now remove another jacket (different slots)
 			if (toItem == None && DressData.PlayerEquippedJacketItem != None && DressData.PlayerEquippedJacketItem != matchForm)
-				
+
 				DressData.PlayerLastEquippedJacketItem = matchForm as Armor
+
+			elseIf (toItem != None && DressData.PlayerEquippedJacketItem != None && toItem != DressData.PlayerEquippedJacketItem)
+				CheckSwapJacketsForItem(toItem)
 			else
-				DressData.PlayerLastEquippedJacketItem = DressData.PlayerEquippedJacketItem
+				if (DressData.PlayerEquippedJacketItem != None)
+					DressData.PlayerLastEquippedJacketItem = DressData.PlayerEquippedJacketItem
+				endIf
 				DressData.PlayerEquippedJacketItem = toItem
 			endIf
 			
@@ -2036,6 +2207,13 @@ bool Function StoreRemoveMyPlayerEquip(Form baseObject)
 endFunction
 
 
+Function SetExtraPartsCountEmpty()
+	PlayerExtraPartsCount = 0
+	PlayerExtraClothingCount = 0
+	DTSleep_PlayerEquipExtraPartsCount.SetValueInt(0)
+endFunction
+
+
 ; --------------------------------------
 
 Function UpdateClothingCounts()
@@ -2085,6 +2263,9 @@ Function UpdateClothingCounts()
 	
 	if (DressData.PlayerEquippedJacketItem != None)
 		count = 1
+	endIf
+	if (DressData.PlayerEquippedJacketSecondItem != None)
+		count += 1
 	endIf
 	
 	DTSleep_PlayerEquipJacketCount.SetValueInt(count)

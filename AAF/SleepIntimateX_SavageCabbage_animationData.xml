@@ -486,6 +486,44 @@
 	</actor>
 </animation>
 
+<!---- chairs ---->
+
+<animation id="SIX_SC_FM-Throne01-03Handjob" time="500">
+	<actor gender="F">
+		<idle form="101A"/>
+	</actor>
+	<actor gender="M">
+		<idle form="101B"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-Throne01-04Handjob" time="500">
+	<actor gender="F">
+		<idle form="E62E"/>
+	</actor>
+	<actor gender="M">
+		<idle form="E62F"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-Throne01-05Blowjob" time="500">
+	<actor gender="F">
+		<idle form="27335"/>
+	</actor>
+	<actor gender="M">
+		<idle form="27336"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-Throne01-06Blowjob" time="500">
+	<actor gender="F">
+		<idle form="27343"/>
+	</actor>
+	<actor gender="M">
+		<idle form="27344"/>
+	</actor>
+</animation>
+
 <animation id="SIX_SC_FM-Armchair01-01Tease" time="390">
 	<actor gender="F">
 		<idle form="FF0"/>
@@ -2033,5 +2071,69 @@
 	<actor gender="M" skeleton="Dog">
 		<idle form="1BB6F"/>
 		<!--<value path="morph" value="Erection Strait" to="1"/>-->
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-SedanPostWar01-03Doggy" time="500">
+	<actor gender="F">
+		<idle form="21EC5"/>
+	</actor>
+	<actor gender="M">
+		<idle form="21EC6"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-SedanPostWar01-04Doggy" time="500">
+	<actor gender="F">
+		<idle form="27345"/>
+	</actor>
+	<actor gender="M">
+		<idle form="27346"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-SedanPostWar01-05Doggy" time="500">
+	<actor gender="F">
+		<idle form="27347"/>
+	</actor>
+	<actor gender="M">
+		<idle form="27348"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-SedanPostWar01-06Doggy" time="500">
+	<actor gender="F">
+		<idle form="27349"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2734A"/>
+	</actor>
+</animation>
+
+
+<animation id="SIX_SC_FM-SedanPreWar01-03Backseat" time="500">
+	<actor gender="F">
+		<idle form="2171C"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2171D"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-SedanPreWar02-03Blowjob" time="500">
+	<actor gender="F">
+		<idle form="27327"/>
+	</actor>
+	<actor gender="M">
+		<idle form="27328"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-SedanPreWar02-04Cowgirl" time="500">
+	<actor gender="F">
+		<idle form="27341"/>
+	</actor>
+	<actor gender="M">
+		<idle form="27342"/>
 	</actor>
 </animation>
