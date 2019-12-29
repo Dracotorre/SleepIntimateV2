@@ -108,6 +108,7 @@ int ShowAAFEquipTipTimerID = 104 const
 int CheckSceneStartTimerID = 9 const
 int AAFCheckStartCount = 0
 int MyMaleRoleGender = -1
+int SecondRoleGender = -1
 float CurrentSingleDuration = -1.0
 
 AAF:AAF_API AAF_API
@@ -333,7 +334,12 @@ bool Function CheckEquipActorArmGun(Actor maleActor, Armor armGun)
 			endIf
 			maleActorGender = MyMaleRoleGender
 		elseIf (maleActor == SceneData.SecondMaleRole)
-			SceneData.SecondMaleRole.EquipItem(armGun, true, true)
+			if (SecondRoleGender < 0)
+				SecondRoleGender = (SceneData.SecondMaleRole.GetLeveledActorBase() as ActorBase).GetSex()
+			endIf
+			if (SecondRoleGender == 0)
+				SceneData.SecondMaleRole.EquipItem(armGun, true, true)
+			endIf
 			return true
 		else
 			maleActorGender = (maleActor.GetLeveledActorBase() as ActorBase).GetSex()
@@ -409,6 +415,13 @@ bool Function PlaySequence()
 	
 	if (SceneData.CompanionInPowerArmor)
 		longScene = -1
+	elseIf (SequenceID == 737 || SequenceID == 765 || SequenceID == 733 || SequenceID == 742 || SequenceID == 748)
+		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.1)
+			longScene = 1
+			if (SequenceID == 737 && DTSleep_IntimateSceneLen.GetValueInt() >= 3)
+				longScene = 2
+			endIf
+		endIf 
 	elseIf (DTSleep_IntimateSceneLen.GetValueInt() >= 3)
 		longScene = 1
 	endIf
@@ -833,6 +846,9 @@ Armor Function GetArmorNudeGun(int kind)
 	endIf
 	Armor gun = None
 	if (!Debug.GetPlatformName() as bool)
+		return None
+	endIf
+	if (SceneData.MaleBodySwapEnabled <= 0)
 		return None
 	endIf
 

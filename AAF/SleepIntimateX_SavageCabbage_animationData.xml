@@ -830,6 +830,109 @@
 	</actor>
 </animation>
 
+<animation id="SIX_SC_FM-WeightBench01-01Tease" time="500">
+	<actor gender="F">
+		<idle form="27337"/>
+	</actor>
+	<actor gender="M">
+		<idle form="27338"/>
+		<!--<value path="morph" value="Erection Up" to="1"/>-->
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-WeightBench01-03Cowgirl" time="500">
+	<actor gender="F">
+		<idle form="27339"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2733A"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-WeightBench01-04Cowgirl" time="500">
+	<actor gender="F">
+		<idle form="2733B"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2733C"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-WeightBench01-05Cowgirl" time="500">
+	<actor gender="F">
+		<idle form="2733D"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2733E"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-WeightBench01-06Cowgirl" time="500">
+	<actor gender="F">
+		<idle form="2733F"/>
+	</actor>
+	<actor gender="M">
+		<idle form="27340"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-Stocks01-01Tease" time="500">
+	<actor gender="F">
+		<idle form="CEDF"/>
+	</actor>
+	<actor gender="M">
+		<idle form="CEE0"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-Stocks01-02Start" time="500">
+	<actor gender="F">
+		<idle form="1818"/>
+	</actor>
+	<actor gender="M">
+		<idle form="1819"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-Stocks01-03Doggy" time="500">
+	<actor gender="F">
+		<idle form="1018"/>
+	</actor>
+	<actor gender="M">
+		<idle form="1019"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-Stocks01-04Doggy" time="500">
+	<actor gender="F">
+		<idle form="181A"/>
+	</actor>
+	<actor gender="M">
+		<idle form="181B"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-Stocks01-05Doggy" time="500">
+	<actor gender="F">
+		<idle form="1325E"/>
+	</actor>
+	<actor gender="M">
+		<idle form="1325F"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FMM-Stocks01-02DoubleTeam" time="500">
+	<actor gender="F">
+		<idle form="104F"/>
+	</actor>
+	<actor gender="M">
+		<idle form="1050"/>
+	</actor>
+	<actor gender="M">
+		<idle form="1051"/>
+	</actor>
+</animation>
+
 <animation id="SIX_SC_FM-Table01-03Missionary" time="500">
 	<actor gender="F">
 		<idle form="45CF"/>
@@ -1196,11 +1299,11 @@
 		<idle form="101C"/>
 	</actor>
 	<actor gender="M">
-		<idle form="101D"/>
+		<idle form="101E"/>
 		<!--<value path="morph" value="Erection" to="1"/>-->
 	</actor>
 	<actor gender="M">
-		<idle form="101E"/>
+		<idle form="101D"/>
 		<!--<value path="morph" value="Erection" to="1"/>-->
 	</actor>
 </animation>
@@ -1252,11 +1355,11 @@
 		<idle form="1028"/>
 	</actor>
 	<actor gender="M">
-		<idle form="1029"/>
+		<idle form="102A"/>
 		<!--<value path="morph" value="Erection" to="1"/>-->
 	</actor>
 	<actor gender="M">
-		<idle form="102A"/>
+		<idle form="1029"/>
 		<!--<value path="morph" value="Erection" to="1"/>-->
 	</actor>
 </animation>
@@ -1266,11 +1369,11 @@
 		<idle form="102B"/>
 	</actor>
 	<actor gender="M">
-		<idle form="102C"/>
+		<idle form="102D"/>
 		<!--<value path="morph" value="Erection" to="1"/>-->
 	</actor>
 	<actor gender="M">
-		<idle form="102D"/>
+		<idle form="102C"/>
 		<!--<value path="morph" value="Erection" to="1"/>-->
 	</actor>
 </animation>
@@ -1280,11 +1383,11 @@
 		<idle form="102E"/>
 	</actor>
 	<actor gender="M">
-		<idle form="102F"/>
+		<idle form="1030"/>
 		<!--<value path="morph" value="Erection" to="1"/>-->
 	</actor>
 	<actor gender="M">
-		<idle form="1030"/>
+		<idle form="102F"/>
 		<!--<value path="morph" value="Erection" to="1"/>-->
 	</actor>
 </animation>
@@ -1294,11 +1397,11 @@
 		<idle form="1031"/>
 	</actor>
 	<actor gender="M">
-		<idle form="1032"/>
+		<idle form="1033"/>
 		<!--<value path="morph" value="Erection" to="1"/>-->
 	</actor>
 	<actor gender="M">
-		<idle form="1033"/>
+		<idle form="1032"/>
 		<!--<value path="morph" value="Erection" to="1"/>-->
 	</actor>
 </animation>
@@ -1308,11 +1411,11 @@
 		<idle form="181C"/>
 	</actor>
 	<actor gender="M">
-		<idle form="181D"/>
+		<idle form="181E"/>
 		<!--<value path="morph" value="Erection" to="1"/>-->
 	</actor>
 	<actor gender="M">
-		<idle form="181E"/>
+		<idle form="181D"/>
 		<!--<value path="morph" value="Erection" to="1"/>-->
 	</actor>
 </animation>
@@ -1322,11 +1425,11 @@
 		<idle form="181F"/>
 	</actor>
 	<actor gender="M">
-		<idle form="1820"/>
+		<idle form="1821"/>
 		<!--<value path="morph" value="Erection" to="1"/>-->
 	</actor>
 	<actor gender="M">
-		<idle form="1821"/>
+		<idle form="1820"/>
 		<!--<value path="morph" value="Erection" to="1"/>-->
 	</actor>
 </animation>
@@ -1350,11 +1453,11 @@
 		<idle form="1825"/>
 	</actor>
 	<actor gender="M">
-		<idle form="1826"/>
+		<idle form="1827"/>
 		<!--<value path="morph" value="Erection" to="1"/>-->
 	</actor>
 	<actor gender="M">
-		<idle form="1827"/>
+		<idle form="1826"/>
 		<!--<value path="morph" value="Erection" to="1"/>-->
 	</actor>
 </animation>
@@ -1364,11 +1467,11 @@
 		<idle form="104C"/>
 	</actor>
 	<actor gender="M">
-		<idle form="104D"/>
+		<idle form="104E"/>
 		<!--<value path="morph" value="Erection Up" to="1"/>-->
 	</actor>
 	<actor gender="M">
-		<idle form="104E"/>
+		<idle form="104D"/>
 		<!--<value path="morph" value="Erection Up" to="1"/>-->
 	</actor>
 </animation>
@@ -1378,11 +1481,11 @@
 		<idle form="1828"/>
 	</actor>
 	<actor gender="M">
-		<idle form="1829"/>
+		<idle form="182A"/>
 		<!--<value path="morph" value="Erection Up" to="1"/>-->
 	</actor>
 	<actor gender="M">
-		<idle form="182A"/>
+		<idle form="1829"/>
 		<!--<value path="morph" value="Erection Up" to="1"/>-->
 	</actor>
 </animation>
@@ -1426,6 +1529,54 @@
 	<actor gender="M">
 		<idle form="369A"/>
 		<!--<value path="morph" value="Erection Up" to="1"/>-->
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FMM-DoubleBed01-03DoubleTeam" time="500">
+	<actor gender="F">
+		<idle form="21EF5"/>
+	</actor>
+	<actor gender="M">
+		<idle form="21EF6"/>
+	</actor>
+	<actor gender="M">
+		<idle form="21EF7"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FMM-Floor04-03DoubleTeam" time="500">
+	<actor gender="F">
+		<idle form="82C9"/>
+	</actor>
+	<actor gender="M">
+		<idle form="82CA"/>
+	</actor>
+	<actor gender="M">
+		<idle form="82CB"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FMM-Floor05-03DoubleTeam" time="500">
+	<actor gender="F">
+		<idle form="BFA8"/>
+	</actor>
+	<actor gender="M">
+		<idle form="BFAA"/>
+	</actor>
+	<actor gender="M">
+		<idle form="BFA9"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FMM-BunkBed01-03Threesome" time="500">
+	<actor gender="F">
+		<idle form="10C3C"/>
+	</actor>
+	<actor gender="M">
+		<idle form="10C3E"/>
+	</actor>
+	<actor gender="M">
+		<idle form="10C3D"/>
 	</actor>
 </animation>
 

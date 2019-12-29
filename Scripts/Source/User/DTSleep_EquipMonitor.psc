@@ -92,6 +92,7 @@ FormList property DTSleep_ArmorLegLeftList auto const
 FormList property DTSleep_ArmorLegRightList auto const
 FormList property DTSleep_ArmorJacketsClothingList auto const
 FormList property DTSleep_IntimateAttireList auto const
+FormList property DTSleep_IntimateAttireMaleList auto const
 FormList property DTSleep_SleepAttireFemale auto const
 FormList property DTSleep_SleepAttireMale auto const
 FormList property DTSleep_ArmorAllExceptionList auto const
@@ -148,16 +149,15 @@ EndEvent
 ; player character
 
 Event OnItemEquipped(Form akBaseObject, ObjectReference akReference)
-	int i = 0
-	while (processingUnequip && i < 45)
-		Utility.WaitMenuMode(0.05)
-		i += 1
-	endWhile
 	
-	
-
 	
 	if (akBaseObject as Armor && DTSleep_EquipMonInit.GetValue() >= 0.0)
+	
+		int i = 0
+		while (processingUnequip && i < 45)
+			Utility.WaitMenuMode(0.05)
+			i += 1
+		endWhile
 	
 		; ignore nude-suit armor
 		if (akBaseObject == DTSleep_NudeSuitPlayerUp || DTSleep_LeitoGunList.HasForm(akBaseObject) || DTSleep_NudeRingList.HasForm(akBaseObject) || DTSleep_BT2GunList.HasForm(akBaseObject))
@@ -229,8 +229,12 @@ Event OnItemEquipped(Form akBaseObject, ObjectReference akReference)
 				DTSleep_CaptureSleepwearEnable.SetValueInt(0)
 				
 			elseIf (DTSleep_CaptureIntimateApparelEnable.GetValue() > 0.0 && DTSleep_EquipMonInit.GetValue() > 0.0)
-				
-				if (ProcessIntimateItem(akBaseObject))
+				int gender = DressData.PlayerGender
+				if (gender < 0)
+					gender = (Game.GetPlayer().GetBaseObject() as ActorBase).GetSex()
+					DressData.PlayerGender = gender
+				endIf
+				if (ProcessIntimateItem(akBaseObject, gender))
 					DressData.PlayerEquippedIntimateAttireItem = akBaseObject as Armor
 				else
 					SetArmorItem(akBaseObject as Armor)
@@ -372,13 +376,16 @@ endEvent
 ; -------------------------------------------------------
 ; companion
 Event Actor.OnItemEquipped(Actor akSender, Form akBaseObject, ObjectReference akReference)
-	int i = 0
-	while (processingCompUnequip && i < 45)
-		Utility.WaitMenuMode(0.05)
-		i += 1
-	endWhile
+	
 	
 	if (akBaseObject as Armor)
+	
+		int i = 0
+		while (processingCompUnequip && i < 45)
+			Utility.WaitMenuMode(0.05)
+			i += 1
+		endWhile
+		
 		if (CompanionSecondRegistered != None && akSender == CompanionSecondRegistered)
 		
 			if (StoringCompanionEquipment)
@@ -435,8 +442,9 @@ Event Actor.OnItemEquipped(Actor akSender, Form akBaseObject, ObjectReference ak
 					DTSleep_CaptureSleepwearEnable.SetValueInt(0)
 					
 				elseIf (DTSleep_CaptureIntimateApparelEnable.GetValue() > 0.0 && DTSleep_EquipMonInit.GetValue() > 0.0)
+					int gender = (akSender.GetBaseObject() as ActorBase).GetSex()
 					
-					if (ProcessIntimateItem(akBaseObject))
+					if (ProcessIntimateItem(akBaseObject, gender))
 						DressData.CompanionEquippedIntimateAttireItem = akBaseObject as Armor
 					else
 						SetArmorItem(akBaseObject as Armor)
@@ -877,10 +885,11 @@ bool Function ProcessExtraPartsRemove(Form item)
 endFunction
 
 ; add or remove intimate apparel - true if added
-bool Function ProcessIntimateItem(Form item)
+bool Function ProcessIntimateItem(Form item, int gender)
 	float captureTime = DTSleep_CaptureIntimateApparelEnable.GetValue()
 	float curTime = Utility.GetCurrentGameTime()
 	float minDiff = GetGameTimeHoursDifference(curTime, captureTime) * 60.0
+	FormList sleepwearList = DTSleep_IntimateAttireList
 	int initialCount = DTSleep_IntimateAttireList.GetSize()
 	
 	if (minDiff > 20.0)
@@ -895,26 +904,37 @@ bool Function ProcessIntimateItem(Form item)
 		return false
 	endIf
 	
-	if (initialCount > 0 && DTSleep_IntimateAttireList.HasForm(item))
-		DTSleep_IntimateAttireList.RemoveAddedForm(item)
-		
-		if (DTSleep_IntimateAttireList.GetSize() < initialCount)
-		
-			; clear DressData
-			ClearDressDataIntimateApparel(item as Armor)
-			
-			DTSleep_InitmateAttireRemMsg.Show()
+	if (gender >= 0 && gender <= 1)
+		if (gender == 0)
+			initialCount = DTSleep_IntimateAttireMaleList.GetSize()
+			sleepwearList = DTSleep_IntimateAttireMaleList
 		endIf
-	else
-		DTSleep_IntimateAttireList.AddForm(item)
-		
-		if (DTSleep_IntimateAttireList.GetSize() > initialCount)
+	
+		if (initialCount > 0 && sleepwearList.HasForm(item))
+			sleepwearList.RemoveAddedForm(item)
 			
-			DTSleep_IntimateAttireAddMsg.Show()
+			if (sleepwearList.GetSize() < initialCount)
 			
-			return true
+				; clear DressData
+				ClearDressDataIntimateApparel(item as Armor)
+				
+				DTSleep_InitmateAttireRemMsg.Show()
+			endIf
 		else
-			DTSleep_FailedToAddCustomArmorMsg.Show()
+			if (gender == 1)
+				sleepwearList.AddForm(item)
+			elseIf (!DTSleep_IntimateAttireFemaleOnlyList.HasForm(item))
+				sleepwearList.AddForm(item)
+			endIf
+			
+			if (sleepwearList.GetSize() > initialCount)
+				
+				DTSleep_IntimateAttireAddMsg.Show()
+				
+				return true
+			else
+				DTSleep_FailedToAddCustomArmorMsg.Show()
+			endIf
 		endIf
 	endIf
 	
@@ -1274,9 +1294,11 @@ Function SetCompanionDataMatchArmorToArmor(Armor matchItem, Armor toItem)
 			if (toItem != None)
 				DressData.CompanionEquippedIntimateAttireItem = toItem
 			endIf
-		elseIf (DTSleep_IntimateAttireList.HasForm(matchItem))
+		elseIf (DressData.CompanionGender == 0 && DTSleep_IntimateAttireMaleList.HasForm(matchItem))
 			DressData.CompanionEquippedIntimateAttireItem = toItem
-			
+		elseIf (DressData.CompanionGender == 1 && DTSleep_IntimateAttireList.HasForm(matchItem))
+			DressData.CompanionEquippedIntimateAttireItem = toItem
+
 		; mask
 		
 		elseIf (DressData.CompanionEquippedMask == matchItem)
@@ -1470,13 +1492,12 @@ Function SetCompanionDressDataMatchingFormToArmor(Form matchForm, Armor toItem)
 			
 		; do intimate items first since could be anything
 		
-		elseIf (DTSleep_IntimateAttireList && DTSleep_IntimateAttireList.HasForm(matchForm))
-			if (DressData.CompanionGender == 0 && DTSleep_IntimateAttireFemaleOnlyList.HasForm(matchForm))
-				; do nothing
-			else 
-				DressData.CompanionEquippedIntimateAttireItem = toItem
-			endIf
+		elseIf (DressData.CompanionGender == 0 && DTSleep_IntimateAttireMaleList.HasForm(matchForm))
+			DressData.CompanionEquippedIntimateAttireItem = toItem
 			
+		elseIf (DressData.CompanionGender == 1 && DTSleep_IntimateAttireList.HasForm(matchForm))
+			DressData.CompanionEquippedIntimateAttireItem = toItem
+
 		elseIf (DTSleep_ArmorMaskList && DTSleep_ArmorMaskList.HasForm(matchForm))
 			DressData.CompanionEquippedMask = toItem
 			
@@ -1618,12 +1639,10 @@ Function SetDressDataMatchArmorToArmor(Armor matchItem, Armor toItem)
 			DressData.PlayerEquippedIntimateAttireItem = toItem
 		elseIf (DressData.PlayerLastEquippedIntimateAttireItem == matchItem)
 			DressData.PlayerEquippedIntimateAttireItem = toItem
-		elseIf (DTSleep_IntimateAttireList && DTSleep_IntimateAttireList.HasForm(matchItem as Form))
-			if (DressData.PlayerGender == 0 && DTSleep_IntimateAttireFemaleOnlyList.HasForm(matchItem as Form))
-				; do nothing
-			else
-				DressData.PlayerEquippedIntimateAttireItem = toItem
-			endIf
+		elseIf (DressData.PlayerGender == 1 && DTSleep_IntimateAttireList.HasForm(matchItem as Form))
+			DressData.PlayerEquippedIntimateAttireItem = toItem
+		elseIf (DressData.PlayerGender == 0 && DTSleep_IntimateAttireMaleList.HasForm(matchItem as Form))
+			DressData.PlayerEquippedIntimateAttireItem = toItem
 			
 		; mask 
 		
@@ -1844,7 +1863,9 @@ Function SetDressDataMatchingFormToArmor(Form matchForm, Armor toItem)
 		elseIf (DTSleep_ArmorCarryPouchList && DTSleep_ArmorCarryPouchList.HasForm(matchForm))
 			DressData.PlayerEquippedCarryPouchItem = toItem
 		
-		elseIf (DTSleep_IntimateAttireList && DTSleep_IntimateAttireList.HasForm(matchForm))
+		elseIf (DressData.PlayerGender == 1 && DTSleep_IntimateAttireList.HasForm(matchForm))
+			DressData.PlayerEquippedIntimateAttireItem = toItem
+		elseIf (DressData.PlayerGender == 0 && DTSleep_IntimateAttireMaleList.HasForm(matchForm))
 			DressData.PlayerEquippedIntimateAttireItem = toItem
 			
 		elseIf (DTSleep_ArmorMaskList && DTSleep_ArmorMaskList.HasForm(matchForm))

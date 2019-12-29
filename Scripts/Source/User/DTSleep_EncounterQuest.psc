@@ -20,6 +20,7 @@ import DTSleep_CommonF
 Actor property PlayerRef auto const
 ActorValue property CharismaAV auto const
 Keyword property AnimFurnFloorBedAnimKY auto const
+Keyword property AnimFurnLayDownUtilityBoxKY auto const
 Spell property AbAddictionAlcoholSp auto const
 Spell property AbAddictionNukaQuantumSp auto const
 MagicEffect property abReduceEnduranceAddictionME auto const
@@ -325,6 +326,13 @@ bool Function PlaceEncounterOnBedForActors(int encounterType, ObjectReference be
 	int idx = -1
 	int tryCount = 3
 	int itemsToPlace = 2
+	bool isLowBed = false
+	
+	if (bedRef.HasKeyword(AnimFurnFloorBedAnimKY))
+		isLowBed = true
+	elseIf (bedRef.HasKeyword(AnimFurnLayDownUtilityBoxKY))
+		isLowBed = true
+	endIf
 	
 	;Debug.Trace(myScriptName + "PlaceEncounter type: " + encounterType)
 	
@@ -514,11 +522,11 @@ bool Function PlaceEncounterOnBedForActors(int encounterType, ObjectReference be
 					while (itemCount > 0)
 					
 						if (randomPlace == 1)
-							placeBedPoint = GetPointBedCuddle(bedRef.HasKeyword(AnimFurnFloorBedAnimKY), bedRef.GetAngleZ())
+							placeBedPoint = GetPointBedCuddle(isLowBed, bedRef.GetAngleZ())
 						elseIf (randomPlace == 2)
-							placeBedPoint = GetPointBedHands(bedRef.HasKeyword(AnimFurnFloorBedAnimKY), bedRef.GetAngleZ())
+							placeBedPoint = GetPointBedHands(isLowBed, bedRef.GetAngleZ())
 						elseIf (randomPlace == 3)
-							placeBedPoint = GetPointBedKnees(bedRef.HasKeyword(AnimFurnFloorBedAnimKY), bedRef.GetAngleZ())
+							placeBedPoint = GetPointBedKnees(isLowBed, bedRef.GetAngleZ())
 						else
 							placeBedPoint = GetPointBedFloor(bedRef.GetAngleZ())
 						endIf

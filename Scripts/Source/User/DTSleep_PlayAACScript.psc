@@ -77,6 +77,7 @@ ObjectReference property PlayerOriginMarkerRef auto hidden
 int LastGunAIndex = -1
 int LastGunBIndex = -1
 int MaleRoleSex = -1
+int SecondRoleSex = -1
 int SceneRunning = -1
 InputEnableLayer DTSleepPlayAACInputLayer
 int DoggyQuitTimer = 99 const
@@ -114,10 +115,9 @@ Event OnEffectStart(Actor akfActor, Actor akmActor)
 	LastGunAIndex = -1
 	LastGunBIndex = -1
 	MaleRoleSex = -1
+	SecondRoleSex = -1
 	ThirdActor = None
 	bool secondActorOkay = true
-	
-	;Debug.Trace("[DTSleep_PlayAAC] OnEffectStart....")
 	
 	if (SceneData.IsCreatureType == 2)
 		MaleRoleSex = 0
@@ -137,7 +137,6 @@ Event OnEffectStart(Actor akfActor, Actor akmActor)
 	
 	if (SequenceID == 741)
 		MainActor = akmActor
-		;Debug.Trace("[DTSleep_PlayAAC] single actor 741 start " + akmActor)
 	
 	elseIf (akfActor != None && akfActor != akmActor)
 		
@@ -212,7 +211,6 @@ endEvent
 
 ; end animation - clean up
 Event OnEffectFinish(Actor akfActor, Actor akmActor)
-	;Debug.Trace("[DTSleep_PlayAAC] OnEffectFinish begin")
 	
 	UnregisterForMenuOpenCloseEvent("PipboyMenu")
 
@@ -256,7 +254,7 @@ Event OnEffectFinish(Actor akfActor, Actor akmActor)
 	
 	if (ThirdActor != None)
 		ThirdActor.StopTranslation()
-		;Debug.Trace("[DTSleep_PlayAAC] move third-actor back to origin")
+		
 		ThirdActor.SetAnimationVariableBool("bHumanoidFootIKDisable", false)
 
 		ThirdActor.MoveTo(ThirdActorOriginMarkRef, 0.0, 0.0, 0.0, true)
@@ -334,7 +332,6 @@ Function CheckRemoveSecondActorWeapon(float waitSecs = 0.07)
 		
 		SecondActor.SetRestrained()
 		if (weapItem != None)
-			;Debug.Trace("[DTSleep_PlayAAC] removing secondActor weapon!")
 			SecondActor.UnequipItem(weapItem, false, true)
 			
 		endIf
@@ -344,7 +341,6 @@ Function CheckRemoveSecondActorWeapon(float waitSecs = 0.07)
 		
 		ThirdActor.SetRestrained()
 		if (weapItem != None)
-			;Debug.Trace("[DTSleep_PlayAAC] removing ThirdActor weapon!")
 			ThirdActor.UnequipItem(weapItem, false, true)
 		endIf
 	endif
@@ -362,9 +358,14 @@ Armor Function GetArmorNudeGun(int kind)
 	if (!Debug.GetPlatformName() as bool)
 		return None
 	endIf
+	
 	int evbVal = DTSleep_SettingUseLeitoGun.GetValueInt()
 	int bt2Val = DTSleep_SettingUseBT2Gun.GetValueInt()
 	int synthVal = DTSleep_SettingSynthHuman.GetValueInt()
+	
+	if (SceneData.MaleBodySwapEnabled <= 0)
+		return None
+	endIf
 	
 	if (SceneData.IsCreatureType == 1)
 		evbVal = 2
@@ -403,7 +404,6 @@ Armor Function GetArmorNudeGun(int kind)
 		endIf
 		
 		if (kind >= 0)
-			;Debug.Trace("[DTSleep_PlayAAC] get nude-armor-gun kind = " + kind)
 			if (SceneData.IsCreatureType == 4)
 				if (synthVal >= 2 && DTSleep_BT2GunList.GetSize() > (kind + 3))
 					gun = DTSleep_BT2GunList.GetAt(kind + 3) as Armor
@@ -449,13 +449,13 @@ Function InitSceneAndPlay()
 	
 	if (SceneData.CompanionInPowerArmor)
 		longScene = -1
-	elseIf (SequenceID == 737 || SequenceID == 765 || SequenceID == 733)
+	elseIf (SequenceID == 737 || SequenceID == 765 || SequenceID == 733 || SequenceID == 742 || SequenceID == 748 || SequenceID == 749)
 		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.1)
 			longScene = 1
 			if (SequenceID == 737 && DTSleep_IntimateSceneLen.GetValueInt() >= 3)
 				longScene = 2
 			endIf
-		endIf
+		endIf 
 	elseIf (DTSleep_IntimateSceneLen.GetValueInt() >= 3)
 		longScene = 1
 	endIf
@@ -648,7 +648,9 @@ Function PlaySequence(DTAACSceneStageStruct[] seqStagesArray)
 		
 		PlayAnimAtStage(seqStagesArray[seqCount], SceneData.MaleRole, SceneData.FemaleRole, ThirdActor, waitSecs)
 		
-		if (pingPongCount > 0 && seqCount == (seqLen - 2))
+		int pongLim = 2
+		
+		if (pingPongCount > 0 && seqCount == (seqLen - pongLim))
 			pingPongCount -= 1
 			seqCount = seqLen - 4
 		endIf
@@ -717,10 +719,16 @@ Function PlayAnimAtStage(DTAACSceneStageStruct stage, Actor mActor, Actor fActor
 				endIf
 			endIf
 			if (oActor != None && stage.ArmorNudeBGun >= 0 && LastGunBIndex != stage.ArmorNudeBGun)
-				LastGunBIndex = stage.ArmorNudeBGun
-				Armor armB1 = GetArmorNudeGun(stage.ArmorNudeBGun)
-				if (armB1 != None)
-					oActor.EquipItem(armB1, true, true)
+				; v2.25 - check secondActor gender
+				if (SecondRoleSex < 0)
+					SecondRoleSex = (oActor.GetLeveledActorBase() as ActorBase).GetSex()
+				endIf
+				if (SecondRoleSex == 0)
+					LastGunBIndex = stage.ArmorNudeBGun
+					Armor armB1 = GetArmorNudeGun(stage.ArmorNudeBGun)
+					if (armB1 != None)
+						oActor.EquipItem(armB1, true, true)
+					endIf
 				endIf
 			endIf
 			
@@ -825,7 +833,7 @@ endFunction
 
 Function StopActor(Actor aActor)
 	if (aActor != None)
-		;Debug.Trace("[DTSleep_PlayAAC] stop actor " + aActor)
+
 		aActor.PlayIdle(LooseIdleStop)
 	endIf
 	
@@ -835,7 +843,6 @@ Function StopSecondActorDone()
 
 	; letting actor go early
 	if (SecondActor != None)
-		;Debug.Trace("[DTSleep_PlayAAC] stop SecondActor Done")
 		SecondActor.StopTranslation()
 		SecondActor.MoveTo(SecondActorOriginMarkRef, 0.0, 0.0, 0.0, true)
 		

@@ -20,7 +20,7 @@ Actor property SecondMaleRole auto conditional hidden
 Armor property ToyArmor auto conditional hidden
 { ie: strap-on when MaleRoleGender = 1 }
 bool property HasToyAvailable = false auto conditional hidden
-{true if fem/fem with toy in one inventory}
+{ true if fem/fem with toy in one inventory}
 bool property HasToyEquipped = false auto conditional hidden
 { ie: set true if MaleRole is female with toy equipped }
 bool property ToyFromContainer = false auto conditional hidden
@@ -43,6 +43,7 @@ float property WaitSecs = 11.2 auto conditional hidden
 bool property PreferStandOnly = false auto conditional hidden
 bool property CompanionInPowerArmor = false auto conditional hidden
 int property PlayerRoleTranslated = 0 auto conditional hidden
+int property MaleBodySwapEnabled = 1 auto conditional hidden
 
 ; -------------------------- backup data if need to restore after reset ---------
 

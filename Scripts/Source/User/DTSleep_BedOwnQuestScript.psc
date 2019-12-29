@@ -52,6 +52,8 @@ GlobalVariable property DTSleep_DebugMode auto const
 FormList property DTSleep_BedList auto const
 FormList property DTSleep_BedIntimateList auto const
 FormList property DTSleep_BedsBigDoubleList auto const
+FormList property DTSleep_BedPillowBedList auto const
+FormList property DTSleep_BedPillowFrameDBList auto const
 Message property DTSleep_OwnBedDoubleReqMessage auto const
 Message property DTSleep_OwnBedTwinReqMessage auto const
 Message property DTSleep_OwnBedOwnedWarnMessage auto const
@@ -144,7 +146,23 @@ int Function CheckBedOwnership(ObjectReference aBedRef, Form baseBedForm, Actor 
 				
 				if (IsObjBelongPlayerWorkshop(aBedRef) > 0)
 					; in a workshop using bed not owned by player -- does it have a twin for double-bed?
-					ObjectReference twinBed = DTSleep_CommonF.FindNearestAnyBedFromObject(aBedRef, DTSleep_BedList, aBedRef, TwinBedDistLimit, true)
+					bool findTwin = true
+					
+					; pillowBed must be on a double-frame
+					if ((DTSConditionals as DTSleep_Conditionals).IsHZSHomebuilderActive > 0)
+						if (DTSleep_BedPillowBedList.HasForm(baseBedForm))
+							ObjectReference bedFrameRef = DTSleep_CommonF.FindNearestAnyBedFromObject(aBedRef, DTSleep_BedPillowFrameDBList, None, 86.0)
+							if (bedFrameRef == None)
+								findTwin = false
+							endIf
+						endIf
+					endIf
+					
+					ObjectReference twinBed = None
+					
+					if (findTwin)
+						twinBed = DTSleep_CommonF.FindNearestAnyBedFromObject(aBedRef, DTSleep_BedList, aBedRef, TwinBedDistLimit, true)
+					endIf
 					
 					LastBedRef = aBedRef
 					LastTwinBedRef = twinBed
@@ -606,8 +624,15 @@ Function DebugDisplayBedsWorkshopIDs(ObjectReference bedRef, ObjectReference twi
 	if (DTSleep_DebugMode.GetValue() >= 1.0)
 		if (bedRef != None && MyWorkshopRef != None)
 			bool bedHasKeyword = bedRef.HasKeyword(DTSleep_OwnBedPrivateKY)
-			bool twinHasKeyword = twinRef.HasKeyword(DTSleep_OwnBedPrivateKY)
-			int bedID = (bedRef as WorkshopObjectScript).WorkshopID
+			bool twinHasKeyword = false
+			if (twinRef != None)
+				twinHasKeyword = twinRef.HasKeyword(DTSleep_OwnBedPrivateKY)
+			endIf
+			WorkshopObjectScript workBed = bedRef as WorkshopObjectScript
+			int bedID = -1
+			if (workBed != None)
+				bedID = workBed.WorkshopID
+			endIf
 			
 			Debug.Trace("[DTSleep_BedOwn] marked private (wid=" + bedID + ")? this/twin beds:  " + bedHasKeyword + "/" + twinHasKeyword)
 		endIf

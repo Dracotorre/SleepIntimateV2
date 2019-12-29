@@ -114,6 +114,8 @@ Function AddAvailableNearbyNPCs()
 	if (PlayerRef.IsInInterior())
 		distance = 800.0
 	endIf
+	float playerZ = PlayerRef.GetPositionZ()			; ignore height diff
+	
 	ObjectReference[] actorArray = PlayerRef.FindAllReferencesWithKeyword(ActorTypeNPCKY, distance)
 	
 	int aCnt = 0
@@ -124,24 +126,29 @@ Function AddAvailableNearbyNPCs()
 		
 		if (ac != None && ac != PlayerRef)
 		
-			if (DTSleep_ModCompanionActorList.HasForm(ac as Form))
-				AddSpectator(ac)
-			elseIf (ActiveCompanionCollectionAlias.Find(ac) > 0)
-				AddSpectator(ac)
-			else
-				int fIdx = 0
-				int len = DTSleep_GuardFactionList.GetSize()
-				while (fIdx < len)
-					
-					Faction gFact = DTSleep_GuardFactionList.GetAt(fIdx) as Faction
-					if (gFact != None)
-						if (ac.IsInFaction(gFact))
-							AddGuard(ac)
+			float htDif = playerZ - ac.GetPositionZ()
+			if (htDif > -200.0 && htDif < 200.0)
+				; ac within reasonable height range 
+		
+				if (DTSleep_ModCompanionActorList.HasForm(ac as Form))
+					AddSpectator(ac)
+				elseIf (ActiveCompanionCollectionAlias.Find(ac) > 0)
+					AddSpectator(ac)
+				else
+					int fIdx = 0
+					int len = DTSleep_GuardFactionList.GetSize()
+					while (fIdx < len)
+						
+						Faction gFact = DTSleep_GuardFactionList.GetAt(fIdx) as Faction
+						if (gFact != None)
+							if (ac.IsInFaction(gFact))
+								AddGuard(ac)
+							endIf
 						endIf
-					endIf
-					
-					fIdx += 1
-				endWhile
+						
+						fIdx += 1
+					endWhile
+				endIf
 			endIf
 		endIf
 	
