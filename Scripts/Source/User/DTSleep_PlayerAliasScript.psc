@@ -128,6 +128,7 @@ FormList property DTSleep_ArmorSlot41List auto const
 FormList property DTSleep_ArmorSlot55List auto const
 FormList property DTSleep_ArmorSlot58List auto const
 FormList property DTSleep_ArmorSlotFXList auto const
+FormList property DTSleep_ArmorJewelry58List auto const
 FormList property DTSleep_ArmorAllExceptionList auto const
 FormList property DTSleep_StrapOnList auto const
 FormList property DTSleep_SleepAttireFemale auto const
@@ -957,13 +958,12 @@ Function CheckCompatibility()
 	endIf
 	Armor pippad = IsPluginActive(0x12009883, pippadName) as Armor   ; slot51
 	if (pippad != None)
-		DTSleep_SettingUndressPipboy.SetValue(-1.0)
+		
 		int pipPadVal = (DTSConditionals as DTSleep_Conditionals).PipPadSlotIndex
 		
 		if (pipPadVal < 20 || pipPadVal > 31)
 			(DTSConditionals as DTSleep_Conditionals).PipPadSlotIndex = 100   ; initialize
 		endIf
-		
 		
 		if (!DTSleep_ArmorPipPadList.HasForm(pippad))
 			DTSleep_ArmorPipPadList.AddForm(pippad)
@@ -980,7 +980,45 @@ Function CheckCompatibility()
 			DTSleep_ArmorPipPadList.AddForm(pippad)
 			pippad = Game.GetFormFromFile(0x12005BAB, pippadName) as Armor   ; 61 - default
 			DTSleep_ArmorPipPadList.AddForm(pippad)
+		endIf
+		; v2.27 - check for fix
+		pippad = Game.GetFormFromFile(0x12005B9F, pippadName) as Armor
+		if (pippad != None)
+			float oldVers = DTSleep_LastVersion.GetValue()
+			if (oldVers > 1.1 && oldVers < 2.27)
+				UpdateRemListsPipPadForm(pippad as Form)
+			endIf
 			
+			; v2.27 add fake pads which equip on activation
+			
+			if (!DTSleep_ArmorPipPadList.HasForm(pippad))
+				DTSleep_ArmorPipPadList.AddForm(pippad As Form)					; fakeFX
+				Form itemForm = Game.GetFormFromFile(0x12005B9E, pippadName)
+				DTSleep_ArmorPipPadList.AddForm(itemForm)						; fake58
+				if (oldVers > 1.1 && oldVers < 2.27)
+					UpdateRemListsPipPadForm(itemForm)
+				endIf
+				itemForm = Game.GetFormFromFile(0x12005B9D, pippadName)
+				DTSleep_ArmorPipPadList.AddForm(itemForm)						; fake57
+				if (oldVers > 1.1 && oldVers < 2.27)
+					UpdateRemListsPipPadForm(itemForm)
+				endIf
+				itemForm = Game.GetFormFromFile(0x12005B9C, pippadName)
+				DTSleep_ArmorPipPadList.AddForm(itemForm)						; fake56
+				if (oldVers > 1.1 && oldVers < 2.27)
+					UpdateRemListsPipPadForm(itemForm)
+				endIf
+				itemForm = Game.GetFormFromFile(0x12005B9B, pippadName)
+				DTSleep_ArmorPipPadList.AddForm(itemForm)						; fake55
+				if (oldVers > 1.1 && oldVers < 2.27)
+					UpdateRemListsPipPadForm(itemForm)
+				endIf
+				itemForm = Game.GetFormFromFile(0x12003D35, pippadName)			
+				DTSleep_ArmorPipPadList.AddForm(itemForm)						; fake54
+				if (oldVers > 1.1 && oldVers < 2.27)
+					UpdateRemListsPipPadForm(itemForm)
+				endIf
+			endIf
 		endIf
 	else
 		(DTSConditionals as DTSleep_Conditionals).PipPadSlotIndex = -1
@@ -2554,6 +2592,12 @@ int Function CheckCustomArmorsAndBackpacks()
 			DTSleep_ArmorChokerList.AddForm(Game.GetFormFromFile(0x11100001, "Elegant Hardware.esp"))
 			DTSleep_ArmorChokerList.AddForm(Game.GetFormFromFile(0x11100059, "Elegant Hardware.esp"))
 		endIf
+		Form jewelForm = Game.GetFormFromFile(0x110009B5, "Elegant Hardware.esp")	; belly ring
+		if (jewelForm != None && !DTSleep_ArmorJewelry58List.HasForm(jewelForm))
+			modCount += 1
+			DTSleep_ArmorJewelry58List.AddForm(jewelForm)
+			DTSleep_ArmorSlot58List.AddForm(jewelForm)
+		endIf
 	endIf
 	
 	
@@ -3065,9 +3109,16 @@ int Function CheckCustomArmorsAndBackpacks()
 			if (!DTSleep_ArmorSlot58List.HasForm(extraArmor as Form))
 				modCount += 1
 				DTSleep_ArmorSlot58List.AddForm(extraArmor as Form)
+				DTSleep_ArmorJewelry58List.AddForm(extraArmor as Form)
 				DTSleep_ArmorSlot55List.AddForm(Game.GetFormFromFile(0x050122C8, "FO4PiercingsSED7.esp"))
-				DTSleep_ArmorSlot58List.AddForm(Game.GetFormFromFile(0x05012A67, "FO4PiercingsSED7.esp"))
+				Form jewelForm = Game.GetFormFromFile(0x05012A67, "FO4PiercingsSED7.esp")
+				DTSleep_ArmorSlot58List.AddForm(jewelForm)
+				DTSleep_ArmorJewelry58List.AddForm(jewelForm)
 				DTSleep_ArmorSlot55List.AddForm(Game.GetFormFromFile(0x05013205, "FO4PiercingsSED7.esp"))
+				
+			elseIf (!DTSleep_ArmorJewelry58List.HasForm(extraArmor as Form))
+				DTSleep_ArmorJewelry58List.AddForm(extraArmor as Form)
+				DTSleep_ArmorJewelry58List.AddForm(Game.GetFormFromFile(0x05012A67, "FO4PiercingsSED7.esp"))
 			endIf
 		endIf
 		
@@ -4454,6 +4505,24 @@ Function UpdateExtraPartsList()
 		Debug.Trace(myScriptName + " update - trimmed custom ExtraParts list by " + finDif)
 	else
 		Debug.Trace(myScriptName + " update - no change to custom ExtraParts list of size " + origLen)
+	endIf
+endFunction
+
+Function UpdateRemListsPipPadForm(Form pippad)
+	if (DTSleep_SleepAttireFemale.HasForm(pippad))
+		DTSleep_SleepAttireFemale.RemoveAddedForm(pippad)
+	endIf
+	if (DTSleep_SleepAttireMale.HasForm(pippad as Form))
+		DTSleep_SleepAttireMale.RemoveAddedForm(pippad)
+	endIf
+	if (DTSleep_ArmorBackPacksList.HasForm(pippad))
+		DTSleep_ArmorBackPacksList.RemoveAddedForm(pippad)
+	endIf
+	if (DTSleep_ArmorJacketsClothingList.HasForm(pippad))
+		DTSleep_ArmorJacketsClothingList.RemoveAddedForm(pippad)
+	endIf
+	if (DTSleep_ArmorMaskList.HasForm(pippad))
+		DTSleep_ArmorMaskList.RemoveAddedForm(pippad)
 	endIf
 endFunction
 

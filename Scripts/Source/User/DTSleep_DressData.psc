@@ -59,6 +59,8 @@ Armor property PlayerEquippedSlot55Item auto conditional hidden
 Armor property PlayerEquippedSlot58Item = None auto conditional hidden
 bool property PlayerEquippedSlot58IsSleepwear = false auto conditional hidden
 { if slot 58 is a sleepwear item }
+bool property PlayerEquippedSlot58IsJewelry = false auto conditional hidden
+{ if slot 58 is jewlery item }
 Armor property PlayerEquippedSlotFXItem auto conditional hidden
 { slot 61 FX item  }
 Armor property PlayerEquippedULegItem auto conditional hidden
@@ -129,6 +131,7 @@ Armor property CompanionEquippedSleepwearItem auto conditional hidden
 Armor property CompanionEquippedSlot41Item auto conditional hidden
 Armor property CompanionEquippedSlot55Item auto conditional hidden
 Armor property CompanionEquippedSlot58Item auto conditional hidden
+bool property CompanionEquippedSlot58IsJewelry = false auto conditional hidden
 Armor property CompanionEquippedSlotFXItem auto conditional hidden
 { slot 61 FX item  }
 Armor property CompanionEquippedULegItem auto conditional hidden

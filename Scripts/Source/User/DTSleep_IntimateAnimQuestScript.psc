@@ -4035,17 +4035,20 @@ bool Function ProcessMainActorClone()
 					int i = 0
 					while (i < gearList.Length)
 						Armor item = gearList[i] as Armor
-						; only copy as Armor to avoid mod-armor
-						
-						bool okayToCopy = true
-						if (SceneData.ToyArmor != None && item == SceneData.ToyArmor && !SceneData.HasToyEquipped)
-							; toy not needed
-							okayToCopy = false
-						endIf
-						
-						if (okayToCopy && MainActorRef.IsEquipped(item))
-							if (ProcessCopyEquipItemActors(item, MainActorRef, MainActorCloneRef, true))
-								MainActorOutfitArray.Add(gearList[i])
+						if (item != None)
+							; only copy as Armor to avoid mod-armor
+							
+							bool okayToCopy = true
+							if (SceneData.ToyArmor != None && item == SceneData.ToyArmor && !SceneData.HasToyEquipped)
+								; toy not needed
+								okayToCopy = false
+							endIf
+							
+							if (okayToCopy && MainActorRef.IsEquipped(item))
+								if (ProcessCopyEquipItemActors(item, MainActorRef, MainActorCloneRef, true))
+									
+									MainActorOutfitArray.Add(gearList[i])
+								endIf
 							endIf
 						endIf
 						

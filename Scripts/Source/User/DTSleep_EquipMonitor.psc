@@ -109,6 +109,7 @@ FormList property DTSleep_IntimateAttireFemaleOnlyList auto const
 FormList property DTSleep_NudeRingList auto const
 FormList property DTSleep_SexyClothesFList auto const
 FormList property DTSleep_SexyClothesMList auto const
+FormList property DTSleep_ArmorJewelry58List auto const			; added v2.27
 EndGroup
 
 ; -------------------  hidden
@@ -200,7 +201,7 @@ Event OnItemEquipped(Form akBaseObject, ObjectReference akReference)
 		elseIf (DTSleep_ArmorLegRightList != None && DTSleep_ArmorLegRightList.HasForm(akBaseObject))
 			DressData.PlayerEquippedArmorLegRightItem = akBaseObject as Armor
 			
-		elseIf (ValidArmorToCheck(akBaseObject as Armor))
+		elseIf (ValidArmorToCheck(akBaseObject as Armor, akBaseObject))
 			;if (akReference)
 				;SetArmorItem((akReference as Form) as Armor) ; this may not be right
 			;else
@@ -362,7 +363,7 @@ Event OnItemUnequipped(Form akBaseObject, ObjectReference akReference)
 				DressData.PlayerEquippedArmorLegRightItem = None
 			endIf
 			
-		elseIf (ValidArmorToCheck(akBaseObject as Armor))
+		elseIf (ValidArmorToCheck(akBaseObject as Armor, akBaseObject))
 			
 			RemoveArmorItem(akBaseObject as Armor)
 		endIf
@@ -420,7 +421,7 @@ Event Actor.OnItemEquipped(Actor akSender, Form akBaseObject, ObjectReference ak
 			elseIf (DTSleep_ArmorLegRightList != None && DTSleep_ArmorLegRightList.HasForm(akBaseObject))
 				DressData.CompanionEquippedArmorLegRightItem = akBaseObject as Armor
 				
-			elseIf (ValidArmorToCheck(akBaseObject as Armor))
+			elseIf (ValidArmorToCheck(akBaseObject as Armor, akBaseObject))
 			
 				if (DTSleep_CaptureSleepwearEnable.GetValue() > 0.0 && DTSleep_EquipMonInit.GetValue() > 0.0)
 					int gender = (akSender.GetBaseObject() as ActorBase).GetSex()
@@ -519,7 +520,7 @@ Event Actor.OnItemUnequipped(Actor akSender, Form akBaseObject, ObjectReference 
 					DressData.CompanionEquippedArmorLegRightItem = None
 				endIf
 				
-			elseIf (ValidArmorToCheck(akBaseObject as Armor))
+			elseIf (ValidArmorToCheck(akBaseObject as Armor, akBaseObject))
 				RemoveCompanionArmorItem(akBaseObject as Armor)
 			endIf
 		endIf
@@ -1378,20 +1379,40 @@ Function SetCompanionDataMatchArmorToArmor(Armor matchItem, Armor toItem)
 		elseIf (DressData.CompanionEquippedSlot58Item == matchItem)
 			DressData.CompanionLastEquippedSlot58Item = DressData.CompanionEquippedSlot58Item
 			DressData.CompanionEquippedSlot58Item = toItem
-			; maybe a sleepwear
+			; maybe a sleepwear or jewelry
 			DressData.CompanionLastSlot58IsSleepwear = DressData.CompanionEquippedSlot58IsSleepwear
-			if (toItem && DTSleep_SleepAttireFemale.HasForm(toItem))
-				DressData.CompanionEquippedSlot58IsSleepwear = true
+			if (toItem != None)
+				if (DTSleep_SleepAttireFemale.HasForm(toItem))
+					DressData.CompanionEquippedSlot58IsSleepwear = true
+					DressData.CompanionEquippedSlot58IsJewelry = false
+				elseIf ((DTSConditionals as DTSleep_Conditionals).IsAWKCRActive && (DTSConditionals as DTSleep_Conditionals).AWKCRPiercingKW != None && toItem.HasKeyword((DTSConditionals as DTSleep_Conditionals).AWKCRPiercingKW))
+					DressData.CompanionEquippedSlot58IsJewelry = true
+					DressData.CompanionEquippedSlot58IsSleepwear = false
+				elseIf (DTSleep_ArmorJewelry58List.HasForm(toItem))
+					DressData.CompanionEquippedSlot58IsJewelry = true
+					DressData.CompanionEquippedSlot58IsSleepwear = false
+				endIf
 			else
 				DressData.CompanionEquippedSlot58IsSleepwear = false
+				DressData.CompanionEquippedSlot58IsJewelry = false
 			endIf
 		elseIf (DressData.CompanionLastEquippedSlot58Item == matchItem)
 			DressData.CompanionEquippedSlot58Item = toItem
 			; maybe a sleepwear
-			if (toItem && DTSleep_SleepAttireFemale.HasForm(toItem))
-				DressData.CompanionEquippedSlot58IsSleepwear = true
+			if (toItem != None)
+				if (DTSleep_SleepAttireFemale.HasForm(toItem))
+					DressData.CompanionEquippedSlot58IsSleepwear = true
+					DressData.CompanionEquippedSlot58IsJewelry = false
+				elseIf ((DTSConditionals as DTSleep_Conditionals).IsAWKCRActive && (DTSConditionals as DTSleep_Conditionals).AWKCRPiercingKW != None && toItem.HasKeyword((DTSConditionals as DTSleep_Conditionals).AWKCRPiercingKW))
+					DressData.CompanionEquippedSlot58IsJewelry = true
+					DressData.CompanionEquippedSlot58IsSleepwear = false
+				elseIf (DTSleep_ArmorJewelry58List.HasForm(toItem))
+					DressData.CompanionEquippedSlot58IsJewelry = true
+					DressData.CompanionEquippedSlot58IsSleepwear = false
+				endIf
 			else
 				DressData.CompanionEquippedSlot58IsSleepwear = false
+				DressData.CompanionEquippedSlot58IsJewelry = false
 			endIf
 		elseIf (DressData.CompanionEquippedSlotFXItem == matchItem)
 			DressData.CompanionLastEquippedSlotFXItem = DressData.CompanionEquippedSlotFXItem
@@ -1551,10 +1572,20 @@ Function SetCompanionDressDataMatchingFormToArmor(Form matchForm, Armor toItem)
 			DressData.CompanionEquippedSlot58Item = toItem
 			
 			; check sleepwear
-			if (toItem && DTSleep_SleepAttireFemale && DTSleep_SleepAttireFemale.HasForm(matchForm))
-				DressData.CompanionEquippedSlot58IsSleepwear = true
+			if (toItem != None)
+				if (DTSleep_SleepAttireFemale.HasForm(matchForm))
+					DressData.CompanionEquippedSlot58IsSleepwear = true
+					DressData.CompanionEquippedSlot58IsJewelry = false
+				elseIf ((DTSConditionals as DTSleep_Conditionals).IsAWKCRActive && (DTSConditionals as DTSleep_Conditionals).AWKCRPiercingKW != None && toItem.HasKeyword((DTSConditionals as DTSleep_Conditionals).AWKCRPiercingKW))
+					DressData.CompanionEquippedSlot58IsJewelry = true
+					DressData.CompanionEquippedSlot58IsSleepwear = false
+				elseIf (DTSleep_ArmorJewelry58List.HasForm(matchForm))
+					DressData.CompanionEquippedSlot58IsJewelry = true
+					DressData.CompanionEquippedSlot58IsSleepwear = false
+				endIf
 			else
 				DressData.CompanionEquippedSlot58IsSleepwear = false
+				DressData.CompanionEquippedSlot58IsJewelry = false
 			endIf
 			
 		elseIf (DTSleep_ArmorSlotFXList && DTSleep_ArmorSlotFXList.HasForm(matchForm))
@@ -1734,19 +1765,39 @@ Function SetDressDataMatchArmorToArmor(Armor matchItem, Armor toItem)
 			DressData.PlayerEquippedSlot58Item = toItem
 			; maybe a sleepwear
 			DressData.PlayerLastEquippedSlot58IsSleepwear = DressData.PlayerEquippedSlot58IsSleepwear
-			if (toItem && DTSleep_SleepAttireFemale.HasForm(toItem))
-				DressData.PlayerEquippedSlot58IsSleepwear = true
+			if (toItem != None)
+				if (DTSleep_SleepAttireFemale.HasForm(toItem))
+					DressData.PlayerEquippedSlot58IsSleepwear = true
+					DressData.PlayerEquippedSlot58IsJewelry = false
+				elseIf ((DTSConditionals as DTSleep_Conditionals).IsAWKCRActive && (DTSConditionals as DTSleep_Conditionals).AWKCRPiercingKW != None && toItem.HasKeyword((DTSConditionals as DTSleep_Conditionals).AWKCRPiercingKW))
+					DressData.PlayerEquippedSlot58IsJewelry = true
+					DressData.PlayerEquippedSlot58IsSleepwear = false
+				elseIf (DTSleep_ArmorJewelry58List.HasForm(toItem))
+					DressData.PlayerEquippedSlot58IsJewelry = true
+					DressData.PlayerEquippedSlot58IsSleepwear = false
+				endIf
 			else
 				DressData.PlayerEquippedSlot58IsSleepwear = false
+				DressData.PlayerEquippedSlot58IsJewelry = false
 			endIf
 		elseIf (DressData.PlayerLastEquippedSlot58Item == matchItem)
 			
 			DressData.PlayerEquippedSlot58Item = toItem 
 			; maybe a sleepwear
-			if (toItem && DTSleep_SleepAttireFemale.HasForm(toItem))
-				DressData.PlayerEquippedSlot58IsSleepwear = true
+			if (toItem != None)
+				if (DTSleep_SleepAttireFemale.HasForm(toItem))
+					DressData.PlayerEquippedSlot58IsSleepwear = true
+					DressData.PlayerEquippedSlot58IsJewelry = false
+				elseIf ((DTSConditionals as DTSleep_Conditionals).IsAWKCRActive && (DTSConditionals as DTSleep_Conditionals).AWKCRPiercingKW != None && toItem.HasKeyword((DTSConditionals as DTSleep_Conditionals).AWKCRPiercingKW))
+					DressData.PlayerEquippedSlot58IsJewelry = true
+					DressData.PlayerEquippedSlot58IsSleepwear = false
+				elseIf (DTSleep_ArmorJewelry58List.HasForm(toItem))
+					DressData.PlayerEquippedSlot58IsJewelry = true
+					DressData.PlayerEquippedSlot58IsSleepwear = false
+				endIf
 			else
 				DressData.PlayerEquippedSlot58IsSleepwear = false
+				DressData.PlayerEquippedSlot58IsJewelry = false
 			endIf
 		elseIf (DressData.PlayerEquippedSlotFXItem == matchItem)
 			DressData.PlayerLastEquippedSlotFXItem = DressData.PlayerEquippedSlotFXItem
@@ -1934,10 +1985,20 @@ Function SetDressDataMatchingFormToArmor(Form matchForm, Armor toItem)
 			DressData.PlayerEquippedSlot58Item = toItem
 			
 			; check sleepwear
-			if (toItem && DTSleep_SleepAttireFemale && DTSleep_SleepAttireFemale.HasForm(matchForm))
-				DressData.PlayerEquippedSlot58IsSleepwear = true
+			if (toItem != None)
+				if (DTSleep_SleepAttireFemale.HasForm(matchForm))
+					DressData.PlayerEquippedSlot58IsSleepwear = true
+					DressData.PlayerEquippedSlot58IsJewelry = false
+				elseIf ((DTSConditionals as DTSleep_Conditionals).IsAWKCRActive && (DTSConditionals as DTSleep_Conditionals).AWKCRPiercingKW != None && toItem.HasKeyword((DTSConditionals as DTSleep_Conditionals).AWKCRPiercingKW))
+					DressData.PlayerEquippedSlot58IsJewelry = true
+					DressData.PlayerEquippedSlot58IsSleepwear = false
+				elseIf (DTSleep_ArmorJewelry58List.HasForm(matchform))
+					DressData.PlayerEquippedSlot58IsJewelry = true
+					DressData.PlayerEquippedSlot58IsSleepwear = false
+				endIf
 			else
 				DressData.PlayerEquippedSlot58IsSleepwear = false
+				DressData.PlayerEquippedSlot58IsJewelry = false
 			endIf
 			
 		elseIf (DTSleep_ArmorSlotFXList && DTSleep_ArmorSlotFXList.HasForm(matchForm))
@@ -2317,12 +2378,18 @@ Function UpdateClothingCounts()
 	
 endFunction
 
-bool Function ValidArmorToCheck(Armor item)
-	if (item)
+bool Function ValidArmorToCheck(Armor item, Form baseForm)
+	if (item != None)
 		if (item.HasKeyword(ArmorTypePowerKY))
 			return false
 		elseIf (item.HasKeyword(ArmorTypeHatKY) || item.HasKeyword(ArmorTypeHelmetKY)) ; || item.HasKeyword(ArmorBodyPartHeadKY))
 			return false
+		endIf
+		; v2.27
+		if ((DTSConditionals as DTSleep_Conditionals).PipPadSlotIndex > 0)
+			if (DTSleep_ArmorPipPadList.HasForm(baseForm))
+				return false
+			endIf
 		endIf
 		return true
 	endIf

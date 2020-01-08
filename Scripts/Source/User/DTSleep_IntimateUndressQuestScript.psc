@@ -2337,7 +2337,7 @@ bool Function IsActorWearingSlot58Exceptions(Actor actorRef)
 	endIf
 	
 	if (DTSleep_ExtraArmorsEnabled.GetValueInt() > 0)
-		if (DTSleep_EquipMonInit.GetValueInt() > 0 && DressData)
+		if (DTSleep_EquipMonInit.GetValueInt() > 0)
 			if (actorRef == PlayerRef)
 				
 				return DressData.PlayerEquippedSlot58Item as bool
@@ -2364,6 +2364,24 @@ bool Function IsActorWearingSlot58Exceptions(Actor actorRef)
 		endIf
 	endIf
 	
+	return false
+endFunction
+
+; v2.27
+bool Function IsActorWearingSlot58Jewelry(Actor actorRef)
+
+	if (DTSleep_EquipMonInit.GetValueInt() > 0)
+		if (actorRef == PlayerRef)
+			if (DressData.PlayerEquippedSlot58Item != None && DressData.PlayerEquippedSlot58IsJewelry)
+				return true
+			endIf
+		elseIf (actorRef == CompanionRef)
+			if (DressData.CompanionEquippedSlot58Item != None && DressData.CompanionEquippedSlot58IsJewelry)
+				return true
+			endIf
+		endIf
+	endIf
+
 	return false
 endFunction
 
@@ -4245,14 +4263,15 @@ Function UndressActorArmorExtendedSlots(Actor actorRef, bool forBed, bool includ
 		;      !!!AWK-Piercing(KY-06000812)!!!, Azar Holstered gun
 		;
 		if (includeExceptions || hasSleepWearMainOutfit || !IsActorWearingSlot58Exceptions(actorRef))
-		
-			bool placeAtFeet = false
-			if (includeExceptions && DropSleepClothes)
-				placeAtFeet = true
-			endIf
+			if (!IsActorWearingSlot58Jewelry(actorRef))
+				bool placeAtFeet = false
+				if (includeExceptions && DropSleepClothes)
+					placeAtFeet = true
+				endIf
 
-			if (DTSleep_SettingIncludeExtSlots.GetValue() > 0.0)
-				UndressActorArmorSlot58(actorRef, placeAtFeet)
+				if (DTSleep_SettingIncludeExtSlots.GetValue() > 0.0)
+					UndressActorArmorSlot58(actorRef, placeAtFeet)
+				endIf
 			endIf
 		endIf
 	endIf
