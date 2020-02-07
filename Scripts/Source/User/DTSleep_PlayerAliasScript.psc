@@ -149,6 +149,8 @@ FormList property DTSleep_ArmorLegLeftList auto const
 FormList property DTSleep_ArmorLegRightList auto const
 FormList property DTSleep_SexyClothesFList auto const
 FormList property DTSleep_SexyClothesMList auto const
+FormList property DTSleep_IntimateAttireOKUnderList auto const
+{ must remove under armor on these intimate outfits -- usually slot-33 only with shoes }
 EndGroup
 
 Group C_AnimSeqLists
@@ -3028,15 +3030,20 @@ int Function CheckCustomArmorsAndBackpacks()
 				DTSleep_FemBedItemFList.AddForm(Game.GetFormFromFile(0x11011178, crazySexToysName))
 				DTSleep_FemBedItemFList.AddForm(Game.GetFormFromFile(0x1101796F, crazySexToysName))
 			endIf
+			
+			; TheKite VTS
+			crossPluginName = "TheKite_VTS.esp"
+			extraArmor = IsPluginActive(0x0900216E, crossPluginName) as Armor   ; outfit
+			if (extraArmor != None && !DTSleep_IntimateAttireOKUnderList.HasForm(extraArmor as Form))
+				modCount += 1
+				DTSleep_IntimateAttireOKUnderList.AddForm(extraArmor as Form)
+				DTSleep_IntimateAttireFemaleOnlyList.AddForm(extraArmor as Form)
+			endIf
 		endIf
 	
 		; TheKite Militia
 		crossPluginName = "TheKite_MilitiaWoman.esp"
 		extraArmor = IsPluginActive(0x09003A18, crossPluginName) as Armor   ; pack
-		if (extraArmor == None)
-			crossPluginName = "TheKite_MilitiaWoman.esl"
-			extraArmor = IsPluginActive(0x09003A18, crossPluginName) as Armor   ; pack
-		endIf
 		if (extraArmor != None)
 			if (!DTSleep_ArmorBackPacksList.HasForm(extraArmor))
 				modCount += 1
@@ -3048,11 +3055,11 @@ int Function CheckCustomArmorsAndBackpacks()
 			endIf
 			
 			extraArmor = Game.GetFormFromFile(0x09003253, crossPluginName) as Armor
-			if (extraArmor != None && !DTSleep_IntimateAttireFemaleOnlyList.HasForm(extraArmor))
-				DTSleep_IntimateAttireFemaleOnlyList.AddForm(extraArmor)
+			if (extraArmor != None && !DTSleep_IntimateAttireOKUnderList.HasForm(extraArmor as Form))
+				DTSleep_IntimateAttireOKUnderList.AddForm(extraArmor as Form)
+				DTSleep_IntimateAttireFemaleOnlyList.AddForm(extraArmor as Form)
 			endIf
 		endIf
-		
 	
 		;TheKite Railroad
 		crossPluginName = "TheKite_Railroad_Handmaiden.esp"
@@ -3064,18 +3071,18 @@ int Function CheckCustomArmorsAndBackpacks()
 		endIf	
 		
 		if (extraArmor != None)
-			if (!DTSleep_ArmorJacketsClothingList.HasForm(extraArmor))
+			if (!DTSleep_ArmorJacketsClothingList.HasForm(extraArmor as Form))
 				modCount += 1
-				DTSleep_ArmorJacketsClothingList.AddForm(extraArmor)
+				DTSleep_ArmorJacketsClothingList.AddForm(extraArmor as Form)
 				DTSleep_ArmorHatHelmList.AddForm(Game.GetFormFromFile(0x0900083F, crossPluginName))
 			endIf
 			
 			extraArmor = Game.GetFormFromFile(0x09000840, crossPluginName) as Armor
-			if (extraArmor != None && !DTSleep_SexyClothesFList.HasForm(extraArmor))
-				Debug.Trace(myScriptName + " --------- added The Kite RR to Female-only list!!!")
-				DTSleep_IntimateAttireFemaleOnlyList.AddForm(extraArmor)
-				DTSleep_SexyClothesFList.AddForm(extraArmor)
-				DTSleep_SexyClothesMList.AddForm(extraArmor)
+			if (extraArmor != None && !DTSleep_IntimateAttireOKUnderList.HasForm(extraArmor as Form))
+				DTSleep_IntimateAttireFemaleOnlyList.AddForm(extraArmor as Form)
+				DTSleep_IntimateAttireOKUnderList.AddForm(extraArmor as Form)
+				DTSleep_SexyClothesFList.AddForm(extraArmor as Form)
+				DTSleep_SexyClothesMList.AddForm(extraArmor as Form)
 			endIf
 		endIf
 		
@@ -3579,6 +3586,10 @@ int Function CheckCustomArmorsAndBackpacks()
 			DTSleep_SleepAttireFemale.AddForm(extraArmor as Form)
 			DTSleep_ArmorAllExceptionList.AddForm(extraArmor as Form)
 		endIf
+		if (DTSleep_ArmorJacketsClothingList.HasForm(extraArmor as Form))
+			; v2.27 fix for error below
+			DTSleep_ArmorJacketsClothingList.RemoveAddedForm(extraArmor as Form)
+		endIf
 	endIf
 	
 	; Vtaw Wardrobe 1
@@ -3586,15 +3597,55 @@ int Function CheckCustomArmorsAndBackpacks()
 	if (!Game.IsPluginInstalled(vtawPlugName))
 		vtawPlugName = "VtawWardrobe1.esl"
 	endIf
-	Form extraForm  = IsPluginActive(0x0900088F, vtawPlugName)
-	if (extraArmor != None)
+	Form extraForm  = IsPluginActive(0x0900087D, vtawPlugName)				
+	if (extraForm != None)			; v2.27 fix - replaced extraArmor with extraForm
 	
-		if (!DTSleep_ArmorJacketsClothingList.HasForm(extraForm))
+		if (!DTSleep_IntimateAttireOKUnderList.HasForm(extraForm))
 			modCount += 1
-			DTSleep_ArmorJacketsClothingList.AddForm(extraForm)
+			DTSleep_IntimateAttireOKUnderList.AddForm(extraForm)  ; boots-outfit
+			DTSleep_ArmorJacketsClothingList.AddForm(Game.GetFormFromFile(0x0900088F, vtawPlugName))
 			DTSleep_ArmorJacketsClothingList.AddForm(Game.GetFormFromFile(0x09000890, vtawPlugName))
 			DTSleep_ArmorExtraClothingList.AddForm(Game.GetFormFromFile(0x09000898, vtawPlugName))
 		endIf
+	endIf
+	
+	; Vtaw Wardrobe 2
+	vtawPlugName = "VtawWardrobe2.esp"
+	if (!Game.IsPluginInstalled(vtawPlugName))
+		vtawPlugName = "VtawWardrobe2.esl"
+	endIf
+	extraForm  = IsPluginActive(0x09000FAA, vtawPlugName)	
+	if (extraForm != None && !DTSleep_IntimateAttireOKUnderList.HasForm(extraForm))
+		modCount += 1
+		DTSleep_IntimateAttireOKUnderList.AddForm(extraForm)
+	endIf
+	
+	; Vtaw Wardrobe 4
+	vtawPlugName = "VtawWardrobe4.esp"
+	extraForm = IsPluginActive(0x0900CF16, vtawPlugName)			
+	if (extraForm != None && !DTSleep_IntimateAttireOKUnderList.HasForm(extraForm))
+		modCount += 1
+		DTSleep_IntimateAttireOKUnderList.AddForm(extraForm)  ; boots-outfit
+		DTSleep_IntimateAttireOKUnderList.AddForm(Game.GetFormFromFile(0x09000CF17, vtawPlugName))
+		DTSleep_IntimateAttireOKUnderList.AddForm(Game.GetFormFromFile(0x090004588, vtawPlugName))
+		DTSleep_ArmorJacketsClothingList.AddForm(Game.GetFormFromFile(0x09000FA7, vtawPlugName))
+		DTSleep_ArmorJacketsClothingList.AddForm(Game.GetFormFromFile(0x09000890, vtawPlugName))
+		DTSleep_ArmorJacketsClothingList.AddForm(Game.GetFormFromFile(0x0900026E8, vtawPlugName))
+		DTSleep_ArmorJacketsClothingList.AddForm(Game.GetFormFromFile(0x0900026EB, vtawPlugName))
+	endIf
+	
+	; Vtaw Utility pack 1
+	vtawPlugName = "VtawUtilityPack1.esp"
+	extraForm = IsPluginActive(0x09001F29, vtawPlugName)
+	if (extraForm != None && !DTSleep_IntimateAttireOKUnderList.HasForm(extraForm))
+		modCount += 1
+		DTSleep_IntimateAttireOKUnderList.AddForm(extraForm)  ; boots-outfit
+		DTSleep_IntimateAttireOKUnderList.AddForm(Game.GetFormFromFile(0x09000361B, vtawPlugName))
+		DTSleep_ArmorExtraClothingList.AddForm(Game.GetFormFromFile(0x0900173E, vtawPlugName))			; Top-Mid in Beard slot
+		DTSleep_ArmorExtraClothingList.AddForm(Game.GetFormFromFile(0x09006423, vtawPlugName))			; onePiece in beard slot
+		DTSleep_ArmorExtraClothingList.AddForm(Game.GetFormFromFile(0x0900B0D9, vtawPlugName))			; pantyhose in beard slot
+		DTSleep_ArmorExtraClothingList.AddForm(Game.GetFormFromFile(0x0900B0FA, vtawPlugName))			; pantyhose
+		DTSleep_ArmorChokerList.AddForm(Game.GetFormFromFile(0x09000830B, vtawPlugName))
 	endIf
 	
 	

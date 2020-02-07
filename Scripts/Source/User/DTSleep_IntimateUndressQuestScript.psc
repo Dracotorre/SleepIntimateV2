@@ -117,6 +117,8 @@ FormList property DTSleep_ArmorGlassesList auto const
 FormList property DTSleep_LeitoGunList auto const ; for backup check
 FormList property DTSleep_BT2GunList auto const
 FormList property DTSleep_IntimateAttireFemaleOnlyList auto const
+FormList property DTSleep_IntimateAttireOKUnderList auto const
+{ must remove under armor on these intimate outfits -- usually slot-33 only with shoes -- will also remove for sleep }
 EndGroup
 
 Group C_Armors
@@ -3498,6 +3500,23 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 		
 			; intimate item could be in any slot so check at end to re-equip
 			actorWearingIntimateItem = IsActorWearingIntimateItem(actorRef)
+			; v2.27 override slot-33-only-with-shoes intimate for sleep
+			if (actorWearingIntimateItem && includeClothing && !includeExceptions)
+				bool remItem = false
+				if (actorRef == PlayerRef)
+					if (DressData.PlayerEquippedIntimateAttireItem != None && DTSleep_IntimateAttireOKUnderList.HasForm(DressData.PlayerEquippedIntimateAttireItem as Form))
+						remItem = true
+					endIf
+				elseIf (actorRef == CompanionRef)
+					if (DressData.CompanionEquippedIntimateAttireItem != None && DTSleep_IntimateAttireOKUnderList.HasForm(DressData.CompanionEquippedIntimateAttireItem as Form))
+						remItem = true
+					endIf
+				endIf
+				if (remItem)
+					actorRef.UnequipItem(DressData.PlayerEquippedIntimateAttireItem, false, true)
+					actorWearingIntimateItem = false
+				endIf
+			endIf
 			if (actorRef == PlayerRef)
 				toyCheckRef = DressData.PlayerEquippedStrapOnItem
 			elseIf (actorRef == CompanionRef)
@@ -3695,14 +3714,20 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 		elseIf (actorRef == PlayerRef)
 		
 			; assume intimate a main outfit then check at end for correction
-			if (!actorWearingIntimateItem)
-				ensureNude = true
+			if (actorWearingIntimateItem)
+				bool okayExceptions = includeExceptions
+				if (okayExceptions && DressData.PlayerEquippedIntimateAttireItem != None && !DTSleep_IntimateAttireOKUnderList.HasForm(DressData.PlayerEquippedIntimateAttireItem as Form))
+					okayExceptions = false
+				endIf
+				UndressActorArmorInnerSlots(actorRef, okayExceptions, okayExceptions)	; v2.27 - for intimate outfit--changed
+			else
+				ensureNude = true			; no intimate outfit
 				
 				actorRef.UnequipItemSlot(3) ; 33 - full body outfit
 				; wait for a mod item event
 				Utility.WaitMenuMode(0.12)
-				
-				UndressActorArmorInnerSlots(actorRef, includeExceptions)	; v2.17 - moved as part of intimate outfit
+				; v2.17 - moved as part of not-intimate outfit
+				UndressActorArmorInnerSlots(actorRef, true)	
 			endIf
 			actorRef.UnequipItemSlot(4) 	; 34 - left hand
 			actorRef.UnequipItemSlot(5)
@@ -4059,19 +4084,25 @@ int Function UndressActorArmorForListFromArray(Actor actorRef, FormList armorLis
 	return count
 endFunction
 
-Function UndressActorArmorInnerSlots(Actor actorRef, bool includeExceptions)
+Function UndressActorArmorInnerSlots(Actor actorRef, bool includeExceptions, bool alwaysRemove = false)
 		
 	actorRef.UnequipItemSlot(4) 	; 34 - left hand 
 	actorRef.UnequipItemSlot(5)
 	
 	; normally considered under-armor clothing pieces
-	actorRef.UnequipItemSlot(6) 	; 36 - u-torso !!!(AWK-Bracelet)!!
-	if (includeExceptions || IsSummerSeason() || !IsActorWearingSlotULegExepction(actorRef))
+	
+	if (alwaysRemove || IsSummerSeason())
 		actorRef.UnequipItemSlot(7) 	; 37 - u-L arm  AWK-Jacket, Cross overcoats
+		actorRef.UnequipItemSlot(8) 	; 38 - u-R arm
+		actorRef.UnequipItemSlot(9) 	; 39 - u-L leg  CROSS-Bos boots, AWK-*OnHip
+		actorRef.UnequipItemSlot(10)
+	elseIf (includeExceptions && !IsActorWearingSlotULegExepction(actorRef))
+		actorRef.UnequipItemSlot(6) 	; 36 - u-torso !!!(AWK-Bracelet)!!
+		actorRef.UnequipItemSlot(7) 	; 37 - u-L arm  AWK-Jacket, Cross overcoats
+		actorRef.UnequipItemSlot(8) 	; u-R arm
 		actorRef.UnequipItemSlot(9) 	; 39 - u-L leg  CROSS-Bos boots, AWK-*OnHip
 		actorRef.UnequipItemSlot(10)
 	endIf
-	actorRef.UnequipItemSlot(8) ; u-R arm
 	
 endFunction
 

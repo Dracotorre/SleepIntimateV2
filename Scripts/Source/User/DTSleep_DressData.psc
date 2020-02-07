@@ -22,7 +22,7 @@ int property PlayerGender = -1 auto conditional hidden
 ; player main outfit data
 Armor property PlayerEquippedHat auto conditional hidden
 Armor property PlayerEquippedBodyOutfit auto conditional hidden
-{ not currently used - no keywords }
+{ used only when we know what it is }
 Armor property PlayerEquippedMask auto conditional hidden
 Armor property PlayerLastEquippedHat auto conditional hidden
 Armor property PlayerLastEquippedBodyOutfit auto conditional hidden
