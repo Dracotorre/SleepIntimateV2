@@ -1944,6 +1944,19 @@ bool Function IsObjectDancePole(ObjectReference obj)
 	return false
 endFunction
 
+bool Function IsObjDesk(ObjectReference obj, Form baseBedForm)
+	if (obj != None)
+		if (baseBedForm == None)
+			baseBedForm = obj.GetBaseObject()
+		endIf
+		if (DTSleep_IntimateDeskList.HasForm(baseBedForm))
+			return true
+		endIf
+	endIf
+	
+	return false
+endFunction
+
 bool Function IsObjMotorcycle(ObjectReference obj, Form baseForm)
 
 	if (obj != None)
@@ -3243,6 +3256,7 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 								
 								if (DTSleep_IntimateStoolBackList.HasForm(SleepBedRef.GetBaseObject() as Form))
 									headingAngle = SleepBedRef.GetAngleZ() + 90.0
+									yOffset = 3.0
 								elseIf (DTSleep_IntimateStoolNoAngleList.HasForm(SleepBedRef.GetBaseObject() as Form))
 									headingAngle = SleepBedRef.GetAngleZ() + 0.1
 									yOffset = -6.3
@@ -4316,6 +4330,17 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 						endIf
 					endIf
 					
+				elseIf (packID == 10)
+					if (SceneData.SameGender == false)
+						if (SleepBedRef.HasKeyword(DTSleep_IntimateChairKeyword) || DTSleep_IntimateChairsList.HasForm(baseBedForm))
+							sidArray.Add(37)
+							sidArray.Add(38)
+						elseIf (SleepBedRef.HasKeyword(AnimFurnCouchKY) || DTSleep_IntimateCouchList.HasForm(baseBedForm))
+							sidArray.Add(34)
+						elseIf (bedIsSMBed || DTSleep_IntimateBenchList.HasForm(baseBedForm))
+							sidArray.Add(59)
+						endIf
+					endIf
 				elseIf (packID == 7)
 				
 					;if (SceneData.IsUsingCreature && SceneData.IsCreatureType == 2)
@@ -4614,6 +4639,34 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 					endIf
 				endIf
 			endIf	; end isAtomicLust
+			
+		;elseIf (packID == 10 && !bedIsBunk && !bedIsCoffin)
+		;	if (!SceneData.SameGender)
+		;		okayAdd = true
+		;		if (playerPick && !DoesMainActorPrefID(0))
+		;			okayAdd = false
+		;		endIf
+		;		if (okayAdd)
+		;			sidArray.Add(0)
+		;			sidArray.Add(1)
+		;		endIf
+		;		okayAdd = true
+		;		if (playerPick && !DoesMainActorPrefID(3))
+		;			okayAdd = false
+		;		endIf
+		;		if (okayAdd)
+		;			sidArray.Add(3)
+		;		endIf
+		;		okayAdd = true
+		;		if (playerPick && !DoesMainActorPrefID(5))
+		;			okayAdd = false
+		;		endIf
+		;		if (okayAdd)
+		;			sidArray.Add(5)
+		;			sidArray.Add(6)
+		;			sidArray.Add(7)
+		;		endIf
+		;	endIf
 			
 		; 50 Shades by Gray
 		elseIf (packID == 9 && !pillowBedHasFrame && !bedIsBunk && !bedIsCoffin)

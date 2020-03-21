@@ -1,0 +1,443 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<SliderSetInfo version="1">
+    <SliderSet name="SI-Camisole-FusionGirl">
+        <DataFolder>DTSleep-Camisole-FG</DataFolder>
+        <SourceFile>Camisole01.nif</SourceFile>
+        <OutputPath>meshes\DTSleep\Jets</OutputPath>
+        <OutputFile GenWeights="false">CamisoleFG</OutputFile>
+        <Shape target="BaseFBody" DataFolder="ZeX-FusionGirl">BaseFBody</Shape>
+        <Shape target="Panty">Panty</Shape>
+        <Shape target="Top">Top</Shape>
+        <Slider name="Belly Pregnant" invert="false" default="0">
+            <Data name="BaseFBodyBelly Pregnant" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyBelly Pregnant</Data>
+            <Data name="PantyBelly Pregnant" target="Panty" local="true">Camisole01.osd\PantyBelly Pregnant</Data>
+            <Data name="TopBelly Pregnant" target="Top" local="true">Camisole01.osd\TopBelly Pregnant</Data>
+        </Slider>
+        <Slider name="Belly Big" invert="false" default="0">
+            <Data name="BaseFBodyBelly Big" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyBelly Big</Data>
+            <Data name="PantyBelly Big" target="Panty" local="true">Camisole01.osd\PantyBelly Big</Data>
+            <Data name="TopBelly Big" target="Top" local="true">Camisole01.osd\TopBelly Big</Data>
+        </Slider>
+        <Slider name="Belly Size" invert="false" default="0">
+            <Data name="BaseFBodyBelly Size" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyBelly Size</Data>
+            <Data name="PantyBelly Size" target="Panty" local="true">Camisole01.osd\PantyBelly Size</Data>
+            <Data name="TopBelly Size" target="Top" local="true">Camisole01.osd\TopBelly Size</Data>
+        </Slider>
+        <Slider name="Belly Tuck" invert="false" default="0">
+            <Data name="BaseFBodyBelly Tuck" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyBelly Tuck</Data>
+            <Data name="PantyBelly Tuck" target="Panty" local="true">Camisole01.osd\PantyBelly Tuck</Data>
+            <Data name="TopBelly Tuck" target="Top" local="true">Camisole01.osd\TopBelly Tuck</Data>
+        </Slider>
+        <Slider name="Boobs Yuge" invert="false" default="0">
+            <Data name="BaseFBodyBoobs Yuge" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyBoobs Yuge</Data>
+            <Data name="PantyBoobs Yuge" target="Panty" local="true">Camisole01.osd\PantyBoobs Yuge</Data>
+            <Data name="TopBoobs Yuge" target="Top" local="true">Camisole01.osd\TopBoobs Yuge</Data>
+        </Slider>
+        <Slider name="Boobs Big" invert="false" default="0">
+            <Data name="BaseFBodyBoobs Big" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyBoobs Big</Data>
+            <Data name="PantyBoobs Big" target="Panty" local="true">Camisole01.osd\PantyBoobs Big</Data>
+            <Data name="TopBoobs Big" target="Top" local="true">Camisole01.osd\TopBoobs Big</Data>
+        </Slider>
+        <Slider name="Boobs Cleavage" invert="false" default="0">
+            <Data name="BaseFBodyBoobs Cleavage" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyBoobs Cleavage</Data>
+            <Data name="TopBoobs Cleavage" target="Top" local="true">Camisole01.osd\TopBoobs Cleavage</Data>
+        </Slider>
+        <Slider name="Boobs Flat" invert="false" default="0">
+            <Data name="BaseFBodyBoobs Flat" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyBoobs Flat</Data>
+            <Data name="TopBoobs Flat" target="Top" local="true">Camisole01.osd\TopBoobs Flat</Data>
+        </Slider>
+        <Slider name="Boobs Gravity" invert="false" default="0">
+            <Data name="BaseFBodyBoobs Gravity" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyBoobs Gravity</Data>
+            <Data name="PantyBoobs Gravity" target="Panty" local="true">Camisole01.osd\PantyBoobs Gravity</Data>
+            <Data name="TopBoobs Gravity" target="Top" local="true">Camisole01.osd\TopBoobs Gravity</Data>
+        </Slider>
+        <Slider name="Boobs Height" invert="false" default="0">
+            <Data name="BaseFBodyBoobs Height" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyBoobs Height</Data>
+            <Data name="TopBoobs Height" target="Top" local="true">Camisole01.osd\TopBoobs Height</Data>
+        </Slider>
+        <Slider name="Boobs Mellons" invert="false" default="0">
+            <Data name="BaseFBodyBoobs Mellons" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyBoobs Mellons</Data>
+            <Data name="PantyBoobs Mellons" target="Panty" local="true">Camisole01.osd\PantyBoobs Mellons</Data>
+            <Data name="TopBoobs Mellons" target="Top" local="true">Camisole01.osd\TopBoobs Mellons</Data>
+        </Slider>
+        <Slider name="Boobs Perky" invert="false" default="0">
+            <Data name="BaseFBodyBoobs Perky" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyBoobs Perky</Data>
+            <Data name="PantyBoobs Perky" target="Panty" local="true">Camisole01.osd\PantyBoobs Perky</Data>
+            <Data name="TopBoobs Perky" target="Top" local="true">Camisole01.osd\TopBoobs Perky</Data>
+        </Slider>
+        <Slider name="Boobs Push Up" invert="false" default="0">
+            <Data name="BaseFBodyBoobs Push Up" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyBoobs Push Up</Data>
+            <Data name="PantyBoobs Push Up" target="Panty" local="true">Camisole01.osd\PantyBoobs Push Up</Data>
+            <Data name="TopBoobs Push Up" target="Top" local="true">Camisole01.osd\TopBoobs Push Up</Data>
+        </Slider>
+        <Slider name="Boobs Small" invert="false" default="0">
+            <Data name="BaseFBodyBoobs Small" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyBoobs Small</Data>
+            <Data name="TopBoobs Small" target="Top" local="true">Camisole01.osd\TopBoobs Small</Data>
+        </Slider>
+        <Slider name="Boobs Together" invert="false" default="0">
+            <Data name="BaseFBodyBoobs Together" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyBoobs Together</Data>
+            <Data name="TopBoobs Together" target="Top" local="true">Camisole01.osd\TopBoobs Together</Data>
+        </Slider>
+        <Slider name="Boobs Top Slope" invert="false" default="0">
+            <Data name="BaseFBodyBoobs Top Slope" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyBoobs Top Slope</Data>
+            <Data name="PantyBoobs Top Slope" target="Panty" local="true">Camisole01.osd\PantyBoobs Top Slope</Data>
+            <Data name="TopBoobs Top Slope" target="Top" local="true">Camisole01.osd\TopBoobs Top Slope</Data>
+        </Slider>
+        <Slider name="Boobs Width" invert="false" default="0">
+            <Data name="BaseFBodyBoobs Width" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyBoobs Width</Data>
+            <Data name="TopBoobs Width" target="Top" local="true">Camisole01.osd\TopBoobs Width</Data>
+        </Slider>
+        <Slider name="Boobs Tiny" invert="false" default="0">
+            <Data name="BaseFBodyBoobs Tiny" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyBoobs Tiny</Data>
+            <Data name="PantyBoobs Tiny" target="Panty" local="true">Camisole01.osd\PantyBoobs Tiny</Data>
+            <Data name="TopBoobs Tiny" target="Top" local="true">Camisole01.osd\TopBoobs Tiny</Data>
+        </Slider>
+        <Slider name="Nipples Length" invert="false" default="0">
+            <Data name="BaseFBodyNipples Length" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyNipples Length</Data>
+            <Data name="TopNipples Length" target="Top" local="true">Camisole01.osd\TopNipples Length</Data>
+        </Slider>
+        <Slider name="Nipples Areola" invert="false" default="0">
+            <Data name="BaseFBodyNipples Areola" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyNipples Areola</Data>
+            <Data name="TopNipples Areola" target="Top" local="true">Camisole01.osd\TopNipples Areola</Data>
+        </Slider>
+        <Slider name="Nipples Distance" invert="false" default="0">
+            <Data name="BaseFBodyNipples Distance" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyNipples Distance</Data>
+            <Data name="TopNipples Distance" target="Top" local="true">Camisole01.osd\TopNipples Distance</Data>
+        </Slider>
+        <Slider name="Nipples Down" invert="false" default="0">
+            <Data name="BaseFBodyNipples Down" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyNipples Down</Data>
+            <Data name="TopNipples Down" target="Top" local="true">Camisole01.osd\TopNipples Down</Data>
+        </Slider>
+        <Slider name="Nipples Gone" invert="false" default="0">
+            <Data name="BaseFBodyNipples Gone" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyNipples Gone</Data>
+            <Data name="TopNipples Gone" target="Top" local="true">Camisole01.osd\TopNipples Gone</Data>
+        </Slider>
+        <Slider name="Nipples Shape" invert="false" default="0">
+            <Data name="BaseFBodyNipples Shape" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyNipples Shape</Data>
+            <Data name="TopNipples Shape" target="Top" local="true">Camisole01.osd\TopNipples Shape</Data>
+        </Slider>
+        <Slider name="Nipples Size" invert="false" default="0">
+            <Data name="BaseFBodyNipples Size" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyNipples Size</Data>
+            <Data name="TopNipples Size" target="Top" local="true">Camisole01.osd\TopNipples Size</Data>
+        </Slider>
+        <Slider name="Nipples Perkiness" invert="false" default="0">
+            <Data name="BaseFBodyNipples Perkiness" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyNipples Perkiness</Data>
+            <Data name="TopNipples Perkiness" target="Top" local="true">Camisole01.osd\TopNipples Perkiness</Data>
+        </Slider>
+        <Slider name="Nipples Puffy" invert="false" default="0">
+            <Data name="BaseFBodyNipples Puffy" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyNipples Puffy</Data>
+            <Data name="TopNipples Puffy" target="Top" local="true">Camisole01.osd\TopNipples Puffy</Data>
+        </Slider>
+        <Slider name="Nipples Up" invert="false" default="0">
+            <Data name="BaseFBodyNipples Up" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyNipples Up</Data>
+            <Data name="TopNipples Up" target="Top" local="true">Camisole01.osd\TopNipples Up</Data>
+        </Slider>
+        <Slider name="Nipples Tip" invert="false" default="0">
+            <Data name="BaseFBodyNipples Tip" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyNipples Tip</Data>
+            <Data name="TopNipples Tip" target="Top" local="true">Camisole01.osd\TopNipples Tip</Data>
+        </Slider>
+        <Slider name="Chest Depth" invert="false" default="0">
+            <Data name="BaseFBodyChest Depth" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyChest Depth</Data>
+            <Data name="TopChest Depth" target="Top" local="true">Camisole01.osd\TopChest Depth</Data>
+        </Slider>
+        <Slider name="Chest Width" invert="false" default="0">
+            <Data name="BaseFBodyChest Width" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyChest Width</Data>
+            <Data name="TopChest Width" target="Top" local="true">Camisole01.osd\TopChest Width</Data>
+        </Slider>
+        <Slider name="Waist Chubby" invert="false" default="0">
+            <Data name="BaseFBodyWaist Chubby" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyWaist Chubby</Data>
+            <Data name="PantyWaist Chubby" target="Panty" local="true">Camisole01.osd\PantyWaist Chubby</Data>
+            <Data name="TopWaist Chubby" target="Top" local="true">Camisole01.osd\TopWaist Chubby</Data>
+        </Slider>
+        <Slider name="Waist Size" invert="false" default="0">
+            <Data name="BaseFBodyWaist Size" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyWaist Size</Data>
+            <Data name="PantyWaist Size" target="Panty" local="true">Camisole01.osd\PantyWaist Size</Data>
+            <Data name="TopWaist Size" target="Top" local="true">Camisole01.osd\TopWaist Size</Data>
+        </Slider>
+        <Slider name="Waist Height" invert="false" default="0">
+            <Data name="BaseFBodyWaist Height" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyWaist Height</Data>
+            <Data name="TopWaist Height" target="Top" local="true">Camisole01.osd\TopWaist Height</Data>
+        </Slider>
+        <Slider name="Waist Line" invert="false" default="0">
+            <Data name="BaseFBodyWaist Line" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyWaist Line</Data>
+            <Data name="TopWaist Line" target="Top" local="true">Camisole01.osd\TopWaist Line</Data>
+        </Slider>
+        <Slider name="Back Size" invert="false" default="0">
+            <Data name="BaseFBodyBack Size" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyBack Size</Data>
+            <Data name="PantyBack Size" target="Panty" local="true">Camisole01.osd\PantyBack Size</Data>
+            <Data name="TopBack Size" target="Top" local="true">Camisole01.osd\TopBack Size</Data>
+        </Slider>
+        <Slider name="Back Arch" invert="false" default="0">
+            <Data name="BaseFBodyBack Arch" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyBack Arch</Data>
+            <Data name="TopBack Arch" target="Top" local="true">Camisole01.osd\TopBack Arch</Data>
+        </Slider>
+        <Slider name="Hips Bone" invert="false" default="0">
+            <Data name="BaseFBodyHips Bone" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyHips Bone</Data>
+            <Data name="PantyHips Bone" target="Panty" local="true">Camisole01.osd\PantyHips Bone</Data>
+            <Data name="TopHips Bone" target="Top" local="true">Camisole01.osd\TopHips Bone</Data>
+        </Slider>
+        <Slider name="Hips Size" invert="false" default="0">
+            <Data name="BaseFBodyHips Size" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyHips Size</Data>
+            <Data name="PantyHips Size" target="Panty" local="true">Camisole01.osd\PantyHips Size</Data>
+            <Data name="TopHips Size" target="Top" local="true">Camisole01.osd\TopHips Size</Data>
+        </Slider>
+        <Slider name="Hips Upper Width" invert="false" default="0">
+            <Data name="BaseFBodyHips Upper Width" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyHips Upper Width</Data>
+            <Data name="PantyHips Upper Width" target="Panty" local="true">Camisole01.osd\PantyHips Upper Width</Data>
+            <Data name="TopHips Upper Width" target="Top" local="true">Camisole01.osd\TopHips Upper Width</Data>
+        </Slider>
+        <Slider name="Bum Size" invert="false" default="0">
+            <Data name="BaseFBodyBum Size" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyBum Size</Data>
+            <Data name="PantyBum Size" target="Panty" local="true">Camisole01.osd\PantyBum Size</Data>
+            <Data name="TopBum Size" target="Top" local="true">Camisole01.osd\TopBum Size</Data>
+        </Slider>
+        <Slider name="Bum Crack" invert="false" default="0">
+            <Data name="BaseFBodyBum Crack" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyBum Crack</Data>
+            <Data name="PantyBum Crack" target="Panty" local="true">Camisole01.osd\PantyBum Crack</Data>
+            <Data name="TopBum Crack" target="Top" local="true">Camisole01.osd\TopBum Crack</Data>
+        </Slider>
+        <Slider name="Bum Shape 1" invert="false" default="0">
+            <Data name="BaseFBodyBum Shape 1" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyBum Shape 1</Data>
+            <Data name="PantyBum Shape 1" target="Panty" local="true">Camisole01.osd\PantyBum Shape 1</Data>
+            <Data name="TopBum Shape 1" target="Top" local="true">Camisole01.osd\TopBum Shape 1</Data>
+        </Slider>
+        <Slider name="Bum Shape 2" invert="false" default="0">
+            <Data name="BaseFBodyBum Shape 2" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyBum Shape 2</Data>
+            <Data name="PantyBum Shape 2" target="Panty" local="true">Camisole01.osd\PantyBum Shape 2</Data>
+            <Data name="TopBum Shape 2" target="Top" local="true">Camisole01.osd\TopBum Shape 2</Data>
+        </Slider>
+        <Slider name="Bum Small" invert="false" default="0">
+            <Data name="BaseFBodyBum Small" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyBum Small</Data>
+            <Data name="PantyBum Small" target="Panty" local="true">Camisole01.osd\PantyBum Small</Data>
+            <Data name="TopBum Small" target="Top" local="true">Camisole01.osd\TopBum Small</Data>
+        </Slider>
+        <Slider name="Bum Chubby" invert="false" default="0">
+            <Data name="BaseFBodyBum Chubby" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyBum Chubby</Data>
+            <Data name="PantyBum Chubby" target="Panty" local="true">Camisole01.osd\PantyBum Chubby</Data>
+            <Data name="TopBum Chubby" target="Top" local="true">Camisole01.osd\TopBum Chubby</Data>
+        </Slider>
+        <Slider name="Bum Round" invert="false" default="0">
+            <Data name="BaseFBodyBum Round" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyBum Round</Data>
+            <Data name="PantyBum Round" target="Panty" local="true">Camisole01.osd\PantyBum Round</Data>
+            <Data name="TopBum Round" target="Top" local="true">Camisole01.osd\TopBum Round</Data>
+        </Slider>
+        <Slider name="Bum Apple" invert="false" default="0">
+            <Data name="BaseFBodyBum Apple" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyBum Apple</Data>
+            <Data name="PantyBum Apple" target="Panty" local="true">Camisole01.osd\PantyBum Apple</Data>
+            <Data name="TopBum Apple" target="Top" local="true">Camisole01.osd\TopBum Apple</Data>
+        </Slider>
+        <Slider name="Calf Size" invert="false" default="0">
+            <Data name="BaseFBodyCalf Size" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyCalf Size</Data>
+        </Slider>
+        <Slider name="Calf Small" invert="false" default="0">
+            <Data name="BaseFBodyCalf Small" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyCalf Small</Data>
+        </Slider>
+        <Slider name="Legs Chubby" invert="false" default="0">
+            <Data name="BaseFBodyLegs Chubby" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyLegs Chubby</Data>
+            <Data name="PantyLegs Chubby" target="Panty" local="true">Camisole01.osd\PantyLegs Chubby</Data>
+            <Data name="TopLegs Chubby" target="Top" local="true">Camisole01.osd\TopLegs Chubby</Data>
+        </Slider>
+        <Slider name="Legs Shape" invert="false" default="0">
+            <Data name="BaseFBodyLegs Shape" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyLegs Shape</Data>
+            <Data name="PantyLegs Shape" target="Panty" local="true">Camisole01.osd\PantyLegs Shape</Data>
+            <Data name="TopLegs Shape" target="Top" local="true">Camisole01.osd\TopLegs Shape</Data>
+        </Slider>
+        <Slider name="Legs Thin" invert="false" default="0">
+            <Data name="BaseFBodyLegs Thin" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyLegs Thin</Data>
+            <Data name="PantyLegs Thin" target="Panty" local="true">Camisole01.osd\PantyLegs Thin</Data>
+            <Data name="TopLegs Thin" target="Top" local="true">Camisole01.osd\TopLegs Thin</Data>
+        </Slider>
+        <Slider name="Thighs Slim" invert="false" default="0">
+            <Data name="BaseFBodyThighs Slim" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyThighs Slim</Data>
+            <Data name="PantyThighs Slim" target="Panty" local="true">Camisole01.osd\PantyThighs Slim</Data>
+            <Data name="TopThighs Slim" target="Top" local="true">Camisole01.osd\TopThighs Slim</Data>
+        </Slider>
+        <Slider name="Thighs Size" invert="false" default="0">
+            <Data name="BaseFBodyThighs Size" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyThighs Size</Data>
+            <Data name="PantyThighs Size" target="Panty" local="true">Camisole01.osd\PantyThighs Size</Data>
+            <Data name="TopThighs Size" target="Top" local="true">Camisole01.osd\TopThighs Size</Data>
+        </Slider>
+        <Slider name="Ankle Size" invert="false" default="0">
+            <Data name="BaseFBodyAnkle Size" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyAnkle Size</Data>
+        </Slider>
+        <Slider name="Arms Chubby" invert="false" default="0">
+            <Data name="BaseFBodyArms Chubby" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyArms Chubby</Data>
+            <Data name="TopArms Chubby" target="Top" local="true">Camisole01.osd\TopArms Chubby</Data>
+        </Slider>
+        <Slider name="Shoulder Smooth" invert="false" default="0">
+            <Data name="BaseFBodyShoulder Smooth" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyShoulder Smooth</Data>
+            <Data name="TopShoulder Smooth" target="Top" local="true">Camisole01.osd\TopShoulder Smooth</Data>
+        </Slider>
+        <Slider name="Shoulder Tweak" invert="false" default="0">
+            <Data name="BaseFBodyShoulder Tweak" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyShoulder Tweak</Data>
+            <Data name="TopShoulder Tweak" target="Top" local="true">Camisole01.osd\TopShoulder Tweak</Data>
+        </Slider>
+        <Slider name="Arms Size" invert="false" default="0">
+            <Data name="BaseFBodyArms Size" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyArms Size</Data>
+            <Data name="TopArms Size" target="Top" local="true">Camisole01.osd\TopArms Size</Data>
+        </Slider>
+        <Slider name="Armpit Ajustment" invert="false" default="0">
+            <Data name="BaseFBodyArmpit Ajustment" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyArmpit Ajustment</Data>
+            <Data name="TopArmpit Ajustment" target="Top" local="true">Camisole01.osd\TopArmpit Ajustment</Data>
+        </Slider>
+        <Slider name="Forearms Size" invert="false" default="0">
+            <Data name="BaseFBodyForearms Size" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyForearms Size</Data>
+        </Slider>
+        <Slider name="Torso Size" invert="false" default="0">
+            <Data name="BaseFBodyTorso Size" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyTorso Size</Data>
+            <Data name="PantyTorso Size" target="Panty" local="true">Camisole01.osd\PantyTorso Size</Data>
+            <Data name="TopTorso Size" target="Top" local="true">Camisole01.osd\TopTorso Size</Data>
+        </Slider>
+        <Slider name="Sturnum Depth" invert="false" default="0">
+            <Data name="BaseFBodySturnum Depth" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodySturnum Depth</Data>
+            <Data name="PantySturnum Depth" target="Panty" local="true">Camisole01.osd\PantySturnum Depth</Data>
+            <Data name="TopSturnum Depth" target="Top" local="true">Camisole01.osd\TopSturnum Depth</Data>
+        </Slider>
+        <Slider name="Sturnum Height" invert="false" default="0">
+            <Data name="BaseFBodySturnum Height" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodySturnum Height</Data>
+            <Data name="PantySturnum Height" target="Panty" local="true">Camisole01.osd\PantySturnum Height</Data>
+            <Data name="TopSturnum Height" target="Top" local="true">Camisole01.osd\TopSturnum Height</Data>
+        </Slider>
+        <Slider name="Groin Position" invert="false" default="0">
+            <Data name="BaseFBodyGroin Position" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyGroin Position</Data>
+            <Data name="PantyGroin Position" target="Panty" local="true">Camisole01.osd\PantyGroin Position</Data>
+            <Data name="TopGroin Position" target="Top" local="true">Camisole01.osd\TopGroin Position</Data>
+        </Slider>
+        <Slider name="Groin Back" invert="false" default="0">
+            <Data name="BaseFBodyGroin Back" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyGroin Back</Data>
+            <Data name="PantyGroin Back" target="Panty" local="true">Camisole01.osd\PantyGroin Back</Data>
+            <Data name="TopGroin Back" target="Top" local="true">Camisole01.osd\TopGroin Back</Data>
+        </Slider>
+        <Slider name="Labia Minora Flat" invert="false" default="0">
+            <Data name="BaseFBodyLabia Minora Flat" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyLabia Minora Flat</Data>
+            <Data name="PantyLabia Minora Flat" target="Panty" local="true">Camisole01.osd\PantyLabia Minora Flat</Data>
+        </Slider>
+        <Slider name="Labia Minora Longer" invert="false" default="0">
+            <Data name="BaseFBodyLabia Minora Longer" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyLabia Minora Longer</Data>
+            <Data name="PantyLabia Minora Longer" target="Panty" local="true">Camisole01.osd\PantyLabia Minora Longer</Data>
+        </Slider>
+        <Slider name="Clitoras Size" invert="false" default="0">
+            <Data name="BaseFBodyClitoras Size" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyClitoras Size</Data>
+            <Data name="PantyClitoras Size" target="Panty" local="true">Camisole01.osd\PantyClitoras Size</Data>
+        </Slider>
+        <Slider name="Clitoras Long" invert="false" default="0">
+            <Data name="BaseFBodyClitoras Long" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyClitoras Long</Data>
+        </Slider>
+        <Slider name="Labia Majora Long" invert="false" default="0">
+            <Data name="BaseFBodyLabia Majora Long" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyLabia Majora Long</Data>
+            <Data name="PantyLabia Majora Long" target="Panty" local="true">Camisole01.osd\PantyLabia Majora Long</Data>
+        </Slider>
+        <Slider name="Labia Majora Wide" invert="false" default="0">
+            <Data name="BaseFBodyLabia Majora Wide" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyLabia Majora Wide</Data>
+            <Data name="PantyLabia Majora Wide" target="Panty" local="true">Camisole01.osd\PantyLabia Majora Wide</Data>
+            <Data name="TopLabia Majora Wide" target="Top" local="true">Camisole01.osd\TopLabia Majora Wide</Data>
+        </Slider>
+        <Slider name="Labia Majora Inner" invert="false" default="0">
+            <Data name="BaseFBodyLabia Majora Inner" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyLabia Majora Inner</Data>
+            <Data name="PantyLabia Majora Inner" target="Panty" local="true">Camisole01.osd\PantyLabia Majora Inner</Data>
+        </Slider>
+        <Slider name="AbDefinition" invert="false" default="0">
+            <Data name="BaseFBodyAbDefinition" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyAbDefinition</Data>
+            <Data name="PantyAbDefinition" target="Panty" local="true">Camisole01.osd\PantyAbDefinition</Data>
+            <Data name="TopAbDefinition" target="Top" local="true">Camisole01.osd\TopAbDefinition</Data>
+        </Slider>
+        <Slider name="Body Toning" invert="false" default="0">
+            <Data name="BaseFBodyBody Toning" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyBody Toning</Data>
+            <Data name="PantyBody Toning" target="Panty" local="true">Camisole01.osd\PantyBody Toning</Data>
+            <Data name="TopBody Toning" target="Top" local="true">Camisole01.osd\TopBody Toning</Data>
+        </Slider>
+        <Slider name="TigerSanBB" invert="false" default="0">
+            <Data name="BaseFBodyTigerSanBB" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyTigerSanBB</Data>
+            <Data name="PantyTigerSanBB" target="Panty" local="true">Camisole01.osd\PantyTigerSanBB</Data>
+            <Data name="TopTigerSanBB" target="Top" local="true">Camisole01.osd\TopTigerSanBB</Data>
+        </Slider>
+        <Slider name="XunAbs" invert="false" default="0">
+            <Data name="BaseFBodyXunAbs" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyXunAbs</Data>
+            <Data name="PantyXunAbs" target="Panty" local="true">Camisole01.osd\PantyXunAbs</Data>
+            <Data name="TopXunAbs" target="Top" local="true">Camisole01.osd\TopXunAbs</Data>
+        </Slider>
+        <Slider name="FFB Fitness 2" invert="false" default="0">
+            <Data name="BaseFBodyFFB Fitness 2" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyFFB Fitness 2</Data>
+            <Data name="PantyFFB Fitness 2" target="Panty" local="true">Camisole01.osd\PantyFFB Fitness 2</Data>
+            <Data name="TopFFB Fitness 2" target="Top" local="true">Camisole01.osd\TopFFB Fitness 2</Data>
+        </Slider>
+        <Slider name="Athletic" invert="false" default="0">
+            <Data name="BaseFBodyAthletic" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyAthletic</Data>
+            <Data name="PantyAthletic" target="Panty" local="true">Camisole01.osd\PantyAthletic</Data>
+            <Data name="TopAthletic" target="Top" local="true">Camisole01.osd\TopAthletic</Data>
+        </Slider>
+        <Slider name="SeveNBase Bombshell" invert="false" default="0">
+            <Data name="BaseFBodySeveNBase Bombshell" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodySeveNBase Bombshell</Data>
+            <Data name="PantySeveNBase Bombshell" target="Panty" local="true">Camisole01.osd\PantySeveNBase Bombshell</Data>
+            <Data name="TopSeveNBase Bombshell" target="Top" local="true">Camisole01.osd\TopSeveNBase Bombshell</Data>
+        </Slider>
+        <Slider name="Knee Height" invert="false" default="0">
+            <Data name="BaseFBodyKnee Height" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyKnee Height</Data>
+        </Slider>
+        <Slider name="Shoulder Width" invert="false" default="0">
+            <Data name="BaseFBodyShoulder Width" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyShoulder Width</Data>
+            <Data name="TopShoulder Width" target="Top" local="true">Camisole01.osd\TopShoulder Width</Data>
+        </Slider>
+        <Slider name="HighHeels" invert="false" default="0" hidden="true">
+            <Data name="BaseFBodyHighHeels" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyHighHeels</Data>
+        </Slider>
+        <Slider name="BodyFat" invert="false" default="0">
+            <Data name="BaseFBodyBodyFat" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyBodyFat</Data>
+            <Data name="PantyBodyFat" target="Panty" local="true">Camisole01.osd\PantyBodyFat</Data>
+            <Data name="TopBodyFat" target="Top" local="true">Camisole01.osd\TopBodyFat</Data>
+        </Slider>
+        <Slider name="LegThin" invert="false" default="0">
+            <Data name="BaseFBodyLegThin" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyLegThin</Data>
+            <Data name="PantyLegThin" target="Panty" local="true">Camisole01.osd\PantyLegThin</Data>
+            <Data name="TopLegThin" target="Top" local="true">Camisole01.osd\TopLegThin</Data>
+        </Slider>
+        <Slider name="HipsNarrow" invert="false" default="0">
+            <Data name="BaseFBodyHipsNarrow" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyHipsNarrow</Data>
+            <Data name="PantyHipsNarrow" target="Panty" local="true">Camisole01.osd\PantyHipsNarrow</Data>
+            <Data name="TopHipsNarrow" target="Top" local="true">Camisole01.osd\TopHipsNarrow</Data>
+        </Slider>
+        <Slider name="ButtGravity" invert="false" default="0">
+            <Data name="BaseFBodyButtGravity" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyButtGravity</Data>
+            <Data name="PantyButtGravity" target="Panty" local="true">Camisole01.osd\PantyButtGravity</Data>
+            <Data name="TopButtGravity" target="Top" local="true">Camisole01.osd\TopButtGravity</Data>
+        </Slider>
+        <Slider name="ButtThin" invert="false" default="0">
+            <Data name="BaseFBodyButtThin" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyButtThin</Data>
+            <Data name="PantyButtThin" target="Panty" local="true">Camisole01.osd\PantyButtThin</Data>
+            <Data name="TopButtThin" target="Top" local="true">Camisole01.osd\TopButtThin</Data>
+        </Slider>
+        <Slider name="HipsForward" invert="false" default="0">
+            <Data name="BaseFBodyHipsForward" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyHipsForward</Data>
+            <Data name="PantyHipsForward" target="Panty" local="true">Camisole01.osd\PantyHipsForward</Data>
+            <Data name="TopHipsForward" target="Top" local="true">Camisole01.osd\TopHipsForward</Data>
+        </Slider>
+        <Slider name="HipRotateForward" invert="false" default="0">
+            <Data name="BaseFBodyHipRotateForward" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyHipRotateForward</Data>
+            <Data name="PantyHipRotateForward" target="Panty" local="true">Camisole01.osd\PantyHipRotateForward</Data>
+            <Data name="TopHipRotateForward" target="Top" local="true">Camisole01.osd\TopHipRotateForward</Data>
+        </Slider>
+        <Slider name="BreastArmpitin" invert="false" default="0">
+            <Data name="BaseFBodyBreastArmpitin" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyBreastArmpitin</Data>
+            <Data name="TopBreastArmpitin" target="Top" local="true">Camisole01.osd\TopBreastArmpitin</Data>
+        </Slider>
+        <Slider name="BreastArmpitWide" invert="false" default="0">
+            <Data name="BaseFBodyBreastArmpitWide" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyBreastArmpitWide</Data>
+            <Data name="TopBreastArmpitWide" target="Top" local="true">Camisole01.osd\TopBreastArmpitWide</Data>
+        </Slider>
+        <Slider name="BreastCurve" invert="false" default="0">
+            <Data name="BaseFBodyBreastCurve" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyBreastCurve</Data>
+            <Data name="TopBreastCurve" target="Top" local="true">Camisole01.osd\TopBreastCurve</Data>
+        </Slider>
+        <Slider name="BreastHeight2" invert="false" default="0">
+            <Data name="BaseFBodyBreastHeight2" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyBreastHeight2</Data>
+            <Data name="TopBreastHeight2" target="Top" local="true">Camisole01.osd\TopBreastHeight2</Data>
+        </Slider>
+        <Slider name="BreastConcave" invert="false" default="0">
+            <Data name="BaseFBodyBreastConcave" target="BaseFBody">ZeX-FusionGirl.osd\BaseFBodyBreastConcave</Data>
+            <Data name="TopBreastConcave" target="Top" local="true">Camisole01.osd\TopBreastConcave</Data>
+        </Slider>
+        <Slider name="ZapBody" invert="false" default="1" zap="true">
+            <Data name="BaseFBodyZapBody" target="BaseFBody" local="true">Camisole01.osd\BaseFBodyZapBody</Data>
+        </Slider>
+    </SliderSet>
+</SliderSetInfo>

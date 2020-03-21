@@ -1,0 +1,15 @@
+{
+  "modName": "SleepIntimate",
+  "keybinds": [
+    {
+      "id": "DTSI_ChairsEnabledToggle",
+      "desc": "Sleep Intimate seat scenes toggle",
+      "action": {
+        "type": "CallFunction",
+        "form": "SleepIntimate.esp|A56A2",
+        "function": "ToggleChairScenes",
+        "params": [1.0]
+      }
+    }
+  ]
+}

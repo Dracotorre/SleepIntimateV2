@@ -1173,6 +1173,22 @@
 			"function": "MarkItemAsStrapOn",
 			"params": [1.0]
 		  }
+		},
+		{
+          "text": "preferences",
+          "type": "section"
+        },
+		{
+			"id": "MCM_SettingClothesBody:Undress",
+			"text": "display clothes for body",
+			"type": "dropdown",
+			"help": "use to limit clothes in menus by body style",
+			"valueOptions": {
+				"options": ["None", "CBBE", "Fusion Girl", "All"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|1843B1",
+				"propertyName": "DTSleep_SettingClothesBody"
+			}
 		}
 	  ]
 	},
@@ -1884,6 +1900,21 @@
 		}
 	  ]
 	},
+    {
+      "pageDisplayName": "Hotkeys",
+      "content": [
+        {
+          "text": "Sleep Intimate Hotkeys",
+          "type": "section"
+        },
+        {
+          "id": "DTSI_ChairsEnabledToggle",
+          "text": "Hotkey for Seat Scenes Setting",
+          "type": "hotkey",
+          "help": "toggle Seat Scenes setting: disabled, embrace, intimate"
+        }
+      ]
+    },
     {
       "pageDisplayName": "Help and Troubleshooting",
       "content": [

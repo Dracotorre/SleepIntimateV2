@@ -1,0 +1,474 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<SliderSetInfo version="1">
+    <SliderSet name="SI-BodyTalk-V2-Erect">
+        <DataFolder>TBOS-BodyTalk-V2</DataFolder>
+        <SourceFile>TBOS-BodyTalk-V2.nif</SourceFile>
+        <OutputPath>meshes\actors\character\characterassets</OutputPath>
+        <OutputFile GenWeights="false">MaleBody_BT2Nude</OutputFile>
+        <Shape target="BaseMaleBody:0" DataFolder="TBOS-BodyTalk-V2">BaseMaleBody:0</Shape>
+        <Slider name="BTBiceps" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTBiceps" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTBiceps</Data>
+        </Slider>
+        <Slider name="BTShoulders" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTShoulders" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTShoulders</Data>
+        </Slider>
+        <Slider name="BTWaist-In" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTWaist-In" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTWaist-In</Data>
+        </Slider>
+        <Slider name="BTPectorals" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTPectorals" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTPectorals</Data>
+        </Slider>
+        <Slider name="BTRibcage" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTRibcage" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTRibcage</Data>
+        </Slider>
+        <Slider name="BTTraps" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTTraps" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTTraps</Data>
+        </Slider>
+        <Slider name="BTHips-In" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTHips-In" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTHips-In</Data>
+        </Slider>
+        <Slider name="BTStomach" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTStomach" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTStomach</Data>
+        </Slider>
+        <Slider name="BTChest" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTChest" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTChest</Data>
+        </Slider>
+        <Slider name="BTButt" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTButt" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTButt</Data>
+        </Slider>
+        <Slider name="BTThigh" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTThigh" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTThigh</Data>
+        </Slider>
+        <Slider name="BTCalves" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTCalves" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTCalves</Data>
+        </Slider>
+        <Slider name="BTBack" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTBack" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTBack</Data>
+        </Slider>
+        <Slider name="BTWaist-Smoothing" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTWaist-Smoothing" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTWaist-Smoothing</Data>
+        </Slider>
+        <Slider name="BTNippleSize" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTNippleSize" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTNippleSize</Data>
+        </Slider>
+        <Slider name="BTButtWidth" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTButtWidth" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTButtWidth</Data>
+        </Slider>
+        <Slider name="Balls" invert="false" default="100">
+            <Data name="BaseMaleBody:0Balls" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0Balls</Data>
+        </Slider>
+        <Slider name="BTFootSize" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTFootSize" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTFootSize</Data>
+        </Slider>
+        <Slider name="BTStomachSmooth" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTStomachSmooth" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTStomachSmooth</Data>
+        </Slider>
+        <Slider name="BTStomachFat" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTStomachFat" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTStomachFat</Data>
+        </Slider>
+        <Slider name="BTBallSize" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTBallSize" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTBallSize</Data>
+        </Slider>
+        <Slider name="BTChestSmoothing" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTChestSmoothing" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTChestSmoothing</Data>
+        </Slider>
+        <Slider name="BTToeSmaller" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTToeSmaller" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTToeSmaller</Data>
+        </Slider>
+        <Slider name="BTBackArch" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTBackArch" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTBackArch</Data>
+        </Slider>
+        <Slider name="BTAbDefinition" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTAbDefinition" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTAbDefinition</Data>
+        </Slider>
+        <Slider name="BTForearms" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTForearms" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTForearms</Data>
+        </Slider>
+        <Slider name="BTARYAYDA" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTARYAYDA" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTARYAYDA</Data>
+        </Slider>
+        <Slider name="BTAryaydaMoreMuscular" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTAryaydaMoreMuscular" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTAryaydaMoreMuscular</Data>
+        </Slider>
+        <Slider name="BTAMShoulderTweaks" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTAMShoulderTweaks" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTAMShoulderTweaks</Data>
+        </Slider>
+        <Slider name="BTAMPecAdjust" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTAMPecAdjust" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTAMPecAdjust</Data>
+        </Slider>
+        <Slider name="BTAMWaistAdust" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTAMWaistAdust" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTAMWaistAdust</Data>
+        </Slider>
+        <Slider name="BTAMBackAdjust" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTAMBackAdjust" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTAMBackAdjust</Data>
+        </Slider>
+        <Slider name="BTElbowAdjust" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTElbowAdjust" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTElbowAdjust</Data>
+        </Slider>
+        <Slider name="BTKneeAdust" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTKneeAdust" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTKneeAdust</Data>
+        </Slider>
+        <Slider name="Erection" invert="false" default="0">
+            <Data name="BaseMaleBody:0Erection" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0Erection</Data>
+        </Slider>
+        <Slider name="Penis Width" invert="false" default="0">
+            <Data name="BaseMaleBody:0Penis Width" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0Penis Width</Data>
+        </Slider>
+        <Slider name="Penis Length" invert="false" default="-16">
+            <Data name="BaseMaleBody:0Penis Length" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0Penis Length</Data>
+        </Slider>
+        <Slider name="TipShape" invert="false" default="0">
+            <Data name="BaseMaleBody:0TipShape" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0TipShape</Data>
+        </Slider>
+        <Slider name="Erection Down" invert="false" default="0">
+            <Data name="BaseMaleBody:0Erection Down" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0Erection Down</Data>
+        </Slider>
+        <Slider name="Erection Up" invert="false" default="0">
+            <Data name="BaseMaleBody:0Erection Up" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0Erection Up</Data>
+        </Slider>
+        <Slider name="AryaydaMuscleSlider" invert="false" default="0">
+            <Data name="BaseMaleBody:0AryaydaMuscleSlider" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0AryaydaMuscleSlider</Data>
+        </Slider>
+        <Slider name="TigerSanBBMale" invert="false" default="0">
+            <Data name="BaseMaleBody:0TigerSanBBMale" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0TigerSanBBMale</Data>
+        </Slider>
+        <Slider name="BTTHinCalf" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTTHinCalf" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTTHinCalf</Data>
+        </Slider>
+        <Slider name="BTThinArm" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTThinArm" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTThinArm</Data>
+        </Slider>
+        <Slider name="BTShinSize" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTShinSize" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTShinSize</Data>
+        </Slider>
+        <Slider name="BTChubbyArm" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTChubbyArm" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTChubbyArm</Data>
+        </Slider>
+        <Slider name="BTChubbyLeg" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTChubbyLeg" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTChubbyLeg</Data>
+        </Slider>
+        <Slider name="ThinThigh" invert="false" default="0">
+            <Data name="BaseMaleBody:0ThinThigh" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0ThinThigh</Data>
+        </Slider>
+        <Slider name="Hips" invert="false" default="0">
+            <Data name="BaseMaleBody:0Hips" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0Hips</Data>
+        </Slider>
+        <Slider name="BT2AdonisBelt" invert="false" default="0">
+            <Data name="BaseMaleBody:0BT2AdonisBelt" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BT2AdonisBelt</Data>
+        </Slider>
+    </SliderSet>
+	<SliderSet name="SI-BodyTalk-V2-ErectDown">
+        <DataFolder>TBOS-BodyTalk-V2</DataFolder>
+        <SourceFile>TBOS-BodyTalk-V2.nif</SourceFile>
+        <OutputPath>meshes\actors\character\characterassets</OutputPath>
+        <OutputFile GenWeights="false">MaleBody_BT2Nude_Down</OutputFile>
+        <Shape target="BaseMaleBody:0" DataFolder="TBOS-BodyTalk-V2">BaseMaleBody:0</Shape>
+        <Slider name="BTBiceps" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTBiceps" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTBiceps</Data>
+        </Slider>
+        <Slider name="BTShoulders" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTShoulders" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTShoulders</Data>
+        </Slider>
+        <Slider name="BTWaist-In" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTWaist-In" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTWaist-In</Data>
+        </Slider>
+        <Slider name="BTPectorals" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTPectorals" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTPectorals</Data>
+        </Slider>
+        <Slider name="BTRibcage" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTRibcage" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTRibcage</Data>
+        </Slider>
+        <Slider name="BTTraps" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTTraps" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTTraps</Data>
+        </Slider>
+        <Slider name="BTHips-In" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTHips-In" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTHips-In</Data>
+        </Slider>
+        <Slider name="BTStomach" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTStomach" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTStomach</Data>
+        </Slider>
+        <Slider name="BTChest" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTChest" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTChest</Data>
+        </Slider>
+        <Slider name="BTButt" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTButt" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTButt</Data>
+        </Slider>
+        <Slider name="BTThigh" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTThigh" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTThigh</Data>
+        </Slider>
+        <Slider name="BTCalves" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTCalves" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTCalves</Data>
+        </Slider>
+        <Slider name="BTBack" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTBack" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTBack</Data>
+        </Slider>
+        <Slider name="BTWaist-Smoothing" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTWaist-Smoothing" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTWaist-Smoothing</Data>
+        </Slider>
+        <Slider name="BTNippleSize" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTNippleSize" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTNippleSize</Data>
+        </Slider>
+        <Slider name="BTButtWidth" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTButtWidth" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTButtWidth</Data>
+        </Slider>
+        <Slider name="Balls" invert="false" default="100">
+            <Data name="BaseMaleBody:0Balls" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0Balls</Data>
+        </Slider>
+        <Slider name="BTFootSize" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTFootSize" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTFootSize</Data>
+        </Slider>
+        <Slider name="BTStomachSmooth" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTStomachSmooth" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTStomachSmooth</Data>
+        </Slider>
+        <Slider name="BTStomachFat" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTStomachFat" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTStomachFat</Data>
+        </Slider>
+        <Slider name="BTBallSize" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTBallSize" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTBallSize</Data>
+        </Slider>
+        <Slider name="BTChestSmoothing" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTChestSmoothing" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTChestSmoothing</Data>
+        </Slider>
+        <Slider name="BTToeSmaller" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTToeSmaller" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTToeSmaller</Data>
+        </Slider>
+        <Slider name="BTBackArch" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTBackArch" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTBackArch</Data>
+        </Slider>
+        <Slider name="BTAbDefinition" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTAbDefinition" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTAbDefinition</Data>
+        </Slider>
+        <Slider name="BTForearms" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTForearms" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTForearms</Data>
+        </Slider>
+        <Slider name="BTARYAYDA" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTARYAYDA" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTARYAYDA</Data>
+        </Slider>
+        <Slider name="BTAryaydaMoreMuscular" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTAryaydaMoreMuscular" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTAryaydaMoreMuscular</Data>
+        </Slider>
+        <Slider name="BTAMShoulderTweaks" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTAMShoulderTweaks" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTAMShoulderTweaks</Data>
+        </Slider>
+        <Slider name="BTAMPecAdjust" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTAMPecAdjust" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTAMPecAdjust</Data>
+        </Slider>
+        <Slider name="BTAMWaistAdust" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTAMWaistAdust" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTAMWaistAdust</Data>
+        </Slider>
+        <Slider name="BTAMBackAdjust" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTAMBackAdjust" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTAMBackAdjust</Data>
+        </Slider>
+        <Slider name="BTElbowAdjust" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTElbowAdjust" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTElbowAdjust</Data>
+        </Slider>
+        <Slider name="BTKneeAdust" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTKneeAdust" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTKneeAdust</Data>
+        </Slider>
+        <Slider name="Erection" invert="false" default="0">
+            <Data name="BaseMaleBody:0Erection" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0Erection</Data>
+        </Slider>
+        <Slider name="Penis Width" invert="false" default="0">
+            <Data name="BaseMaleBody:0Penis Width" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0Penis Width</Data>
+        </Slider>
+        <Slider name="Penis Length" invert="false" default="-10">
+            <Data name="BaseMaleBody:0Penis Length" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0Penis Length</Data>
+        </Slider>
+        <Slider name="TipShape" invert="false" default="0">
+            <Data name="BaseMaleBody:0TipShape" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0TipShape</Data>
+        </Slider>
+        <Slider name="Erection Down" invert="false" default="112">
+            <Data name="BaseMaleBody:0Erection Down" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0Erection Down</Data>
+        </Slider>
+        <Slider name="Erection Up" invert="false" default="0">
+            <Data name="BaseMaleBody:0Erection Up" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0Erection Up</Data>
+        </Slider>
+        <Slider name="AryaydaMuscleSlider" invert="false" default="0">
+            <Data name="BaseMaleBody:0AryaydaMuscleSlider" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0AryaydaMuscleSlider</Data>
+        </Slider>
+        <Slider name="TigerSanBBMale" invert="false" default="0">
+            <Data name="BaseMaleBody:0TigerSanBBMale" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0TigerSanBBMale</Data>
+        </Slider>
+        <Slider name="BTTHinCalf" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTTHinCalf" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTTHinCalf</Data>
+        </Slider>
+        <Slider name="BTThinArm" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTThinArm" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTThinArm</Data>
+        </Slider>
+        <Slider name="BTShinSize" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTShinSize" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTShinSize</Data>
+        </Slider>
+        <Slider name="BTChubbyArm" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTChubbyArm" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTChubbyArm</Data>
+        </Slider>
+        <Slider name="BTChubbyLeg" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTChubbyLeg" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTChubbyLeg</Data>
+        </Slider>
+        <Slider name="ThinThigh" invert="false" default="0">
+            <Data name="BaseMaleBody:0ThinThigh" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0ThinThigh</Data>
+        </Slider>
+        <Slider name="Hips" invert="false" default="0">
+            <Data name="BaseMaleBody:0Hips" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0Hips</Data>
+        </Slider>
+        <Slider name="BT2AdonisBelt" invert="false" default="0">
+            <Data name="BaseMaleBody:0BT2AdonisBelt" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BT2AdonisBelt</Data>
+        </Slider>
+    </SliderSet>
+	<SliderSet name="SI-BodyTalk-V2-ErectUp">
+        <DataFolder>TBOS-BodyTalk-V2</DataFolder>
+        <SourceFile>TBOS-BodyTalk-V2.nif</SourceFile>
+        <OutputPath>meshes\actors\character\characterassets</OutputPath>
+        <OutputFile GenWeights="false">MaleBody_BT2Nude_Up</OutputFile>
+        <Shape target="BaseMaleBody:0" DataFolder="TBOS-BodyTalk-V2">BaseMaleBody:0</Shape>
+        <Slider name="BTBiceps" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTBiceps" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTBiceps</Data>
+        </Slider>
+        <Slider name="BTShoulders" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTShoulders" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTShoulders</Data>
+        </Slider>
+        <Slider name="BTWaist-In" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTWaist-In" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTWaist-In</Data>
+        </Slider>
+        <Slider name="BTPectorals" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTPectorals" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTPectorals</Data>
+        </Slider>
+        <Slider name="BTRibcage" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTRibcage" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTRibcage</Data>
+        </Slider>
+        <Slider name="BTTraps" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTTraps" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTTraps</Data>
+        </Slider>
+        <Slider name="BTHips-In" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTHips-In" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTHips-In</Data>
+        </Slider>
+        <Slider name="BTStomach" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTStomach" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTStomach</Data>
+        </Slider>
+        <Slider name="BTChest" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTChest" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTChest</Data>
+        </Slider>
+        <Slider name="BTButt" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTButt" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTButt</Data>
+        </Slider>
+        <Slider name="BTThigh" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTThigh" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTThigh</Data>
+        </Slider>
+        <Slider name="BTCalves" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTCalves" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTCalves</Data>
+        </Slider>
+        <Slider name="BTBack" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTBack" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTBack</Data>
+        </Slider>
+        <Slider name="BTWaist-Smoothing" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTWaist-Smoothing" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTWaist-Smoothing</Data>
+        </Slider>
+        <Slider name="BTNippleSize" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTNippleSize" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTNippleSize</Data>
+        </Slider>
+        <Slider name="BTButtWidth" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTButtWidth" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTButtWidth</Data>
+        </Slider>
+        <Slider name="Balls" invert="false" default="100">
+            <Data name="BaseMaleBody:0Balls" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0Balls</Data>
+        </Slider>
+        <Slider name="BTFootSize" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTFootSize" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTFootSize</Data>
+        </Slider>
+        <Slider name="BTStomachSmooth" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTStomachSmooth" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTStomachSmooth</Data>
+        </Slider>
+        <Slider name="BTStomachFat" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTStomachFat" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTStomachFat</Data>
+        </Slider>
+        <Slider name="BTBallSize" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTBallSize" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTBallSize</Data>
+        </Slider>
+        <Slider name="BTChestSmoothing" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTChestSmoothing" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTChestSmoothing</Data>
+        </Slider>
+        <Slider name="BTToeSmaller" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTToeSmaller" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTToeSmaller</Data>
+        </Slider>
+        <Slider name="BTBackArch" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTBackArch" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTBackArch</Data>
+        </Slider>
+        <Slider name="BTAbDefinition" invert="false" default="100">
+            <Data name="BaseMaleBody:0BTAbDefinition" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTAbDefinition</Data>
+        </Slider>
+        <Slider name="BTForearms" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTForearms" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTForearms</Data>
+        </Slider>
+        <Slider name="BTARYAYDA" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTARYAYDA" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTARYAYDA</Data>
+        </Slider>
+        <Slider name="BTAryaydaMoreMuscular" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTAryaydaMoreMuscular" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTAryaydaMoreMuscular</Data>
+        </Slider>
+        <Slider name="BTAMShoulderTweaks" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTAMShoulderTweaks" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTAMShoulderTweaks</Data>
+        </Slider>
+        <Slider name="BTAMPecAdjust" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTAMPecAdjust" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTAMPecAdjust</Data>
+        </Slider>
+        <Slider name="BTAMWaistAdust" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTAMWaistAdust" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTAMWaistAdust</Data>
+        </Slider>
+        <Slider name="BTAMBackAdjust" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTAMBackAdjust" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTAMBackAdjust</Data>
+        </Slider>
+        <Slider name="BTElbowAdjust" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTElbowAdjust" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTElbowAdjust</Data>
+        </Slider>
+        <Slider name="BTKneeAdust" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTKneeAdust" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTKneeAdust</Data>
+        </Slider>
+        <Slider name="Erection" invert="false" default="0">
+            <Data name="BaseMaleBody:0Erection" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0Erection</Data>
+        </Slider>
+        <Slider name="Penis Width" invert="false" default="0">
+            <Data name="BaseMaleBody:0Penis Width" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0Penis Width</Data>
+        </Slider>
+        <Slider name="Penis Length" invert="false" default="-16">
+            <Data name="BaseMaleBody:0Penis Length" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0Penis Length</Data>
+        </Slider>
+        <Slider name="TipShape" invert="false" default="0">
+            <Data name="BaseMaleBody:0TipShape" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0TipShape</Data>
+        </Slider>
+        <Slider name="Erection Down" invert="false" default="0">
+            <Data name="BaseMaleBody:0Erection Down" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0Erection Down</Data>
+        </Slider>
+        <Slider name="Erection Up" invert="false" default="120">
+            <Data name="BaseMaleBody:0Erection Up" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0Erection Up</Data>
+        </Slider>
+        <Slider name="AryaydaMuscleSlider" invert="false" default="0">
+            <Data name="BaseMaleBody:0AryaydaMuscleSlider" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0AryaydaMuscleSlider</Data>
+        </Slider>
+        <Slider name="TigerSanBBMale" invert="false" default="0">
+            <Data name="BaseMaleBody:0TigerSanBBMale" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0TigerSanBBMale</Data>
+        </Slider>
+        <Slider name="BTTHinCalf" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTTHinCalf" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTTHinCalf</Data>
+        </Slider>
+        <Slider name="BTThinArm" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTThinArm" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTThinArm</Data>
+        </Slider>
+        <Slider name="BTShinSize" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTShinSize" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTShinSize</Data>
+        </Slider>
+        <Slider name="BTChubbyArm" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTChubbyArm" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTChubbyArm</Data>
+        </Slider>
+        <Slider name="BTChubbyLeg" invert="false" default="0">
+            <Data name="BaseMaleBody:0BTChubbyLeg" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BTChubbyLeg</Data>
+        </Slider>
+        <Slider name="ThinThigh" invert="false" default="0">
+            <Data name="BaseMaleBody:0ThinThigh" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0ThinThigh</Data>
+        </Slider>
+        <Slider name="Hips" invert="false" default="0">
+            <Data name="BaseMaleBody:0Hips" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0Hips</Data>
+        </Slider>
+        <Slider name="BT2AdonisBelt" invert="false" default="0">
+            <Data name="BaseMaleBody:0BT2AdonisBelt" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0BT2AdonisBelt</Data>
+        </Slider>
+    </SliderSet>
+</SliderSetInfo>

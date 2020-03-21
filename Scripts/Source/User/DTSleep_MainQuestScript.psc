@@ -1184,6 +1184,10 @@ Event DTSleep_IntimateAnimQuestScript.IntimateSequenceDoneEvent(DTSleep_Intimate
 		endIf
 		
 		UnregisterForCustomEvent((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript), "IntimateSequenceDoneEvent")
+		if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SleepBedRef != None)
+			; v2.28 fix -- was only unregister from beds down below in args
+			UnregisterForRemoteEvent((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SleepBedRef, "OnActivate")
+		endIf
 		
 	
 		Actor mainActor = akArgs[0] as Actor
@@ -1410,8 +1414,6 @@ Event DTSleep_IntimateAnimQuestScript.IntimateSequenceDoneEvent(DTSleep_Intimate
 			if (bedRef != None)
 			
 				DTDebug("have a Bed, should we prompt for exit? -- Interrupted? " + SceneData.Interrupted, 2)
-			
-				UnregisterForRemoteEvent(bedRef, "OnActivate")
 				
 				if (SceneData.Interrupted <= 0 && SceneData.AnimationSet != 8)
 				
@@ -1598,6 +1600,7 @@ Event ObjectReference.OnActivate(ObjectReference akSender, ObjectReference akAct
 	if (akActionRef != PlayerRef)
 	
 		DTDebug(" this furniture " + akSender + " activated by " + akActionRef, 2)
+		UnregisterForRemoteEvent(akSender, "OnActivate")			; v2.28 always unregister now
 		
 		if (DTSleep_PlayerUsingBed.GetValue() >= 1.0 && SleepBedInUseRef != None && SleepBedInUseRef == akSender)
 			; get out of bed!!
@@ -1605,8 +1608,11 @@ Event ObjectReference.OnActivate(ObjectReference akSender, ObjectReference akAct
 			SleepBedInUseRef.Activate(PlayerRef)
 			
 		elseIf ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SceneIsPlaying)
-			UnregisterForRemoteEvent(akSender, "OnActivate")
-			(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).CancelScene()
+			
+			; is same furniture? v2.28
+			if (akSender == (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SleepBedRef)
+				(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).CancelScene()
+			endIf
 		endIf
 		
 	elseIf (SleepBedInUseRef != None && akSender != SleepBedInUseRef)
@@ -1747,8 +1753,8 @@ Event OnPlayerSleepStop(bool abInterrupted, ObjectReference akBed)
 	
 	; check enabled and 3D since some mods take bed away (which breaks some base-game features)
 	;  - bed may be taken away after this causing issue
-	;
-	if (!abInterrupted && !PlayerRef.IsInCombat())
+	;  v2.28 - disallow MorningSex mod
+	if (!abInterrupted && !(DTSConditionals as DTSleep_Conditionals).IsMorningSexActive && !PlayerRef.IsInCombat())
 	
 		Location currentLoc = (SleepPlayerAlias as DTSleep_PlayerAliasScript).CurrentLocation
 		bool observeWinter = true
@@ -1770,9 +1776,10 @@ Event OnPlayerSleepStop(bool abInterrupted, ObjectReference akBed)
 		if (abInterrupted)
 			DTDebug(" OnSleepStop interrupted...", 2)
 			DTSleep_SleepInterruptedSleepStopMsg.Show()
-		elseIf (akBed == None || !akBed.IsEnabled() || !akbed.Is3DLoaded())
-			; v2.13
-			DTDebug(" OnSleepStop no bed!", 1)
+			
+		;elseIf (akBed == None || !akBed.IsEnabled() || !akbed.Is3DLoaded())
+			; v2.13; v2.28 - skip this report
+		;	DTDebug(" OnSleepStop no bed!", 1)
 		endIf
 		
 		DTSleep_PlayerUsingBed.SetValue(0.0)
@@ -2420,7 +2427,6 @@ bool Function ActivatePlayerSleepForBed(ObjectReference bedRef, bool isSpecialAn
 		else
 			DTSleep_BedBusyMessage.Show()
 		endIf
-		
 	else
 		RegisterForSleepWithBed(bedRef)
 	endIf
@@ -7130,8 +7136,13 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 		
 	elseIf (specialFurn > 0 && specialFurn != 103 && (DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive)
 		animPacks[0] = 7
-		if (specialFurn == 2 && (DTSConditionals as DTSleep_Conditionals).IsAtomicLustActive)
-			animPacks.Add(5)
+		if (specialFurn == 2)
+			if ((DTSConditionals as DTSleep_Conditionals).IsAtomicLustActive)
+				animPacks.Add(5)
+			endIf
+			;if ((DTSConditionals as DTSleep_Conditionals).IsBP70Active)
+			;	animPacks.Add(10)
+			;endIf
 		endIf
 	elseIf (specialFurn == 103 && IsAdultAnimationAvailable())
 		if (furnBaseForm == None)
@@ -8739,6 +8750,7 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 	bool hasSavageCabbageAnims = false
 	bool hasGrayAnims = false
 	bool hasLeitoV2Anims = false	; compatible with AAF, but cannot have old X_Anims patch due to shared file locations
+	bool hasBP70Anims = false
 	int animSetCount = 0
 	int animSetFailCount = 0
 	int multiLoverGender = -1
@@ -8808,6 +8820,10 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 				hasCrazyGunAnims = true
 				animSetCount += 1
 			endIf
+			;if ((DTSConditionals as DTSleep_Conditionals).IsBP70Active)
+			;	hasBP70Anims = true
+			;	animSetCount += 1
+			;endIf
 		
 			; AAF fails if power armor bug - restrict by powerArmorFlag
 			
@@ -11753,6 +11769,14 @@ int Function RestoreTestSettings(float oldVersion = 0.0)
 		DTSleep_SettingModMCMCtl.SetValue(0.0)
 	endIf
 	
+	if (oldVersion < 2.280 && DTSleep_PlayerUsingBed.GetValueInt() <= 0)
+	
+		; clean-up
+		UnregisterForAllRemoteEvents()
+		
+		PlayerSleepPerkAdd()		; re-register
+	endIf
+	
 	return count
 endFunction
 
@@ -13530,6 +13554,7 @@ Function Shutdown(bool completely = false)
 	if (DTSleep_ShutdownConfirmMsg.Show() == 1)
 		
 		UnregisterForMenuOpenCloseEvent("WorkshopMenu")
+		
 		Utility.WaitMenuMode(0.1)
 		DTSleep_SettingModActive.SetValue(-1.0)
 		DTSleep_SettingModMCMCtl.SetValue(0.0)
@@ -13544,6 +13569,8 @@ Function Shutdown(bool completely = false)
 		endIf
 
 		PlayerSleepPerkRemove()
+		
+		UnregisterForAllRemoteEvents()
 		
 		DTSleep_SettingIntimate.SetValue(-1.0)
 		

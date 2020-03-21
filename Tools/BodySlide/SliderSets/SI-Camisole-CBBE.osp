@@ -1,0 +1,715 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<SliderSetInfo version="1">
+    <SliderSet name="SI-Camisole-CBBE">
+        <DataFolder>DTSleep-Camisole-CBBE</DataFolder>
+        <SourceFile>Nightie01.nif</SourceFile>
+        <OutputPath>meshes\DTSleep\Jets</OutputPath>
+        <OutputFile GenWeights="false">CamisoleCBBE</OutputFile>
+        <Shape target="CBBE" DataFolder="CBBE">CBBE</Shape>
+        <Shape target="Panty">Panty</Shape>
+        <Shape target="Top">Top</Shape>
+        <Slider name="Breasts" invert="false" default="0">
+            <Data name="CBBEBreasts" target="CBBE">CBBEBody.osd\CBBEBreasts</Data>
+            <Data name="TopBreasts" target="Top" local="true">Nightie01.osd\TopBreasts</Data>
+        </Slider>
+        <Slider name="BreastsCleavage" invert="false" default="0">
+            <Data name="CBBEBreastsCleavage" target="CBBE">CBBEBody.osd\CBBEBreastsCleavage</Data>
+            <Data name="TopBreastsCleavage" target="Top" local="true">Nightie01.osd\TopBreastsCleavage</Data>
+        </Slider>
+        <Slider name="BreastsGone" invert="false" default="0">
+            <Data name="CBBEBreastsGone" target="CBBE">CBBEBody.osd\CBBEBreastsGone</Data>
+            <Data name="TopBreastsGone" target="Top" local="true">Nightie01.osd\TopBreastsGone</Data>
+        </Slider>
+        <Slider name="BreastsNewSH" invert="false" default="0">
+            <Data name="CBBEBreastsNewSH" target="CBBE">CBBEBody.osd\CBBEBreastsNewSH</Data>
+            <Data name="TopBreastsNewSH" target="Top" local="true">Nightie01.osd\TopBreastsNewSH</Data>
+        </Slider>
+        <Slider name="BreastsSmall" invert="false" default="0">
+            <Data name="CBBEBreastsSmall" target="CBBE">CBBEBody.osd\CBBEBreastsSmall</Data>
+            <Data name="TopBreastsSmall" target="Top" local="true">Nightie01.osd\TopBreastsSmall</Data>
+        </Slider>
+        <Slider name="BreastsSmall2" invert="false" default="0">
+            <Data name="CBBEBreastsSmall2" target="CBBE">CBBEBody.osd\CBBEBreastsSmall2</Data>
+            <Data name="TopBreastsSmall2" target="Top" local="true">Nightie01.osd\TopBreastsSmall2</Data>
+        </Slider>
+        <Slider name="BreastsTogether" invert="false" default="0">
+            <Data name="CBBEBreastsTogether" target="CBBE">CBBEBody.osd\CBBEBreastsTogether</Data>
+            <Data name="TopBreastsTogether" target="Top" local="true">Nightie01.osd\TopBreastsTogether</Data>
+        </Slider>
+        <Slider name="BreastTopSlope" invert="false" default="0">
+            <Data name="CBBEBreastTopSlope" target="CBBE">CBBEBody.osd\CBBEBreastTopSlope</Data>
+            <Data name="TopBreastTopSlope" target="Top" local="true">Nightie01.osd\TopBreastTopSlope</Data>
+        </Slider>
+        <Slider name="BreastWidth" invert="false" default="0">
+            <Data name="CBBEBreastWidth" target="CBBE">CBBEBody.osd\CBBEBreastWidth</Data>
+            <Data name="TopBreastWidth" target="Top" local="true">Nightie01.osd\TopBreastWidth</Data>
+        </Slider>
+        <Slider name="Butt" invert="false" default="0">
+            <Data name="CBBEButt" target="CBBE">CBBEBody.osd\CBBEButt</Data>
+            <Data name="PantyButt" target="Panty" local="true">Nightie01.osd\PantyButt</Data>
+            <Data name="TopButt" target="Top" local="true">Nightie01.osd\TopButt</Data>
+        </Slider>
+        <Slider name="ButtCrack" invert="false" default="0">
+            <Data name="CBBEButtCrack" target="CBBE">CBBEBody.osd\CBBEButtCrack</Data>
+            <Data name="PantyButtCrack" target="Panty" local="true">Nightie01.osd\PantyButtCrack</Data>
+            <Data name="TopButtCrack" target="Top" local="true">Nightie01.osd\TopButtCrack</Data>
+        </Slider>
+        <Slider name="ButtNew" invert="false" default="0">
+            <Data name="CBBEButtNew" target="CBBE">CBBEBody.osd\CBBEButtNew</Data>
+            <Data name="PantyButtNew" target="Panty" local="true">Nightie01.osd\PantyButtNew</Data>
+            <Data name="TopButtNew" target="Top" local="true">Nightie01.osd\TopButtNew</Data>
+        </Slider>
+        <Slider name="ButtShape2" invert="false" default="0">
+            <Data name="CBBEButtShape2" target="CBBE">CBBEBody.osd\CBBEButtShape2</Data>
+            <Data name="PantyButtShape2" target="Panty" local="true">Nightie01.osd\PantyButtShape2</Data>
+            <Data name="TopButtShape2" target="Top" local="true">Nightie01.osd\TopButtShape2</Data>
+        </Slider>
+        <Slider name="ButtSmall" invert="false" default="0">
+            <Data name="CBBEButtSmall" target="CBBE">CBBEBody.osd\CBBEButtSmall</Data>
+            <Data name="PantyButtSmall" target="Panty" local="true">Nightie01.osd\PantyButtSmall</Data>
+            <Data name="TopButtSmall" target="Top" local="true">Nightie01.osd\TopButtSmall</Data>
+        </Slider>
+        <Slider name="CalfSize" invert="false" default="0">
+            <Data name="CBBECalfSize" target="CBBE">CBBEBody.osd\CBBECalfSize</Data>
+        </Slider>
+        <Slider name="CalfSmooth" invert="false" default="0">
+            <Data name="CBBECalfSmooth" target="CBBE">CBBEBody.osd\CBBECalfSmooth</Data>
+        </Slider>
+        <Slider name="ChestDepth" invert="false" default="0">
+            <Data name="CBBEChestDepth" target="CBBE">CBBEBody.osd\CBBEChestDepth</Data>
+            <Data name="PantyChestDepth" target="Panty" local="true">Nightie01.osd\PantyChestDepth</Data>
+            <Data name="TopChestDepth" target="Top" local="true">Nightie01.osd\TopChestDepth</Data>
+        </Slider>
+        <Slider name="ChestWidth" invert="false" default="0">
+            <Data name="CBBEChestWidth" target="CBBE">CBBEBody.osd\CBBEChestWidth</Data>
+            <Data name="TopChestWidth" target="Top" local="true">Nightie01.osd\TopChestWidth</Data>
+        </Slider>
+        <Slider name="ChubbyArms" invert="false" default="0">
+            <Data name="CBBEChubbyArms" target="CBBE">CBBEBody.osd\CBBEChubbyArms</Data>
+            <Data name="TopChubbyArms" target="Top" local="true">Nightie01.osd\TopChubbyArms</Data>
+        </Slider>
+        <Slider name="ChubbyButt" invert="false" default="0">
+            <Data name="CBBEChubbyButt" target="CBBE">CBBEBody.osd\CBBEChubbyButt</Data>
+            <Data name="PantyChubbyButt" target="Panty" local="true">Nightie01.osd\PantyChubbyButt</Data>
+            <Data name="TopChubbyButt" target="Top" local="true">Nightie01.osd\TopChubbyButt</Data>
+        </Slider>
+        <Slider name="ChubbyLegs" invert="false" default="0">
+            <Data name="CBBEChubbyLegs" target="CBBE">CBBEBody.osd\CBBEChubbyLegs</Data>
+            <Data name="PantyChubbyLegs" target="Panty" local="true">Nightie01.osd\PantyChubbyLegs</Data>
+            <Data name="TopChubbyLegs" target="Top" local="true">Nightie01.osd\TopChubbyLegs</Data>
+        </Slider>
+        <Slider name="ChubbyWaist" invert="false" default="0">
+            <Data name="CBBEChubbyWaist" target="CBBE">CBBEBody.osd\CBBEChubbyWaist</Data>
+            <Data name="PantyChubbyWaist" target="Panty" local="true">Nightie01.osd\PantyChubbyWaist</Data>
+            <Data name="TopChubbyWaist" target="Top" local="true">Nightie01.osd\TopChubbyWaist</Data>
+        </Slider>
+        <Slider name="CrotchBack" invert="false" default="0">
+            <Data name="CBBECrotchBack" target="CBBE">CBBEBody.osd\CBBECrotchBack</Data>
+            <Data name="PantyCrotchBack" target="Panty" local="true">Nightie01.osd\PantyCrotchBack</Data>
+            <Data name="TopCrotchBack" target="Top" local="true">Nightie01.osd\TopCrotchBack</Data>
+        </Slider>
+        <Slider name="DoubleMelon" invert="false" default="0">
+            <Data name="CBBEDoubleMelon" target="CBBE">CBBEBody.osd\CBBEDoubleMelon</Data>
+            <Data name="TopDoubleMelon" target="Top" local="true">Nightie01.osd\TopDoubleMelon</Data>
+        </Slider>
+        <Slider name="Groin" invert="false" default="0">
+            <Data name="CBBEGroin" target="CBBE">CBBEBody.osd\CBBEGroin</Data>
+            <Data name="PantyGroin" target="Panty" local="true">Nightie01.osd\PantyGroin</Data>
+            <Data name="TopGroin" target="Top" local="true">Nightie01.osd\TopGroin</Data>
+        </Slider>
+        <Slider name="HipBack" invert="false" default="0">
+            <Data name="CBBEHipBack" target="CBBE">CBBEBody.osd\CBBEHipBack</Data>
+            <Data name="PantyHipBack" target="Panty" local="true">Nightie01.osd\PantyHipBack</Data>
+            <Data name="TopHipBack" target="Top" local="true">Nightie01.osd\TopHipBack</Data>
+        </Slider>
+        <Slider name="HipBone" invert="false" default="0">
+            <Data name="CBBEHipBone" target="CBBE">CBBEBody.osd\CBBEHipBone</Data>
+            <Data name="PantyHipBone" target="Panty" local="true">Nightie01.osd\PantyHipBone</Data>
+            <Data name="TopHipBone" target="Top" local="true">Nightie01.osd\TopHipBone</Data>
+        </Slider>
+        <Slider name="Hips" invert="false" default="0">
+            <Data name="CBBEHips" target="CBBE">CBBEBody.osd\CBBEHips</Data>
+            <Data name="PantyHips" target="Panty" local="true">Nightie01.osd\PantyHips</Data>
+            <Data name="TopHips" target="Top" local="true">Nightie01.osd\TopHips</Data>
+        </Slider>
+        <Slider name="HipUpperWidth" invert="false" default="0">
+            <Data name="CBBEHipUpperWidth" target="CBBE">CBBEBody.osd\CBBEHipUpperWidth</Data>
+            <Data name="PantyHipUpperWidth" target="Panty" local="true">Nightie01.osd\PantyHipUpperWidth</Data>
+            <Data name="TopHipUpperWidth" target="Top" local="true">Nightie01.osd\TopHipUpperWidth</Data>
+        </Slider>
+        <Slider name="KneeHeight" invert="false" default="0">
+            <Data name="CBBEKneeHeight" target="CBBE">CBBEBody.osd\CBBEKneeHeight</Data>
+            <Data name="TopKneeHeight" target="Top" local="true">Nightie01.osd\TopKneeHeight</Data>
+        </Slider>
+        <Slider name="LegShape" invert="false" default="0">
+            <Data name="CBBELegShape" target="CBBE">CBBEBody.osd\CBBELegShape</Data>
+            <Data name="PantyLegShape" target="Panty" local="true">Nightie01.osd\PantyLegShape</Data>
+            <Data name="TopLegShape" target="Top" local="true">Nightie01.osd\TopLegShape</Data>
+        </Slider>
+        <Slider name="LegsThin" invert="false" default="0">
+            <Data name="CBBELegsThin" target="CBBE">CBBEBody.osd\CBBELegsThin</Data>
+            <Data name="PantyLegsThin" target="Panty" local="true">Nightie01.osd\PantyLegsThin</Data>
+            <Data name="TopLegsThin" target="Top" local="true">Nightie01.osd\TopLegsThin</Data>
+        </Slider>
+        <Slider name="NipBGone" invert="false" default="0">
+            <Data name="CBBENipBGone" target="CBBE">CBBEBody.osd\CBBENipBGone</Data>
+            <Data name="TopNipBGone" target="Top" local="true">Nightie01.osd\TopNipBGone</Data>
+        </Slider>
+        <Slider name="NippleAreola" invert="false" default="0">
+            <Data name="CBBENippleAreola" target="CBBE">CBBEBody.osd\CBBENippleAreola</Data>
+            <Data name="TopNippleAreola" target="Top" local="true">Nightie01.osd\TopNippleAreola</Data>
+        </Slider>
+        <Slider name="NippleDistance" invert="false" default="0">
+            <Data name="CBBENippleDistance" target="CBBE">CBBEBody.osd\CBBENippleDistance</Data>
+            <Data name="TopNippleDistance" target="Top" local="true">Nightie01.osd\TopNippleDistance</Data>
+        </Slider>
+        <Slider name="NippleDown" invert="false" default="0">
+            <Data name="CBBENippleDown" target="CBBE">CBBEBody.osd\CBBENippleDown</Data>
+            <Data name="TopNippleDown" target="Top" local="true">Nightie01.osd\TopNippleDown</Data>
+        </Slider>
+        <Slider name="NippleLength" invert="false" default="0">
+            <Data name="CBBENippleLength" target="CBBE">CBBEBody.osd\CBBENippleLength</Data>
+            <Data name="TopNippleLength" target="Top" local="true">Nightie01.osd\TopNippleLength</Data>
+        </Slider>
+        <Slider name="NipplePerk2" invert="false" default="0">
+            <Data name="CBBENipplePerk2" target="CBBE">CBBEBody.osd\CBBENipplePerk2</Data>
+            <Data name="TopNipplePerk2" target="Top" local="true">Nightie01.osd\TopNipplePerk2</Data>
+        </Slider>
+        <Slider name="NipplePerkiness" invert="false" default="0">
+            <Data name="CBBENipplePerkiness" target="CBBE">CBBEBody.osd\CBBENipplePerkiness</Data>
+            <Data name="TopNipplePerkiness" target="Top" local="true">Nightie01.osd\TopNipplePerkiness</Data>
+        </Slider>
+        <Slider name="NippleSize" invert="false" default="0">
+            <Data name="CBBENippleSize" target="CBBE">CBBEBody.osd\CBBENippleSize</Data>
+            <Data name="TopNippleSize" target="Top" local="true">Nightie01.osd\TopNippleSize</Data>
+        </Slider>
+        <Slider name="NippleTip" invert="false" default="0">
+            <Data name="CBBENippleTip" target="CBBE">CBBEBody.osd\CBBENippleTip</Data>
+            <Data name="TopNippleTip" target="Top" local="true">Nightie01.osd\TopNippleTip</Data>
+        </Slider>
+        <Slider name="NippleUp" invert="false" default="0">
+            <Data name="CBBENippleUp" target="CBBE">CBBEBody.osd\CBBENippleUp</Data>
+            <Data name="TopNippleUp" target="Top" local="true">Nightie01.osd\TopNippleUp</Data>
+        </Slider>
+        <Slider name="PregnancyBelly" invert="false" default="0">
+            <Data name="CBBEPregnancyBelly" target="CBBE">CBBEBody.osd\CBBEPregnancyBelly</Data>
+            <Data name="PantyPregnancyBelly" target="Panty" local="true">Nightie01.osd\PantyPregnancyBelly</Data>
+            <Data name="TopPregnancyBelly" target="Top" local="true">Nightie01.osd\TopPregnancyBelly</Data>
+        </Slider>
+        <Slider name="PushUp" invert="false" default="0">
+            <Data name="CBBEPushUp" target="CBBE">CBBEBody.osd\CBBEPushUp</Data>
+            <Data name="TopPushUp" target="Top" local="true">Nightie01.osd\TopPushUp</Data>
+        </Slider>
+        <Slider name="RoundAss" invert="false" default="0">
+            <Data name="CBBERoundAss" target="CBBE">CBBEBody.osd\CBBERoundAss</Data>
+            <Data name="PantyRoundAss" target="Panty" local="true">Nightie01.osd\PantyRoundAss</Data>
+            <Data name="TopRoundAss" target="Top" local="true">Nightie01.osd\TopRoundAss</Data>
+        </Slider>
+        <Slider name="ShoulderSmooth" invert="false" default="0">
+            <Data name="CBBEShoulderSmooth" target="CBBE">CBBEBody.osd\CBBEShoulderSmooth</Data>
+            <Data name="TopShoulderSmooth" target="Top" local="true">Nightie01.osd\TopShoulderSmooth</Data>
+        </Slider>
+        <Slider name="ShoulderTweak" invert="false" default="0">
+            <Data name="CBBEShoulderTweak" target="CBBE">CBBEBody.osd\CBBEShoulderTweak</Data>
+            <Data name="TopShoulderTweak" target="Top" local="true">Nightie01.osd\TopShoulderTweak</Data>
+        </Slider>
+        <Slider name="ShoulderWidth" invert="false" default="0">
+            <Data name="CBBEShoulderWidth" target="CBBE">CBBEBody.osd\CBBEShoulderWidth</Data>
+            <Data name="TopShoulderWidth" target="Top" local="true">Nightie01.osd\TopShoulderWidth</Data>
+        </Slider>
+        <Slider name="SlimThighs" invert="false" default="0">
+            <Data name="CBBESlimThighs" target="CBBE">CBBEBody.osd\CBBESlimThighs</Data>
+            <Data name="PantySlimThighs" target="Panty" local="true">Nightie01.osd\PantySlimThighs</Data>
+            <Data name="TopSlimThighs" target="Top" local="true">Nightie01.osd\TopSlimThighs</Data>
+        </Slider>
+        <Slider name="SternumDepth" invert="false" default="0">
+            <Data name="CBBESternumDepth" target="CBBE">CBBEBody.osd\CBBESternumDepth</Data>
+            <Data name="TopSternumDepth" target="Top" local="true">Nightie01.osd\TopSternumDepth</Data>
+        </Slider>
+        <Slider name="SternumHeight" invert="false" default="0">
+            <Data name="CBBESternumHeight" target="CBBE">CBBEBody.osd\CBBESternumHeight</Data>
+            <Data name="TopSternumHeight" target="Top" local="true">Nightie01.osd\TopSternumHeight</Data>
+        </Slider>
+        <Slider name="Thighs" invert="false" default="0">
+            <Data name="CBBEThighs" target="CBBE">CBBEBody.osd\CBBEThighs</Data>
+            <Data name="PantyThighs" target="Panty" local="true">Nightie01.osd\PantyThighs</Data>
+            <Data name="TopThighs" target="Top" local="true">Nightie01.osd\TopThighs</Data>
+        </Slider>
+        <Slider name="TummyTuck" invert="false" default="0">
+            <Data name="CBBETummyTuck" target="CBBE">CBBEBody.osd\CBBETummyTuck</Data>
+            <Data name="PantyTummyTuck" target="Panty" local="true">Nightie01.osd\PantyTummyTuck</Data>
+            <Data name="TopTummyTuck" target="Top" local="true">Nightie01.osd\TopTummyTuck</Data>
+        </Slider>
+        <Slider name="VanillaFo4" invert="false" default="0">
+            <Data name="CBBEVanillaFo4" target="CBBE">CBBEBody.osd\CBBEVanillaFo4</Data>
+            <Data name="PantyVanillaFo4" target="Panty" local="true">Nightie01.osd\PantyVanillaFo4</Data>
+            <Data name="TopVanillaFo4" target="Top" local="true">Nightie01.osd\TopVanillaFo4</Data>
+        </Slider>
+        <Slider name="Waist" invert="false" default="0">
+            <Data name="CBBEWaist" target="CBBE">CBBEBody.osd\CBBEWaist</Data>
+            <Data name="PantyWaist" target="Panty" local="true">Nightie01.osd\PantyWaist</Data>
+            <Data name="TopWaist" target="Top" local="true">Nightie01.osd\TopWaist</Data>
+        </Slider>
+        <Slider name="WaistHeight" invert="false" default="0">
+            <Data name="CBBEWaistHeight" target="CBBE">CBBEBody.osd\CBBEWaistHeight</Data>
+            <Data name="PantyWaistHeight" target="Panty" local="true">Nightie01.osd\PantyWaistHeight</Data>
+            <Data name="TopWaistHeight" target="Top" local="true">Nightie01.osd\TopWaistHeight</Data>
+        </Slider>
+        <Slider name="WideWaistLine" invert="false" default="0">
+            <Data name="CBBEWideWaistLine" target="CBBE">CBBEBody.osd\CBBEWideWaistLine</Data>
+            <Data name="PantyWideWaistLine" target="Panty" local="true">Nightie01.osd\PantyWideWaistLine</Data>
+            <Data name="TopWideWaistLine" target="Top" local="true">Nightie01.osd\TopWideWaistLine</Data>
+        </Slider>
+        <Slider name="Ankles" invert="false" default="0">
+            <Data name="CBBEAnkles" target="CBBE">CBBEBody.osd\CBBEAnkles</Data>
+        </Slider>
+        <Slider name="AppleCheeks" invert="false" default="0">
+            <Data name="CBBEAppleCheeks" target="CBBE">CBBEBody.osd\CBBEAppleCheeks</Data>
+            <Data name="PantyAppleCheeks" target="Panty" local="true">Nightie01.osd\PantyAppleCheeks</Data>
+            <Data name="TopAppleCheeks" target="Top" local="true">Nightie01.osd\TopAppleCheeks</Data>
+        </Slider>
+        <Slider name="Arms" invert="false" default="0">
+            <Data name="CBBEArms" target="CBBE">CBBEBody.osd\CBBEArms</Data>
+            <Data name="TopArms" target="Top" local="true">Nightie01.osd\TopArms</Data>
+        </Slider>
+        <Slider name="Back" invert="false" default="0">
+            <Data name="CBBEBack" target="CBBE">CBBEBody.osd\CBBEBack</Data>
+            <Data name="PantyBack" target="Panty" local="true">Nightie01.osd\PantyBack</Data>
+            <Data name="TopBack" target="Top" local="true">Nightie01.osd\TopBack</Data>
+        </Slider>
+        <Slider name="BackArch" invert="false" default="0">
+            <Data name="CBBEBackArch" target="CBBE">CBBEBody.osd\CBBEBackArch</Data>
+            <Data name="TopBackArch" target="Top" local="true">Nightie01.osd\TopBackArch</Data>
+        </Slider>
+        <Slider name="Belly" invert="false" default="0">
+            <Data name="CBBEBelly" target="CBBE">CBBEBody.osd\CBBEBelly</Data>
+            <Data name="PantyBelly" target="Panty" local="true">Nightie01.osd\PantyBelly</Data>
+            <Data name="TopBelly" target="Top" local="true">Nightie01.osd\TopBelly</Data>
+        </Slider>
+        <Slider name="BigBelly" invert="false" default="0">
+            <Data name="CBBEBigBelly" target="CBBE">CBBEBody.osd\CBBEBigBelly</Data>
+            <Data name="PantyBigBelly" target="Panty" local="true">Nightie01.osd\PantyBigBelly</Data>
+            <Data name="TopBigBelly" target="Top" local="true">Nightie01.osd\TopBigBelly</Data>
+        </Slider>
+        <Slider name="BigButt" invert="false" default="0">
+            <Data name="CBBEBigButt" target="CBBE">CBBEBody.osd\CBBEBigButt</Data>
+            <Data name="PantyBigButt" target="Panty" local="true">Nightie01.osd\PantyBigButt</Data>
+            <Data name="TopBigButt" target="Top" local="true">Nightie01.osd\TopBigButt</Data>
+        </Slider>
+        <Slider name="BigTorso" invert="false" default="0">
+            <Data name="CBBEBigTorso" target="CBBE">CBBEBody.osd\CBBEBigTorso</Data>
+            <Data name="PantyBigTorso" target="Panty" local="true">Nightie01.osd\PantyBigTorso</Data>
+            <Data name="TopBigTorso" target="Top" local="true">Nightie01.osd\TopBigTorso</Data>
+        </Slider>
+        <Slider name="BreastCenter" invert="false" default="0">
+            <Data name="CBBEBreastCenter" target="CBBE">CBBEBody.osd\CBBEBreastCenter</Data>
+            <Data name="TopBreastCenter" target="Top" local="true">Nightie01.osd\TopBreastCenter</Data>
+        </Slider>
+        <Slider name="BreastCenterBig" invert="false" default="0">
+            <Data name="CBBEBreastCenterBig" target="CBBE">CBBEBody.osd\CBBEBreastCenterBig</Data>
+            <Data name="TopBreastCenterBig" target="Top" local="true">Nightie01.osd\TopBreastCenterBig</Data>
+        </Slider>
+        <Slider name="BreastFantasy" invert="false" default="0">
+            <Data name="CBBEBreastFantasy" target="CBBE">CBBEBody.osd\CBBEBreastFantasy</Data>
+            <Data name="TopBreastFantasy" target="Top" local="true">Nightie01.osd\TopBreastFantasy</Data>
+        </Slider>
+        <Slider name="BreastFlatness2" invert="false" default="0">
+            <Data name="CBBEBreastFlatness2" target="CBBE">CBBEBody.osd\CBBEBreastFlatness2</Data>
+            <Data name="TopBreastFlatness2" target="Top" local="true">Nightie01.osd\TopBreastFlatness2</Data>
+        </Slider>
+        <Slider name="BreastGravity2" invert="false" default="0">
+            <Data name="CBBEBreastGravity2" target="CBBE">CBBEBody.osd\CBBEBreastGravity2</Data>
+            <Data name="TopBreastGravity2" target="Top" local="true">Nightie01.osd\TopBreastGravity2</Data>
+        </Slider>
+        <Slider name="BreastHeight" invert="false" default="0">
+            <Data name="CBBEBreastHeight" target="CBBE">CBBEBody.osd\CBBEBreastHeight</Data>
+            <Data name="TopBreastHeight" target="Top" local="true">Nightie01.osd\TopBreastHeight</Data>
+        </Slider>
+        <Slider name="BreastPerkiness" invert="false" default="0">
+            <Data name="CBBEBreastPerkiness" target="CBBE">CBBEBody.osd\CBBEBreastPerkiness</Data>
+            <Data name="TopBreastPerkiness" target="Top" local="true">Nightie01.osd\TopBreastPerkiness</Data>
+        </Slider>
+        <Slider name="ArmpitHeight" invert="false" default="0">
+            <Data name="CBBEArmpitHeight" target="CBBE">CBBEBody.osd\CBBEArmpitHeight</Data>
+            <Data name="TopArmpitHeight" target="Top" local="true">Nightie01.osd\TopArmpitHeight</Data>
+        </Slider>
+        <Slider name="ForearmSize" invert="false" default="0">
+            <Data name="CBBEForearmSize" target="CBBE">CBBEBody.osd\CBBEForearmSize</Data>
+        </Slider>
+        <Slider name="NippleShape" invert="false" default="0">
+            <Data name="CBBENippleShape" target="CBBE">CBBEBody.osd\CBBENippleShape</Data>
+            <Data name="TopNippleShape" target="Top" local="true">Nightie01.osd\TopNippleShape</Data>
+        </Slider>
+        <Slider name="NippleTwistUp" invert="false" default="0">
+            <Data name="CBBENippleTwistUp" target="CBBE">CBBEBody.osd\CBBENippleTwistUp</Data>
+            <Data name="TopNippleTwistUp" target="Top" local="true">Nightie01.osd\TopNippleTwistUp</Data>
+        </Slider>
+        <Slider name="7B Upper" invert="false" default="0">
+            <Data name="CBBE7B Upper" target="CBBE">CBBEBody.osd\CBBE7B Upper</Data>
+            <Data name="Top7B Upper" target="Top" local="true">Nightie01.osd\Top7B Upper</Data>
+        </Slider>
+        <Slider name="7B Lower" invert="false" default="0">
+            <Data name="CBBE7B Lower" target="CBBE">CBBEBody.osd\CBBE7B Lower</Data>
+            <Data name="Panty7B Lower" target="Panty" local="true">Nightie01.osd\Panty7B Lower</Data>
+            <Data name="Top7B Lower" target="Top" local="true">Nightie01.osd\Top7B Lower</Data>
+        </Slider>
+        <Slider name="MuscularChest" invert="false" default="0">
+            <Data name="CBBEMuscularChest" target="CBBE">CBBEBody.osd\CBBEMuscularChest</Data>
+            <Data name="PantyMuscularChest" target="Panty" local="true">Nightie01.osd\PantyMuscularChest</Data>
+            <Data name="TopMuscularChest" target="Top" local="true">Nightie01.osd\TopMuscularChest</Data>
+        </Slider>
+        <Slider name="MuscularArms" invert="false" default="0">
+            <Data name="CBBEMuscularArms" target="CBBE">CBBEBody.osd\CBBEMuscularArms</Data>
+            <Data name="TopMuscularArms" target="Top" local="true">Nightie01.osd\TopMuscularArms</Data>
+        </Slider>
+        <Slider name="MuscularButt" invert="false" default="0">
+            <Data name="CBBEMuscularButt" target="CBBE">CBBEBody.osd\CBBEMuscularButt</Data>
+            <Data name="PantyMuscularButt" target="Panty" local="true">Nightie01.osd\PantyMuscularButt</Data>
+            <Data name="TopMuscularButt" target="Top" local="true">Nightie01.osd\TopMuscularButt</Data>
+        </Slider>
+        <Slider name="MuscularLegs" invert="false" default="0">
+            <Data name="CBBEMuscularLegs" target="CBBE">CBBEBody.osd\CBBEMuscularLegs</Data>
+            <Data name="PantyMuscularLegs" target="Panty" local="true">Nightie01.osd\PantyMuscularLegs</Data>
+            <Data name="TopMuscularLegs" target="Top" local="true">Nightie01.osd\TopMuscularLegs</Data>
+        </Slider>
+        <Slider name="ZapBody" invert="false" default="1" zap="true">
+            <Data name="CBBEZapBody" target="CBBE" local="true">Nightie01.osd\CBBEZapBody</Data>
+        </Slider>
+    </SliderSet>
+    <SliderSet name="SI-CamiSplit-CBBE">
+        <DataFolder>DTSleep-Camisole-CBBE</DataFolder>
+        <SourceFile>Nightie04.nif</SourceFile>
+        <OutputPath>meshes\DTSleep\Jets</OutputPath>
+        <OutputFile GenWeights="false">CamiSplitCBBE</OutputFile>
+        <Shape target="CBBE" DataFolder="CBBE">CBBE</Shape>
+        <Shape target="Top">Top</Shape>
+        <Slider name="Breasts" invert="false" default="0">
+            <Data name="CBBEBreasts" target="CBBE">CBBEBody.osd\CBBEBreasts</Data>
+            <Data name="TopBreasts" target="Top" local="true">Nightie04.osd\TopBreasts</Data>
+        </Slider>
+        <Slider name="BreastsCleavage" invert="false" default="0">
+            <Data name="CBBEBreastsCleavage" target="CBBE">CBBEBody.osd\CBBEBreastsCleavage</Data>
+            <Data name="TopBreastsCleavage" target="Top" local="true">Nightie04.osd\TopBreastsCleavage</Data>
+        </Slider>
+        <Slider name="BreastsGone" invert="false" default="0">
+            <Data name="CBBEBreastsGone" target="CBBE">CBBEBody.osd\CBBEBreastsGone</Data>
+            <Data name="TopBreastsGone" target="Top" local="true">Nightie04.osd\TopBreastsGone</Data>
+        </Slider>
+        <Slider name="BreastsNewSH" invert="false" default="0">
+            <Data name="CBBEBreastsNewSH" target="CBBE">CBBEBody.osd\CBBEBreastsNewSH</Data>
+            <Data name="TopBreastsNewSH" target="Top" local="true">Nightie04.osd\TopBreastsNewSH</Data>
+        </Slider>
+        <Slider name="BreastsSmall" invert="false" default="0">
+            <Data name="CBBEBreastsSmall" target="CBBE">CBBEBody.osd\CBBEBreastsSmall</Data>
+            <Data name="TopBreastsSmall" target="Top" local="true">Nightie04.osd\TopBreastsSmall</Data>
+        </Slider>
+        <Slider name="BreastsSmall2" invert="false" default="0">
+            <Data name="CBBEBreastsSmall2" target="CBBE">CBBEBody.osd\CBBEBreastsSmall2</Data>
+            <Data name="TopBreastsSmall2" target="Top" local="true">Nightie04.osd\TopBreastsSmall2</Data>
+        </Slider>
+        <Slider name="BreastsTogether" invert="false" default="0">
+            <Data name="CBBEBreastsTogether" target="CBBE">CBBEBody.osd\CBBEBreastsTogether</Data>
+            <Data name="TopBreastsTogether" target="Top" local="true">Nightie04.osd\TopBreastsTogether</Data>
+        </Slider>
+        <Slider name="BreastTopSlope" invert="false" default="0">
+            <Data name="CBBEBreastTopSlope" target="CBBE">CBBEBody.osd\CBBEBreastTopSlope</Data>
+            <Data name="TopBreastTopSlope" target="Top" local="true">Nightie04.osd\TopBreastTopSlope</Data>
+        </Slider>
+        <Slider name="BreastWidth" invert="false" default="0">
+            <Data name="CBBEBreastWidth" target="CBBE">CBBEBody.osd\CBBEBreastWidth</Data>
+            <Data name="TopBreastWidth" target="Top" local="true">Nightie04.osd\TopBreastWidth</Data>
+        </Slider>
+        <Slider name="Butt" invert="false" default="0">
+            <Data name="CBBEButt" target="CBBE">CBBEBody.osd\CBBEButt</Data>
+            <Data name="TopButt" target="Top" local="true">Nightie04.osd\TopButt</Data>
+        </Slider>
+        <Slider name="ButtCrack" invert="false" default="0">
+            <Data name="CBBEButtCrack" target="CBBE">CBBEBody.osd\CBBEButtCrack</Data>
+            <Data name="TopButtCrack" target="Top" local="true">Nightie04.osd\TopButtCrack</Data>
+        </Slider>
+        <Slider name="ButtNew" invert="false" default="0">
+            <Data name="CBBEButtNew" target="CBBE">CBBEBody.osd\CBBEButtNew</Data>
+            <Data name="TopButtNew" target="Top" local="true">Nightie04.osd\TopButtNew</Data>
+        </Slider>
+        <Slider name="ButtShape2" invert="false" default="0">
+            <Data name="CBBEButtShape2" target="CBBE">CBBEBody.osd\CBBEButtShape2</Data>
+            <Data name="TopButtShape2" target="Top" local="true">Nightie04.osd\TopButtShape2</Data>
+        </Slider>
+        <Slider name="ButtSmall" invert="false" default="0">
+            <Data name="CBBEButtSmall" target="CBBE">CBBEBody.osd\CBBEButtSmall</Data>
+            <Data name="TopButtSmall" target="Top" local="true">Nightie04.osd\TopButtSmall</Data>
+        </Slider>
+        <Slider name="CalfSize" invert="false" default="0">
+            <Data name="CBBECalfSize" target="CBBE">CBBEBody.osd\CBBECalfSize</Data>
+        </Slider>
+        <Slider name="CalfSmooth" invert="false" default="0">
+            <Data name="CBBECalfSmooth" target="CBBE">CBBEBody.osd\CBBECalfSmooth</Data>
+        </Slider>
+        <Slider name="ChestDepth" invert="false" default="0">
+            <Data name="CBBEChestDepth" target="CBBE">CBBEBody.osd\CBBEChestDepth</Data>
+            <Data name="TopChestDepth" target="Top" local="true">Nightie04.osd\TopChestDepth</Data>
+        </Slider>
+        <Slider name="ChestWidth" invert="false" default="0">
+            <Data name="CBBEChestWidth" target="CBBE">CBBEBody.osd\CBBEChestWidth</Data>
+            <Data name="TopChestWidth" target="Top" local="true">Nightie04.osd\TopChestWidth</Data>
+        </Slider>
+        <Slider name="ChubbyArms" invert="false" default="0">
+            <Data name="CBBEChubbyArms" target="CBBE">CBBEBody.osd\CBBEChubbyArms</Data>
+            <Data name="TopChubbyArms" target="Top" local="true">Nightie04.osd\TopChubbyArms</Data>
+        </Slider>
+        <Slider name="ChubbyButt" invert="false" default="0">
+            <Data name="CBBEChubbyButt" target="CBBE">CBBEBody.osd\CBBEChubbyButt</Data>
+            <Data name="TopChubbyButt" target="Top" local="true">Nightie04.osd\TopChubbyButt</Data>
+        </Slider>
+        <Slider name="ChubbyLegs" invert="false" default="0">
+            <Data name="CBBEChubbyLegs" target="CBBE">CBBEBody.osd\CBBEChubbyLegs</Data>
+            <Data name="TopChubbyLegs" target="Top" local="true">Nightie04.osd\TopChubbyLegs</Data>
+        </Slider>
+        <Slider name="ChubbyWaist" invert="false" default="0">
+            <Data name="CBBEChubbyWaist" target="CBBE">CBBEBody.osd\CBBEChubbyWaist</Data>
+            <Data name="TopChubbyWaist" target="Top" local="true">Nightie04.osd\TopChubbyWaist</Data>
+        </Slider>
+        <Slider name="CrotchBack" invert="false" default="0">
+            <Data name="CBBECrotchBack" target="CBBE">CBBEBody.osd\CBBECrotchBack</Data>
+            <Data name="TopCrotchBack" target="Top" local="true">Nightie04.osd\TopCrotchBack</Data>
+        </Slider>
+        <Slider name="DoubleMelon" invert="false" default="0">
+            <Data name="CBBEDoubleMelon" target="CBBE">CBBEBody.osd\CBBEDoubleMelon</Data>
+            <Data name="TopDoubleMelon" target="Top" local="true">Nightie04.osd\TopDoubleMelon</Data>
+        </Slider>
+        <Slider name="Groin" invert="false" default="0">
+            <Data name="CBBEGroin" target="CBBE">CBBEBody.osd\CBBEGroin</Data>
+            <Data name="TopGroin" target="Top" local="true">Nightie04.osd\TopGroin</Data>
+        </Slider>
+        <Slider name="HipBack" invert="false" default="0">
+            <Data name="CBBEHipBack" target="CBBE">CBBEBody.osd\CBBEHipBack</Data>
+            <Data name="TopHipBack" target="Top" local="true">Nightie04.osd\TopHipBack</Data>
+        </Slider>
+        <Slider name="HipBone" invert="false" default="0">
+            <Data name="CBBEHipBone" target="CBBE">CBBEBody.osd\CBBEHipBone</Data>
+            <Data name="TopHipBone" target="Top" local="true">Nightie04.osd\TopHipBone</Data>
+        </Slider>
+        <Slider name="Hips" invert="false" default="0">
+            <Data name="CBBEHips" target="CBBE">CBBEBody.osd\CBBEHips</Data>
+            <Data name="TopHips" target="Top" local="true">Nightie04.osd\TopHips</Data>
+        </Slider>
+        <Slider name="HipUpperWidth" invert="false" default="0">
+            <Data name="CBBEHipUpperWidth" target="CBBE">CBBEBody.osd\CBBEHipUpperWidth</Data>
+            <Data name="TopHipUpperWidth" target="Top" local="true">Nightie04.osd\TopHipUpperWidth</Data>
+        </Slider>
+        <Slider name="KneeHeight" invert="false" default="0">
+            <Data name="CBBEKneeHeight" target="CBBE">CBBEBody.osd\CBBEKneeHeight</Data>
+            <Data name="TopKneeHeight" target="Top" local="true">Nightie04.osd\TopKneeHeight</Data>
+        </Slider>
+        <Slider name="LegShape" invert="false" default="0">
+            <Data name="CBBELegShape" target="CBBE">CBBEBody.osd\CBBELegShape</Data>
+            <Data name="TopLegShape" target="Top" local="true">Nightie04.osd\TopLegShape</Data>
+        </Slider>
+        <Slider name="LegsThin" invert="false" default="0">
+            <Data name="CBBELegsThin" target="CBBE">CBBEBody.osd\CBBELegsThin</Data>
+            <Data name="TopLegsThin" target="Top" local="true">Nightie04.osd\TopLegsThin</Data>
+        </Slider>
+        <Slider name="NipBGone" invert="false" default="0">
+            <Data name="CBBENipBGone" target="CBBE">CBBEBody.osd\CBBENipBGone</Data>
+            <Data name="TopNipBGone" target="Top" local="true">Nightie04.osd\TopNipBGone</Data>
+        </Slider>
+        <Slider name="NippleAreola" invert="false" default="0">
+            <Data name="CBBENippleAreola" target="CBBE">CBBEBody.osd\CBBENippleAreola</Data>
+            <Data name="TopNippleAreola" target="Top" local="true">Nightie04.osd\TopNippleAreola</Data>
+        </Slider>
+        <Slider name="NippleDistance" invert="false" default="0">
+            <Data name="CBBENippleDistance" target="CBBE">CBBEBody.osd\CBBENippleDistance</Data>
+            <Data name="TopNippleDistance" target="Top" local="true">Nightie04.osd\TopNippleDistance</Data>
+        </Slider>
+        <Slider name="NippleDown" invert="false" default="0">
+            <Data name="CBBENippleDown" target="CBBE">CBBEBody.osd\CBBENippleDown</Data>
+            <Data name="TopNippleDown" target="Top" local="true">Nightie04.osd\TopNippleDown</Data>
+        </Slider>
+        <Slider name="NippleLength" invert="false" default="0">
+            <Data name="CBBENippleLength" target="CBBE">CBBEBody.osd\CBBENippleLength</Data>
+            <Data name="TopNippleLength" target="Top" local="true">Nightie04.osd\TopNippleLength</Data>
+        </Slider>
+        <Slider name="NipplePerk2" invert="false" default="0">
+            <Data name="CBBENipplePerk2" target="CBBE">CBBEBody.osd\CBBENipplePerk2</Data>
+            <Data name="TopNipplePerk2" target="Top" local="true">Nightie04.osd\TopNipplePerk2</Data>
+        </Slider>
+        <Slider name="NipplePerkiness" invert="false" default="0">
+            <Data name="CBBENipplePerkiness" target="CBBE">CBBEBody.osd\CBBENipplePerkiness</Data>
+            <Data name="TopNipplePerkiness" target="Top" local="true">Nightie04.osd\TopNipplePerkiness</Data>
+        </Slider>
+        <Slider name="NippleSize" invert="false" default="0">
+            <Data name="CBBENippleSize" target="CBBE">CBBEBody.osd\CBBENippleSize</Data>
+            <Data name="TopNippleSize" target="Top" local="true">Nightie04.osd\TopNippleSize</Data>
+        </Slider>
+        <Slider name="NippleTip" invert="false" default="0">
+            <Data name="CBBENippleTip" target="CBBE">CBBEBody.osd\CBBENippleTip</Data>
+            <Data name="TopNippleTip" target="Top" local="true">Nightie04.osd\TopNippleTip</Data>
+        </Slider>
+        <Slider name="NippleUp" invert="false" default="0">
+            <Data name="CBBENippleUp" target="CBBE">CBBEBody.osd\CBBENippleUp</Data>
+            <Data name="TopNippleUp" target="Top" local="true">Nightie04.osd\TopNippleUp</Data>
+        </Slider>
+        <Slider name="PregnancyBelly" invert="false" default="0">
+            <Data name="CBBEPregnancyBelly" target="CBBE">CBBEBody.osd\CBBEPregnancyBelly</Data>
+            <Data name="TopPregnancyBelly" target="Top" local="true">Nightie04.osd\TopPregnancyBelly</Data>
+        </Slider>
+        <Slider name="PushUp" invert="false" default="0">
+            <Data name="CBBEPushUp" target="CBBE">CBBEBody.osd\CBBEPushUp</Data>
+            <Data name="TopPushUp" target="Top" local="true">Nightie04.osd\TopPushUp</Data>
+        </Slider>
+        <Slider name="RoundAss" invert="false" default="0">
+            <Data name="CBBERoundAss" target="CBBE">CBBEBody.osd\CBBERoundAss</Data>
+            <Data name="TopRoundAss" target="Top" local="true">Nightie04.osd\TopRoundAss</Data>
+        </Slider>
+        <Slider name="ShoulderSmooth" invert="false" default="0">
+            <Data name="CBBEShoulderSmooth" target="CBBE">CBBEBody.osd\CBBEShoulderSmooth</Data>
+            <Data name="TopShoulderSmooth" target="Top" local="true">Nightie04.osd\TopShoulderSmooth</Data>
+        </Slider>
+        <Slider name="ShoulderTweak" invert="false" default="0">
+            <Data name="CBBEShoulderTweak" target="CBBE">CBBEBody.osd\CBBEShoulderTweak</Data>
+            <Data name="TopShoulderTweak" target="Top" local="true">Nightie04.osd\TopShoulderTweak</Data>
+        </Slider>
+        <Slider name="ShoulderWidth" invert="false" default="0">
+            <Data name="CBBEShoulderWidth" target="CBBE">CBBEBody.osd\CBBEShoulderWidth</Data>
+            <Data name="TopShoulderWidth" target="Top" local="true">Nightie04.osd\TopShoulderWidth</Data>
+        </Slider>
+        <Slider name="SlimThighs" invert="false" default="0">
+            <Data name="CBBESlimThighs" target="CBBE">CBBEBody.osd\CBBESlimThighs</Data>
+            <Data name="TopSlimThighs" target="Top" local="true">Nightie04.osd\TopSlimThighs</Data>
+        </Slider>
+        <Slider name="SternumDepth" invert="false" default="0">
+            <Data name="CBBESternumDepth" target="CBBE">CBBEBody.osd\CBBESternumDepth</Data>
+            <Data name="TopSternumDepth" target="Top" local="true">Nightie04.osd\TopSternumDepth</Data>
+        </Slider>
+        <Slider name="SternumHeight" invert="false" default="0">
+            <Data name="CBBESternumHeight" target="CBBE">CBBEBody.osd\CBBESternumHeight</Data>
+            <Data name="TopSternumHeight" target="Top" local="true">Nightie04.osd\TopSternumHeight</Data>
+        </Slider>
+        <Slider name="Thighs" invert="false" default="0">
+            <Data name="CBBEThighs" target="CBBE">CBBEBody.osd\CBBEThighs</Data>
+            <Data name="TopThighs" target="Top" local="true">Nightie04.osd\TopThighs</Data>
+        </Slider>
+        <Slider name="TummyTuck" invert="false" default="0">
+            <Data name="CBBETummyTuck" target="CBBE">CBBEBody.osd\CBBETummyTuck</Data>
+            <Data name="TopTummyTuck" target="Top" local="true">Nightie04.osd\TopTummyTuck</Data>
+        </Slider>
+        <Slider name="VanillaFo4" invert="false" default="0">
+            <Data name="CBBEVanillaFo4" target="CBBE">CBBEBody.osd\CBBEVanillaFo4</Data>
+            <Data name="TopVanillaFo4" target="Top" local="true">Nightie04.osd\TopVanillaFo4</Data>
+        </Slider>
+        <Slider name="Waist" invert="false" default="0">
+            <Data name="CBBEWaist" target="CBBE">CBBEBody.osd\CBBEWaist</Data>
+            <Data name="TopWaist" target="Top" local="true">Nightie04.osd\TopWaist</Data>
+        </Slider>
+        <Slider name="WaistHeight" invert="false" default="0">
+            <Data name="CBBEWaistHeight" target="CBBE">CBBEBody.osd\CBBEWaistHeight</Data>
+            <Data name="TopWaistHeight" target="Top" local="true">Nightie04.osd\TopWaistHeight</Data>
+        </Slider>
+        <Slider name="WideWaistLine" invert="false" default="0">
+            <Data name="CBBEWideWaistLine" target="CBBE">CBBEBody.osd\CBBEWideWaistLine</Data>
+            <Data name="TopWideWaistLine" target="Top" local="true">Nightie04.osd\TopWideWaistLine</Data>
+        </Slider>
+        <Slider name="Ankles" invert="false" default="0">
+            <Data name="CBBEAnkles" target="CBBE">CBBEBody.osd\CBBEAnkles</Data>
+        </Slider>
+        <Slider name="AppleCheeks" invert="false" default="0">
+            <Data name="CBBEAppleCheeks" target="CBBE">CBBEBody.osd\CBBEAppleCheeks</Data>
+            <Data name="TopAppleCheeks" target="Top" local="true">Nightie04.osd\TopAppleCheeks</Data>
+        </Slider>
+        <Slider name="Arms" invert="false" default="0">
+            <Data name="CBBEArms" target="CBBE">CBBEBody.osd\CBBEArms</Data>
+            <Data name="TopArms" target="Top" local="true">Nightie04.osd\TopArms</Data>
+        </Slider>
+        <Slider name="Back" invert="false" default="0">
+            <Data name="CBBEBack" target="CBBE">CBBEBody.osd\CBBEBack</Data>
+            <Data name="TopBack" target="Top" local="true">Nightie04.osd\TopBack</Data>
+        </Slider>
+        <Slider name="BackArch" invert="false" default="0">
+            <Data name="CBBEBackArch" target="CBBE">CBBEBody.osd\CBBEBackArch</Data>
+            <Data name="TopBackArch" target="Top" local="true">Nightie04.osd\TopBackArch</Data>
+        </Slider>
+        <Slider name="Belly" invert="false" default="0">
+            <Data name="CBBEBelly" target="CBBE">CBBEBody.osd\CBBEBelly</Data>
+            <Data name="TopBelly" target="Top" local="true">Nightie04.osd\TopBelly</Data>
+        </Slider>
+        <Slider name="BigBelly" invert="false" default="0">
+            <Data name="CBBEBigBelly" target="CBBE">CBBEBody.osd\CBBEBigBelly</Data>
+            <Data name="TopBigBelly" target="Top" local="true">Nightie04.osd\TopBigBelly</Data>
+        </Slider>
+        <Slider name="BigButt" invert="false" default="0">
+            <Data name="CBBEBigButt" target="CBBE">CBBEBody.osd\CBBEBigButt</Data>
+            <Data name="TopBigButt" target="Top" local="true">Nightie04.osd\TopBigButt</Data>
+        </Slider>
+        <Slider name="BigTorso" invert="false" default="0">
+            <Data name="CBBEBigTorso" target="CBBE">CBBEBody.osd\CBBEBigTorso</Data>
+            <Data name="TopBigTorso" target="Top" local="true">Nightie04.osd\TopBigTorso</Data>
+        </Slider>
+        <Slider name="BreastCenter" invert="false" default="0">
+            <Data name="CBBEBreastCenter" target="CBBE">CBBEBody.osd\CBBEBreastCenter</Data>
+            <Data name="TopBreastCenter" target="Top" local="true">Nightie04.osd\TopBreastCenter</Data>
+        </Slider>
+        <Slider name="BreastCenterBig" invert="false" default="0">
+            <Data name="CBBEBreastCenterBig" target="CBBE">CBBEBody.osd\CBBEBreastCenterBig</Data>
+            <Data name="TopBreastCenterBig" target="Top" local="true">Nightie04.osd\TopBreastCenterBig</Data>
+        </Slider>
+        <Slider name="BreastFantasy" invert="false" default="0">
+            <Data name="CBBEBreastFantasy" target="CBBE">CBBEBody.osd\CBBEBreastFantasy</Data>
+            <Data name="TopBreastFantasy" target="Top" local="true">Nightie04.osd\TopBreastFantasy</Data>
+        </Slider>
+        <Slider name="BreastFlatness2" invert="false" default="0">
+            <Data name="CBBEBreastFlatness2" target="CBBE">CBBEBody.osd\CBBEBreastFlatness2</Data>
+            <Data name="TopBreastFlatness2" target="Top" local="true">Nightie04.osd\TopBreastFlatness2</Data>
+        </Slider>
+        <Slider name="BreastGravity2" invert="false" default="0">
+            <Data name="CBBEBreastGravity2" target="CBBE">CBBEBody.osd\CBBEBreastGravity2</Data>
+            <Data name="TopBreastGravity2" target="Top" local="true">Nightie04.osd\TopBreastGravity2</Data>
+        </Slider>
+        <Slider name="BreastHeight" invert="false" default="0">
+            <Data name="CBBEBreastHeight" target="CBBE">CBBEBody.osd\CBBEBreastHeight</Data>
+            <Data name="TopBreastHeight" target="Top" local="true">Nightie04.osd\TopBreastHeight</Data>
+        </Slider>
+        <Slider name="BreastPerkiness" invert="false" default="0">
+            <Data name="CBBEBreastPerkiness" target="CBBE">CBBEBody.osd\CBBEBreastPerkiness</Data>
+            <Data name="TopBreastPerkiness" target="Top" local="true">Nightie04.osd\TopBreastPerkiness</Data>
+        </Slider>
+        <Slider name="ArmpitHeight" invert="false" default="0">
+            <Data name="CBBEArmpitHeight" target="CBBE">CBBEBody.osd\CBBEArmpitHeight</Data>
+            <Data name="TopArmpitHeight" target="Top" local="true">Nightie04.osd\TopArmpitHeight</Data>
+        </Slider>
+        <Slider name="ForearmSize" invert="false" default="0">
+            <Data name="CBBEForearmSize" target="CBBE">CBBEBody.osd\CBBEForearmSize</Data>
+        </Slider>
+        <Slider name="NippleShape" invert="false" default="0">
+            <Data name="CBBENippleShape" target="CBBE">CBBEBody.osd\CBBENippleShape</Data>
+            <Data name="TopNippleShape" target="Top" local="true">Nightie04.osd\TopNippleShape</Data>
+        </Slider>
+        <Slider name="NippleTwistUp" invert="false" default="0">
+            <Data name="CBBENippleTwistUp" target="CBBE">CBBEBody.osd\CBBENippleTwistUp</Data>
+            <Data name="TopNippleTwistUp" target="Top" local="true">Nightie04.osd\TopNippleTwistUp</Data>
+        </Slider>
+        <Slider name="7B Upper" invert="false" default="0">
+            <Data name="CBBE7B Upper" target="CBBE">CBBEBody.osd\CBBE7B Upper</Data>
+            <Data name="Top7B Upper" target="Top" local="true">Nightie04.osd\Top7B Upper</Data>
+        </Slider>
+        <Slider name="7B Lower" invert="false" default="0">
+            <Data name="CBBE7B Lower" target="CBBE">CBBEBody.osd\CBBE7B Lower</Data>
+            <Data name="Top7B Lower" target="Top" local="true">Nightie04.osd\Top7B Lower</Data>
+        </Slider>
+        <Slider name="MuscularChest" invert="false" default="0">
+            <Data name="CBBEMuscularChest" target="CBBE">CBBEBody.osd\CBBEMuscularChest</Data>
+            <Data name="TopMuscularChest" target="Top" local="true">Nightie04.osd\TopMuscularChest</Data>
+        </Slider>
+        <Slider name="MuscularArms" invert="false" default="0">
+            <Data name="CBBEMuscularArms" target="CBBE">CBBEBody.osd\CBBEMuscularArms</Data>
+            <Data name="TopMuscularArms" target="Top" local="true">Nightie04.osd\TopMuscularArms</Data>
+        </Slider>
+        <Slider name="MuscularButt" invert="false" default="0">
+            <Data name="CBBEMuscularButt" target="CBBE">CBBEBody.osd\CBBEMuscularButt</Data>
+            <Data name="TopMuscularButt" target="Top" local="true">Nightie04.osd\TopMuscularButt</Data>
+        </Slider>
+        <Slider name="MuscularLegs" invert="false" default="0">
+            <Data name="CBBEMuscularLegs" target="CBBE">CBBEBody.osd\CBBEMuscularLegs</Data>
+            <Data name="TopMuscularLegs" target="Top" local="true">Nightie04.osd\TopMuscularLegs</Data>
+        </Slider>
+    </SliderSet>
+</SliderSetInfo>

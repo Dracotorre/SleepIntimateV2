@@ -1712,6 +1712,12 @@ Function CheckCompatibility()
 	;
 	if (DTSleep_AdultContentOn.GetValue() >= 1.0)
 	
+		if (Game.IsPluginInstalled("AAFMorningSexWithLover.esp"))
+			(DTSConditionals as DTSleep_Conditionals).IsMorningSexActive = true
+		else
+			(DTSConditionals as DTSleep_Conditionals).IsMorningSexActive = false
+		endIf
+	
 		; Lacy Underwear
 		string lacyPlugin = "Lacy Underwear.esp"
 		
@@ -2097,7 +2103,7 @@ Function CheckCompatibility()
 					(DTSConditionals as DTSleep_Conditionals).IsGrayAnimsActive = false
 				endIf
 				
-				; BP70 - a scene causes game crash with ZeX skeleton
+				; BP70 -v2.2.1 a scene causes game crash with ZeX skeleton - also requires AAF.esm as master
 				;if (Game.IsPluginInstalled("rxl_bp70_animations.esp"))
 				;
 				;	(DTSConditionals as DTSleep_Conditionals).IsBP70Active = true
@@ -3710,7 +3716,7 @@ Form Function IsPluginActive(int formID, string pluginName)
 	if (Game.IsPluginInstalled(pluginName))
 		; from CreationKit.com: "Note the top most byte in the given ID is unused so 0000ABCD works as well as 0400ABCD"
 		Form formFound = Game.GetFormFromFile(formID, pluginName)
-		if (formFound)
+		if (formFound != None)
 			Debug.Trace(myScriptName + " found plugin: " + pluginName)
 			return formFound 
 		endIf

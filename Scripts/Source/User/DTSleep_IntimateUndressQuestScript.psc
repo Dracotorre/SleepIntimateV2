@@ -57,6 +57,7 @@ Keyword property ArmorTypePower auto const
 Keyword property DTSleep_OutfitContainerKY auto const
 Keyword property DTSleep_OwnBedPrivateKY auto const
 Keyword property IsSleepFurnitureKY auto const
+Keyword property DTSleep_SleepwearKY auto const
 
 GlobalVariable property DTSleep_EquipMonInit auto
 GlobalVariable property DTSleep_ExtraArmorsEnabled auto
@@ -119,6 +120,8 @@ FormList property DTSleep_BT2GunList auto const
 FormList property DTSleep_IntimateAttireFemaleOnlyList auto const
 FormList property DTSleep_IntimateAttireOKUnderList auto const
 { must remove under armor on these intimate outfits -- usually slot-33 only with shoes -- will also remove for sleep }
+FormList property DTSleep_SleepAttireHandsList auto const
+{ sleep outfit that includes hand slots }
 EndGroup
 
 Group C_Armors
@@ -1283,7 +1286,7 @@ bool Function CheckActorHasSleepwearMainOutfit(Actor actorRef, int equipMonInitL
 	
 	if (equipMonInitLevel > 0)
 		if (actorRef == PlayerRef)
-			if (DressData.PlayerEquippedSleepwearItem)
+			if (DressData.PlayerEquippedSleepwearItem != None)
 				if (!DTSleep_ArmorSlot58List.HasForm(DressData.PlayerEquippedSleepwearItem))
 					return true
 				endIf
@@ -2198,6 +2201,11 @@ bool Function IsActorCarryingSleepwear(Actor actorRef, ObjectReference bedContai
 				endIf
 			endIf
 		endIf
+		
+		if (actorRef.WornHasKeyword(DTSleep_SleepwearKY))
+			return true
+		endIf
+		
 		Armor item = None
 		int gender = GetGenderForActor(actorRef)
 		
@@ -2424,6 +2432,55 @@ bool Function IsActorWearingSlot61Exceptions(Actor actorRef)
 	return false
 EndFunction
 
+bool Function IsActorWearingSleepClothesHandsException(Actor actorRef)
+	if (actorRef == None)
+		return false
+	endIf
+	
+	bool checkArmorList = false
+	
+	if (DTSleep_EquipMonInit.GetValue() >= 5.0)
+		if (actorRef == PlayerRef)
+			if (DressData.PlayerEquippedIntimateAttireItem != None)
+				if (DTSleep_SleepAttireHandsList.HasForm(DressData.PlayerEquippedIntimateAttireItem))
+					return true
+				endIf
+			endIf
+			if (DressData.PlayerEquippedSleepwearItem != None)
+				if (DTSleep_SleepAttireHandsList.HasForm(DressData.PlayerEquippedSleepwearItem))
+					return true
+				endIf
+			endIf
+			
+		elseIf (actorRef == CompanionRef)
+			if (DressData.CompanionEquippedIntimateAttireItem != None)
+				if (DTSleep_SleepAttireHandsList.HasForm(DressData.CompanionEquippedIntimateAttireItem))
+					return true
+				endIf
+			endIf
+			if (DressData.CompanionEquippedSleepwearItem != None)
+				if (DTSleep_SleepAttireHandsList.HasForm(DressData.CompanionEquippedSleepwearItem))
+					return true
+				endIf
+			endIf
+		else
+			checkArmorList = true
+		endIf
+	else
+		checkArmorList = true
+	endIf
+	
+	if (checkArmorList)
+		Armor item = GetArmorForActorWearingClothingOnList(actorRef, DTSleep_SleepAttireHandsList)
+		if (item != None)
+		
+			return true
+		endIf
+	endIf
+	
+	return false
+endFunction
+
 
 bool Function IsActorWearingSlotULegExepction(Actor actorRef)
 	if (actorRef == None)
@@ -2551,7 +2608,7 @@ bool Function PlaceFormNearFeet(Form item, Actor actorRef)
 	return result
 endFunction
 
-; cornerVal 0+ for beds -- 2 is coffin or narrow bed, -1 for other furniture
+; cornerVal 0+ for beds -- 2 is coffin or narrow bed, 3 is desk, -1 for other furniture
 Point3DOrient Function PlacePointAtBed(ObjectReference bedRef, Actor fromActor, int cornerVal)
 	
 	Point3DOrient placeBedPoint = new Point3DOrient
@@ -2562,12 +2619,17 @@ Point3DOrient Function PlacePointAtBed(ObjectReference bedRef, Actor fromActor, 
 			placeBedPoint = DTSleep_CommonF.GetPointBedArmorPlaceAtFoot(ptBed, ptActor)
 		elseIf (cornerVal == 2)
 			placeBedPoint = DTSleep_CommonF.GetPointBedArmorPlaceAtFoot(ptBed, ptActor, -25.4, -63.0)
+		elseIf (cornerVal == 3)
+			; v2.30 desk / too close to middle where feet are
+			placeBedPoint = DTSleep_CommonF.GetPointBedArmorPlaceAtFoot(ptBed, ptActor, 0.0, -25.0)
 		elseIf (cornerVal < 0)
 			float xOff = 0.0
 			float yOff = 0.0		; some chairs are backward so would need to reverse
 
 			if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsObjBenchSofa(bedRef, None))	
 				xOff = 22.0
+			elseIf (bedRef.HasKeyword((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).AnimFurnBarStoolKY))
+				yOff = -8.5
 			elseIf ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsObjShower(bedRef, None))
 				xOff = 25.0
 				yOff = 14.0 
@@ -3637,9 +3699,9 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 				; force off and prevent auto-equip items until done undressing
 				playerArmorKnockOff = true
 				PlayerRef.EquipItem(DTSleep_NudeRingArmorOuter, true, true)
-				UndressActorArmorOutSlots(actorRef, true, hasSleepWearMainOutfit)
+				UndressActorArmorOutSlots(actorRef, true)
 			else
-				UndressActorArmorOutSlots(actorRef, skipUpperOuterArmorSlots, hasSleepWearMainOutfit)
+				UndressActorArmorOutSlots(actorRef, skipUpperOuterArmorSlots)
 			endIf
 		else
 			; v2.14 - if has sleepwear set to respect-only to avoid removing by slot
@@ -3687,8 +3749,9 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 		
 		if (hasSleepWearMainOutfit)
 			if (includeExceptions)
-			
+				; remove sleep outfit
 				UndressActorArmorMainSleepwearPlaceAtFeet(actorRef, DropSleepClothes)
+				hasSleepWearMainOutfit = false
 				
 				if (actorRef == PlayerRef)
 					; ensure
@@ -3696,10 +3759,16 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 					ensureNude = true
 					actorRef.UnequipItemSlot(3) 	; 33 - full body outfit
 					Utility.WaitMenuMode(0.16)
+					UndressActorArmorInnerSlots(actorRef, true, true)			; v2.28 - always remove true
+				endIf
+			else
+				; keep sleep outfit on - limit inner slots
+				
+				if (!IsActorWearingSleepClothesHandsException(actorRef))
 					actorRef.UnequipItemSlot(4) 	; 34 - left hand 
 					actorRef.UnequipItemSlot(5)
 				endIf
-			else
+				
 				if (actorRef == CompanionRef)
 					
 					if (DressData.CompanionEquippedSleepwearItem != None && !DTSleep_SleepAttireFullArmorList.HasForm(DressData.CompanionEquippedSleepwearItem as Form))
@@ -3708,8 +3777,6 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 						UndressActorCompanionDressNudeSuit(actorRef, hasSleepWearMainOutfit)
 					endIf
 				endIf
-				actorRef.UnequipItemSlot(4) 	; 34 - left hand 
-				actorRef.UnequipItemSlot(5)
 			endIf
 		elseIf (actorRef == PlayerRef)
 		
@@ -3719,7 +3786,7 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 				if (okayExceptions && DressData.PlayerEquippedIntimateAttireItem != None && !DTSleep_IntimateAttireOKUnderList.HasForm(DressData.PlayerEquippedIntimateAttireItem as Form))
 					okayExceptions = false
 				endIf
-				UndressActorArmorInnerSlots(actorRef, okayExceptions, okayExceptions)	; v2.27 - for intimate outfit--changed
+				UndressActorArmorInnerSlots(actorRef, okayExceptions, okayExceptions, true)	; v2.27 - for intimate outfit--changed
 			else
 				ensureNude = true			; no intimate outfit
 				
@@ -3727,14 +3794,12 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 				; wait for a mod item event
 				Utility.WaitMenuMode(0.12)
 				; v2.17 - moved as part of not-intimate outfit
-				UndressActorArmorInnerSlots(actorRef, true)	
+				UndressActorArmorInnerSlots(actorRef, true, true)			; v2.28 - always remove true
 			endIf
-			actorRef.UnequipItemSlot(4) 	; 34 - left hand
-			actorRef.UnequipItemSlot(5)
 			
 		elseIf (includeExceptions || !actorWearingArmorAll)  ; companion
 			if (actorRef == CompanionRef)
-				if (hasSleepWearMainOutfit || actorWearingIntimateItem)
+				if (actorWearingIntimateItem)
 					; override since has sleepwear on
 					DressData.CompanionRequiresNudeSuit = false 
 				elseIf (actorRef == CompanionStrongRef)
@@ -4084,24 +4149,35 @@ int Function UndressActorArmorForListFromArray(Actor actorRef, FormList armorLis
 	return count
 endFunction
 
-Function UndressActorArmorInnerSlots(Actor actorRef, bool includeExceptions, bool alwaysRemove = false)
-		
-	actorRef.UnequipItemSlot(4) 	; 34 - left hand 
-	actorRef.UnequipItemSlot(5)
+Function UndressActorArmorInnerSlots(Actor actorRef, bool includeExceptions, bool alwaysRemove = false, bool wearingSleepClothes = false)
+	
+	bool hasHandsException = false
+	
+	if (!wearingSleepClothes)
+		actorRef.UnequipItemSlot(4) 	; 34 - left hand 
+		actorRef.UnequipItemSlot(5)
+	elseIf (IsActorWearingSleepClothesHandsException(actorRef))
+		hasHandsException = true
+	else
+		actorRef.UnequipItemSlot(4) 	; 34 - left hand 
+		actorRef.UnequipItemSlot(5)
+	endIf
 	
 	; normally considered under-armor clothing pieces
 	
-	if (alwaysRemove || IsSummerSeason())
-		actorRef.UnequipItemSlot(7) 	; 37 - u-L arm  AWK-Jacket, Cross overcoats
-		actorRef.UnequipItemSlot(8) 	; 38 - u-R arm
-		actorRef.UnequipItemSlot(9) 	; 39 - u-L leg  CROSS-Bos boots, AWK-*OnHip
-		actorRef.UnequipItemSlot(10)
-	elseIf (includeExceptions && !IsActorWearingSlotULegExepction(actorRef))
-		actorRef.UnequipItemSlot(6) 	; 36 - u-torso !!!(AWK-Bracelet)!!
-		actorRef.UnequipItemSlot(7) 	; 37 - u-L arm  AWK-Jacket, Cross overcoats
-		actorRef.UnequipItemSlot(8) 	; u-R arm
-		actorRef.UnequipItemSlot(9) 	; 39 - u-L leg  CROSS-Bos boots, AWK-*OnHip
-		actorRef.UnequipItemSlot(10)
+	if (!hasHandsException)
+		if (alwaysRemove || IsSummerSeason())
+			actorRef.UnequipItemSlot(7) 	; 37 - u-L arm  AWK-Jacket, Cross overcoats
+			actorRef.UnequipItemSlot(8) 	; 38 - u-R arm
+			actorRef.UnequipItemSlot(9) 	; 39 - u-L leg  CROSS-Bos boots, AWK-*OnHip, Comfy Socks
+			actorRef.UnequipItemSlot(10)
+		elseIf (includeExceptions && !IsActorWearingSlotULegExepction(actorRef))
+			actorRef.UnequipItemSlot(6) 	; 36 - u-torso !!!(AWK-Bracelet)!!
+			actorRef.UnequipItemSlot(7) 	; 37 - u-L arm  AWK-Jacket, Cross overcoats
+			actorRef.UnequipItemSlot(8) 	; u-R arm
+			actorRef.UnequipItemSlot(9) 	; 39 - u-L leg  CROSS-Bos boots, AWK-*OnHip, Comfy Socks
+			actorRef.UnequipItemSlot(10)
+		endIf
 	endIf
 	
 endFunction
@@ -4556,6 +4632,8 @@ bool Function UndressActorBackPack(Actor actorRef, bool placeOnGround = true)
 							cornerVal = 1
 						elseIf (PlayerBedRef.HasKeyWord(IsSleepFurnitureKY) == false)
 							cornerVal = -1
+						elseIf ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsObjDesk(PlayerBedRef, PlayerBedRef.GetBaseObject()))
+							cornerVal = 3
 						endIf
 						
 						placedCount += UndressPlaceExtraArmorForBed(PlayerBedRef, actorRef, backpack, cornerVal, DressData.PlayerBackPackNoGOModel)

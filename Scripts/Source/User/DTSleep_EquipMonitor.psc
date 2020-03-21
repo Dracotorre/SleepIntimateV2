@@ -64,6 +64,9 @@ Keyword property ArmorTypeHelmetKY auto const
 Keyword property ArmorTypePowerKY auto const
 Keyword property ArmorBodyPartHeadKY auto const  ; also used for shock collar, some masks
 { not currently used }
+Keyword property DTSleep_IntimateOutfitFemKY auto const
+Keyword property DTSleep_SleepWearCamiKY auto const
+Keyword property DTSleep_SleepwearKY auto const
 EndGroup
 
 Group C_Lists
@@ -894,7 +897,9 @@ bool Function ProcessIntimateItem(Form item, int gender)
 	int initialCount = DTSleep_IntimateAttireList.GetSize()
 	
 	if (minDiff > 20.0)
-		return false 
+		return false
+	elseIf (item.HasKeyword(DTSleep_IntimateOutfitFemKY))
+		return false
 	endIf
 	
 	if (IsOnStandardArmorLists(item))
@@ -1036,6 +1041,8 @@ bool Function ProcessSleepwearItem(Form item, int gender)
 	FormList sleepwearList = DTSleep_SleepAttireFemale
 	
 	if (item == None || minDiff > 20.0)
+		return false
+	elseIf (item.HasKeyword(DTSleep_SleepwearKY))
 		return false
 	endIf
 	
@@ -1291,11 +1298,22 @@ Function SetCompanionDataMatchArmorToArmor(Armor matchItem, Armor toItem)
 		elseIf (DressData.CompanionEquippedIntimateAttireItem == matchItem)
 			DressData.CompanionLastEquippedIntimateAttireItem = DressData.CompanionEquippedIntimateAttireItem
 			DressData.CompanionEquippedIntimateAttireItem = toItem
+			if (DressData.CompanionGender == 1 && DressData.CompanionLastEquippedIntimateAttireItem != None)
+				if (DressData.CompanionEquippedIntimateAttireItem.HasKeyword(DTSleep_SleepWearCamiKY))
+					; v2.30 allow both
+					DressData.CompanionLastEquippedSleepwearItem =  DressData.CompanionLastEquippedIntimateAttireItem
+				elseIf (DTSleep_SleepAttireFemale.HasForm(DressData.CompanionLastEquippedIntimateAttireItem))
+					; v2.30 allow both
+					DressData.CompanionLastEquippedSleepwearItem =  DressData.CompanionLastEquippedIntimateAttireItem
+				endIf
+			endIf
 		elseIf (DressData.CompanionLastEquippedIntimateAttireItem == matchItem)
 			if (toItem != None)
 				DressData.CompanionEquippedIntimateAttireItem = toItem
 			endIf
 		elseIf (DressData.CompanionGender == 0 && DTSleep_IntimateAttireMaleList.HasForm(matchItem))
+			DressData.CompanionEquippedIntimateAttireItem = toItem
+		elseIf (DressData.CompanionGender == 1 && matchItem.HasKeyword(DTSleep_IntimateOutfitFemKY))
 			DressData.CompanionEquippedIntimateAttireItem = toItem
 		elseIf (DressData.CompanionGender == 1 && DTSleep_IntimateAttireList.HasForm(matchItem))
 			DressData.CompanionEquippedIntimateAttireItem = toItem
@@ -1516,6 +1534,8 @@ Function SetCompanionDressDataMatchingFormToArmor(Form matchForm, Armor toItem)
 		elseIf (DressData.CompanionGender == 0 && DTSleep_IntimateAttireMaleList.HasForm(matchForm))
 			DressData.CompanionEquippedIntimateAttireItem = toItem
 			
+		elseIf (DressData.CompanionGender == 1 && matchform.HasKeyword(DTSleep_IntimateOutfitFemKY))
+			DressData.CompanionEquippedIntimateAttireItem = toItem
 		elseIf (DressData.CompanionGender == 1 && DTSleep_IntimateAttireList.HasForm(matchForm))
 			DressData.CompanionEquippedIntimateAttireItem = toItem
 
@@ -1668,7 +1688,18 @@ Function SetDressDataMatchArmorToArmor(Armor matchItem, Armor toItem)
 		elseIf (DressData.PlayerEquippedIntimateAttireItem == matchItem)
 			DressData.PlayerLastEquippedIntimateAttireItem = DressData.PlayerEquippedIntimateAttireItem
 			DressData.PlayerEquippedIntimateAttireItem = toItem
+			if (DressData.PlayerGender == 1 && DressData.PlayerLastEquippedIntimateAttireItem != None)
+				if (DressData.PlayerLastEquippedIntimateAttireItem.HasKeyword(DTSleep_SleepWearCamiKY))
+					;v2.30 - allow both 
+					DressData.PlayerLastEquippedSleepwearItem = DressData.PlayerLastEquippedIntimateAttireItem
+				elseIf (DTSleep_SleepAttireFemale.HasForm(DressData.PlayerLastEquippedIntimateAttireItem))
+					;v2.30 - allow both
+					DressData.PlayerLastEquippedSleepwearItem = DressData.PlayerLastEquippedIntimateAttireItem
+				endIf
+			endIf
 		elseIf (DressData.PlayerLastEquippedIntimateAttireItem == matchItem)
+			DressData.PlayerEquippedIntimateAttireItem = toItem
+		elseIf (DressData.PlayerGender == 1 && matchItem.HasKeyword(DTSleep_IntimateOutfitFemKY))
 			DressData.PlayerEquippedIntimateAttireItem = toItem
 		elseIf (DressData.PlayerGender == 1 && DTSleep_IntimateAttireList.HasForm(matchItem as Form))
 			DressData.PlayerEquippedIntimateAttireItem = toItem
@@ -1914,6 +1945,8 @@ Function SetDressDataMatchingFormToArmor(Form matchForm, Armor toItem)
 		elseIf (DTSleep_ArmorCarryPouchList && DTSleep_ArmorCarryPouchList.HasForm(matchForm))
 			DressData.PlayerEquippedCarryPouchItem = toItem
 		
+		elseIf (DressData.PlayerGender == 1 &&  matchForm.HasKeyword(DTSleep_IntimateOutfitFemKY))
+			DressData.PlayerEquippedIntimateAttireItem = toItem
 		elseIf (DressData.PlayerGender == 1 && DTSleep_IntimateAttireList.HasForm(matchForm))
 			DressData.PlayerEquippedIntimateAttireItem = toItem
 		elseIf (DressData.PlayerGender == 0 && DTSleep_IntimateAttireMaleList.HasForm(matchForm))
@@ -2006,7 +2039,7 @@ Function SetDressDataMatchingFormToArmor(Form matchForm, Armor toItem)
 			DressData.PlayerLastEquippedSlotFXIsSleepwear = DressData.PlayerEquippedSlotFXIsSleepwear
 			DressData.PlayerEquippedSlotFXItem = toItem
 			; check sleepwear
-			if (toItem && DTSleep_SleepAttireFemale && DTSleep_SleepAttireFemale.HasForm(matchForm))
+			if (toItem && DTSleep_SleepAttireFemale != None && DTSleep_SleepAttireFemale.HasForm(matchForm))
 				DressData.PlayerEquippedSlotFXIsSleepwear = true
 			else
 				DressData.PlayerEquippedSlotFXIsSleepwear = false
@@ -2027,10 +2060,13 @@ endFunction
 Function SetDressDataBasicMatchFormToArmor(Form matchForm, Armor toItem)
 	if (matchForm != None)
 		;Debug.Trace("[DTSleep_EquipMon] SetDressDataBasic: " + matchform)
-		if (DTSleep_SleepAttireFemale && DTSleep_SleepAttireFemale.HasForm(matchForm))
+		if (matchForm.HasKeyword(DTSleep_SleepwearKY))
 			DressData.PlayerLastEquippedSleepwearItem = DressData.PlayerEquippedSleepwearItem
 			DressData.PlayerEquippedSleepwearItem = toItem
-		elseIf (DTSleep_SleepAttireMale && DTSleep_SleepAttireMale.HasForm(matchForm))
+		elseIf (DressData.PlayerGender == 1 && DTSleep_SleepAttireFemale.HasForm(matchForm))
+			DressData.PlayerLastEquippedSleepwearItem = DressData.PlayerEquippedSleepwearItem
+			DressData.PlayerEquippedSleepwearItem = toItem
+		elseIf (DressData.PlayerGender == 0 &&DTSleep_SleepAttireMale != None && DTSleep_SleepAttireMale.HasForm(matchForm))
 			DressData.PlayerLastEquippedSleepwearItem = DressData.PlayerEquippedSleepwearItem
 			DressData.PlayerEquippedSleepwearItem = toItem
 		endIf

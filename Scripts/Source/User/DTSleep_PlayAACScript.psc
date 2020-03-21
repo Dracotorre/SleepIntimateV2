@@ -28,6 +28,7 @@ GlobalVariable property DTSleep_IntimateDogEXP auto
 GlobalVariable property DTSleep_SettingUseLeitoGun auto const
 GlobalVariable property DTSleep_SettingUseBT2Gun auto const
 GlobalVariable property DTSleep_SettingSynthHuman auto const
+GlobalVariable property DTSleep_SettingCancelScene auto const
 EndGroup
 
 Group A_GameData
@@ -197,7 +198,9 @@ Event OnEffectStart(Actor akfActor, Actor akmActor)
 		MainActor.SetAnimationVariableBool("bHumanoidFootIKDisable", true)
 		;MainActor.ChangeAnimFaceArchetype(AnimFaceArchetypeHappy)
 		
-		RegisterForMenuOpenCloseEvent("PipboyMenu")
+		if (DTSleep_SettingCancelScene.GetValue() > 0.0)
+			RegisterForMenuOpenCloseEvent("PipboyMenu")
+		endIf
 		Utility.Wait(0.2)
 		
 		InitSceneAndPlay()
@@ -212,7 +215,9 @@ endEvent
 ; end animation - clean up
 Event OnEffectFinish(Actor akfActor, Actor akmActor)
 	
-	UnregisterForMenuOpenCloseEvent("PipboyMenu")
+	if (DTSleep_SettingCancelScene.GetValue() > 0.0)
+		UnregisterForMenuOpenCloseEvent("PipboyMenu")
+	endIf
 
 	if (PlayerOriginMarkerRef != None)
 		DTSleep_CommonF.MoveActorToObject(PlayerRef, PlayerOriginMarkerRef)
@@ -598,6 +603,7 @@ Function PlaySequence(DTAACSceneStageStruct[] seqStagesArray)
 
 	;Debug.Trace("[DTSleep_PlayAAC] playSequence " + SequenceID + " with " + MainActor + ", " + SecondActor)
 	if (MainActor == None || SceneData == None)
+		Debug.Trace("DTSleep_PlayAAC] missing main actor or scene data--stopping")
 		StopAnimationSequence()
 		return
 	elseIf (seqStagesArray.Length == 0)

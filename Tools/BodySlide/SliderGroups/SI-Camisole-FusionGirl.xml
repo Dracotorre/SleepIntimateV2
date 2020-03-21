@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<SliderGroups>
+    <Group name="Fusion Girl">
+        <Member name="SI-CamiSplit-FusionGirl"/>
+        <Member name="SI-Camisole-FusionGirl"/>
+    </Group>
+    <Group name="SI-Camisole-FusionGirl">
+		<Member name="SI-CamiSplit-FusionGirl"/>
+        <Member name="SI-Camisole-FusionGirl"/>
+    </Group>
+</SliderGroups>

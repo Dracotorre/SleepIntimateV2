@@ -84,6 +84,7 @@ bool property IsBasementLivingActive = false auto conditional hidden
 bool property IsLetsDanceActive = false auto conditional hidden
 bool property IsFusionCityActive = false auto conditional hidden
 bool property IsPlayerCommentsActive = false auto conditional hidden
+bool property IsMorningSexActive = false auto conditional hidden
 bool property IsSnapBedsActive = false auto conditional hidden
 bool property IsScavversBackPackActive = false auto conditional hidden
 int property HasGenderSwappedPerks = -1 auto conditional hidden

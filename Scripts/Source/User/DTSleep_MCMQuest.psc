@@ -46,6 +46,7 @@ GlobalVariable property DTSleep_SettingChemCraft auto
 GlobalVariable property DTSleep_SettingModActive auto const
 GlobalVariable property DTSleep_SettingModMCMCtl auto const
 GlobalVariable property DTSleep_UndressCarryBonus auto const
+GlobalVariable property DTSleep_SettingChairsEnabled auto const
 EndGroup
 
 string property MCMmodName = "SleepIntimate" auto const hidden
@@ -258,6 +259,26 @@ EndFunction
 Function SetRestoreDefaults(float val)
 
 	(pDTSleep_MainQuest as DTSleep_MainQuestScript).RestoreSettingsDefault()
+EndFunction
+
+Function ToggleChairScenes(float val)
+	
+	int chairVal = 1 + DTSleep_SettingChairsEnabled.GetValueInt()
+	if (chairVal < 0)
+		chairVal == 1
+	endIf
+	
+	if (DTSleep_ActivChairs.GetValue() < 2.0)
+		
+		if (chairVal > 1)
+			chairVal = 0
+		endIf
+		
+	elseIf (chairVal > 2)
+		chairVal = 0
+	endIf
+	
+	DTSleep_SettingChairsEnabled.SetValueInt(chairVal)
 EndFunction
 
 

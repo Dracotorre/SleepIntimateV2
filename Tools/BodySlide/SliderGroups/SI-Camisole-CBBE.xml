@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<SliderGroups>
+    <Group name="CBBE">
+        <Member name="SI-Camisole-CBBE"/>
+        <Member name="SI-CamiSplit-CBBE"/>
+    </Group>
+    <Group name="SI-Camisole-CBBE">
+		<Member name="SI-Camisole-CBBE"/>
+        <Member name="SI-CamiSplit-CBBE"/>
+    </Group>
+</SliderGroups>

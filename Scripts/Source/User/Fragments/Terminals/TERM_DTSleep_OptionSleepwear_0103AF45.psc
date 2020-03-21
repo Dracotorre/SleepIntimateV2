@@ -61,8 +61,42 @@ Function Fragment_Terminal_11(ObjectReference akTerminalRef)
 EndFunction
 ;END FRAGMENT
 
+;BEGIN FRAGMENT Fragment_Terminal_12
+Function Fragment_Terminal_12(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingClothesBody.SetValue(0.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_13
+Function Fragment_Terminal_13(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingClothesBody.SetValue(3.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_14
+Function Fragment_Terminal_14(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingClothesBody.SetValue(2.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_15
+Function Fragment_Terminal_15(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingClothesBody.SetValue(1.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
 ;END FRAGMENT CODE - Do not edit anything between this and the begin comment
 
 Quest Property pDTSleep_MainQuest Auto Const Mandatory
 
 Quest Property pDTSleep_IntimateUndressQuest Auto Const Mandatory
+
+GlobalVariable Property pDTSleep_SettingClothesBody Auto Const Mandatory
