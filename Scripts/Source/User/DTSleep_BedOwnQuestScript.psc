@@ -549,7 +549,7 @@ int Function IsObjBelongPlayerWorkshop(ObjectReference objRef)
 
 		MyWorkshopRef = linkRef as WorkshopScript
 		
-		if (linkRef.HasKeyword(DTSConditionals.ConquestWorkshopKW))
+		if (DTSConditionals.ConquestWorkshopKW != None && linkRef.HasKeyword(DTSConditionals.ConquestWorkshopKW))
 
 			return 2
 		elseIf (linkRef.GetValue(WorkshopPlayerOwned) >= 1.0)

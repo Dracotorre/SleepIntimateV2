@@ -224,6 +224,7 @@ GlobalVariable property DTSleep_HRLastSleepTime auto const
 GlobalVariable property DTSleep_SettingLover2 auto const
 { include 2nd lover in scenes }
 GlobalVariable property DTSleep_SexStyleLevel auto
+GlobalVariable property DTSleep_AdultOutfitOn auto
 EndGroup
 
 Group BC_Globals_Settings
@@ -317,6 +318,7 @@ Keyword property FurnitureClassRelaxationKY auto const
 Keyword property FurnitureTypePowerArmorKY auto const
 
 Keyword property DTSleep_OutfitContainerKY auto const
+Keyword property DTSleep_LoverRingKY auto const
 ActorValue property WorkshopPlayerOwned auto Const
 ReferenceAlias property SleepCompanionAlias auto const 
 ReferenceAlias property CompanionAlias auto const
@@ -2756,7 +2758,7 @@ IntimateChancePair Function ChanceForIntimateScene(IntimateCompanionSet companio
 	int baseChance = -34
 	if (forHugs)
 		baseChance = -4
-	elseIf (DTSleep_AdultContentOn.GetValue() <= 1.0)
+	elseIf (DTSleep_AdultContentOn.GetValue() <= 1.5)
 		baseChance = -28
 	elseIf (IsAdultAnimationAvailable() == false)
 		baseChance = -30
@@ -4861,11 +4863,12 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 	; v2.22 - also check alias together with count just in case
 	if ((DTSConditionals as DTSleep_Conditionals).LoverRingEquipCount > 0 && DTSleep_TrueLoveAlias != None)
 		; companion has a ring - consider only the ring!
-		;DTDebug(" checking for nearby lover ring owner...", 2)
 		
 		Actor loverActor = DTSleep_TrueLoveAlias.GetActorReference()
-		if (loverActor != None && loverActor.GetItemCount(DTSleep_ArmorLoverRing) > 0 && loverActor.GetDistance(PlayerRef) < 2000.0)
-			;DTDebug("found true love ring holder " + loverActor, 1)
+		DTDebug(" checking for nearby lover ring owner for actor " + loverActor, 2)
+		
+		if (loverActor != None && loverActor.WornHasKeyword(DTSleep_LoverRingKY) && loverActor.GetDistance(PlayerRef) < 2000.0)
+			;DTDebug("found true love ring holder " + loverActor, 2)
 			if (loverActor.IsDead())
 				; ummm...
 				DTDebug(" lover's ring wearer, " + loverActor + " is... dead.", 1)
@@ -5804,7 +5807,7 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 			endIf
 		endIf
 		
-		DTDebug(" check nearCompanion " + nearCompanion.CompanionActor, 2)
+		DTDebug(" check nearCompanion " + nearCompanion.CompanionActor, 1)
 
 		;  ***** verify companion is ready and update SceneData
 		; 
@@ -6573,7 +6576,7 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 				
 				int undressLevel = -1
 				if (doFade)
-					if (DTSleep_AdultContentOn.GetValue() <= 1.0 || SceneData.AnimationSet == 0 || pickStyle == 1)
+					if (DTSleep_AdultContentOn.GetValue() <= 1.5 || SceneData.AnimationSet == 0 || pickStyle == 1)
 						undressLevel = 1
 						; if sleeping bag and outdoors, normal clothed respect
 						if (targetRef.HasKeyword(AnimFurnFloorBedAnims) && !PlayerRef.IsInInterior())
@@ -7094,7 +7097,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 		doOtherProp = false
 		animPacks[0] = 0
 		; doSexyDance handled later
-	elseIf (DTSleep_AdultContentOn.GetValue() <= 1.0 || TestVersion == -3 || (DTSConditionals as DTSleep_Conditionals).ImaPCMod == false)
+	elseIf (DTSleep_AdultContentOn.GetValue() <= 1.5 || TestVersion == -3 || (DTSConditionals as DTSleep_Conditionals).ImaPCMod == false)
 		hugsOnly = true
 		animPacks[0] = 0
 		doOtherProp = false
@@ -8706,10 +8709,12 @@ Function InitSleepQuest(bool silent = false)
 		StartTimer(64.0, CustomCameraTipTimerID)
 		StartTimer(200.0, IntroRestNotShowTipTimerID)
 		
+		float adultOn = DTSleep_AdultContentOn.GetValue()
+		
 		if (!silent)
 			if (IsAdultAnimationAvailable())
 				DTSleep_StartedExplicitMessage.Show()
-			elseIf (DTSleep_AdultContentOn.GetValue() == 1.0)
+			elseIf (adultOn >= 1.0 && adultOn <= 1.50)
 				DTSleep_StartedSafeMessage.Show()
 			else
 				DTSleep_StartedMessage.Show()
@@ -9223,7 +9228,7 @@ bool Function IsCompanionRaceCompatible(Actor companionActor, ActorBase compBase
 				; v1.08 - Xbox-only / non-adult scenes to support romanced Nick Valentine mod
 				; v1.60 - also XOXO
 				; v1.67 - any by included creature type to check
-				if (DTSleep_SettingSynthHuman.GetValue() <= 0.0 || DTSleep_AdultContentOn.GetValue() <= 1.0)
+				if (DTSleep_SettingSynthHuman.GetValue() <= 0.0 || DTSleep_AdultContentOn.GetValue() <= 1.5)
 					SceneData.IsUsingCreature = true
 					SceneData.IsCreatureType = CreatureTypeSynth
 				elseIf ((DTSConditionals as DTSleep_Conditionals).ImaPCMod)
@@ -9482,11 +9487,11 @@ int Function IsCompanionActorReadyForScene(IntimateCompanionSet intimateActor, b
 			return -4
 			
 		elseIf (compActor.IsSneaking())
-			DTDebug(" IsCompanionready - No: companion sneaking ", 2)
+			DTDebug(" IsCompanionready - No: companion sneaking ", 1)
 			return -14
 			
 		elseIf (compActor.IsWeaponDrawn())
-			DTDebug(" IsCompanionready - No: companion has weapon drawn ", 2)
+			DTDebug(" IsCompanionready - No: companion has weapon drawn ", 1)
 			return -13
 		endIf
 		
@@ -10502,7 +10507,7 @@ endFunction
 bool Function PlayerIntimateCompatible()
 	if ((DTSConditionals as DTSleep_Conditionals).PlayerRace == None)
 		ActorBase playerBase = (PlayerRef.GetBaseObject() as ActorBase)
-		if (playerBase)
+		if (playerBase != None)
 			Race playerR = playerBase.GetRace()
 			(DTSConditionals as DTSleep_Conditionals).PlayerRace = playerR
 		endIf
@@ -10513,6 +10518,8 @@ bool Function PlayerIntimateCompatible()
 	elseIf ((DTSConditionals as DTSleep_Conditionals).IsVulpineRacePlayerActive)
 		return true
 	endIf
+	
+	DTDebug("player race incompatible!", 1)
 	
 	return false
 endFunction
@@ -11231,6 +11238,12 @@ Function ProcessCompatibleMods(bool showMsg = true)
 		endIf
 	endIf
 	
+	if (DTSleep_AdultContentOn.GetValue() >= 2.0 && (DTSConditionals as DTSleep_Conditionals).ImaPCMod)
+		DTSleep_AdultOutfitOn.SetValue(2.0)
+	elseIf (!(DTSConditionals as DTSleep_Conditionals).ImaPCMod)
+		DTSleep_AdultOutfitOn.SetValue(0.0)
+	endIf
+	
 EndFunction
 
 Function RedressCompanion()
@@ -11639,7 +11652,7 @@ int Function RestoreTestSettings(float oldVersion = 0.0)
 		RegisterForMenuOpenCloseEvent("WorkshopMenu")
 	endIf
 	
-	if (DTSleep_AdultContentOn.GetValue() <= 1.0)
+	if (DTSleep_AdultContentOn.GetValue() <= 1.5)
 		if (DTSleep_SettingChairsEnabled.GetValueInt() >= 2)
 			DTSleep_SettingChairsEnabled.SetValueInt(1)
 		endIf
@@ -11883,7 +11896,7 @@ Function SetModDefaultSettingsForGame()
 		(DTSConditionals as DTSleep_Conditionals).HasModReqNormSleep = true
 	endIf
 	
-	if (DTSleep_AdultContentOn.GetValue() <= 1.0 && DTSleep_SettingUndressPipboy.GetValueInt() == 1)
+	if (DTSleep_AdultContentOn.GetValue() <= 1.5 && DTSleep_SettingUndressPipboy.GetValueInt() == 1)
 		; default 1 not applicable 
 		DTSleep_SettingUndressPipboy.SetValue(0.0)
 	endIf
@@ -12748,7 +12761,7 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 				fadeUndressLevel = 1
 			endIf
 		elseIf (fadeUndressLevel < 2 && !(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SceneIDIsCuddle(seqID))
-			if (adultContentVal >= 2.0)
+			if (adultContentVal >= 2)
 				; uh-oh, caller expected dance or cuddle, but picker chose sexy scene!
 				DTDebug("SetUndressAndFadeForIntimateScene undress-level set to respect/sleep, but ID  ", 2)
 				fadeUndressLevel = 2
@@ -12761,7 +12774,7 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 		
 		if (!isNaked)						; v1.57 - if naked on activate bed, take it all off
 		
-			if (adultContentVal <= 1.0 || SceneData.AnimationSet == 0 || animPacks == None)
+			if (adultContentVal < 2 || SceneData.AnimationSet == 0 || animPacks == None)
 				; out of respect for players consider naked/underwear dancing implies too much
 				; let's restrict undress so depending on outfit may remain dressed
 				includeClothing = false
@@ -12894,7 +12907,6 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 	elseIf (SceneData.AnimationSet == 5 && DTSleep_SettingUndress.GetValue() > 0.0)
 		; no undress - let's do hats
 		(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).StartForManualStopRespect(companionRef, true)
-		;SetUndressForManualStop(false, companionRef, false, true, None, false)
 	endIf
 	
 	;Utility.Wait(0.24)
@@ -13659,6 +13671,7 @@ Function TestModeOutput()
 		Debug.Trace(myScriptName + "      Location: " + (SleepPlayerAlias as DTSleep_PlayerAliasScript).CurrentLocation)
 		Debug.Trace(myScriptName + "     game time: " + Utility.GetCurrentGameTime())
 		Debug.Trace(myScriptName + " Player Gender: " + DressData.PlayerGender)
+		Debug.Trace(myScriptName + "   Player Race: " + (DTSConditionals as DTSleep_Conditionals).PlayerRace)
 		Debug.Trace(myScriptName + "genderSwapPerk: " + (DTSConditionals as DTSleep_Conditionals).HasGenderSwappedPerks)
 		Debug.Trace(myScriptName + "    Rest Count: " + DTSleep_RestCount.GetValueInt())
 		Debug.Trace(myScriptName + " ScnCount / Xp: " + IntimacySceneCount + " / " + DTSleep_IntimateEXP.GetValueInt())
@@ -13672,7 +13685,6 @@ Function TestModeOutput()
 		Debug.Trace(myScriptName + "  IntCompanion: " + IntimateCompanionRef + " (PA glitch? " + powerArmorGlitch + ")")
 		Debug.Trace(myScriptName + "      IntFails: " + IntimateCheckFailCount)
 		Debug.Trace(myScriptName + "      LastFail: " + IntimateCheckLastFailTime)
-		Debug.Trace(myScriptName + " self/dog Fail: " + IntimateCheckLastDogFailTime)
 		Debug.Trace(myScriptName + "      LastSucc: " + DTSleep_IntimateTime.GetValue() + " / " + IntimateLastTime)
 		Debug.Trace(myScriptName + "       LastHug: " + IntimateLastEmbraceTime)
 		Debug.Trace(myScriptName + "   LastDogSucc: " + DTSleep_IntimateDogTime.GetValue())
@@ -13681,6 +13693,7 @@ Function TestModeOutput()
 		Debug.Trace(myScriptName + " =====================================================================")
 		Debug.Trace(myScriptName + "    ----------- TEST MODE --- settings -------")
 		Debug.Trace(myScriptName + "     AdultMode: " + DTSleep_AdultContentOn.GetValue())
+		Debug.Trace(myScriptName + "    promptVal:  " + DTSleep_SettingShowIntimateCheck.GetValue())
 		Debug.Trace(myScriptName + " AdultLeitoEVB: " + DTSleep_IsLeitoActive.GetValue())
 		Debug.Trace(myScriptName + "        AAF on: " + DTSleep_SettingAAF.GetValue())
 		Debug.Trace(myScriptName + "   SeeYouSleep: " + DTSleep_IsSYSCWActive.GetValue() + " / " + DTSleep_SettingPrefSYSC.GetValue())
@@ -13720,6 +13733,7 @@ Function TestModeOutput()
 		Debug.Trace(myScriptName + "       GrayMod: " + (DTSConditionals as DTSleep_Conditionals).IsGrayAnimsActive)
 		
 		Debug.Trace(myScriptName + "         ----- TEST MODE ---- conditionals ----------")
+		Debug.Trace(myScriptName + "  LoverRingCnt:	" + (DTSConditionals as DTSleep_Conditionals).LoverRingEquipCount)
 		Debug.Trace(myScriptName + "  gamesetRConv: " + (DTSConditionals as DTSleep_Conditionals).HasGamesetReducedConv)
 		Debug.Trace(myScriptName + "hasModReqSleep: " + (DTSConditionals as DTSleep_Conditionals).HasModReqNormSleep)
 		Debug.Trace(myScriptName + " DLC NukaWorld: " + (DTSConditionals as DTSleep_Conditionals).IsNukaWorldDLCActive)

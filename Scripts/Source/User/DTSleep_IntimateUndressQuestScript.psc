@@ -1263,7 +1263,10 @@ Function CheckAndEquipMainSleepOutfit(Actor actorRef)
 			if (actorRef == CompanionValentineRef)
 				RedressActorRemoveNudeSuits(actorRef, DTSleep_SkinSynthGen2DirtyNude, "synth2 nude-armor")
 			endIf
-			; assume nude-ring knocked sleepwear off
+			; assume nude-ring knocked sleepwear off - v2.31: added alt-fem just in case
+			if (DTSleep_SettingAltFemBody.GetValue() >= 1.0 && AltFemBodyEnabled && DTSleep_AdultContentOn.GetValue() >= 2.0 && GetGenderForActor(actorRef) == 1)
+				RedressActorRemoveNudeSuits(actorRef, DTSleep_AltFemNudeBody, " altFemNudeBody ")
+			endIf
 			RedressActorRemoveNudeSuits(actorRef, DTSleep_NudeRing, " nude ring ")
 			RedressActorRemoveNudeSuits(actorRef, DTSleep_NudeRingNoHands, " nude ring no-hands ")
 			Utility.WaitMenuMode(0.2)
@@ -3303,11 +3306,13 @@ SleepwearEquipSet Function SleepwearEquipForActorFromList(Actor actorRef, FormLi
 			return result
 		endIf
 		
-		item = GetArmorForActorWearingClothingOnList(actorRef, DTSleep_StrapOnList)
-		if (item)
-			; wearing a strap-on, consider sleepwear
-			
-			return result
+		if (GetGenderForActor(actorRef) == 1)
+			item = GetArmorForActorWearingClothingOnList(actorRef, DTSleep_StrapOnList)
+			if (item != None)
+				; wearing a strap-on, consider sleepwear
+				
+				return result
+			endIf
 		endIf
 		
 		Armor armorItem = SleepwearFoundForActorFromList(actorRef, fromSleepwearList)
@@ -3325,7 +3330,17 @@ SleepwearEquipSet Function SleepwearEquipForActorFromList(Actor actorRef, FormLi
 			result.SleepWearItem = armorItem
 			
 			if (!actorRef.IsEquipped(armorItem))
-				DTDebug(" sleepEquipFromLast equip sleep clothes " + armorItem + " on " + actorRef, 2)
+				DTDebug(" sleepEquipFromList equip sleep clothes " + armorItem + " on " + actorRef, 1)
+				; assume nude-ring knocked sleepwear off
+				
+				if (DTSleep_SettingAltFemBody.GetValue() >= 1.0 && AltFemBodyEnabled && DTSleep_AdultContentOn.GetValue() >= 2.0 && GetGenderForActor(actorRef) == 1)
+					; v2.31 - just in case
+					RedressActorRemoveNudeSuits(actorRef, DTSleep_AltFemNudeBody, " altFemNudeBody ")
+				endIf
+				RedressActorRemoveNudeSuits(actorRef, DTSleep_NudeRing, " nude ring ")
+				RedressActorRemoveNudeSuits(actorRef, DTSleep_NudeSuit, " nude suit ")		;v2.31 changed to suit
+				Utility.WaitMenuMode(0.2)
+			
 				actorRef.EquipItem(armorItem, false, true)
 				Utility.WaitMenuMode(0.1)
 				
