@@ -76,8 +76,10 @@ int Function GetStageCountForSequenceID(int seqID, int longScene = 0, int other 
 		endIf
 	elseIf (seqID >= 1000)
 		result = 1
-		if (seqID == 1001 || seqID == 1054 || seqID == 1055)
+		if (seqID <= 1001 || seqID == 1034 || seqID == 1059)
 			result = 4
+		elseIf (seqID == 1007)
+			result = 6
 		endIf
 		
 	elseIf (seqID >= 849 && seqID < 900)
@@ -174,7 +176,7 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 	
 	if (seqID >= 900)
 		ssStruct.PluginName = "AAF_GrayAnimations.esp"
-		
+			
 		if (seqID == 901)
 			if (stageNumber == 1)
 				ssStruct.FAnimFormID = 0x09002677

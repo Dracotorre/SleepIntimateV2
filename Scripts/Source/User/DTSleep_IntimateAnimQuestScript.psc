@@ -4640,34 +4640,6 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 				endIf
 			endIf	; end isAtomicLust
 			
-		;elseIf (packID == 10 && !bedIsBunk && !bedIsCoffin)
-		;	if (!SceneData.SameGender)
-		;		okayAdd = true
-		;		if (playerPick && !DoesMainActorPrefID(0))
-		;			okayAdd = false
-		;		endIf
-		;		if (okayAdd)
-		;			sidArray.Add(0)
-		;			sidArray.Add(1)
-		;		endIf
-		;		okayAdd = true
-		;		if (playerPick && !DoesMainActorPrefID(3))
-		;			okayAdd = false
-		;		endIf
-		;		if (okayAdd)
-		;			sidArray.Add(3)
-		;		endIf
-		;		okayAdd = true
-		;		if (playerPick && !DoesMainActorPrefID(5))
-		;			okayAdd = false
-		;		endIf
-		;		if (okayAdd)
-		;			sidArray.Add(5)
-		;			sidArray.Add(6)
-		;			sidArray.Add(7)
-		;		endIf
-		;	endIf
-			
 		; 50 Shades by Gray
 		elseIf (packID == 9 && !pillowBedHasFrame && !bedIsBunk && !bedIsCoffin)
 			if (SceneData.SecondFemaleRole == None && SceneData.SecondMaleRole == None)

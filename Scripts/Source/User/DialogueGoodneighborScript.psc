@@ -190,7 +190,7 @@ Function MagnoliaDate()
 	; ======  end DTSleep  =======
 EndFunction
 
-; characters expected to bo positioned and OurBedRef set
+; characters expected to be positioned and OurBedRef set
 ; "Dating Magnolia" patch may call this function, so there is a wait at end to let function run until animated scene finishes
 ;
 Function MagnoliaDateSI(Actor myPlayer)
@@ -233,15 +233,16 @@ Function MagnoliaDateSI(Actor myPlayer)
 		SceneData.SecondFemaleRole = None
 		SceneData.SecondMaleRole = None
 		SceneData.AnimationSet = 0
+		
+		if ((myPlayer.GetBaseObject() as ActorBase).GetSex() == 1)
+			SceneData.SameGender = true
+			SceneData.MaleRoleGender = 1
+		endIf
 	else
 		adultOn = false
 		modSafe = false
 	endIf
 	
-	if ((myPlayer.GetBaseObject() as ActorBase).GetSex() == 1)
-		SceneData.SameGender = true
-		SceneData.MaleRoleGender = 1
-	endIf
 	
 	if (DTSleep_IntimateAnimQuestP != None && DTSleep_SettingIntimate != None && DTSleep_SettingIntimate.GetValue() > 0.0 && DTSleep_SettingUndress.GetValue() > 0.0)
 	
@@ -254,7 +255,7 @@ Function MagnoliaDateSI(Actor myPlayer)
 				timeSinceLast = Utility.GetCurrentGameTime() - IntimateTime
 			endIf
 			
-			if (timeSinceLast > 0.20 && ScenePick == 50 && SceneData.MaleRoleGender == 0 && DTSConditionals.IsLeitoActive)
+			if (timeSinceLast > 0.20 && ScenePick == 50 && SceneData.MaleRoleGender == 0 && (DTSConditionals.IsLeitoActive || DTSConditionals.IsLeitoAAFActive))
 				doPlayAdultAnim = true
 				
 				if (DTSConditionals.IsLeitoAAFActive)
@@ -276,7 +277,7 @@ Function MagnoliaDateSI(Actor myPlayer)
 				SceneData.AnimationSet = 5
 				doPlayAdultAnim = true
 				
-			elseIf (timeSinceLast > 0.50 && DTSConditionals.IsLeitoActive && DTSleep_IsLeitoActive.GetValueInt() >= 1)
+			elseIf (timeSinceLast > 0.50 && (DTSConditionals.IsLeitoActive || DTSConditionals.IsLeitoAAFActive) && DTSleep_IsLeitoActive.GetValueInt() >= 1)
 				doPlayAdultAnim = true
 				
 				if (DTSConditionals.IsLeitoAAFActive)
@@ -294,7 +295,7 @@ Function MagnoliaDateSI(Actor myPlayer)
 					if (SceneData.SameGender)
 						scenID = Utility.RandomInt(152, 153)
 					else
-						scenID = Utility.RandomInt(152, 154)
+						scenID = Utility.RandomInt(150, 154)
 					endIf
 				endIf
 			else
@@ -311,6 +312,7 @@ Function MagnoliaDateSI(Actor myPlayer)
 						SceneData.HasToyAvailable = true
 						SceneData.HasToyEquipped = false
 					else
+						doPlayAdultAnim = false
 						adultOn = false
 					endIf
 				else
@@ -330,10 +332,27 @@ Function MagnoliaDateSI(Actor myPlayer)
 		endIf
 		
 		if (DTSConditionals.IsPlayerCommentsActive)
+			; PCHT and PHT work differently  -- v2.32
+			Quest pcQ = (DTSConditionals as DTSleep_Conditionals).ModPlayerCommentsQuest
 			GlobalVariable gv = DTSConditionals.ModPlayerCommentsGlobDisabled
-			if (gv != None && gv.GetValueInt() <= 0)
+			int pcDisVal = -1
+			if (gv != None)
+				pcDisVal = gv.GetValueInt()
+			endIf
+			if (pcQ != None)
+				; PCHT enabled
+				if (pcQ.IsRunning() && pcDisVal < 1)
+					modSafe = false
+					if (SceneData != None)
+						SceneData.AnimationSet = 0
+					endIf
+				endIf
+			elseIf (pcDisVal >= 1)
+				; PHT enabled
 				modSafe = false
-				SceneData.AnimationSet = 0
+				if (SceneData != None)
+					SceneData.AnimationSet = 0
+				endIf
 			endIf
 		endIf
 		
