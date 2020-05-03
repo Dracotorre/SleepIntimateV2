@@ -15,6 +15,7 @@ Group A_Main
 DTSleep_Conditionals property DTSConditionals auto
 GlobalVariable property DTSleep_EquipMonInit auto
 { initialized }
+GlobalVariable property DTSleep_AdultContentOn auto const
 GlobalVariable property DTSleep_PlayerEquipBackpackCount auto
 GlobalVariable property DTSleep_PlayerEquipSleepwearCount auto
 GlobalVariable property DTSleep_PlayerEquipIntimateItemCount auto
@@ -155,148 +156,161 @@ EndEvent
 Event OnItemEquipped(Form akBaseObject, ObjectReference akReference)
 	
 	
-	if (akBaseObject as Armor && DTSleep_EquipMonInit.GetValue() >= 0.0)
+	if (akBaseObject as Armor)
 	
-		int i = 0
-		while (processingUnequip && i < 45)
-			Utility.WaitMenuMode(0.05)
-			i += 1
-		endWhile
-	
-		; ignore nude-suit armor
-		if (akBaseObject == DTSleep_NudeSuitPlayerUp || DTSleep_LeitoGunList.HasForm(akBaseObject) || DTSleep_NudeRingList.HasForm(akBaseObject) || DTSleep_BT2GunList.HasForm(akBaseObject))
-			return
-		endIf
-		
-		if (DTSleep_EquipMonInit.GetValue() >= 5.0)
-			
-			if (StoreAddMyPlayerEquipItem(akBaseObject) == false)
-				; already equipped or un-equip requested  -- auto-re-equip may cause this due to our priority process wait on UnEquip
-				;Debug.Trace("[DTSleep Equip] player OnEquip -- not setting item " + akBaseObject)
+		if (akBaseObject.HasKeyword(DTSleep_IntimateOutfitFemKY))
+			if (DTSleep_AdultContentOn.GetValueInt() < 2 || !(Debug.GetPlatformName() as bool))
+				Utility.WaitMenuMode(0.3)
+				Actor playerRef = self.GetActorReference()
+				playerRef.UnequipItem(akBaseObject)
+				
 				return
 			endIf
 		endIf
+		
+		if (DTSleep_EquipMonInit.GetValue() >= 0.0)
 	
-		if (StoringPlayerEquipment)
-			StoreRemoveFromPlayerEquip(akBaseObject)
-		endIf
+			int i = 0
+			while (processingUnequip && i < 45)
+				Utility.WaitMenuMode(0.05)
+				i += 1
+			endWhile
 		
-		if (akBaseObject.HasKeyword(ArmorTypeHatKY) || akBaseObject.HasKeyword(ArmorTypeHelmetKY) || DTSleep_ArmorHatHelmList.HasForm(akBaseObject))
-			
-			DressData.PlayerLastEquippedHat = DressData.PlayerEquippedHat
-			DressData.PlayerEquippedHat = akBaseObject as Armor
-			
-		elseIf (DTSleep_ArmorChokerList != None && DTSleep_ArmorChokerList.HasForm(akBaseObject))
-			DressData.PlayerEquippedChokerItem = akBaseObject as Armor
-		elseIf (DTSleep_ArmorNecklaceSlot50List != None && DTSleep_ArmorNecklaceSlot50List.HasForm(akBaseObject))
-			
-			DressData.PlayerEquippedNecklaceItem = akBaseObject as Armor
-			
-		elseIf (DTSleep_ArmorTorsoList != None && DTSleep_ArmorTorsoList.HasForm(akBaseObject))
-			DressData.PlayerEquippedArmorTorsoItem = akBaseObject as Armor
-			DressData.PlayerEquippedSlot41Item = None
-		elseIf (DTSleep_ArmorArmLeftList != None && DTSleep_ArmorArmLeftList.HasForm(akBaseObject))
-			DressData.PlayerEquippedArmorArmLeftItem = akBaseObject as Armor
-		elseIf (DTSleep_ArmorArmRightList != None && DTSleep_ArmorArmRightList.HasForm(akBaseObject))
-			DressData.PlayerEquippedArmorArmRightItem = akBaseObject as Armor
-		elseIf (DTSleep_ArmorLegLeftList != None && DTSleep_ArmorLegLeftList.HasForm(akBaseObject))
-			DressData.PlayerEquippedArmorLegLeftItem = akBaseObject as Armor
-		elseIf (DTSleep_ArmorLegRightList != None && DTSleep_ArmorLegRightList.HasForm(akBaseObject))
-			DressData.PlayerEquippedArmorLegRightItem = akBaseObject as Armor
-			
-		elseIf (ValidArmorToCheck(akBaseObject as Armor, akBaseObject))
-			;if (akReference)
-				;SetArmorItem((akReference as Form) as Armor) ; this may not be right
-			;else
-			
-			if (DTSleep_CaptureSleepwearEnable.GetValue() > 0.0 && DTSleep_EquipMonInit.GetValue() > 0.0)
-				int gender = DressData.PlayerGender
-				if (gender < 0)
-					gender = (Game.GetPlayer().GetBaseObject() as ActorBase).GetSex()
-					DressData.PlayerGender = gender
-				endIf
-				
-				if (ProcessSleepwearItem(akBaseObject, gender))
-				
-					if (DTSleep_ArmorSlot58List.HasForm(akBaseObject))
-						DressData.PlayerEquippedSlot58IsSleepwear = true
-						DressData.PlayerEquippedSlot58Item = akBaseObject as Armor
-					elseIf (DTSleep_ArmorSlotFXList.HasForm(akBaseObject))
-						DressData.PlayerEquippedSlotFXIsSleepwear = true
-						DressData.PlayerEquippedSlotFXItem = akBaseObject as Armor
-					else
-						DressData.PlayerEquippedSleepwearItem = akBaseObject as Armor
-					endIf
-				else
-					SetArmorItem(akBaseObject as Armor)
-				endIf
-				DTSleep_CaptureSleepwearEnable.SetValueInt(0)
-				
-			elseIf (DTSleep_CaptureIntimateApparelEnable.GetValue() > 0.0 && DTSleep_EquipMonInit.GetValue() > 0.0)
-				int gender = DressData.PlayerGender
-				if (gender < 0)
-					gender = (Game.GetPlayer().GetBaseObject() as ActorBase).GetSex()
-					DressData.PlayerGender = gender
-				endIf
-				if (ProcessIntimateItem(akBaseObject, gender))
-					DressData.PlayerEquippedIntimateAttireItem = akBaseObject as Armor
-				else
-					SetArmorItem(akBaseObject as Armor)
-				endIf
-				
-				DTSleep_CaptureIntimateApparelEnable.SetValueInt(0)
-				
-			elseIf (DTSleep_CaptureMaskEnable.GetValue() > 0.0 && DTSleep_EquipMonInit.GetValue() > 0.0)
-				if (ProcessMaskItem(akBaseObject))
-					DressData.PlayerEquippedMask = akBaseObject as Armor
-				else
-					SetArmorItem(akBaseObject as Armor)
-				endIf
-				DTSleep_CaptureMaskEnable.SetValueInt(0)
-				
-			elseIf (DTSleep_CaptureStrapOnEnable.GetValue() > 0.0 && DTSleep_EquipMonInit.GetValue() > 0.0)
-				
-				if (ProcessStrapOnItem(akBaseObject))
-					DressData.PlayerEquippedStrapOnItem = akBaseObject as Armor
-				else
-					SetArmorItem(akBaseObject as Armor)
-				endIf
-				
-				DTSleep_CaptureStrapOnEnable.SetValueInt(0)
-				
-			elseIf (DTSleep_CaptureBackpackEnable.GetValue() > 0.0 && DTSleep_EquipMonInit.GetValue() > 0.0)
-				if (ProcessBackpackItem(akBaseObject))
-					DressData.PlayerEquippedBackpackItem = akBaseObject as Armor
-				else
-					SetArmorItem(akBaseObject as Armor)
-				endIf
-				
-				DTSleep_CaptureBackpackEnable.SetValueInt(0)
-				
-			elseIf (DTSleep_CaptureJacketEnable.GetValue() > 0.0 && DTSleep_EquipMonInit.GetValue() > 0.0)
-				if (ProcessJacketItem(akBaseObject))
-					if (DressData.PlayerEquippedJacketItem != None && DressData.PlayerEquippedJacketSecondItem == None)
-						DressData.PlayerEquippedJacketSecondItem = akBaseObject as Armor
-					else
-						DressData.PlayerEquippedJacketItem = akBaseObject as Armor
-					endIf
-				else
-					SetArmorItem(akBaseObject as Armor)
-				endIf
-				
-				DTSleep_CaptureJacketEnable.SetValueInt(0)
-			else
-			
-				SetArmorItem(akBaseObject as Armor)
+			; ignore nude-suit armor
+			if (akBaseObject == DTSleep_NudeSuitPlayerUp || DTSleep_LeitoGunList.HasForm(akBaseObject) || DTSleep_NudeRingList.HasForm(akBaseObject) || DTSleep_BT2GunList.HasForm(akBaseObject))
+				return
 			endIf
+			
+			if (DTSleep_EquipMonInit.GetValue() >= 5.0)
+				
+				if (StoreAddMyPlayerEquipItem(akBaseObject) == false)
+					; already equipped or un-equip requested  -- auto-re-equip may cause this due to our priority process wait on UnEquip
+					;Debug.Trace("[DTSleep Equip] player OnEquip -- not setting item " + akBaseObject)
+					return
+				endIf
+			endIf
+		
+			if (StoringPlayerEquipment)
+				StoreRemoveFromPlayerEquip(akBaseObject)
+			endIf
+			
+			if (akBaseObject.HasKeyword(ArmorTypeHatKY) || akBaseObject.HasKeyword(ArmorTypeHelmetKY) || DTSleep_ArmorHatHelmList.HasForm(akBaseObject))
+				
+				DressData.PlayerLastEquippedHat = DressData.PlayerEquippedHat
+				DressData.PlayerEquippedHat = akBaseObject as Armor
+				
+			elseIf (DTSleep_ArmorChokerList != None && DTSleep_ArmorChokerList.HasForm(akBaseObject))
+				DressData.PlayerEquippedChokerItem = akBaseObject as Armor
+			elseIf (DTSleep_ArmorNecklaceSlot50List != None && DTSleep_ArmorNecklaceSlot50List.HasForm(akBaseObject))
+				
+				DressData.PlayerEquippedNecklaceItem = akBaseObject as Armor
+				
+			elseIf (DTSleep_ArmorTorsoList != None && DTSleep_ArmorTorsoList.HasForm(akBaseObject))
+				DressData.PlayerEquippedArmorTorsoItem = akBaseObject as Armor
+				DressData.PlayerEquippedSlot41Item = None
+			elseIf (DTSleep_ArmorArmLeftList != None && DTSleep_ArmorArmLeftList.HasForm(akBaseObject))
+				DressData.PlayerEquippedArmorArmLeftItem = akBaseObject as Armor
+			elseIf (DTSleep_ArmorArmRightList != None && DTSleep_ArmorArmRightList.HasForm(akBaseObject))
+				DressData.PlayerEquippedArmorArmRightItem = akBaseObject as Armor
+			elseIf (DTSleep_ArmorLegLeftList != None && DTSleep_ArmorLegLeftList.HasForm(akBaseObject))
+				DressData.PlayerEquippedArmorLegLeftItem = akBaseObject as Armor
+			elseIf (DTSleep_ArmorLegRightList != None && DTSleep_ArmorLegRightList.HasForm(akBaseObject))
+				DressData.PlayerEquippedArmorLegRightItem = akBaseObject as Armor
+				
+			elseIf (ValidArmorToCheck(akBaseObject as Armor, akBaseObject))
+				;if (akReference)
+					;SetArmorItem((akReference as Form) as Armor) ; this may not be right
+				;else
+				
+				if (DTSleep_CaptureSleepwearEnable.GetValue() > 0.0 && DTSleep_EquipMonInit.GetValue() > 0.0)
+					int gender = DressData.PlayerGender
+					if (gender < 0)
+						gender = (Game.GetPlayer().GetBaseObject() as ActorBase).GetSex()
+						DressData.PlayerGender = gender
+					endIf
+					
+					if (ProcessSleepwearItem(akBaseObject, gender))
+					
+						if (DTSleep_ArmorSlot58List.HasForm(akBaseObject))
+							DressData.PlayerEquippedSlot58IsSleepwear = true
+							DressData.PlayerEquippedSlot58Item = akBaseObject as Armor
+						elseIf (DTSleep_ArmorSlotFXList.HasForm(akBaseObject))
+							DressData.PlayerEquippedSlotFXIsSleepwear = true
+							DressData.PlayerEquippedSlotFXItem = akBaseObject as Armor
+						else
+							DressData.PlayerEquippedSleepwearItem = akBaseObject as Armor
+						endIf
+					else
+						SetArmorItem(akBaseObject as Armor)
+					endIf
+					DTSleep_CaptureSleepwearEnable.SetValueInt(0)
+					
+				elseIf (DTSleep_CaptureIntimateApparelEnable.GetValue() > 0.0 && DTSleep_EquipMonInit.GetValue() > 0.0)
+					int gender = DressData.PlayerGender
+					if (gender < 0)
+						gender = (Game.GetPlayer().GetBaseObject() as ActorBase).GetSex()
+						DressData.PlayerGender = gender
+					endIf
+					if (ProcessIntimateItem(akBaseObject, gender))
+						DressData.PlayerEquippedIntimateAttireItem = akBaseObject as Armor
+					else
+						SetArmorItem(akBaseObject as Armor)
+					endIf
+					
+					DTSleep_CaptureIntimateApparelEnable.SetValueInt(0)
+					
+				elseIf (DTSleep_CaptureMaskEnable.GetValue() > 0.0 && DTSleep_EquipMonInit.GetValue() > 0.0)
+					if (ProcessMaskItem(akBaseObject))
+						DressData.PlayerEquippedMask = akBaseObject as Armor
+					else
+						SetArmorItem(akBaseObject as Armor)
+					endIf
+					DTSleep_CaptureMaskEnable.SetValueInt(0)
+					
+				elseIf (DTSleep_CaptureStrapOnEnable.GetValue() > 0.0 && DTSleep_EquipMonInit.GetValue() > 0.0)
+					
+					if (ProcessStrapOnItem(akBaseObject))
+						DressData.PlayerEquippedStrapOnItem = akBaseObject as Armor
+					else
+						SetArmorItem(akBaseObject as Armor)
+					endIf
+					
+					DTSleep_CaptureStrapOnEnable.SetValueInt(0)
+					
+				elseIf (DTSleep_CaptureBackpackEnable.GetValue() > 0.0 && DTSleep_EquipMonInit.GetValue() > 0.0)
+					if (ProcessBackpackItem(akBaseObject))
+						DressData.PlayerEquippedBackpackItem = akBaseObject as Armor
+					else
+						SetArmorItem(akBaseObject as Armor)
+					endIf
+					
+					DTSleep_CaptureBackpackEnable.SetValueInt(0)
+					
+				elseIf (DTSleep_CaptureJacketEnable.GetValue() > 0.0 && DTSleep_EquipMonInit.GetValue() > 0.0)
+					if (ProcessJacketItem(akBaseObject))
+						if (DressData.PlayerEquippedJacketItem != None && DressData.PlayerEquippedJacketSecondItem == None)
+							DressData.PlayerEquippedJacketSecondItem = akBaseObject as Armor
+						else
+							DressData.PlayerEquippedJacketItem = akBaseObject as Armor
+						endIf
+					else
+						SetArmorItem(akBaseObject as Armor)
+					endIf
+					
+					DTSleep_CaptureJacketEnable.SetValueInt(0)
+				else
+				
+					SetArmorItem(akBaseObject as Armor)
+				endIf
+			endIf
+			
+			UpdateClothingCounts()
+			
+			;Debug.Trace("[DTSleep_EquipMon] equipped " + akBaseObject)
+			;Debug.Trace("[DTSleep_EquipMon] EndEquip Jacket: " + DressData.PlayerEquippedJacketItem)
+			;Debug.Trace("[DTSleep_EquipMon] EndEquip Last: " + DressData.PlayerLastEquippedJacketItem)
+			;Debug.Trace("[DTSleep_EquipMon] EndEquip Second: " + DressData.PlayerEquippedJacketSecondItem)
 		endIf
-		
-		UpdateClothingCounts()
-		
-		;Debug.Trace("[DTSleep_EquipMon] equipped " + akBaseObject)
-		;Debug.Trace("[DTSleep_EquipMon] EndEquip Jacket: " + DressData.PlayerEquippedJacketItem)
-		;Debug.Trace("[DTSleep_EquipMon] EndEquip Last: " + DressData.PlayerLastEquippedJacketItem)
-		;Debug.Trace("[DTSleep_EquipMon] EndEquip Second: " + DressData.PlayerEquippedJacketSecondItem)
 	endIf
 endEvent
 
@@ -383,6 +397,15 @@ Event Actor.OnItemEquipped(Actor akSender, Form akBaseObject, ObjectReference ak
 	
 	
 	if (akBaseObject as Armor)
+	
+		if (akBaseObject.HasKeyword(DTSleep_IntimateOutfitFemKY))
+			if (DTSleep_AdultContentOn.GetValueInt() < 2 || !DTSConditionals.ImaPCMod)
+				Utility.WaitMenuMode(0.3)
+				akSender.UnequipItem(akBaseObject)
+				
+				return
+			endIf
+		endIf
 	
 		int i = 0
 		while (processingCompUnequip && i < 45)
@@ -482,6 +505,7 @@ Event Actor.OnItemUnequipped(Actor akSender, Form akBaseObject, ObjectReference 
 			
 			if (StoringCompanionEquipment)
 				;Debug.Trace("[DTSleep_EquipMon] Store Un-equip 2nd Comp: " + akSender + " baseObject as Armor: " + akBaseObject)
+				
 				StoreAddToCompanionSecEquip(akBaseObject)
 			endIf
 		elseIf (akSender == CompanionRegistered && DTSleep_EquipMonInit.GetValue() >= 0.0)

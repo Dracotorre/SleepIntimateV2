@@ -409,7 +409,7 @@
 			"type": "dropdown",
 			"help": "watch sleep recovery with chance for interruption, or disable to use sleep menu then wake in bed",
 			"valueOptions": {
-				"options": ["Disabled", "constant-time", "fast-time", "fast-wait-time"],
+				"options": ["Disabled", "constant-time", "fast-time", "fast-wait-time", "fast-wait-skip"],
 				"sourceType": "GlobalValue",
 				"sourceForm": "SleepIntimate.esp|814DF",
 				"propertyName": "DTSleep_SettingNapOnly"
@@ -662,6 +662,18 @@
 				"sourceType": "GlobalValue",
 				"sourceForm": "SleepIntimate.esp|F6A53",
 				"propertyName": "DTSleep_SettingDoAffinity"
+			}
+		},
+		{
+			"id": "MCM_SettingSpectate:Intimacy",
+			"text": "Spectators",
+			"type": "dropdown",
+			"help": "chance nearby spectators",
+			"valueOptions": {
+				"options": ["Disabled", "Companions and Guards", "All"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|19096C",
+				"propertyName": "DTSleep_SettingSpectate"
 			}
 		},
 		{
@@ -1827,9 +1839,9 @@
 			"id": "MCM_SettingFastTime:Test",
 			"text": "Immersive Rest fast-time Rate",
 			"type": "dropdown",
-			"help": "Changes fast-time rate TimeScale. Select total real-time minutes for 6-hour sleep",
+			"help": "Changes fast-time rate TimeScale. Also increases faster-wait-time rate. Select total real-time minutes for 6-hour sleep",
 			"valueOptions": {
-				"options": ["10 minutes - default", "8 minutes", "7 minutes"],
+				"options": ["10 minutes - default", "8 minutes", "7 minutes", "5 minutes"],
 				"sourceType": "GlobalValue",
 				"sourceForm": "SleepIntimate.esp|DF5EE",
 				"propertyName": "DTSleep_SettingFastTime"
@@ -1912,6 +1924,12 @@
           "text": "Hotkey for Seat Scenes Setting",
           "type": "hotkey",
           "help": "toggle Seat Scenes setting: disabled, embrace, intimate"
+        },
+		{
+          "id": "DTSI_PlayerAwaken",
+          "text": "Hotkey for Awaken from sleep",
+          "type": "hotkey",
+          "help": "Awaken from sleep"
         }
       ]
     },

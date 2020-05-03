@@ -1,4 +1,4 @@
-<meta title="SleepIntimateX_SavageCabbage_positionData.xml" version="2.18" dataSet="position"/>
+<meta title="SleepIntimateX_SavageCabbage_positionData.xml" version="2.35" dataSet="position"/>
 <defaults startEquipmentSet="None" stopEquipmentSet="None" />
 <!-- for use with SavageCabbage v1.1 -->
 
@@ -214,6 +214,15 @@
 <position id="DTSIX_791_S1" animation="SIX_SC_FM-SedanPreWar02-03Blowjob" isHidden="true"/>
 <position id="DTSIX_791_S2" animation="SIX_SC_FM-SedanPreWar02-04Cowgirl" isHidden="true"/>
 
+<!--- ********************* solo ****************** -->
+
+<position id="DTSIXF_797_S1" animation="SIX_SC_F_797" isHidden="true"/>
+<position id="DTSIXM_797_S1" animation="SIX_SC_M_797" isHidden="true"/>
+<position id="DTSIXF_798_S1" animation="SIX_SC_F_798" isHidden="true"/>
+<position id="DTSIXM_798_S1" animation="SIX_SC_M_798" isHidden="true"/>
+<position id="DTSIXF_799_S1" animation="SIX_SC_F_799" isHidden="true"/>
+<position id="DTSIXM_799_S1" animation="SIX_SC_M_799" isHidden="true"/>
+
 
 <!-- ********************** Supermutant!  ********************** -->
 
@@ -226,6 +235,8 @@
 <position id="DTSIXSM_761_S2" animation="SIX_SC_FSM-Standing01-04Doggy" isHidden="true"/>
 <position id="DTSIXSM_761_S3" animation="SIX_SC_FSM-Standing01-05Doggy" isHidden="true"/>
 <position id="DTSIXSM_761_S4" animation="SIX_SC_FSM-Standing01-06Doggy" isHidden="true"/>
+
+<position id="DTSIXSMSM_761_S1" animation="SIX_SC_FSMSM-Standing01-03DoubleTeam" isHidden="true"/>
 
 <position id="DTSIXSM_762_S1" animation="SIX_SC_FSM-Standing02-03Handjob" isHidden="true"/>
 <position id="DTSIXSM_762_S2" animation="SIX_SC_FSM-Standing02-04Blowjob" isHidden="true"/>

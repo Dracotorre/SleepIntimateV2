@@ -1,4 +1,4 @@
-<meta title="SleepIntimateX_SavageCabbage_animationData.xml" version="2.0" dataSet="animation"/>
+<meta title="SleepIntimateX_SavageCabbage_animationData.xml" version="2.35" dataSet="animation"/>
 <defaults source="SavageCabbage_Animations.esp"/>
 
 <animation id="SIX_SC_FM-Bed01-01Handjob" time="390">
@@ -2286,5 +2286,55 @@
 	</actor>
 	<actor gender="M">
 		<idle form="27342"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_F_797" time="500">
+	<actor gender="F">
+		<idle form="99DE"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_M_797" time="500">
+	<actor gender="M">
+		<idle form="CF44"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_F_798" time="500">
+	<actor gender="F">
+		<idle form="FD3"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_M_798" time="500">
+	<actor gender="M">
+		<idle form="FD4"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_F_799" time="500">
+	<actor gender="F">
+		<idle form="CF43"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_M_799" time="500">
+	<actor gender="M">
+		<idle form="CF44"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FSMSM-Standing01-03DoubleTeam" time="500">
+	<actor gender="F">
+		<idle form="104A0"/>
+	</actor>
+	<actor gender="M" skeleton="Supermutant">
+		<idle form="104A1"/>
+		<!--<value path="morph" value="Erection Up" to="1"/>-->
+	</actor>
+	<actor gender="M" skeleton="Supermutant">
+		<idle form="104A2"/>
+		<!--<value path="morph" value="Erection Up" to="1"/>-->
 	</actor>
 </animation>

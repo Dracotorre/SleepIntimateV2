@@ -303,7 +303,7 @@ ObjectReference Function FindNearestOpenBedFromObject(ObjectReference fromObj, F
 			
 			if (closestIDX >= 0)
 			
-				if (ownedIDX >= 0 && closestOwnedDist < 1000.0)
+				if (ownedIDX >= 0 && closestOwnedDist < 3200.0)
 					return nearBedArr[ownedIDX]
 				endIf
 			
@@ -471,7 +471,7 @@ EndFunction
 
 Point3DOrient Function GetPointBedKnees(bool isLowBed, float zAngleOfBed) global
 	Point3DOrient positionResult = new Point3DOrient
-	positionResult.X = -12.2  ; for bed head facing north
+	positionResult.X = -13.8  ; for bed head facing north
 	positionResult.Y = -19.0
 	
 	positionResult = GetPointOrientedFromPointByAngle(positionResult, zAngleOfBed)
@@ -501,7 +501,7 @@ Point3DOrient Function GetPointBedLeitoA(bool isLowBed, float zAngleOfBed, float
 	if isLowBed
 		positionResult.Z = 7.3
 	else
-		positionResult.Z = 46.4
+		positionResult.Z = 46.8
 	endIf
 	 
 	positionResult.Heading = 0.0
@@ -632,7 +632,7 @@ Point3DOrient Function GetPointBedFootEndToEndForBed(ObjectReference aBedRef, fl
 	return positionResult
 EndFunction
 
-; around origin on z-axis rotation (heading)
+; around origin on z-axis rotation (heading or yaw)
 ;
 Point3DOrient Function GetPointOrientedFromPointByAngle(Point3DOrient pt, float angle) global
 	Point3DOrient positionResult = new Point3DOrient
@@ -715,7 +715,7 @@ Function MoveActorFacingDistance(Actor actorRef, float distance) global
 	endIf
 endFunction
 
-Function MoveActorToObject(Actor actorRef, ObjectReference posObjRef, float atAngleOff = 0.1, float yOffset = 0.001, float turnAngleSpeed = 0.00000000001) global
+Function MoveActorToObject(Actor actorRef, ObjectReference posObjRef, float atAngleOff = 0.1, float yOffset = 0.001, float zOffset = 0.0, float turnAngleSpeed = 0.00000000001) global
 	
 
 	if (actorRef != None && posObjRef != None)
@@ -729,7 +729,7 @@ Function MoveActorToObject(Actor actorRef, ObjectReference posObjRef, float atAn
 		float z = posObjRef.GetPositionZ()
 		float h = posObjRef.GetAngleZ()
 			
-		actorRef.TranslateTo(x + 0.001, y + yOffset, z, 0.0, 0.0, h + 0.05 + atAngleOff, 400.0, turnAngleSpeed)
+		actorRef.TranslateTo(x + 0.001, y + yOffset, z + zOffset, 0.0, 0.0, h + 0.05 + atAngleOff, 400.0, turnAngleSpeed)
 	endIf
 endFunction
 
@@ -761,7 +761,9 @@ ObjectReference Function PlaceFormAtFootOfBedRef(Form formToPlace, ObjectReferen
 	if (formToPlace != None && bedRef != None)
 		Point3DOrient ptFoot = GetPointBedFootEndToEndForBed(bedRef, distanceAway, offsetX)
 		ObjectReference newObj = bedRef.PlaceAtMe(formToPlace, 1, false)
+		
 		newObj = Ensure3DIsLoadedForNewObjRef(newObj, true)
+		
 		if (distanceAway >= 10.0)
 			newObj.SetPosition(ptFoot.X, ptFoot.Y, ptFoot.Z + 2.0)
 		else
@@ -781,18 +783,26 @@ EndFunction
 ObjectReference Function PlaceFormAtNodeRefForNodeForm(ObjectReference nodeRef, string nodeString, Form nodeForm, bool blockActivate = true) global
 	if (nodeRef && nodeString && nodeForm)
 		ObjectReference newObj = nodeRef.PlaceAtNode(nodeString, nodeForm)
+		
 		return Ensure3DIsLoadedForNewObjRef(newObj, blockActivate)
 	endIf
+	
 	return None
 EndFunction
 
+;
+; no need to call directly, use one of the PlaceFormAt* functions instead
+; by default Havok motion allowed to let decoration settle and be pushed around
+;
 ObjectReference Function Ensure3DIsLoadedForNewObjRef(ObjectReference newObj, bool blockActivate = true) global
 	if (newObj)
 		; make sure 3D loaded
 		int tryCnt = 0
 		while (tryCnt < 50)
 			if (newObj.Is3DLoaded())
-				;newObj.SetMotionType(4)
+				;if (disableHavok)
+				;	newObj.SetMotionType(4)  ; - this would disable Havok motion to stay in place
+				;endIf
 				if (blockActivate)
 					newObj.BlockActivation(true, true)
 				endIf

@@ -205,7 +205,7 @@ EndFunction
 ;BEGIN FRAGMENT Fragment_Terminal_27
 Function Fragment_Terminal_27(ObjectReference akTerminalRef)
 ;BEGIN CODE
-pDTSleep_SettingNapOnly.SetValue(0.0)
+pDTSleep_SettingNapOnly.SetValue(4.0)
 ;END CODE
 EndFunction
 ;END FRAGMENT
@@ -262,6 +262,14 @@ EndFunction
 Function Fragment_Terminal_34(ObjectReference akTerminalRef)
 ;BEGIN CODE
 pDTSleep_SettingIncludeExtSlots.SetValue(1.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_35
+Function Fragment_Terminal_35(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingNapOnly.SetValue(0.0)
 ;END CODE
 EndFunction
 ;END FRAGMENT

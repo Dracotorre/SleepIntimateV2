@@ -3,6 +3,7 @@ Scriptname DTSleep_IntimateAffinityQuestScript extends Quest
 
 ; by DracoTorre
 ; www.dracotorre.com/mods/sleepintimate/
+; https://github.com/Dracotorre/SleepIntimateV2
 ;
 ; helper quest to update affinity for intimate actions
 

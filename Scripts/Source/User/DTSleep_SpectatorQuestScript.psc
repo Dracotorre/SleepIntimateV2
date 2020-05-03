@@ -30,6 +30,7 @@ Keyword property ArmorTypePowerKY auto const
 Keyword property WorkshopItemKeyword auto const
 ;GlobalVariable property DTSleep_AdultContentOn auto const
 GlobalVariable property DTSleep_SettingCrime auto const
+GlobalVariable property DTSleep_SettingSpectate auto const
 GlobalVariable property DTSleep_IntimateIdleID auto const
 Message property DTSleep_CrimeReportMessage auto const
 Faction property DTSleep_SpecatorComnFaction auto const
@@ -46,8 +47,8 @@ Idle property IdleBooingStanding auto const
 Idle property IdleHeadShakeNo auto const
 ;Idle property IdleThinking auto const
 Idle property IdleShrug auto const
+Idle property IdleCheeringStanding auto const		;v2.35 added
 EndGroup
-
 
 ; -----------------------------
 ; private
@@ -60,6 +61,11 @@ int CrowdReactionTimer = 101 const
 int CrowdEndLimitTimer = 102 const
 int CrimeReportedTimer = 103 const
 int CrimeReportMsgTimer = 104 const
+
+; constants copied from MainQuest for SceneData.IntimateLocationType to limit spectator types NPC, Companion, Guards
+int LocActorChanceSettled = 10 const
+int LocActorChanceOwned = 12 const
+int LocActorChanceTown = 20 const
 
 ; *************************** Events *************
 ;
@@ -110,50 +116,71 @@ EndEvent
 
 Function AddAvailableNearbyNPCs()
 
-	float distance = 2400.0			; used by IsNearby
+	float distance = 2800.0			; v2.35 increased since now using location types
 	if (PlayerRef.IsInInterior())
-		distance = 800.0
+		distance = 700.0			; same as owned-bed nearby NPC chance check
+	elseIf (SceneData.IntimateLocationType == LocActorChanceSettled)
+		distance = 1000.0
+	elseIf (SceneData.IntimateLocationType == LocActorChanceOwned)
+		distance = 640.0
+	elseIf (SceneData.IntimateLocationType == LocActorChanceTown)
+		distance = 1800.0
 	endIf
 	float playerZ = PlayerRef.GetPositionZ()			; ignore height diff
+	int commonActorLim = 0
+	int spectateSetVal = DTSleep_SettingSpectate.GetValueInt()
 	
-	ObjectReference[] actorArray = PlayerRef.FindAllReferencesWithKeyword(ActorTypeNPCKY, distance)
-	
-	int aCnt = 0
-	;Debug.Trace("[DTSleep_SpectatorQuest] searching found total actor count: " + actorArray.Length)
-	
-	while (aCnt < actorArray.Length)
-		Actor ac = actorArray[aCnt] as Actor
+	if (spectateSetVal >= 1)
+		ObjectReference[] actorArray = PlayerRef.FindAllReferencesWithKeyword(ActorTypeNPCKY, distance)
 		
-		if (ac != None && ac != PlayerRef)
+		int aCnt = 0
+		;Debug.Trace("[DTSleep_SpectatorQuest] searching found total actor count: " + actorArray.Length)
 		
-			float htDif = playerZ - ac.GetPositionZ()
-			if (htDif > -200.0 && htDif < 200.0)
-				; ac within reasonable height range 
-		
-				if (DTSleep_ModCompanionActorList.HasForm(ac as Form))
-					AddSpectator(ac)
-				elseIf (ActiveCompanionCollectionAlias.Find(ac) > 0)
-					AddSpectator(ac)
-				else
-					int fIdx = 0
-					int len = DTSleep_GuardFactionList.GetSize()
-					while (fIdx < len)
+		while (aCnt < actorArray.Length)
+			Actor ac = actorArray[aCnt] as Actor
+			
+			if (ac != None && ac != PlayerRef)
+			
+				float htDif = playerZ - ac.GetPositionZ()
+				if (htDif > -200.0 && htDif < 250.0)
+					; ac within reasonable height range 
+			
+					if (DTSleep_ModCompanionActorList.HasForm(ac as Form))
+						AddSpectator(ac, true)
+						commonActorLim += 1
+					elseIf (ActiveCompanionCollectionAlias.Find(ac) > 0)
+						AddSpectator(ac, true)
+						commonActorLim += 1
 						
-						Faction gFact = DTSleep_GuardFactionList.GetAt(fIdx) as Faction
-						if (gFact != None)
-							if (ac.IsInFaction(gFact))
-								AddGuard(ac)
+					elseIf (SceneData.IntimateLocationType != LocActorChanceOwned)
+						bool guardFound = false
+						int fIdx = 0
+						int len = DTSleep_GuardFactionList.GetSize()
+						while (fIdx < len && !guardFound)
+							
+							Faction gFact = DTSleep_GuardFactionList.GetAt(fIdx) as Faction
+							if (gFact != None)
+								if (ac.IsInFaction(gFact))
+									guardFound = true
+									AddGuard(ac)
+								endIf
+							endIf
+							
+							fIdx += 1
+						endWhile
+						if (!guardFound && commonActorLim < 8 && spectateSetVal >= 2)
+							; v2.35 other spectators
+							if (AddSpectator(ac, false))
+								commonActorLim += 1
 							endIf
 						endIf
-						
-						fIdx += 1
-					endWhile
+					endIf
 				endIf
 			endIf
-		endIf
-	
-		aCnt += 1
-	endWhile
+		
+			aCnt += 1
+		endWhile
+	endIf
 	
 endFunction
 
@@ -162,7 +189,7 @@ Function AddGuard(Actor guardActor)
 	if (MGuardActorArray == None)
 		MGuardActorArray = new Actor[0]
 	endIf
-	if (guardActor != None && ActorOkayToSpectate(guardActor))
+	if (guardActor != None && ActorOkayToSpectate(guardActor, false))
 		if (Utility.RandomInt(3,10) > 4)
 			;Debug.Trace("[DTSleep_SpectatorQuest] adding guard spectator: " + guardActor)
 			guardActor.AddToFaction(DTSleep_SpecatorGuardFaction)
@@ -172,14 +199,14 @@ Function AddGuard(Actor guardActor)
 	endIf
 endFunction
 
-Function AddSpectator(Actor spectActor)
+bool Function AddSpectator(Actor spectActor, bool isCompanion)
 	
 	if (MSpectatorActorArray == None)
 		MSpectatorActorArray = new Actor[0]
 	endIf
 	if (spectActor != None)
 
-		if (ActorOkayToSpectate(spectActor))
+		if (ActorOkayToSpectate(spectActor, isCompanion))
 			int lim = 7
 			if (spectActor.GetSitState() < 2)
 				lim = 10
@@ -187,13 +214,16 @@ Function AddSpectator(Actor spectActor)
 		
 			if (spectActor == SceneData.MaleRole || Utility.RandomInt(5,12) > lim)
 				spectActor.AddToFaction(DTSleep_SpecatorComnFaction)
-				;Debug.Trace("[DTSleep_SpectatorQuest] adding spectator: " + spectActor)
+
 				MSpectatorActorArray.Add(spectActor)
 				DTSleep_CrowdRefCollAlias.AddRef(spectActor)
+				
+				return true
 			endIf
 		endIf
 	endIf
 	
+	return false
 endFunction
 
 Function SetTargetObject(ObjectReference targetRef)
@@ -211,6 +241,7 @@ bool Function StopAll()
 	int charisma = (PlayerRef.GetValue(CharismaAV) as int)
 	int luck = (PlayerRef.GetValue(LuckAV) as int)
 	CancelTimer(CrowdReactionTimer)
+	CancelTimer(CrowdEndLimitTimer)
 	
 	if (self.IsRunning())
 		; remove factions from actors and set guards violent unless lucky or beautiful
@@ -246,7 +277,9 @@ bool Function StopAll()
 					if (SceneIsDance() == false)
 						if (DTSleep_SettingCrime.GetValue() > 0.0 && !crimeCommitted)
 							int limit = charisma + luck
-							
+							if (SceneData.IsCreatureType >= 1 && SceneData.IsCreatureType <= 2)
+								limit -= 6
+							endIf
 							if (limit <= 20 && Utility.RandomInt(6, 20) >= limit)
 								crimeCommitted = true
 								CrimeReportGuardIndex = index
@@ -286,7 +319,7 @@ bool Function StopAll()
 endFunction
 
 
-bool Function ActorOkayToSpectate(Actor aActorRef)
+bool Function ActorOkayToSpectate(Actor aActorRef, bool isCompanion)
 
 	if (aActorRef != None && aActorRef.IsEnabled() && !aActorRef.IsDead() && !aActorRef.IsUnconscious() && aActorRef.GetSleepState() < 3)
 	
@@ -297,7 +330,7 @@ bool Function ActorOkayToSpectate(Actor aActorRef)
 		elseIf (aActorRef != SceneData.MaleRole && aActorRef != SceneData.FemaleRole && aActorRef != SceneData.SecondMaleRole && aActorRef != SceneData.SecondFemaleRole)
 		
 			; haters will not participate unless dance
-			if (SceneIsDance() || !(DTSleep_IntimateAffinityQuestP as DTSleep_IntimateAffinityQuestScript).CompanionHatesIntimateOtherPublic(aActorRef))
+			if (SceneIsDance() || !isCompanion || !(DTSleep_IntimateAffinityQuestP as DTSleep_IntimateAffinityQuestScript).CompanionHatesIntimateOtherPublic(aActorRef))
 				
 				ActorBase aBase = aActorRef.GetLeveledActorBase() as ActorBase
 				if (aBase != None)
@@ -345,7 +378,7 @@ Function ProcessReactionForActor(Actor actorRef)
 		rIdle = IdleHeadShakeNo
 	else
 	
-		int rand = Utility.RandomInt(0, 5)
+		int rand = Utility.RandomInt(0, 6)
 		if (SceneData.IsCreatureType >= 1 && SceneData.IsCreatureType <= 2)
 			rIdle = IdleHeadShakeNo
 			if (rand >= 3)
@@ -354,10 +387,12 @@ Function ProcessReactionForActor(Actor actorRef)
 			
 		elseIf (rand <= 2)
 			rIdle = IdleClapping
-		;elseIf (rand == 2)
-		
-		elseIf (rand >= 4)
+		elseIf (rand == 3)
+			rIdle = IdleShrug
+		elseIf (rand == 4)
 			rIdle = IdleHeadShakeNo
+		else
+			rIdle = IdleCheeringStanding
 		endIf
 	endIf
 	

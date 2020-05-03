@@ -55,6 +55,7 @@ bool property IsMutatedLustActive = false auto conditional hidden
 bool property IsRufgtActive = false auto conditional hidden
 bool property IsHoloboyActive = false auto conditional hidden
 bool property IsGrayAnimsActive = false auto conditional hidden
+bool property IsGrayCreatureActive = false auto conditional hidden
 bool property IsLocksmithActive = false auto conditional hidden
 bool property IsSavageCabbageActive = false auto conditional hidden
 float property SavageCabbageVers = 0.0 auto conditional hidden

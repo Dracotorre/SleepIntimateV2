@@ -267,6 +267,12 @@ Function MagnoliaDateSI(Actor myPlayer)
 					includeClothing = true
 					scenID = 150
 				endIf
+			elseIf (timeSinceLast > 0.33 && DTSConditionals.IsRufgtActive && SceneData.SameGender && SceneData.MaleRoleGender == 1)
+			
+				scenID = Utility.RandomInt(591, 593)
+				SceneData.AnimationSet = 5
+				doPlayAdultAnim = true
+				
 			elseIf (timeSinceLast > 0.33 && DTSConditionals.IsAtomicLustActive && Utility.RandomInt(1,5) > 3)
 				if (SceneData.SameGender)
 					
@@ -277,27 +283,32 @@ Function MagnoliaDateSI(Actor myPlayer)
 				SceneData.AnimationSet = 5
 				doPlayAdultAnim = true
 				
-			elseIf (timeSinceLast > 0.50 && (DTSConditionals.IsLeitoActive || DTSConditionals.IsLeitoAAFActive) && DTSleep_IsLeitoActive.GetValueInt() >= 1)
+			elseIf (timeSinceLast > 0.67 && DTSConditionals.IsLeitoAAFActive && DTSleep_IsLeitoActive.GetValueInt() >= 1)
 				doPlayAdultAnim = true
 				
-				if (DTSConditionals.IsLeitoAAFActive)
-					SceneData.AnimationSet = 6
-					includeClothing = true
-					if (SceneData.SameGender)
-						scenID = Utility.RandomInt(652, 653)
-					else
-						scenID = Utility.RandomInt(650, 654)
-					endIf
-					
+				SceneData.AnimationSet = 6
+				includeClothing = true
+				if (SceneData.SameGender)
+					scenID = Utility.RandomInt(652, 653)
 				else
-					SceneData.AnimationSet = 1
-					includeClothing = true
-					if (SceneData.SameGender)
-						scenID = Utility.RandomInt(152, 153)
-					else
-						scenID = Utility.RandomInt(150, 154)
-					endIf
+					scenID = Utility.RandomInt(651, 654)
 				endIf
+					
+			elseIf (timeSinceLast > 0.67 && DTSConditionals.IsLeitoActive && DTSleep_IsLeitoActive.GetValueInt() >= 1)
+				doPlayAdultAnim = true
+				
+				SceneData.AnimationSet = 1
+				includeClothing = true
+				if (SceneData.SameGender)
+					scenID = Utility.RandomInt(152, 153)
+				else
+					scenID = Utility.RandomInt(151, 154)
+				endIf
+
+			elseIf (timeSinceLast > 0.40 && DTSConditionals.IsSavageCabbageActive && !SceneData.SameGender)
+				doPlayAdultAnim = true
+				SceneData.AnimationSet = 7
+				scenID = 751
 			else
 				adultOn = false
 			endIf

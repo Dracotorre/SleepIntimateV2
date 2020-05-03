@@ -124,16 +124,18 @@ Event OnEffectStart(Actor akfActor, Actor akmActor)
 		MaleRoleSex = 0
 	endIf
 	
+	;Debug.Trace("[DTSleep_PlayAAC] onStart cast " + akmActor + "/" + akfActor)
+	
 	if (SceneData.CompanionInPowerArmor)
 		secondActorOkay = false
 	elseIf (SceneData.IsCreatureType == 3)	; v2.17 - added synth
 		if (SequenceID >= 100)
 			secondActorOkay = false
 		endIf
-	elseIf (SceneData.MaleRole != akfActor && SceneData.FemaleRole != akfActor)
-		secondActorOkay = false
 	elseIf (akfActor == akmActor)
 		secondActorOkay = false
+	elseIf (akfActor == PlayerRef)
+		secondActorOkay = false				; v2.33 should never be second
 	endIf
 	
 	if (SequenceID == 741)
@@ -142,7 +144,7 @@ Event OnEffectStart(Actor akfActor, Actor akmActor)
 	elseIf (akfActor != None && akfActor != akmActor)
 		
 		if (secondActorOkay)
-			MainActor = akmActor
+			MainActor = akmActor			; always player or clone
 			SecondActor = akfActor
 			
 			SecondActorOriginMarkRef = DTSleep_CommonF.PlaceFormAtObjectRef(DTSleep_MainNode, SecondActor)
@@ -150,12 +152,33 @@ Event OnEffectStart(Actor akfActor, Actor akmActor)
 			Utility.Wait(0.2)
 			SecondActor.ChangeAnimFaceArchetype(AnimFaceArchetypeHappy)
 			SecondActor.SetGhost(true)
-			
+
+			; v2.35 fix for broken missing actor and duplicated actor when same genders choose third
+			;  spell always cast on player and primary companion which may be same gender -- let's resolve
 			if (SceneData.SecondFemaleRole != None)
-				ThirdActor = SceneData.SecondFemaleRole
+				if (SceneData.MaleRole != akfActor && SceneData.FemaleRole != akfActor)
+					;akfActor / SecondActor must be SecondFemaleRole
+					if (MainActor == SceneData.FemaleRole)
+						ThirdActor = SceneData.MaleRole
+					else
+						ThirdActor = SceneData.FemaleRole
+					endIf
+				else
+					ThirdActor = SceneData.SecondFemaleRole
+				endIf
 			elseIf (SceneData.SecondMaleRole != None)
-				ThirdActor = SceneData.SecondMaleRole
+				if (SceneData.MaleRole != akfActor && SceneData.FemaleRole != akfActor)
+					;akfActor / SecondActor must be SecondMaleRole
+					if (MainActor == SceneData.FemaleRole)
+						ThirdActor = SceneData.MaleRole
+					else
+						ThirdActor = SceneData.FemaleRole
+					endIf
+				else
+					ThirdActor = SceneData.SecondMaleRole
+				endIf
 			endIf
+
 			
 			if (ThirdActor != None)
 				ThirdActor.SetAnimationVariableBool("bHumanoidFootIKDisable", true)
@@ -257,19 +280,14 @@ Event OnEffectFinish(Actor akfActor, Actor akmActor)
 		SecondActor.SetRestrained(false)
 	endIf
 	
-	if (ThirdActor != None)
-		ThirdActor.StopTranslation()
-		
-		ThirdActor.SetAnimationVariableBool("bHumanoidFootIKDisable", false)
-
-		ThirdActor.MoveTo(ThirdActorOriginMarkRef, 0.0, 0.0, 0.0, true)
-		
-		if ((ThirdActor.GetLeveledActorBase() as ActorBase).GetSex() == 0)
-			RemoveLeitoGuns(ThirdActor)
-		endIf
-		
-		ThirdActor.SetGhost(false)
-		ThirdActor.SetRestrained(false)
+	if (ThirdActor != None && ThirdActor != SecondActor)
+		FinRestoreExtraActor(ThirdActor, ThirdActorOriginMarkRef)
+	elseIf (SceneData.SecondMaleRole != None)
+		Debug.Trace("[DTSleep_PlayAAC] missing ThirdActor on fin, but have SecondMaleRole!!")
+		FinRestoreExtraActor(SceneData.SecondMaleRole, ThirdActorOriginMarkRef)
+	elseIf (SceneData.SecondFemaleRole !=  None)
+		Debug.Trace("[DTSleep_PlayAAC] missing ThirdActor on fin, but have SecondFemaleRole!!")
+		FinRestoreExtraActor(SceneData.SecondFemaleRole, ThirdActorOriginMarkRef)
 	endIf
 	
 	if (MainActorOriginMarkRef != None)
@@ -352,6 +370,21 @@ Function CheckRemoveSecondActorWeapon(float waitSecs = 0.07)
 	if (waitSecs > 0.0)
 		Utility.Wait(waitSecs)
 	endIf
+EndFunction
+
+Function FinRestoreExtraActor(Actor akActor, ObjectReference akToRef)
+	akActor.StopTranslation()
+	
+	akActor.SetAnimationVariableBool("bHumanoidFootIKDisable", false)
+
+	akActor.MoveTo(akToRef, 0.0, 0.0, 0.0, true)
+	
+	if ((akActor.GetLeveledActorBase() as ActorBase).GetSex() == 0)
+		RemoveLeitoGuns(akActor)
+	endIf
+	
+	akActor.SetGhost(false)
+	akActor.SetRestrained(false)
 EndFunction
 
 ; 0 = normal, 1 = up, 2 = down
@@ -438,6 +471,7 @@ Function InitSceneAndPlay()
 	float mainAngleOff = 0.0
 	float secondAngleOff = 0.0
 	float mainYOff = 0.0
+	float mainZOff = 0.0					; only move secondActor! moving player up/down may cause camera shake
 	float secondYOff = 0.0
 	bool turned = false
 	int longScene = 0
@@ -505,8 +539,14 @@ Function InitSceneAndPlay()
 	if (MainActor == SceneData.MaleRole)
 		mainAngleOff = angleOffset + angleM
 		mainYOff = yOffM
+		if (seqStagesArray.Length > 0)
+			mainZOff = seqStagesArray[0].MPosZOffset
+		endIf
 	else
 		mainAngleOff = angleOffset + angleF
+		if (seqStagesArray.Length > 0)
+			mainZOff = 0.0 - seqStagesArray[0].MPosZOffset
+		endIf
 	endIf
 	
 	if (SecondActor != None)
@@ -528,15 +568,10 @@ Function InitSceneAndPlay()
 	endIf
 	
 	; in other file for easy access
-	(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).MoveActorsToAACPositions(MainActor, SecondActor, ThirdActor, mainYOff, mainAngleOff, secondAngleOff)
+	(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).MoveActorsToAACPositions(MainActor, SecondActor, ThirdActor, mainYOff, mainAngleOff, secondAngleOff, mainZOff)
 
 	;Debug.Trace("[DTSleep_PlayAAC] actors (MST) " + MainActor + "/" + SecondActor + "/" + ThirdActor)
-
-	;if (SecondActor != None)
-	;	;SecondActor.SetRestrained(true)
-	;	SecondActor.PlayIdle(LooseIdleStop)
-	;	Utility.Wait(0.2)
-	;endIf
+	;Debug.Trace("[DTSleep_PlayAAC] actors (MFO) " + SceneData.MaleRole + "/" + SceneData.FemaleRole + "/" + SceneData.SecondMaleRole + "/" + SceneData.SecondFemaleRole)
 	
 	; fade-in
 	Game.FadeOutGame(false, true, 0.67, 2.1)
@@ -652,7 +687,16 @@ Function PlaySequence(DTAACSceneStageStruct[] seqStagesArray)
 		;	gunArmor = GetArmorNudeGun(gunIndex)
 		;endIf
 		
-		PlayAnimAtStage(seqStagesArray[seqCount], SceneData.MaleRole, SceneData.FemaleRole, ThirdActor, waitSecs)
+		Actor extraActor = None								; v2.35 fix - ThirdActor not always extra role
+		if (ThirdActor != None)
+			if (SceneData.SecondFemaleRole != None)
+				extraActor = SceneData.SecondFemaleRole
+			elseIf (SceneData.SecondMaleRole != None)
+				extraActor = SceneData.SecondMaleRole
+			endIf
+		endIf
+		
+		PlayAnimAtStage(seqStagesArray[seqCount], SceneData.MaleRole, SceneData.FemaleRole, extraActor, waitSecs)
 		
 		int pongLim = 2
 		
@@ -683,7 +727,7 @@ endFunction
 
 Function PlayAnimAtStage(DTAACSceneStageStruct stage, Actor mActor, Actor fActor, Actor oActor, float waitSecs)
 
-	if (fActor != None && stage.FAnimFormID > 0 && SceneRunning > 0)
+	if (stage.FAnimFormID > 0 && SceneRunning > 0)
 	
 		if (stage.StageTime > 0.0)
 			waitSecs = stage.StageTime

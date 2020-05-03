@@ -278,7 +278,9 @@ bool Function StartupScenePublic(Actor aMainActor, Actor aSecondaryActor, Object
 		MainActor = aMainActor
 	else
 		MainActor = aMainActor
-		Debug.Trace("[DTSleep_PlayAAF] caster only play ")
+		if (DTSleep_SettingTestMode.GetValue() > 0.0 && DTSleep_DebugMode.GetValue() >= 1.0)
+			Debug.Trace("[DTSleep_PlayAAF] caster only play ")
+		endIf
 	endIf
 	
 	if (MainActor != None && DTSConditionals.IsF4SE && (Debug.GetPlatformName() as bool))
@@ -503,7 +505,13 @@ bool Function PlaySequence()
 					Armor arm1Gun = GetArmorNudeGun(MySeqStagesArray[0].ArmorNudeAGun)
 					Armor arm2Gun = GetArmorNudeGun(MySeqStagesArray[0].ArmorNudebGun)
 					;PlaySingleStageScene(CreateSeqPositionStr(SequenceID, MySeqStagesArray[0].StageNum), MySeqStagesArray[0].StageTime, SceneData.MaleMarker, arm1Gun, arm2Gun)
-					PlaySingleStageScene(MySeqStagesArray[0].PositionID, MySeqStagesArray[0].StageTime, SceneData.MaleMarker, GetArmorNudeGun(MySeqStagesArray[0].ArmorNudeAGun))
+					string posID = MySeqStagesArray[0].PositionID
+					if (SecondActor == None)
+						if (SceneData.MaleRole != None && MainActor == SceneData.MaleRole)
+							posID = MySeqStagesArray[0].PositionOrigID
+						endIf
+					endIf
+					PlaySingleStageScene(posID, MySeqStagesArray[0].StageTime, SceneData.MaleMarker, GetArmorNudeGun(MySeqStagesArray[0].ArmorNudeAGun))
 				elseIf (MySeqStagesArray.Length > 1)
 					PlayAASequence()
 				else
@@ -963,6 +971,11 @@ Function PlayAASequenceLists(Actor mActor, Actor fActor, Actor oActor)
 
 		aafSettings.duration = 10.0
 		aafSettings.position = MySeqStagesArray[0].PositionID
+		if (SecondActor == None)
+			if (SceneData.MaleRole != None && MainActor == SceneData.MaleRole)
+				aafSettings.position = MySeqStagesArray[0].PositionOrigID
+			endIf
+		endIf
 		;aafSettings.position = CreateSeqPositionStr(SequenceID, 1)
 		if (MSceneFadeEnabled)
 			aafSettings.skipWalk = true

@@ -1,4 +1,4 @@
-<meta title="SleepIntimateX_AtomicLust_animationData.xml" version="2.18" dataSet="animation"/>
+<meta title="SleepIntimateX_AtomicLust_animationData.xml" version="2.35" dataSet="animation"/>
 <defaults source="Atomic Lust.esp"/>
 
 <animation id="SIX_AL_AtomicSpork" frames="304">
@@ -276,10 +276,21 @@
 	</actor>
 </animation>
 
+<animation id="SIX_AL_AtomicJerking" frames="400">
+	<actor gender="M">
+		<idle form="020428DC" id="Atomic Jerking M"/>
+	</actor>
+</animation>
 
 
 <!-- Solo Female Animations -->
 
+<animation id="SIX_AL_AtomicFingeringSitting" frames="400">
+	<actor gender="F">
+		<idle form="020428DF" id="Atomic Fingering (Sitting) F"/>
+		<!--<value path="action" value="Female Sounds" target="0" loop="true" from="1" to="0" frames="8.555"/>-->
+	</actor>
+</animation>
 
 <animation id="SIX_AL_AtomicFingeringLay" frames="400">
 	<actor gender="F">

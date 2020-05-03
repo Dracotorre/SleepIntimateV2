@@ -10,6 +10,16 @@
         "function": "ToggleChairScenes",
         "params": [1.0]
       }
+    },
+	{
+      "id": "DTSI_PlayerAwaken",
+      "desc": "Sleep Intimate awaken from sleep",
+      "action": {
+        "type": "CallFunction",
+        "form": "SleepIntimate.esp|A56A2",
+        "function": "WakePlayer",
+        "params": [1.0]
+      }
     }
   ]
 }

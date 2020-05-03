@@ -1,0 +1,14 @@
+<meta title="SleepIntimateX_CreaturePack01_positionData.xml" version="1.0" dataSet="position"/>
+<defaults startEquipmentSet="None" stopEquipmentSet="None" />
+<!--<defaults startEquipmentSet="unEquip" stopEquipmentSet="reEquip" startMorphSet="ready" stopMorphSet="unReady"/>-->
+
+<position id="DTSIXSM_962_S1" animation="SIX_GCP_FSM-Mutantstage01" isHidden="True"/>
+<position id="DTSIXSM_962_S2" animation="SIX_GCP_FSM-Mutantstage02" isHidden="True"/>
+<position id="DTSIXSM_962_S3" animation="SIX_GCP_FSM-Mutantstage03" isHidden="True"/>
+<position id="DTSIXSM_962_S4" animation="SIX_GCP_FSM-Mutantstage04" isHidden="True"/>
+
+<position id="DTSIXSM_963_S1" animation="SIX_GCP_FSM-02Mutantstage01" isHidden="True"/>
+<position id="DTSIXSM_963_S2" animation="SIX_GCP_FSM-02Mutantstage02" isHidden="True"/>
+<position id="DTSIXSM_963_S3" animation="SIX_GCP_FSM-02Mutantstage03" isHidden="True"/>
+<position id="DTSIXSM_963_S4" animation="SIX_GCP_FSM-02Mutantstage04" isHidden="True"/>
+

@@ -1,0 +1,74 @@
+<meta title="SleepIntimateX_CreaturePack01_animationData.xml" version="1.0" dataSet="animation"/>
+<defaults source="AAF_CreaturePack01.esp"/>
+
+<animation id="SIX_GCP_FSM-Mutantstage01" frames="300">
+	<actor>
+		<idle form="010098fb" id="CP_Mutant01_F"/>
+	</actor>
+	<actor skeleton="Supermutant">
+		<idle form="010098f7" id="CP_Mutant01_C"/>
+	</actor>
+</animation>
+
+<animation id="SIX_GCP_FSM-Mutantstage02" frames="300">
+	<actor>
+		<idle form="010098fd" id="CP_Mutant02_F"/>
+	</actor>
+	<actor skeleton="Supermutant">
+		<idle form="010098f8" id="CP_Mutant02_C"/>
+	</actor>
+</animation>
+
+<animation id="SIX_GCP_FSM-Mutantstage03" frames="300">
+	<actor>
+		<idle form="010098fe" id="CP_Mutant03_F"/>
+	</actor>
+	<actor skeleton="Supermutant">
+		<idle form="010098f9" id="CP_Mutant03_C"/>
+	</actor>
+</animation>
+
+<animation id="SIX_GCP_FSM-Mutantstage04" frames="300">
+	<actor>
+		<idle form="010098ff" id="CP_Mutant04_F"/>
+	</actor>
+	<actor skeleton="Supermutant">
+		<idle form="010098fa" id="CP_Mutant04_C"/>
+	</actor>
+</animation>
+
+<animation id="SIX_GCP_FSM-02Mutantstage01" offset="0,1.5,3.5,0:0,0,0,0" frames="300">
+	<actor>
+		<idle form="0100a0a5" id="CP_02Mutant01_F"/>
+	</actor>
+	<actor skeleton="SuperMutant">
+		<idle form="0100a099" id="CP_02Mutant01_C"/>
+	</actor>
+</animation>
+
+<animation id="SIX_GCP_FSM-02Mutantstage02" offset="0,1.5,3.5,0:0,0,0,0" frames="300">
+	<actor>
+		<idle form="0100a0a6" id="CP_02Mutant02_F"/>
+	</actor>
+	<actor skeleton="SuperMutant">
+		<idle form="0100a09a" id="CP_02Mutant02_C"/>
+	</actor>
+</animation>
+
+<animation id="SIX_GCP_FSM-02Mutantstage03" offset="0,1.5,3.5,0:0,0,0,0" frames="300">
+	<actor>
+		<idle form="0100a0a7" id="CP_02Mutant03_F"/>
+	</actor>
+	<actor skeleton="SuperMutant">
+		<idle form="0100a09b" id="CP_02Mutant03_C"/>
+	</actor>
+</animation>
+
+<animation id="SIX_GCP_FSM-02Mutantstage04" offset="0,1.5,3.5,0:0,0,0,0" frames="300">
+	<actor>
+		<idle form="0100a0a8" id="CP_02Mutant04_F"/>
+	</actor>
+	<actor skeleton="SuperMutant">
+		<idle form="0100a09c" id="CP_02Mutant04_C"/>
+	</actor>
+</animation>

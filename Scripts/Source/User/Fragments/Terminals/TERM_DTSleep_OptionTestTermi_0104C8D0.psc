@@ -76,7 +76,7 @@ EndFunction
 ;BEGIN FRAGMENT Fragment_Terminal_10
 Function Fragment_Terminal_10(ObjectReference akTerminalRef)
 ;BEGIN CODE
-pDTSleep_SettingFastTime.SetValue(0.0)
+pDTSleep_SettingFastTime.SetValue(3.0)
 ;END CODE
 EndFunction
 ;END FRAGMENT

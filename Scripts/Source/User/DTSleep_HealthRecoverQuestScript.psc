@@ -16,6 +16,8 @@ Scriptname DTSleep_HealthRecoverQuestScript extends Quest
 ; 
 ; checks for time jumps via console commands or mods--one such mod is SleepTogether Anywhere which has its own sleep menu to pass time
 ;
+; v2.35 update to handle DTSleep_SettingNapOnly == 4: fade-to-black, quick consecutive AdvanceTime
+;    also AdvanceTime better handles near midnight and players using other TimeScale (not 20 or 30, but still ignore over 30)
 
 Quest property DT_PotionHandleQuestP auto const
 Quest property HC_Manager auto const
@@ -55,12 +57,16 @@ Message property DTSleep_TimePassRestoreMsg auto const
 Message property DTSleep_RestOverEncumberedMsg auto const
 Message property DTSleep_ResumeRestMsg auto const
 Message property DTSleep_ResumeRestPoorMsg auto const
+Message property DTSleep_ResumeRestRelaxMsg auto const
 Potion property HC_DiseaseEffect_Infection auto const
 Potion property HC_DiseaseEffect_Lethargy auto const
 
 ImageSpaceModifier property FastTimeISM auto const
 ImageSpaceModifier property FastTimeFadeInISM auto const
 ImageSpaceModifier property FastTimeFadeOutISM auto const
+bool property HoldToBlackIsSetOn auto hidden
+ImageSpaceModifier property HoldAtBlackImod auto const
+ImageSpaceModifier property FadefromBlackImod auto const
 
 int property BedType = 0 auto hidden			; set using convenience functions
 int property FastSleepStatus = 0 auto hidden
@@ -80,6 +86,8 @@ bool property PlayerWellRested auto hidden
 bool property SleepyPlayer auto hidden
 { set on SleepTime check - only valid if recently checked IsSleepTimePublic }
 float property PlayerWellRestedTime auto hidden
+int property SleepTimeIntimacyCount auto hidden			; v2.33
+int property SleepWaitTimeCount = 0 auto hidden
 
 ; ---------------------------------------------------------------------
 ; ************************ Custom Events ******************************
@@ -118,6 +126,10 @@ int SleepNapRecRealTimerID = 98 const
 int SleepNapRecGameTimerID = 104 const		; health
 int SleepNapFatGameTimerID = 106 const		; fatigue and adrenaline
 int SleepNapTimeScaleTimerID = 99 const
+int HoldToBlackClearTimerID = 107 const		; v2.35 for fade-to-black
+
+bool MyHealthRecoverBusy = false
+bool FastTimeISMOn = false
 
 ; *************************************************************
 ; events
@@ -136,8 +148,9 @@ Event OnQuestInit()
 	HoursOversleep = 7
 	PoorSleepHourLimit = 4
 	SleepInterrupted = false
+	SleepWaitTimeCount = 0
 	
-	StartTimer(57.0, SleepNapTimeScaleTimerID)			; check after minute --player committed to sleep
+	StartTimer(55.0, SleepNapTimeScaleTimerID)			; check after minute --player committed to sleep
 	StartTimerGameTime(0.356, SleepNapRecGameTimerID)
 	StartTimerGameTime(0.987, SleepNapFatGameTimerID)	; first hour a bit short; 59m
 EndEvent
@@ -148,6 +161,10 @@ Event OnTimer(int aiTimerID)
 		CheckTimeScale()
 	elseIf (aiTimerID == SleepNapRecRealTimerID)
 		PlayerNapRecover()
+		
+	elseIf (aiTimerID == HoldToBlackClearTimerID)			; v2.35
+		HoldAtBlackImod.Remove()
+		FadefromBlackImod.Remove()
 	endIf
 EndEvent
 
@@ -167,41 +184,49 @@ EndEvent
 ; only use this once before rest check as it marks last time checked
 ; for repeat checks between Rest see SleepyPlayer property
 ;
-bool Function IsSleepTimePublic(float gameTime)
-	SleepyPlayer = false
-	
-	if (Game.GetDifficulty() >= 6)
-		; fatigue sleep effect
-		int sleepEffectVal = PlayerRef.GetValue(HC_SleepEffectAV) as int
-		if (sleepEffectVal >= 2)
-			; sleepy
-			SleepyPlayer = true
-		endIf
-	endIf
-	
-	if (SleepyPlayer)
-		if (LastGameTimeHourUpdate > 0.0 && (gameTime - LastGameTimeHourUpdate) < 2.0)
-			if ((gameTime - LastGameTimeHourUpdate) > 0.74)
-				
-				return true
-			endIf
-		elseIf (LastSleepCheckTime > 0.0 && (gameTime - LastSleepCheckTime) < 2.0)
-			if ((gameTime - LastSleepCheckTime) > 0.76)
-				
-				SleepyPlayer = true
-			endIf
-		else
-			; use hour of day
-			float dayFrac = gameTime - Math.Floor(gameTime)
-			
-			if (dayFrac > 0.7917 || dayFrac < 0.1667)
-			
+bool Function IsSleepTimePublic(float gameTime, bool recordCheckTime = true)
+
+	float hoursSince = GetHoursSinceLastSleepTime()
+	if (!SleepyPlayer || hoursSince > 2.75)				; v2.35 set condition to limit recent re-use
+		SleepyPlayer = false
+		
+		if (Game.GetDifficulty() >= 6)
+			; fatigue sleep effect
+			int sleepEffectVal = PlayerRef.GetValue(HC_SleepEffectAV) as int
+			if (sleepEffectVal >= 2)
+				; sleepy
 				SleepyPlayer = true
 			endIf
 		endIf
+		
+		if (SleepyPlayer)
+			if (LastGameTimeHourUpdate > 0.0 && (gameTime - LastGameTimeHourUpdate) < 2.0)
+				if ((gameTime - LastGameTimeHourUpdate) > 0.74)
+					
+					return true				; expected sleep-since -- do not record LastSleepCheckTime
+				endIf
+			endIf
+		elseIf (Game.GetDifficulty() < 6)							; v2.35 -- added this for non-survival ???
+			if (LastSleepCheckTime > 0.0 && (gameTime - LastSleepCheckTime) < 2.0)
+				if ((gameTime - LastSleepCheckTime) > 0.76)
+					
+					SleepyPlayer = true
+				endIf
+			else
+				; use hour of day
+				float hour = GameHour.GetValue()
+				
+				if (hour > 19.75 || hour < 5.5)
+				
+					SleepyPlayer = true
+				endIf
+			endIf
+		endIf
+		
+		if (recordCheckTime && SleepyPlayer)
+			LastSleepCheckTime = gameTime
+		endIf
 	endIf
-	
-	LastSleepCheckTime = gameTime
 	
 	return SleepyPlayer	
 endFunction
@@ -229,17 +254,24 @@ endFunction
 Function StopAllCancel()
 	
 	if (!IsDone)
-		;Debug.Trace("[DTSleep_HealthRec] StopAllCancel HourCount = " + HourCount)
 		IsDone = true
+		int waitCnt = 0
+		while (waitCnt < 5 && MyHealthRecoverBusy)	;v2.35 wait until processing complete
+			Utility.Wait(0.2)
+		endWhile
+		
+		FinalizeHourCount()
+		
 		if (HourCount >= 5)
-			if (HourCount >= 7)
-				HandleStop(true, true)		;v2.13 allow full recover for 7+ hours
+			if (HourCount >= 6)
+				HandleStop(true, true)		;v2.13 allow full recover for 7+ hours or v2.33 fewer with recent intimacy
 			else
 				HandleStop(true, false)
 			endIf
 		else 
 			HandleStop()
 		endIf
+		SleepTimeIntimacyCount = 0					; v2.33 reset
 	endIf
 	
 endFunction
@@ -248,8 +280,9 @@ Function StopAllDone(bool fullRecover)
 	
 	if (!IsDone)
 		IsDone = true
+		FinalizeHourCount()
 		HandleStop(fullRecover, true)
-		
+		SleepTimeIntimacyCount = 0					; v2.33 reset
 		Utility.Wait(0.2)
 	endIf
 endFunction
@@ -258,75 +291,117 @@ endFunction
 ; considered private functions
 
 ; ------
-
 ; AdvanceTime - sets GameHour ahead at rate just faster (0.8) than game-hour per real-minute
 ; - it takes the game ~2 seconds to actually update the game time then allow time for game-hour timers
 ; - additionally, time between skips (timeRemainInRealSec) must allow process time
 ; --- and consider features dependent on order of real-time and game-time events
 ; - avoids skipping over day-change to allow game to handle updates and record stats
+; v2.35 update to handle different remaining game-time for half-hour
 ;
-; hourToNext - send total game-hour time between events
-; returns real-time seconds remaining (for timers)
+; hourToNext - send total game-hour time between events; default is for 3 skips per hour with 6 game-minute (18 real seconds) wait between
+; returns real-time seconds remaining (for timers) and actual timeSkip hours
 ;
-float Function AdvanceTime(float hourToNext = 0.33330) ;float hourToNext = 0.250)
-	float timeSkip = 0.233330; 0.1750							; default time-scale and hourToNext pre-calc
-	float timeRemainInRealSec = 18.00; 13.50				; time-scale independent - to return
+float[] Function AdvanceTime(float hourToNext = 0.33330)
+	float timeSkip = 0.233330						; default time-scale and hourToNext pre-calc (hourToNext - minuteRemain to get real skip)
+	float timeRemainInRealSec = 18.00				; time-scale independent - default for 3 skips per hour to return
 	float timeScaleVal = TimeScale.GetValue()		; get current time-scale - player or another mod may change
 													; approximates 66 TimeScale by set clock
+													
+	float beforeMidnightHourSet = 23.9833			; 3 real-time seconds (20 time-scale) before day change
+	float[] result = new float[2]
+		
+	if (hourToNext == 0.500)
+		; short wait = 0.3367 game-time minutes
+		if (TimeScaleVal == 20.0)
+			timeRemainInRealSec = 1.25
+		else
+			timeRemainInRealSec = 25.0 / timeScaleVal
+		endIf
+	elseIf (hourToNext > 0.490)
+		hourToNext = 0.490
+	endIf
 	
 	; restrict - faster time-scale same as fast-time setting
 	if (timeScaleVal >= 0.250 && timeScaleVal <= 30.0)
 	
 		if (timeScaleVal != 20.0 || hourToNext != 0.33330)
 			if (timeScaleVal == 30.0 && hourToNext == 0.33330)
-				timeSkip = 0.183330; 0.100
-			else
+				timeSkip = 0.183330
+			elseIf (timeScaleVal == 20.0 && hourToNext == 0.500)
+				timeSkip = 0.493056
+			elseIf (timeScaleVal == 20.0 && hourToNext == 0.250)
+				timeRemainInRealSec = 13.50
+				timeSkip = 0.1750
+			elseIf (hourToNext <= 0.9)
 				; calculate skip
 				float multi = 60.0 / timeScaleVal
-				float subSec = timeRemainInRealSec / (multi * 60)
+				float subSec = timeRemainInRealSec / (multi * 60.0)
 				timeSkip = hourToNext - subSec
 			endIf
 		endIf
+		
 		float gHour = GameHour.GetValue()
 		
 		; ensure day-change processed including days-passed stat
-		if (gHour < 23.7330)
+		if (gHour < 23.76)
+		
 			float newVal = gHour + timeSkip
-			if (newVal >= 23.967)
-				newVal = 23.967		; 6 real-time seconds (20 time-scale) before day change
+			if (newVal > beforeMidnightHourSet)
+				newVal = beforeMidnightHourSet
+				timeSkip = beforeMidnightHourSet - gHour
+				if (timeRemainInRealSec < 4.5)
+					timeRemainInRealSec = 4.5		; extra real-time wait to pass midnight
+				endIf
 			endIf
 			GameHour.SetValue(newVal)
+			
+		elseIf (gHour > beforeMidnightHourSet && gHour < 24.0)
+			; no need to set the hour -- just wait
+			if (timeRemainInRealSec < 4.5)
+				timeRemainInRealSec = 4.5		; extra real-time wait to pass midnight
+			endIf
 		else
-			; 6 real-time seconds (20 time-scale) before day change
-			timeSkip = 23.967 - gHour
-			GameHour.SetValue(23.967)
+			timeSkip = beforeMidnightHourSet - gHour
+			
+			GameHour.SetValue(beforeMidnightHourSet)
+			if (timeRemainInRealSec < 4.5)
+				timeRemainInRealSec = 4.5		; extra real-time wait to pass midnight
+			endIf
 		endif
 		
 		; record total to update Hours Waited stat at end
 		SleepWaitHours += timeSkip
 	else
 		timeSkip = 0.0
+		timeRemainInRealSec = 0.0
 	endIf
+
+	result[0] = timeRemainInRealSec
+	result[1] = timeSkip
 	
-	return timeRemainInRealSec
+	return result
 endFunction
 
 ; player might have skipped time! check to make sure and adjust as needed
-; returns number of hours inremented or zero for error--out of game-time --- v2.16: changed from bool to int to handle skip-time
+; returns number of hours incremented or zero for error--out of game-time --- v2.16: changed from bool to int to handle skip-time
 ;
 int Function CheckGameHourIncrement()
 	int result = 1
+	int napOnly = DTSleep_SettingNapOnly.GetValueInt()
 	
 	if (HourCount < 0)
-		InitHourCount()
-		int napOnly = DTSleep_SettingNapOnly.GetValueInt()
+		InitHourCount()							; may set at zero, or higher for continued sleep
 		
 		if (HourCount >= 1)
 			SleepInterrupted = true
 			
 			if (DTSleep_SettingNotifications.GetValue() > 0.0 && napOnly > 0)
 				if (GoodSleep)
-					DTSleep_ResumeRestMsg.Show(HourCount + 1)
+					if (SleepTimeIntimacyCount > 0)
+						DTSleep_ResumeRestRelaxMsg.Show(HourCount + 1)
+					else
+						DTSleep_ResumeRestMsg.Show(HourCount + 1)
+					endIf
 				else
 					DTSleep_ResumeRestPoorMsg.Show(HourCount + 1)
 				endIf
@@ -338,13 +413,14 @@ int Function CheckGameHourIncrement()
 		endIf
 	endIf
 
-	HourCount += 1
+	HourCount += 1								; update for completing an hour
+	
 	
 	float currentGameTime = Utility.GetCurrentGameTime()
 	float hourDiff = GetHoursDifference(currentGameTime, LastGameTimeHourUpdate)
 	
 	if (hourDiff >= 2.0)			 
-		
+		; game might have skipped time - correct our HourCount
 		if (currentGameTime < LastGameTimeHourUpdate)
 			; so we went backwards?
 			HourCount -= (hourDiff as int)
@@ -355,6 +431,9 @@ int Function CheckGameHourIncrement()
 			Debug.Trace("[DTSleep_HealthRec] time went backwards by " + hourDiff + " hours!!")
 		else
 			result = Math.Floor(hourDiff)			; v2.16 - return increment
+			if (HourCount < 2)
+				result -= 1
+			endIf
 			HourCount += (result - 1)				; already incremented 1
 			
 			if (DTSleep_DebugMode.GetValueInt() >= 1)
@@ -396,7 +475,7 @@ Function CheckTimeScale()
 		float curTime = Utility.GetCurrentGameTime()
 		float hoursSinceStart = GetHoursDifference(RestStartedTime, curTime)
 		if (hoursSinceStart < 1.50)				; v2.16 - prevent time-scale change if skipped time
-			if (napSpeed == 3)
+			if (napSpeed >= 3)
 				int curVal = TimeScale.GetValueInt()			; get current - may have changed since original recorded
 				if (curVal < 20)
 					; speed up for players using longer hours so final hour reduced to 3 minutes real-time
@@ -412,10 +491,13 @@ Function CheckTimeScale()
 					
 					if (timeScaleSettingVal > 0)
 						if (timeScaleSettingVal == 1)
-							timeScaleVal = 50
-						elseIf (timeScaleSettingVal >= 2)
-							; risky? -- game-hour = real-time minute
+							timeScaleVal = 50					
+						elseIf (timeScaleSettingVal == 2)
+							; 1 game-hour == 1 real-minute
 							timeScaleVal = 60
+						elseIf (timeScaleSettingVal >= 3)
+							timeScaleVal = 76					; v2.33
+							; risky?
 						endIf
 					endIf
 					IncreaseTimeScale(timeScaleVal)
@@ -428,10 +510,34 @@ Function CheckTimeScale()
 		
 endFunction
 
+Function FadeInSec(float secs, bool doWait = true)
+	
+	if (HoldToBlackIsSetOn)
+		StartTimer(secs + 0.5, HoldToBlackClearTimerID)
+		HoldAtBlackImod.PopTo(FadefromBlackImod, secs)
+		HoldToBlackIsSetOn = false
+		if (doWait && secs > 0.1)
+			Utility.Wait(secs)
+		endIf
+	endIf
+endFunction
+
+Function FadeOutSec(float secs, bool doWait = true)
+	
+	if (HoldToBlackIsSetOn == false)
+		HoldAtBlackImod.Apply()
+		HoldToBlackIsSetOn = true
+		if (doWait && secs > 0.1)
+			Utility.Wait(secs)
+		endIf
+	endIf
+endFunction
+
 Function FastSleepEffectOff()
 
 	FastSleepStatus = 0
-	if (DTSleep_SettingFastSleepEffect.GetValue() > 0.0)
+	if (FastTimeISMOn)
+		FastTimeISMOn = false
 		FastTimeISM.PopTo(FastTimeFadeOutISM)
 		Utility.Wait(1.0)
 		FastTimeFadeOutISM.Remove()
@@ -442,19 +548,47 @@ Function FastSleepEffectOn(int status = 2)
 	FastSleepStatus = status
 	
 	if (DTSleep_SettingFastSleepEffect.GetValue() > 0.0)
+		FastTimeISMOn = true
 		FastTimeFadeInISM.Apply()
 		Utility.Wait(1.0)
 		FastTimeFadeInISM.PopTo(FastTimeISM)
 	endIf
 endFunction
 
+; round-up if close enough
+Function FinalizeHourCount()
+	if (HourCount >= 1)
+		float currentGameTime = Utility.GetCurrentGameTime()
+		float hourDiff = GetHoursDifference(currentGameTime, LastGameTimeHourUpdate)
+		float hourDFraction =  hourDiff - Math.Floor(hourDiff)
+		if (hourDFraction >= 0.75)
+			; close enough to round up
+			HourCount += 1
+		endIf
+	endIf
+endFunction
+
+; hours between last sleep-stop and this sleep-start
+float Function GetHoursSinceLastSleepTime(float currentGameTime = 0.0)
+	if (self.IsRunning())
+		return GetHoursDifference(DTSleep_HRLastSleepTime.GetValue(), LastGameTimeHourUpdate)
+	endIf
+	if (currentGameTime <= 0.0)
+		currentGameTime = Utility.GetCurrentGameTime()
+	endIf
+	return GetHoursDifference(currentGameTime, LastGameTimeHourUpdate)
+endFunction
+
 Function IncreaseTimeScale(int timeScaleVal)
-	TimeScale.SetValueInt(timeScaleVal)
 	
-	FastSleepEffectOn()
-	
-	if (DTSleep_SettingNotifications.GetValue() >= 1.0)
-		DTSleep_TimePassFastMsg.Show()
+	if (DTSleep_PlayerUsingBed.GetValue() > 0.0)
+		TimeScale.SetValueInt(timeScaleVal)
+		
+		FastSleepEffectOn()
+		
+		if (DTSleep_SettingNotifications.GetValue() >= 1.0)
+			DTSleep_TimePassFastMsg.Show()
+		endIf
 	endIf
 endFunction
 
@@ -464,18 +598,37 @@ Function InitHourCount(bool resetHours = false)
 	int lastSleepHours = DTSleep_HRLastSleepHourCount.GetValueInt()
 	float curTime = Utility.GetCurrentGameTime()
 	
-	if (curTime > RestStartedTime)
+	if (curTime >= RestStartedTime)
 		if (DTSleep_SettingNapOnly.GetValue() >= 1.0 && lastSleepHours >= 2)
-			float hoursSince = GetHoursDifference(DTSleep_HRLastSleepTime.GetValue(), LastGameTimeHourUpdate)
+			float hoursSince = GetHoursSinceLastSleepTime()						; hours between this sleep-start and last sleep-stop
 			int upperLim = 5
+			float sinceLim = 2.5
+			if (SleepTimeIntimacyCount > 0)
+				sinceLim = 3.0
+				upperLim = 6
+			endIf
 			
-			if (hoursSince < 2.5)
-				if (resetHours)
+			;Debug.Trace("[DTSleep_HealthRec] InitHour hoursSince: " + hoursSince + " for lastHour " + lastSleepHours + " at time, " + curTime)
+			
+			if (hoursSince < sinceLim)
+				if (resetHours || hoursSince < 0.333)	; v2.33 no penalty for quick return
 					HourCount = lastSleepHours
 					
 				elseIf (lastSleepHours >= upperLim)
 					HourCount = upperLim - 1
-					GoodSleep = false
+					if (SleepTimeIntimacyCount <= 0)	; v2.33 no sleep penalty for getting some action
+						GoodSleep = false
+					endIf
+				elseIf (SleepTimeIntimacyCount > 0)		; v2.33 bonus for getting some action
+					if (hoursSince > 1.50)
+						HourCount = lastSleepHours + 1
+					else
+						HourCount = lastSleepHours
+					endIf
+					if (HourCount >= upperLim)
+						HourCount = upperLim - 1
+					endIf
+					GoodSleep = true
 				else
 					HourCount = lastSleepHours - 1
 				endIf
@@ -495,6 +648,7 @@ Function InitHourCount(bool resetHours = false)
 	elseIf (curTime < RestStartedTime)
 		Debug.Trace("[DTSleep_HealthRec] InitHourCount detected went backward in time!! ")
 	endIf
+	; reset SleepTimeIntimacyCount at end
 endFunction
 
 float Function GetHoursDifference(float time1, float time2)
@@ -517,8 +671,6 @@ Function HandleStop(bool fullRecover = false, bool fullSleep = false)
 	CancelTimerGameTime(SleepNapFatGameTimerID)
 	
 	float currentGameTime = Utility.GetCurrentGameTime()
-	float hourDiff = GetHoursDifference(currentGameTime, LastGameTimeHourUpdate)
-	float hourDFraction =  hourDiff - Math.Floor(hourDiff)
 	bool updateStats = true
 	
 	if (HourCount < 0)
@@ -529,11 +681,6 @@ Function HandleStop(bool fullRecover = false, bool fullSleep = false)
 	else
 		; stayed in bed long enough to start sleep and init hours
 		DTSleep_HRLastSleepTime.SetValue(currentGameTime)
-	endIf
-	
-	if (hourDFraction >= 0.75)
-		; close enough to round up
-		HourCount += 1
 	endIf
 	
 	if (HourCount > 0 && updateStats)
@@ -593,13 +740,16 @@ Function HandleStop(bool fullRecover = false, bool fullSleep = false)
 		;	DTSleep_TimePassRestoreMsg.Show()
 		;	Utility.Wait(1.2)
 		;endIf
-	elseIf (FastSleepStatus > 0)
+	elseIf (FastSleepStatus > 0 || FastTimeISMOn)
 		FastSleepEffectOff()
 	endIf
 	
 	if (SleepWaitHours > 0.0)
 		int waitHourCount = SleepWaitHours as int
 		if (waitHourCount >= 1)
+			if (DTSleep_SettingTestMode.GetValueInt() > 0 && DTSleep_DebugMode.GetValue() >= 2.0)
+				Debug.Trace("[DTSleep_HealthRec] updating Wait-Stat by  " + waitHourCount)
+			endIf
 			Game.IncrementStat("Hours Waiting", waitHourCount)
 		endIf
 		SleepWaitHours = 0.0
@@ -613,6 +763,8 @@ endFunction
 ; fraction 0.03333 every 20 game-minutes = 1/2 full recovery in 5 game-hours
 ;
 Function PlayerNapRecover(float fractionVal = 0.03333, float nextTimerHours = 0.33330)
+	
+	MyHealthRecoverBusy = true
 	
 	if (PlayerRef.IsOverEncumbered())
 			GoodSleep = false
@@ -631,27 +783,7 @@ Function PlayerNapRecover(float fractionVal = 0.03333, float nextTimerHours = 0.
 			if (HourCount >= 5)
 				fractionVal = fractionVal * 2.0
 			endIf
-			float healthTrueMax = PlayerRef.GetValue(HealthAV)
-			RestoreValueByFraction(HealthAV, fractionVal, healthTrueMax)
-			
-			if (Game.GetDifficulty() >= 6)
-				
-				; bone recovery - copied from HC_Manager and adjusted for per-hour basis
-				float enduranceTrueMax     = PlayerRef.GetValue(EnduranceCondition)
-				float leftAttackTrueMax    = PlayerRef.GetValue(LeftAttackCondition)
-				float leftMobilityTrueMax  = PlayerRef.GetValue(LeftMobilityCondition)
-				float perceptionTrueMax    = PlayerRef.GetValue(PerceptionCondition)
-				float rightAttackTrueMax   = PlayerRef.GetValue(RightAttackCondition)
-				float rightMobilityTrueMax = PlayerRef.GetValue(RightMobilityCondition)
-				
-				RestoreValueByFraction(EnduranceCondition, fractionVal, enduranceTrueMax)
-				RestoreValueByFraction(LeftAttackCondition, fractionVal, leftAttackTrueMax)
-				RestoreValueByFraction(LeftMobilityCondition, fractionVal, leftMobilityTrueMax)
-				RestoreValueByFraction(PerceptionCondition, fractionVal, perceptionTrueMax)
-				RestoreValueByFraction(RightAttackCondition, fractionVal, rightAttackTrueMax)
-				RestoreValueByFraction(RightMobilityCondition, fractionVal, rightMobilityTrueMax)
-				
-			endIf
+			PlayerRestoreHealthByFraction(fractionVal)
 		endIf
 		
 		int hourLimit = 5
@@ -660,30 +792,56 @@ Function PlayerNapRecover(float fractionVal = 0.03333, float nextTimerHours = 0.
 			hourLimit = 6
 		endIf
 		
-		if (SleepStarted && HourCount < hourLimit && DTSleep_SettingNapOnly.GetValueInt() == 3)
-			; faster-wait-time
+		; v2.35 continue fast-wait-time 2 rounds after hourLimit
+		if (SleepStarted && HourCount <= hourLimit && DTSleep_SettingNapOnly.GetValueInt() >= 3 && SleepWaitTimeCount < 2)
+			; fast-wait-time
+			if (HourCount == hourLimit)
+				SleepWaitTimeCount += 1
+			endIf
 			
-			float nextRealTime = AdvanceTime(nextTimerHours)
-			if (nextRealTime > 0.0)
+			float[] nextRealTime = AdvanceTime(nextTimerHours)
+			
+			if (nextRealTime[0] > 0.0)
 				if (FastSleepStatus < 1)
 					FastSleepEffectOn(1)
+					if (DTSleep_SettingNotifications.GetValue() >= 1.0)
+						DTSleep_TimePassFastMsg.Show()
+					endIf
 				endIf
-				StartTimer(nextRealTime, SleepNapRecRealTimerID)
+				StartTimer(nextRealTime[0], SleepNapRecRealTimerID)
 			else
 				StartTimerGameTime(nextTimerHours, SleepNapRecGameTimerID)
+				SleepWaitTimeCount = 4							; v2.35 end fast-wait mode
+				if (FastSleepStatus == 1)					
+					FastSleepEffectOff()
+					DTSleep_TimePassRestoreMsg.Show()
+				endIf
+				if (DTSleep_SettingTestMode.GetValueInt() > 0 && DTSleep_DebugMode.GetValue() >= 2.0)
+					Debug.Trace("[DTSleep_HealthRec] fast-wait ended early at HourCount " + HourCount)
+				endIf
 			endIf
 		else
 			StartTimerGameTime(nextTimerHours, SleepNapRecGameTimerID)
 			if (FastSleepStatus == 1)
 				FastSleepEffectOff()
 				DTSleep_TimePassRestoreMsg.Show()
+				
+			elseIf (TimeScaleOriginal != TimeScale.GetValue())
+				if (DTSleep_SettingTestMode.GetValueInt() > 0 && DTSleep_DebugMode.GetValue() >= 2.0)
+					Debug.Trace("[DTSleep_HealthRec] restoring TimeScale to " + TimeScaleOriginal)
+				endIf
+				
+				TimeScale.SetValue(TimeScaleOriginal)
+				
+				FastSleepEffectOff()
 			endIf
 		endIf
 	
 	elseIf (DTSleep_PlayerUsingBed.GetValue() <= 0.0)
 		; apparently player left bed
-		;SendRestInterruptEvent(0)
-		;Debug.Trace("[DTSleep_HealthRec] player not using bed -- cancel now")
+		if (DTSleep_SettingTestMode.GetValueInt() > 0 && DTSleep_DebugMode.GetValue() >= 1.0)
+			Debug.Trace("[DTSleep_HealthRec] player not using bed -- cancel now")
+		endIf
 		StopAllCancel()
 		
 	elseIf (!GoodSleep && FastSleepStatus == 1)
@@ -693,12 +851,92 @@ Function PlayerNapRecover(float fractionVal = 0.03333, float nextTimerHours = 0.
 		endIf
 	endIf
 	
+	MyHealthRecoverBusy = false
+	
 endFunction
 
 Function PlayerNapRecoverFatigue()
 
 	int hourIncCount = CheckGameHourIncrement()	; always increment HourCount  - v2.16 changed from bool to int hour-increment
 	
+	; v2.35 skip mid-sleep preference fast-wait-skip before recover
+	if (SleepStarted && DTSleep_SettingNapOnly.GetValueint() == 4 && HourCount >= 1 && HourCount <= 2 && HoursOversleep >= 4)	
+	
+		; ----stop NapRecover until finished advancing
+		int waitCnt = 0
+		while (waitCnt < 10 && MyHealthRecoverBusy)
+			Utility.Wait(0.2)
+			waitCnt += 1
+		endWhile
+		CancelTimer(SleepNapRecRealTimerID)
+		CancelTimerGameTime(SleepNapRecGameTimerID)
+		
+		MyHealthRecoverBusy = true
+		
+		int skipHour = 5 - HourCount
+		if (BedType == SleepBedCampingID || BedType == SleepBedGroundMattressID || BedType == SleepBedSleepBagID)
+			skipHour = 4 - HourCount
+		elseIf (BedType == SleepBedOwnID)
+			skipHour = 6 - HourCount
+		endIf
+		
+		int skipCount = skipHour * 2			; number half-hour increments for full cycle
+		int advTimeCount = 0					; actual loop-count to update HourCount
+		int advTooShortCount = 0
+
+		FadeOutSec(1.2, false)
+		
+		; stop if player exits bed mid-loop
+		while (skipCount > 0 && !IsDone && DTSleep_PlayerUsingBed.GetValue() > 0.0)
+		
+			; AdvanceTime limits crossing over midnight -- check return for actual advance
+			float[] nextWaitSet = AdvanceTime(0.500)		; half-hour not counting next Utility.Wait
+			
+			while (nextWaitSet[0] > 1.50 && !IsDone)
+				Utility.Wait(1.0)
+				nextWaitSet[0] = nextWaitSet[0] - 1.0
+			endWhile
+			if (!IsDone)
+				Utility.Wait(nextWaitSet[0])
+			endIf
+			
+			if (nextWaitSet[1] > 0.37)
+				; actual advance far enough to count
+				advTimeCount += 1
+			else
+				advTooShortCount += 1				
+			endIf
+			
+			; since recovery paused, recover here
+			PlayerRestoreHealthByFraction(0.0450)
+			
+			skipCount -= 1
+		endWhile
+		
+		if (advTooShortCount > 0 && !IsDone && DTSleep_PlayerUsingBed.GetValue() > 0.0) 
+			; one more partial for getting shorted
+			advTimeCount += 1
+			float[] nextWaitSet = AdvanceTime()
+		endIf
+		
+		if (advTimeCount > 1)
+			int incHourFastCount = Math.Ceiling(advTimeCount as float * 0.5)
+			HourCount += incHourFastCount
+			hourIncCount += incHourFastCount - 1
+			LastGameTimeHourUpdate = Utility.GetCurrentGameTime()
+		endIf
+		
+		FadeInSec(2.33, false)
+		
+		MyHealthRecoverBusy = false
+		
+		if (DTSleep_PlayerUsingBed.GetValue() > 0.0)
+			; re-start recover
+			StartTimer(2.0, SleepNapRecRealTimerID)
+		endIf
+	endIf
+	
+	; fatigue recovery
 	if (DTSleep_PlayerUsingBed.GetValue() > 0.0 && DTSleep_SettingNapRecover.GetValue() > 0.0)
 	
 		if (GoodSleep && Game.GetDifficulty() >= 6)
@@ -715,7 +953,7 @@ Function PlayerNapRecoverFatigue()
 				endIf
 				
 				if (sleepEffectVal > limit)				
-					; decrement by hours to handle skip-time like "Sleep Together Anywhere" --v2.16
+					; decrement by hours to handle skip-time like "Sleep Together Anywhere" --v2.16 or v2.35 our skip-time above
 					sleepEffectVal -= hourIncCount
 					if (sleepEffectVal < limit)
 						sleepEffectVal = limit
@@ -810,7 +1048,8 @@ bool Function PlayerDiseaseCheckBed(int bedStyle, int hourSleep)
 		int diseaseType = 0
 		int chanceDisease = 45	; 10% chance
 		
-		if (PlayerRef.HasMagicEffect(HC_Herbal_Antimicrobial_Effect))
+		; v2.33 include intimacy to reduce chance 
+		if (SleepTimeIntimacyCount > 0 || PlayerRef.HasMagicEffect(HC_Herbal_Antimicrobial_Effect))
 			chanceDisease = 49	; 2% chance
 		endIf
 		
@@ -936,11 +1175,13 @@ Function PlayerNapRecoverFinal(int recoverLevel)
 				endIf
 				SetHCSleepTimer(sleepTimer, SleepInterrupted)
 			endIf
-		elseIf (HourCount >= 3)
+		else
 			SleepyPlayer = true
-			; allow some time before next drop
-			float sleepTimer = 2.5 + HourCount as float
-			SetHCSleepTimer(sleepTimer, SleepInterrupted)
+			if (HourCount >= 3)
+				; allow some time before next drop -- HC-sleep-deprevation timer
+				float sleepTimer = 2.5 + HourCount as float
+				SetHCSleepTimer(sleepTimer, SleepInterrupted)
+			endIf
 		endIf
 		
 			
@@ -958,6 +1199,31 @@ Function PlayerNapRecoverFinal(int recoverLevel)
 	
 endFunction
 
+Function PlayerRestoreHealthByFraction(float fractionVal)
+
+	float healthTrueMax = PlayerRef.GetValue(HealthAV)
+	RestoreValueByFraction(HealthAV, fractionVal, healthTrueMax)
+	
+	if (Game.GetDifficulty() >= 6)
+		
+		; bone recovery - copied from HC_Manager and adjusted for per-hour basis
+		float enduranceTrueMax     = PlayerRef.GetValue(EnduranceCondition)
+		float leftAttackTrueMax    = PlayerRef.GetValue(LeftAttackCondition)
+		float leftMobilityTrueMax  = PlayerRef.GetValue(LeftMobilityCondition)
+		float perceptionTrueMax    = PlayerRef.GetValue(PerceptionCondition)
+		float rightAttackTrueMax   = PlayerRef.GetValue(RightAttackCondition)
+		float rightMobilityTrueMax = PlayerRef.GetValue(RightMobilityCondition)
+		
+		RestoreValueByFraction(EnduranceCondition, fractionVal, enduranceTrueMax)
+		RestoreValueByFraction(LeftAttackCondition, fractionVal, leftAttackTrueMax)
+		RestoreValueByFraction(LeftMobilityCondition, fractionVal, leftMobilityTrueMax)
+		RestoreValueByFraction(PerceptionCondition, fractionVal, perceptionTrueMax)
+		RestoreValueByFraction(RightAttackCondition, fractionVal, rightAttackTrueMax)
+		RestoreValueByFraction(RightMobilityCondition, fractionVal, rightMobilityTrueMax)
+		
+	endIf
+endFunction
+
 Function RestoreValueByFraction(ActorValue actorValToRestore, float fractionVal, float maxVal)
 
 	float valRestore = fractionVal * maxVal
@@ -965,7 +1231,7 @@ Function RestoreValueByFraction(ActorValue actorValToRestore, float fractionVal,
 endFunction
 
 Function SendRestCompleteEvent(int interruptType)
-
+	
 	if (DTSleep_SettingNapOnly.GetValue() >= 1.0)
 		Var[] kArgs = new Var[6]
 		kArgs[0] = interruptType
@@ -980,7 +1246,7 @@ Function SendRestCompleteEvent(int interruptType)
 endFunction
 
 Function SendRestInterruptEvent(int interruptType)
-
+	
 	Var[] kArgs = new Var[2]
 	kArgs[0] = interruptType
 	kArgs[1] = HourCount

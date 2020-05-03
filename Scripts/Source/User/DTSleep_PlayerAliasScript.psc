@@ -104,6 +104,7 @@ FormList property DTSleep_IntimatePropList auto const
 FormList property DTSleep_IntimateSedanPreWarList auto const
 FormList property DTSleep_IntimateWeightBenchList auto const 		; added v2.25
 FormList property DTSleep_SettlerFactionList auto const
+FormList property DTSleep_IntimateDinerBoothTableAllList auto const ; added v2.35
 Message property DTSleep_VersionMsg auto const
 Message property DTSleep_VersionExplicitMsg auto const
 Message property DTSleep_VersionSafeMsg auto const
@@ -236,6 +237,10 @@ Event OnPlayerLoadGame()
 	
 	StartTimer(4.2, 13)
 EndEvent
+
+Event OnPlayerSwimming()
+	SleepQuestScript.EnteredSwimmingState()
+endEvent
 
 ; faster to record current location than looking up location at bedtime
 Event OnLocationChange(Location akOldLoc, Location akNewLoc)
@@ -656,6 +661,8 @@ Function CheckCompatibility()
 			
 			DTSleep_IntimateWeightBenchList.AddForm(Game.GetFormFromFile(0x0500119A, "DLCWorkshop03.esm"))
 			(DTSConditionals as DTSleep_Conditionals).WeightBenchKY = (Game.GetFormFromFile(0x05001A52, "DLCWorkshop03.esm") as Keyword)
+			
+			DTSleep_IntimateDinerBoothTableAllList.AddForm(Game.GetFormFromFile(0x050049F3, "DLCWorkshop03.esm"))
 		endIf
 	endIf
 	
@@ -2102,6 +2109,11 @@ Function CheckCompatibility()
 				else
 					(DTSConditionals as DTSleep_Conditionals).IsGrayAnimsActive = false
 				endIf
+				if (Game.IsPluginInstalled("AAF_CreaturePack01.esp"))
+					(DTSConditionals as DTSleep_Conditionals).IsGrayCreatureActive = true
+				else
+					(DTSConditionals as DTSleep_Conditionals).IsGrayCreatureActive = false
+				endIf
 				
 				; BP70 -v2.2.1 a scene causes game crash with ZeX skeleton - also requires AAF.esm as master
 				;if (Game.IsPluginInstalled("rxl_bp70_animations.esp"))
@@ -2688,7 +2700,7 @@ int Function CheckCustomArmorsAndBackpacks()
 		
 		extraArmor = Game.GetFormFromFile(0x0900085C, crossPluginName) as Armor
 		if (extraArmor != None && !DTSleep_ArmorTorsoList.HasForm(extraArmor))
-			Debug.Trace(myScriptName + " adding Mojave Vest to torso list")
+			;Debug.Trace(myScriptName + " adding Mojave Vest to torso list")
 			DTSleep_ArmorTorsoList.AddForm(extraArmor)
 		endIf
 	endIf
@@ -4435,6 +4447,12 @@ Function UpgradeToVersion()
 				if (bed != None)
 					DTSleep_BedsBigDoubleList.AddForm(bed)
 				endIf
+			endIf
+		endIf
+		
+		if (lastVers < 2.351)
+			if ((DTSConditionals as DTSleep_Conditionals).IsWorkShop03DLCActive)
+				DTSleep_IntimateDinerBoothTableAllList.AddForm(Game.GetFormFromFile(0x050049F3, "DLCWorkshop03.esm"))
 			endIf
 		endIf
 		

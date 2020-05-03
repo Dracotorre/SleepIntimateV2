@@ -44,6 +44,11 @@ bool property PreferStandOnly = false auto conditional hidden
 bool property CompanionInPowerArmor = false auto conditional hidden
 int property PlayerRoleTranslated = 0 auto conditional hidden
 int property MaleBodySwapEnabled = 1 auto conditional hidden
+;
+; additional scene info v2.35
+;
+int property IntimateLocationType = 0 auto conditional hidden
+
 
 ; -------------------------- backup data if need to restore after reset ---------
 

@@ -281,6 +281,12 @@ Function ToggleChairScenes(float val)
 	DTSleep_SettingChairsEnabled.SetValueInt(chairVal)
 EndFunction
 
+Function WakePlayer(float val)
+	if (Game.IsActivateControlsEnabled())
+		(pDTSleep_MainQuest as DTSleep_MainQuestScript).PlayerSleepAwake(false)
+	endIf
+EndFunction
+
 
 Function Update()
 	if (MCMPlayerFemale < 0)

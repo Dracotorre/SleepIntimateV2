@@ -35,6 +35,7 @@ FormList property DTSleep_AddictionDrinkFList auto
 FormList property DTSleep_BedItemFlist auto 
 FormList property DTSleep_FemBedItemFList auto 
 FormList property DTSleep_LoverItemFList auto
+FormList property DTSleep_BedsBigDoubleList auto const
 
 Static property DTSleep_DummyNode auto const
 
@@ -318,6 +319,20 @@ Armor Function GetNukabearArmor()
 	return nukaBear
 endFunction
 
+Form Function GetPillowFormIfActorHas(Actor actorRef, ObjectReference bedRef = None)
+	Form resultForm = None
+	if (DTSleep_FemBedItemFList.GetSize() > 2)
+		Form pillow = DTSleep_FemBedItemFList.GetAt(2)
+		
+		if (actorRef.GetItemCount(pillow) > 0)
+			resultForm = pillow
+		elseIf (bedRef != None && bedRef.GetItemCount(pillow))
+			resultForm = pillow
+		endIf
+	endIf
+	return resultForm
+endFunction
+
 ;  if encounter unavailable then returns false else true for placed
 ; 
 bool Function PlaceEncounterOnBedForActors(int encounterType, ObjectReference bedRef, Actor playerActorRef, Actor companionActorRef)
@@ -465,7 +480,11 @@ bool Function PlaceEncounterOnBedForActors(int encounterType, ObjectReference be
 	if (idx >= 0 && bedDecorList && idx < bedDecorList.GetSize())
 		int placedItemCount = 0
 		int listSize = bedDecorList.GetSize()
-		
+		bool isDoubleBed = false
+		if (DTSleep_BedsBigDoubleList.HasForm(bedRef.GetBaseObject()))
+			isDoubleBed = true
+		endIf
+
 		;Debug.Trace(myScriptName + " placing items... idx: " + idx + " in list-Size: " + listSize)
 		
 		while (idx >= 0 && idx < listSize && tryCount > 0 && itemsToPlace > 0)
@@ -513,7 +532,7 @@ bool Function PlaceEncounterOnBedForActors(int encounterType, ObjectReference be
 				; we have something to place on bed
 				Point3DOrient placeBedPoint
 				Point3DOrient bedPoint = DTSleep_CommonF.PointOfObject(bedRef)
-				int randomPlace = Utility.RandomInt(1,3)
+				int randomPlace = Utility.RandomInt(1, 3)
 				
 				ObjectReference mainNodeRef = PlaceFormAtObjectRef(DTSleep_DummyNode, playerActorRef)
 				
@@ -533,9 +552,14 @@ bool Function PlaceEncounterOnBedForActors(int encounterType, ObjectReference be
 						
 						
 						float jitter = Utility.RandomFloat(0.5, 3.5)
+						float xOffset = 0.0
+						if (isDoubleBed)
+							xOffset = 40.0
+						endIf
+						
 						;Debug.Trace(myScriptName + "  placing item on bed at X,Y " + placeBedPoint.X + "," + placeBedPoint.Y)
 						mainNodeRef.SetAngle(0.0, 0.0, placeBedPoint.Heading)
-						mainNodeRef.SetPosition(bedPoint.X + placeBedPoint.X + jitter, bedPoint.Y + placeBedPoint.Y - jitter, bedPoint.Z + placeBedPoint.Z)
+						mainNodeRef.SetPosition(bedPoint.X + placeBedPoint.X + xOffset + jitter, bedPoint.Y + placeBedPoint.Y - jitter, bedPoint.Z + placeBedPoint.Z)
 						;mainNodeRef.MoveTo(bedRef, placeBedPoint.X + jitter, placeBedPoint.Y - jitter, placeBedPoint.Z, false)
 					
 						ObjectReference placedObjRef = PlaceFormAtObjectRef(baseForm, mainNodeRef)
