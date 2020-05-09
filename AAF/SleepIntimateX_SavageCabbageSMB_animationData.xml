@@ -1,0 +1,114 @@
+<meta title="SleepIntimateX_SavageCabbageSMB_animationData.xml" version="2.40" dataSet="animation"/>
+<defaults source="SavageCabbage_Animations.esp"/>
+
+<animation id="SIX_SC-FM-SMBehemoth-Floor01-03ReverseCowgirl" time="500">
+	<actor gender="F">
+		<idle form="2A141"/>
+	</actor>
+	<actor gender="M" skeleton="SupermutantBehemoth">
+		<idle form="2A142"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-SMBehemoth-Floor01-04Blowjob" time="500">
+	<actor gender="F">
+		<idle form="2A143"/>
+	</actor>
+	<actor gender="M" skeleton="SupermutantBehemoth">
+		<idle form="2A144"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-SMBehemoth-Floor01-05Cowgirl" time="500">
+	<actor gender="F">
+		<idle form="2A145"/>
+	</actor>
+	<actor gender="M" skeleton="SupermutantBehemoth">
+		<idle form="2A146"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-SMBehemoth-Floor01-06Cowgirl" time="500">
+	<actor gender="F">
+		<idle form="2A147"/>
+	</actor>
+	<actor gender="M" skeleton="SupermutantBehemoth">
+		<idle form="2A148"/>
+	</actor>
+</animation>
+
+
+<animation id="SIX_SC-FM-SMBehemoth-Floor02-03Missionary" time="500">
+	<actor gender="F">
+		<idle form="27AE6"/>
+	</actor>
+	<actor gender="M" skeleton="SupermutantBehemoth">
+		<idle form="27AE7"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-SMBehemoth-Floor02-04Missionary" time="500">
+	<actor gender="F">
+		<idle form="24546"/>
+	</actor>
+	<actor gender="M" skeleton="SupermutantBehemoth">
+		<idle form="27AE8"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-SMBehemoth-Floor02-05Missionary" time="500">
+	<actor gender="F">
+		<idle form="27AE9"/>
+	</actor>
+	<actor gender="M" skeleton="SupermutantBehemoth">
+		<idle form="27AEA"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-SMBehemoth-Floor02-06Missionary" time="500">
+	<actor gender="F">
+		<idle form="27AED"/>
+	</actor>
+	<actor gender="M" skeleton="SupermutantBehemoth">
+		<idle form="27AEE"/>
+		<value path="morph" value="Erection Up" to="1"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-SMBehemoth-Floor03-03Handjob" time="500">
+	<actor gender="F">
+		<idle form="2A149"/>
+	</actor>
+	<actor gender="M" skeleton="SupermutantBehemoth">
+		<idle form="2A14A"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-SMBehemoth-Floor03-04Titjob" time="500">
+	<actor gender="F">
+		<idle form="2A14B"/>
+	</actor>
+	<actor gender="M" skeleton="SupermutantBehemoth">
+		<idle form="2A14C"/>
+		<value path="morph" value="Erection Up" to="1"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-SMBehemoth-Floor03-05Blowjob" time="500">
+	<actor gender="F">
+		<idle form="2A14D"/>
+	</actor>
+	<actor gender="M" skeleton="SupermutantBehemoth">
+		<idle form="2A14E"/>
+		<value path="morph" value="Erection Up" to="1"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-SMBehemoth-Floor03-06Blowjob" time="500">
+	<actor gender="F">
+		<idle form="2A14F"/>
+	</actor>
+	<actor gender="M" skeleton="SupermutantBehemoth">
+		<idle form="2A150"/>
+	</actor>
+</animation>

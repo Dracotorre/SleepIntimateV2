@@ -430,6 +430,38 @@ pDTSleep_SettingSpectate.SetValue(0.0)
 EndFunction
 ;END FRAGMENT
 
+;BEGIN FRAGMENT Fragment_Terminal_51
+Function Fragment_Terminal_51(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingDoorsEnabled.SetValue(0.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_52
+Function Fragment_Terminal_52(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingDoorsEnabled.SetValue(1.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_53
+Function Fragment_Terminal_53(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingProps.SetValue(0.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_54
+Function Fragment_Terminal_54(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingProps.SetValue(1.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
 ;END FRAGMENT CODE - Do not edit anything between this and the begin comment
 
 GlobalVariable Property pDTSleep_SettingIntimate Auto Const Mandatory
@@ -483,3 +515,7 @@ GlobalVariable Property pDTSleep_SettingUseBT2Gun Auto Const Mandatory
 GlobalVariable Property pDTSleep_SettingAltFemBody Auto Const Mandatory
 
 GlobalVariable Property pDTSleep_SettingSpectate Auto Const Mandatory
+
+GlobalVariable Property pDTSleep_SettingDoorsEnabled Auto Const Mandatory
+
+GlobalVariable Property pDTSleep_SettingProps Auto Const Mandatory

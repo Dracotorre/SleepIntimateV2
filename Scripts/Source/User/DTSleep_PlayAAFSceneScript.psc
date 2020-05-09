@@ -417,13 +417,21 @@ bool Function PlaySequence()
 	
 	if (SceneData.CompanionInPowerArmor)
 		longScene = -1
-	elseIf (SequenceID == 737 || SequenceID == 765 || SequenceID == 733 || SequenceID == 742 || SequenceID == 748)
+	elseIf (SequenceID == 737 || SequenceID == 765 || SequenceID == 733 || SequenceID == 742 || SequenceID == 748 || SequenceID == 749)
 		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.1)
 			longScene = 1
 			if (SequenceID == 737 && DTSleep_IntimateSceneLen.GetValueInt() >= 3)
 				longScene = 2
 			endIf
-		endIf 
+		endIf
+	elseIf (SequenceID == 701 || SequenceID == 746 || SequenceID == 752 || SequenceID == 736 || SequenceID == 760 || SequenceID == 766)
+		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.2)
+			longScene = 1
+		endIf
+	elseIf (SequenceID == 768 && SceneData.SecondMaleRole != None)
+		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.2)
+			longScene = 1
+		endIf
 	elseIf (DTSleep_IntimateSceneLen.GetValueInt() >= 3)
 		longScene = 1
 	endIf

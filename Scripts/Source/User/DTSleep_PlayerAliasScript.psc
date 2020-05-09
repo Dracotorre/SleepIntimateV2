@@ -105,6 +105,7 @@ FormList property DTSleep_IntimateSedanPreWarList auto const
 FormList property DTSleep_IntimateWeightBenchList auto const 		; added v2.25
 FormList property DTSleep_SettlerFactionList auto const
 FormList property DTSleep_IntimateDinerBoothTableAllList auto const ; added v2.35
+FormList property DTSleep_JailDoorBadLocationList auto const 		; added v2.40
 Message property DTSleep_VersionMsg auto const
 Message property DTSleep_VersionExplicitMsg auto const
 Message property DTSleep_VersionSafeMsg auto const
@@ -211,6 +212,10 @@ string myScriptName = "[DTSleep-Intimate]" const
 ; *****************************************************
 ;    Events
  
+Event OnKill(Actor akVictim)
+  SleepQuestScript.PlayerKilledActor(akVictim)
+endEvent
+
 Event OnPlayerLoadGame()
 	
 	(DTSConditionals as DTSleep_Conditionals).HasReloaded = true
@@ -384,6 +389,7 @@ Function CheckCompatibility()
 		if (locForm != None && !DTSleep_UndressLocationList.HasForm(locForm))
 			DTSleep_UndressLocationList.AddForm(locForm)
 			DTSleep_UndressLocationList.AddForm(Game.GetFormFromFile(0x0201089D, "DLCRobot.esm"))
+			DTSleep_JailDoorBadLocationList.AddForm(locForm)			; v2.40
 		endIf
 		
 		(DTSConditionals as DTSleep_Conditionals).RobotAdaRef = Game.GetFormFromFile(0x0200FF12, "DLCRobot.esm") as Actor
@@ -1696,16 +1702,6 @@ Function CheckCompatibility()
 	endIf
 	
 	
-	;if (Game.IsPluginInstalled("LooksMenu.esp"))
-	;	if (!(DTSConditionals as DTSleep_Conditionals).IsLooksMenuActive)
-	;		; TODO: set pref
-	;		
-	;	endIf
-	;	(DTSConditionals as DTSleep_Conditionals).IsLooksMenuActive = true
-	;else
-	;	(DTSConditionals as DTSleep_Conditionals).IsLooksMenuActive = false
-	;endIf
-	
 	; check for mods that require normal game sleep events
 	if (!(DTSConditionals as DTSleep_Conditionals).HasModReqNormSleep)
 		if (Game.IsPluginInstalled("AdvancedNeeds2.esp"))
@@ -1718,6 +1714,16 @@ Function CheckCompatibility()
 	;   Adult only
 	;
 	if (DTSleep_AdultContentOn.GetValue() >= 1.0)
+	
+		if (Game.IsPluginInstalled("LooksMenu.esp"))
+			;if (!(DTSConditionals as DTSleep_Conditionals).IsLooksMenuActive)
+			;	; TODO: set pref
+			;	
+			;endIf
+			(DTSConditionals as DTSleep_Conditionals).IsLooksMenuActive = true
+		else
+			(DTSConditionals as DTSleep_Conditionals).IsLooksMenuActive = false
+		endIf
 	
 		if (Game.IsPluginInstalled("AAFMorningSexWithLover.esp"))
 			(DTSConditionals as DTSleep_Conditionals).IsMorningSexActive = true
@@ -1781,6 +1787,8 @@ Function CheckCompatibility()
 		; SavageCabbage - allow in XOXO so player can have extra dance
 		if (Game.IsPluginInstalled("SavageCabbage_Animations.esp"))
 			
+			(DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive = true
+			
 			if (!(DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive)
 				Idle danceIdle = Game.GetFormFromFile(0x0800182C, "SavageCabbage_Animations.esp") as Idle
 				if (danceIdle != None && !DTSleep_Dance2List.HasForm(danceIdle))
@@ -1789,14 +1797,21 @@ Function CheckCompatibility()
 				endIf
 				(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.04
 			endIf
+			Form idleForm = None
 			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.1)
-				Form idleForm = Game.GetFormFromFile(0x05024CE1, "SavageCabbage_Animations.esp")
+				idleForm = Game.GetFormFromFile(0x05024CE1, "SavageCabbage_Animations.esp")
 				if (idleForm  != None)
-					(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.10
 					DTSleep_Dance2List.AddForm(idleForm)
+					(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.10
 				endIf
 			endIf
-			(DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive = true
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.2)
+		
+				idleForm = Game.GetFormFromFile(0x0802C023, "SavageCabbage_Animations.esp")
+				if (idleForm  != None)
+					(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.20
+				endIf
+			endIf
 		else
 			(DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive = false
 			(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = -1.0
@@ -1899,12 +1914,16 @@ Function CheckCompatibility()
 				
 				; check sex chair-mod active - only 1 to check (TODO: Atomic Lust has a single scene -- consider for future if add more)
 				if ((DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive)
-					if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.10)
+					if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
 						DTSleep_ActivFlagpole.SetValue(2.0)
+						DTSleep_ActivChairs.SetValue(3.0)
+					elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.10)
+						DTSleep_ActivFlagpole.SetValue(2.0)
+						DTSleep_ActivChairs.SetValue(2.0)
 					else
 						DTSleep_ActivFlagpole.SetValue(-1.0)
+						DTSleep_ActivChairs.SetValue(2.0)
 					endIf
-					DTSleep_ActivChairs.SetValue(2.0)
 				else
 					DTSleep_ActivChairs.SetValue(-1.0)
 					DTSleep_ActivFlagpole.SetValue(-1.0)
@@ -3711,7 +3730,7 @@ bool Function CheckGameSettings()
 	endIf
 	
 	; check for old main script
-	if (SleepQuestScript.ChanceForIntimateSceneAdjDance(500) != 2152)
+	if (SleepQuestScript.ChanceForIntimateSceneAdjDance(500) != 2413)
 	
 		if (DTSleep_BadVersWarnMsg.Show() >= 1)
 			Utility.Wait(0.33)
@@ -4453,6 +4472,12 @@ Function UpgradeToVersion()
 		if (lastVers < 2.351)
 			if ((DTSConditionals as DTSleep_Conditionals).IsWorkShop03DLCActive)
 				DTSleep_IntimateDinerBoothTableAllList.AddForm(Game.GetFormFromFile(0x050049F3, "DLCWorkshop03.esm"))
+			endIf
+		endIf
+		
+		if (lastVers < 2.400)
+			if ((DTSConditionals as DTSleep_Conditionals).IsRobotDLCActive)
+				DTSleep_JailDoorBadLocationList.AddForm(Game.GetFormFromFile(0x020008A4, "DLCRobot.esm"))		; DLC01LairLocation
 			endIf
 		endIf
 		

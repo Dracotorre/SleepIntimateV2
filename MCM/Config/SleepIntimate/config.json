@@ -428,6 +428,30 @@
 			}
 		},
 		{
+			"id": "MCM_SettingHealthRecover:Rest",
+			"text": "Rest Health Recover",
+			"type": "dropdown",
+			"help": "during rest recover health per hour - about the same as normal sleep",
+			"valueOptions": {
+				"options": ["Disabled", "Enabled"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|19A916",
+				"propertyName": "DTSleep_SettingHealthRecover"
+			}
+		},
+		{
+			"id": "MCM_SettingNapRecover:Rest",
+			"text": "Rest Fatigue Recover",
+			"type": "dropdown",
+			"help": "during Immersive Rest on Survival recover fatigue",
+			"valueOptions": {
+				"options": ["Disabled", "Enabled"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|81fE0",
+				"propertyName": "DTSleep_SettingNapRecover"
+			}
+		},
+		{
 			"id": "MCM_SettingNapComp:Rest",
 			"text": "Companion go to bed",
 			"type": "dropdown",
@@ -604,6 +628,19 @@
 			}
 		},
 		{
+			"id": "MCM_SettingDoorsEnabled:Intimacy",
+			"text": "Door Scenes",
+			"type": "dropdown",
+			"help": "include jail doors for intimacy -- requires Savage Cabbage's pack 1.2",
+			"groupCondition": {"AND": [10, 11]},
+			"valueOptions": {
+				"options": ["Disabled", "Enabled"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|199244",
+				"propertyName": "DTSleep_SettingChairsEnabled"
+			}
+		},
+		{
 			"id": "MCM_SettingPilloryEnabled:Intimacy",
 			"text": "Torture Devices",
 			"type": "dropdown",
@@ -614,6 +651,19 @@
 				"sourceType": "GlobalValue",
 				"sourceForm": "SleepIntimate.esp|1046B5",
 				"propertyName": "DTSleep_SettingPilloryEnabled"
+			}
+		},
+		{
+			"id": "MCM_SettingProps:Intimacy",
+			"text": "Prop Search",
+			"type": "dropdown",
+			"help": "when Relax+ on chair do you want to search for nearby props (tables, counters, motorcycles, showers)?",
+			"groupCondition": {"AND": [10, 11]},
+			"valueOptions": {
+				"options": ["Disabled", "Enabled"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|19A179",
+				"propertyName": "DTSleep_SettingProps"
 			}
 		},
 		{

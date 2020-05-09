@@ -44,6 +44,7 @@ GlobalVariable property DTSleep_HRLastSleepTime auto
 GlobalVariable property DTSleep_PlayerUsingBed auto const
 { set to zero if player done resting }
 GlobalVariable property DTSleep_SettingNapRecover auto const
+GlobalVariable property DTSleep_SettingHealthRecover auto const			; v2.40 to disable/enable recovery
 GlobalVariable property DTSleep_SettingNotifications auto const
 GlobalVariable property DTSleep_SettingNapOnly auto const
 GlobalVariable property DTSleep_SettingTestMode auto const
@@ -1201,26 +1202,28 @@ endFunction
 
 Function PlayerRestoreHealthByFraction(float fractionVal)
 
-	float healthTrueMax = PlayerRef.GetValue(HealthAV)
-	RestoreValueByFraction(HealthAV, fractionVal, healthTrueMax)
-	
-	if (Game.GetDifficulty() >= 6)
+	if (DTSleep_SettingHealthRecover.GetValueInt() >= 1)
+		float healthTrueMax = PlayerRef.GetValue(HealthAV)
+		RestoreValueByFraction(HealthAV, fractionVal, healthTrueMax)
 		
-		; bone recovery - copied from HC_Manager and adjusted for per-hour basis
-		float enduranceTrueMax     = PlayerRef.GetValue(EnduranceCondition)
-		float leftAttackTrueMax    = PlayerRef.GetValue(LeftAttackCondition)
-		float leftMobilityTrueMax  = PlayerRef.GetValue(LeftMobilityCondition)
-		float perceptionTrueMax    = PlayerRef.GetValue(PerceptionCondition)
-		float rightAttackTrueMax   = PlayerRef.GetValue(RightAttackCondition)
-		float rightMobilityTrueMax = PlayerRef.GetValue(RightMobilityCondition)
-		
-		RestoreValueByFraction(EnduranceCondition, fractionVal, enduranceTrueMax)
-		RestoreValueByFraction(LeftAttackCondition, fractionVal, leftAttackTrueMax)
-		RestoreValueByFraction(LeftMobilityCondition, fractionVal, leftMobilityTrueMax)
-		RestoreValueByFraction(PerceptionCondition, fractionVal, perceptionTrueMax)
-		RestoreValueByFraction(RightAttackCondition, fractionVal, rightAttackTrueMax)
-		RestoreValueByFraction(RightMobilityCondition, fractionVal, rightMobilityTrueMax)
-		
+		if (Game.GetDifficulty() >= 6)
+			
+			; bone recovery - copied from HC_Manager and adjusted for per-hour basis
+			float enduranceTrueMax     = PlayerRef.GetValue(EnduranceCondition)
+			float leftAttackTrueMax    = PlayerRef.GetValue(LeftAttackCondition)
+			float leftMobilityTrueMax  = PlayerRef.GetValue(LeftMobilityCondition)
+			float perceptionTrueMax    = PlayerRef.GetValue(PerceptionCondition)
+			float rightAttackTrueMax   = PlayerRef.GetValue(RightAttackCondition)
+			float rightMobilityTrueMax = PlayerRef.GetValue(RightMobilityCondition)
+			
+			RestoreValueByFraction(EnduranceCondition, fractionVal, enduranceTrueMax)
+			RestoreValueByFraction(LeftAttackCondition, fractionVal, leftAttackTrueMax)
+			RestoreValueByFraction(LeftMobilityCondition, fractionVal, leftMobilityTrueMax)
+			RestoreValueByFraction(PerceptionCondition, fractionVal, perceptionTrueMax)
+			RestoreValueByFraction(RightAttackCondition, fractionVal, rightAttackTrueMax)
+			RestoreValueByFraction(RightMobilityCondition, fractionVal, rightMobilityTrueMax)
+			
+		endIf
 	endIf
 endFunction
 

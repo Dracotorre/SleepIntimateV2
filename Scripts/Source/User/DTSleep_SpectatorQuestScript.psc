@@ -66,6 +66,8 @@ int CrimeReportMsgTimer = 104 const
 int LocActorChanceSettled = 10 const
 int LocActorChanceOwned = 12 const
 int LocActorChanceTown = 20 const
+int LocActorChanceTownNice = 22 const
+int LocActorChanceInterior = 8 const
 
 ; *************************** Events *************
 ;
@@ -117,14 +119,19 @@ EndEvent
 Function AddAvailableNearbyNPCs()
 
 	float distance = 2800.0			; v2.35 increased since now using location types
-	if (PlayerRef.IsInInterior())
-		distance = 700.0			; same as owned-bed nearby NPC chance check
-	elseIf (SceneData.IntimateLocationType == LocActorChanceSettled)
+			
+	if (SceneData.IntimateLocationType == LocActorChanceSettled)
 		distance = 1000.0
 	elseIf (SceneData.IntimateLocationType == LocActorChanceOwned)
 		distance = 640.0
+	elseIf (SceneData.IntimateLocationType == LocActorChanceTownNice)
+		distance = 1200.0
 	elseIf (SceneData.IntimateLocationType == LocActorChanceTown)
 		distance = 1800.0
+	elseIf (SceneData.IntimateLocationType == LocActorChanceInterior)
+		distance = 700.0
+	elseIf (PlayerRef.IsInInterior())
+		distance = 700.0
 	endIf
 	float playerZ = PlayerRef.GetPositionZ()			; ignore height diff
 	int commonActorLim = 0
@@ -134,7 +141,7 @@ Function AddAvailableNearbyNPCs()
 		ObjectReference[] actorArray = PlayerRef.FindAllReferencesWithKeyword(ActorTypeNPCKY, distance)
 		
 		int aCnt = 0
-		;Debug.Trace("[DTSleep_SpectatorQuest] searching found total actor count: " + actorArray.Length)
+		;Debug.Trace("[DTSleep_SpectatorQuest] searching area " + SceneData.IntimateLocationType + " with found total actor count: " + actorArray.Length)
 		
 		while (aCnt < actorArray.Length)
 			Actor ac = actorArray[aCnt] as Actor
@@ -211,7 +218,7 @@ bool Function AddSpectator(Actor spectActor, bool isCompanion)
 			if (spectActor.GetSitState() < 2)
 				lim = 10
 			endIf
-		
+			
 			if (spectActor == SceneData.MaleRole || Utility.RandomInt(5,12) > lim)
 				spectActor.AddToFaction(DTSleep_SpecatorComnFaction)
 

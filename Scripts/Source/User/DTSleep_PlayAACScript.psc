@@ -80,6 +80,7 @@ int LastGunBIndex = -1
 int MaleRoleSex = -1
 int SecondRoleSex = -1
 int SceneRunning = -1
+bool MeIsStopping = false
 InputEnableLayer DTSleepPlayAACInputLayer
 int DoggyQuitTimer = 99 const
 int SeqLimitTimerID = 101 const
@@ -111,7 +112,7 @@ EndEvent
 ; second actor must be akfActor (target) and not player in two-person sequences
 ;
 Event OnEffectStart(Actor akfActor, Actor akmActor)
-	
+	MeIsStopping = false
 	SequenceID = DTSleep_IntimateIdleID.GetValueInt()
 	LastGunAIndex = -1
 	LastGunBIndex = -1
@@ -412,6 +413,9 @@ Armor Function GetArmorNudeGun(int kind)
 		bt2Val = -1
 		evbVal = 2
 		synthVal = 1
+	elseIf (SceneData.IsCreatureType >= 5)
+		return None
+		
 	elseIf (DTSConditionals.IsUniquePlayerMaleActive && evbVal > 0 && SceneData.MaleRole == PlayerRef)
 		bt2Val = -1
 	endIf
@@ -494,7 +498,15 @@ Function InitSceneAndPlay()
 			if (SequenceID == 737 && DTSleep_IntimateSceneLen.GetValueInt() >= 3)
 				longScene = 2
 			endIf
-		endIf 
+		endIf
+	elseIf (SequenceID == 701 || SequenceID == 746 || SequenceID == 752 || SequenceID == 736 || SequenceID == 760 || SequenceID == 766)
+		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.2)
+			longScene = 1
+		endIf
+	elseIf (SequenceID == 768 && SceneData.SecondMaleRole != None)
+		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.2)
+			longScene = 1
+		endIf
 	elseIf (DTSleep_IntimateSceneLen.GetValueInt() >= 3)
 		longScene = 1
 	endIf
@@ -912,30 +924,32 @@ Function StopSecondActorDone()
 endFunction
 
 Function StopAnimationSequence()
-	;Debug.Trace("[DTSleep_PlayAAC] StopSequence")
-	
-	float fadeTime = 1.75
-	if (SceneData.Interrupted > 0)
-		fadeTime = 0.50
-	elseIf (SequenceID < 100)
-		fadeTime = 0.86
+	if (!MeIsStopping)
+		MeIsStopping = true
+		
+		float fadeTime = 1.75
+		if (SceneData.Interrupted > 0)
+			fadeTime = 0.50
+		elseIf (SequenceID < 100)
+			fadeTime = 0.86
+		endIf
+		Game.FadeOutGame(true, true, 0.0, fadeTime, true)
+		Utility.Wait(fadeTime - 0.25)
+		; use controller fade since game-fade sometimes fails - controller will fade-in
+		(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).FadeOutSec(0.25)
+		
+		if (SceneRunning > 0)
+			SceneRunning = 0
+			Utility.Wait(1.0)
+		endIf
+		StopActor(MainActor)
+		StopActor(SecondActor)
+		StopActor(ThirdActor)
+		Utility.Wait(fadeTime * 0.5)
+		Game.FadeOutGame(false, true, 0.0, 0.5)  ; remove game fade
+		
+		self.Dispel()
 	endIf
-	Game.FadeOutGame(true, true, 0.0, fadeTime, true)
-	Utility.Wait(fadeTime - 0.25)
-	; use controller fade since game-fade sometimes fails - controller will fade-in
-	(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).FadeOutSec(0.25)
-	
-	if (SceneRunning > 0)
-		SceneRunning = 0
-		Utility.Wait(1.0)
-	endIf
-	StopActor(MainActor)
-	StopActor(SecondActor)
-	StopActor(ThirdActor)
-	Utility.Wait(fadeTime * 0.5)
-	Game.FadeOutGame(false, true, 0.0, 0.5)  ; remove game fade
-	
-	self.Dispel()
 endFunction
 
 Function WaitOnScene(float waitSecs)

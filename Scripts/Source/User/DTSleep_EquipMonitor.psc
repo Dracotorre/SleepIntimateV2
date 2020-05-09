@@ -158,7 +158,7 @@ Event OnItemEquipped(Form akBaseObject, ObjectReference akReference)
 	
 	if (akBaseObject as Armor)
 	
-		if (akBaseObject.HasKeyword(DTSleep_IntimateOutfitFemKY))
+		if (DTSleep_IntimateOutfitFemKY != None && akBaseObject.HasKeyword(DTSleep_IntimateOutfitFemKY))
 			if (DTSleep_AdultContentOn.GetValueInt() < 2 || !(Debug.GetPlatformName() as bool))
 				Utility.WaitMenuMode(0.3)
 				Actor playerRef = self.GetActorReference()
@@ -913,7 +913,7 @@ bool Function ProcessExtraPartsRemove(Form item)
 endFunction
 
 ; add or remove intimate apparel - true if added
-bool Function ProcessIntimateItem(Form item, int gender)
+bool Function ProcessIntimateItem(Form item, int gender = -1)
 	float captureTime = DTSleep_CaptureIntimateApparelEnable.GetValue()
 	float curTime = Utility.GetCurrentGameTime()
 	float minDiff = GetGameTimeHoursDifference(curTime, captureTime) * 60.0
@@ -1057,7 +1057,7 @@ bool Function ProcessMaskItem(Form item)
 endFunction
 
 ; add or remove sleepwear - true if added
-bool Function ProcessSleepwearItem(Form item, int gender)
+bool Function ProcessSleepwearItem(Form item, int gender = -1)
 	float captureTime = DTSleep_CaptureSleepwearEnable.GetValue()
 	float curTime = Utility.GetCurrentGameTime()
 	float minDiff = GetGameTimeHoursDifference(curTime, captureTime) * 60.0
@@ -2438,7 +2438,8 @@ Function UpdateClothingCounts()
 	
 endFunction
 
-bool Function ValidArmorToCheck(Armor item, Form baseForm)
+; I guess I originally intended to pass reference instead of armor... doesn't matter now
+bool Function ValidArmorToCheck(Armor item, Form baseForm = None)
 	if (item != None)
 		if (item.HasKeyword(ArmorTypePowerKY))
 			return false
@@ -2447,11 +2448,18 @@ bool Function ValidArmorToCheck(Armor item, Form baseForm)
 		endIf
 		; v2.27
 		if ((DTSConditionals as DTSleep_Conditionals).PipPadSlotIndex > 0)
-			if (DTSleep_ArmorPipPadList.HasForm(baseForm))
+			if (DTSleep_ArmorPipPadList.HasForm(item))
 				return false
 			endIf
 		endIf
 		return true
+	elseIf (baseForm != None)
+		if ((DTSConditionals as DTSleep_Conditionals).PipPadSlotIndex > 0)
+			if (DTSleep_ArmorPipPadList.HasForm(baseForm))
+				return false
+			endIf
+		endIf
 	endIf
+	
 	return false
 endFunction

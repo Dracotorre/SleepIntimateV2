@@ -1,4 +1,4 @@
-<meta title="SleepIntimateX_SavageCabbage_animationData.xml" version="2.35" dataSet="animation"/>
+<meta title="SleepIntimateX_SavageCabbage_animationData.xml" version="2.40" dataSet="animation"/>
 <defaults source="SavageCabbage_Animations.esp"/>
 
 <animation id="SIX_SC_FM-Bed01-01Handjob" time="390">
@@ -298,6 +298,15 @@
 	</actor>
 </animation>
 
+<animation id="SIX_SC-FM-Human-DoubleBed03-07ClimaxLoop" time="500">
+	<actor gender="F">
+		<idle form="27AE4"/>
+	</actor>
+	<actor gender="M">
+		<idle form="27AE5"/>
+	</actor>
+</animation>
+
 <animation id="SIX_SC_FM-DoubleBed04-01Tease" time="390">
 	<actor gender="F">
 		<idle form="99E0"/>
@@ -434,6 +443,15 @@
 	<actor gender="M">
 		<idle form="6445"/>
 		<!--<value path="morph" value="Erection Up" to="1"/>-->
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-Couch01-06Spoon" time="500">
+	<actor gender="F">
+		<idle form="2B0AB"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2B0AC"/>
 	</actor>
 </animation>
 
@@ -992,6 +1010,24 @@
 	</actor>
 </animation>
 
+<animation id="SIX_SC-FM-Human-Desk01-05Doggy" time="500">
+	<actor gender="F">
+		<idle form="2B0AD"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2B0AE"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-Desk01-06Doggy" time="500">
+	<actor gender="F">
+		<idle form="2B0B3"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2B0B4"/>
+	</actor>
+</animation>
+
 <animation id="SIX_SC_FM-PoolTable01-01Tease" time="500">
 	<actor gender="F">
 		<idle form="1802"/>
@@ -1109,6 +1145,15 @@
 	<actor gender="M">
 		<idle form="1815"/>
 		<!--<value path="morph" value="Erection" to="1"/>-->
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-Motorbike01-01Tease" time="500">
+	<actor gender="F">
+		<idle form="2B868"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2B869"/>
 	</actor>
 </animation>
 
@@ -1759,6 +1804,15 @@
 	</actor>
 </animation>
 
+<animation id="SIX_SC-FM-SuperMutant-DoubleBed03-02Start" time="500">
+	<actor gender="F">
+		<idle form="2A151"/>
+	</actor>
+	<actor gender="M" skeleton="Supermutant">
+		<idle form="2A152"/>
+	</actor>
+</animation>
+
 <animation id="SIX_SC_FSM-DoubleBed03-03Cowgirl" time="390">
 	<actor gender="F">
 		<idle form="E626"/>
@@ -2049,131 +2103,12 @@
 	</actor>
 </animation>
 
-<!--- ************************* Dog --->
-
-<animation id="SIX_SC_FD-Bed01-01Tease" time="500">
+<animation id="SIX_SC-FM-SuperMutant-Standing03-06Carry" time="500">
 	<actor gender="F">
-		<idle form="21F00"/>
+		<idle form="2A156"/>
 	</actor>
-	<actor gender="M" skeleton="Dog">
-		<idle form="21F01"/>
-		<!--<value path="morph" value="Erection Strait" to="1"/>-->
-	</actor>
-</animation>
-
-<animation id="SIX_SC_FD-Bed01-02Start" time="500">
-	<actor gender="F">
-		<idle form="226AF"/>
-	</actor>
-	<actor gender="M" skeleton="Dog">
-		<idle form="226B0"/>
-		<!--<value path="morph" value="Erection Strait" to="1"/>-->
-	</actor>
-</animation>
-
-<animation id="SIX_SC_FD-Bed01-03Handjob" time="500">
-	<actor gender="F">
-		<idle form="207BC"/>
-	</actor>
-	<actor gender="M" skeleton="Dog">
-		<idle form="207BD"/>
-		<!--<value path="morph" value="Erection Strait" to="1"/>-->
-	</actor>
-</animation>
-
-<animation id="SIX_SC_FD-Bed02-01Tease" time="500">
-	<actor gender="F">
-		<idle form="21F02"/>
-	</actor>
-	<actor gender="M" skeleton="Dog">
-		<idle form="21F03"/>
-		<!--<value path="morph" value="Erection Strait" to="1"/>-->
-	</actor>
-</animation>
-
-<animation id="SIX_SC_FD-Couch01-01Tease" time="500">
-	<actor gender="F">
-		<idle form="1E914"/>
-	</actor>
-	<actor gender="M" skeleton="Dog">
-		<idle form="1E915"/>
-		<!--<value path="morph" value="Erection Strait" to="1"/>-->
-	</actor>
-</animation>
-
-<animation id="SIX_SC_FD-Couch01-02Start" time="500">
-	<actor gender="F">
-		<idle form="1E916"/>
-	</actor>
-	<actor gender="M" skeleton="Dog">
-		<idle form="1E917"/>
-		<!--<value path="morph" value="Erection Strait" to="1"/>-->
-	</actor>
-</animation>
-
-<animation id="SIX_SC_FD-Floor01-01Tease" time="500">
-	<actor gender="F">
-		<idle form="1AC2C"/>
-	</actor>
-	<actor gender="M" skeleton="Dog">
-		<idle form="1AC2D"/>
-		<!--<value path="morph" value="Erection Strait" to="1"/>-->
-	</actor>
-</animation>
-
-<animation id="SIX_SC_FD-Floor02-01Tease" time="500">
-	<actor gender="F">
-		<idle form="226BB"/>
-	</actor>
-	<actor gender="M" skeleton="Dog">
-		<idle form="226BC"/>
-		<!--<value path="morph" value="Erection Strait" to="1"/>-->
-	</actor>
-</animation>
-
-<animation id="SIX_SC_FD-Standing01-01Tease" time="500">
-	<actor gender="F">
-		<idle form="1E930"/>
-	</actor>
-	<actor gender="M" skeleton="Dog">
-		<idle form="1E931"/>
-		<!--<value path="morph" value="Erection Strait" to="1"/>-->
-	</actor>
-</animation>
-
-<animation id="SIX_SC_FD-Standing01-02Start" time="500">
-	<actor gender="F">
-		<idle form="20001"/>
-	</actor>
-	<actor gender="M" skeleton="Dog">
-		<idle form="20002"/>
-		<!--<value path="morph" value="Erection Strait" to="1"/>-->
-	</actor>
-</animation>
-
-<animation id="SIX_SC_FDH-Floor01-01TeaseRestrained" time="500">
-	<actor gender="F">
-		<idle form="23607"/>
-	</actor>
-	<actor gender="M" skeleton="Dog">
-		<idle form="23608"/>
-		<!--<value path="morph" value="Erection Strait" to="1"/>-->
-	</actor>
-	<actor>
-		<idle form="23609"/>
-	</actor>
-</animation>
-
-<animation id="SIX_SC_FDH-Floor01-02StartRestrained" time="500">
-	<actor gender="F">
-		<idle form="23611"/>
-	</actor>
-	<actor gender="M" skeleton="Dog">
-		<idle form="23612"/>
-		<!--<value path="morph" value="Erection Strait" to="1"/>-->
-	</actor>
-	<actor>
-		<idle form="23613"/>
+	<actor gender="M" skeleton="Supermutant">
+		<idle form="2A157"/>
 	</actor>
 </animation>
 
@@ -2192,36 +2127,6 @@
 	</actor>
 	<actor>
 		<idle form="23613"/>
-	</actor>
-</animation>
-
-<animation id="SIX_SC_FD-Chair01-01Tease" time="500">
-	<actor gender="F">
-		<idle form="17E8A"/>
-	</actor>
-	<actor gender="M" skeleton="Dog">
-		<idle form="17E8B"/>
-		<!--<value path="morph" value="Erection Strait" to="1"/>-->
-	</actor>
-</animation>
-
-<animation id="SIX_SC_FD-Chair01-02Start" time="500">
-	<actor gender="F">
-		<idle form="18625"/>
-	</actor>
-	<actor gender="M" skeleton="Dog">
-		<idle form="18626"/>
-		<!--<value path="morph" value="Erection Strait" to="1"/>-->
-	</actor>
-</animation>
-
-<animation id="SIX_SC_FD-Chair01-08Finish" time="200">
-	<actor gender="F">
-		<idle form="1BB6E"/>
-	</actor>
-	<actor gender="M" skeleton="Dog">
-		<idle form="1BB6F"/>
-		<!--<value path="morph" value="Erection Strait" to="1"/>-->
 	</actor>
 </animation>
 
@@ -2268,6 +2173,15 @@
 	</actor>
 	<actor gender="M">
 		<idle form="2171D"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-SedanPreWar01-04MissionaryBackseat" time="500">
+	<actor gender="F">
+		<idle form="2C01E"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2C01F"/>
 	</actor>
 </animation>
 
@@ -2336,5 +2250,218 @@
 	<actor gender="M" skeleton="Supermutant">
 		<idle form="104A2"/>
 		<!--<value path="morph" value="Erection Up" to="1"/>-->
+	</actor>
+</animation>
+
+<!-- **************************** v1.2 ****************** -->
+
+<animation id="SIX_SC-FM-Human-Crane01-03Carry" time="500">
+	<actor gender="F">
+		<idle form="2C012"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2C013"/>
+	</actor>
+</animation>
+
+
+<animation id="SIX_SC-FM-Human-Bed04-03Missionary" time="500">
+	<actor gender="F">
+		<idle form="E62C"/>
+	</actor>
+	<actor gender="M">
+		<idle form="E62D"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-Bed04-04Missionary" time="500">
+	<actor gender="F">
+		<idle form="2B0A5"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2B0A6"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-Bed04-05Missionary" time="500">
+	<actor gender="F">
+		<idle form="2B0A7"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2B0A8"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-Bed04-06Missionary" time="500">
+	<actor gender="F">
+		<idle form="2B0A9"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2B0AA"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-DinerBooth01-01Tease" time="500">
+	<actor gender="F">
+		<idle form="2B866"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2B867"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-FederalistCouch02-03ReverseCowGirl" time="500">
+	<actor gender="F">
+		<idle form="2B0B5"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2B0B6"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-FederalistCouch02-04ReverseCowGirl" time="500">
+	<actor gender="F">
+		<idle form="2B0B7"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2B0B8"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-Ottoman01-03Handjob" time="500">
+	<actor gender="F">
+		<idle form="2B86A"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2B86B"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-Ottoman01-04Blowjob" time="500">
+	<actor gender="F">
+		<idle form="2B86C"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2B86D"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-KitchenPostWar01-03Doggy" time="500">
+	<actor gender="F">
+		<idle form="2C016"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2C017"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-KitchenPostWar01-04Doggy" time="500">
+	<actor gender="F">
+		<idle form="2C018"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2C019"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-KitchenPostWar01-05Doggy" time="500">
+	<actor gender="F">
+		<idle form="2C01A"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2C01B"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-Throne02-03ReverseCowgirl" time="500">
+	<actor gender="F">
+		<idle form="2C022"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2C023"/>
+	</actor>
+</animation>
+
+
+<animation id="SIX_SC-FM-Human-JailCellSmall01-03Standing" time="500">
+	<actor gender="F">
+		<idle form="2A135"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2A136"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-JailCellSmall01-04Standing" time="500">
+	<actor gender="F">
+		<idle form="2A137"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2A138"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-JailCellSmall01-05Carry" time="500">
+	<actor gender="F">
+		<idle form="2B0B9"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2B0BA"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-JailCellSmall01-06Carry" time="500">
+	<actor gender="F">
+		<idle form="2B0BB"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2B0BC"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-JailCellTinyWithDoor01-03Blowjob" time="500">
+	<actor gender="F">
+		<idle form="2B0BD"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2B0BE"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-JailCellTinyWithDoor01-04Blowjob" time="500">
+	<actor gender="F">
+		<idle form="2B0BF"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2B0C0"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-JailCellTinyWithDoor01-05Blowjob" time="500">
+	<actor gender="F">
+		<idle form="2B0C1"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2B0C2"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-JailCellTinyWithDoor01-06Facefuck" time="500">
+	<actor gender="F">
+		<idle form="2C014"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2C015"/>
+	</actor>
+</animation>
+
+<!-- ----------- new super mutant 1.2 ---------------------- -->
+
+<animation id="SIX_SC-FM-SuperMutant-Standing04-01Tease" time="500">
+	<actor gender="F">
+		<idle form="2A158"/>
+	</actor>
+	<actor gender="M" skeleton="Supermutant">
+		<idle form="2A159"/>
 	</actor>
 </animation>

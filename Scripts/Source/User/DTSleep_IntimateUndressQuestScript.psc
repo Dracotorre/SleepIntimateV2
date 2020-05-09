@@ -2591,7 +2591,7 @@ bool Function PlaceFormNearFeet(Form item, Actor actorRef)
 	return result
 endFunction
 
-; cornerVal 0+ for beds -- 2 is coffin or narrow bed, 3 is desk, -1 for other furniture
+; cornerVal 0+ for beds -- 2 is coffin or narrow bed, 3 is desk, 4 is chair-with-table, -1 for other furniture
 Point3DOrient Function PlacePointAtBed(ObjectReference bedRef, Actor fromActor, int cornerVal)
 	
 	Point3DOrient placeBedPoint = new Point3DOrient
@@ -2613,9 +2613,12 @@ Point3DOrient Function PlacePointAtBed(ObjectReference bedRef, Actor fromActor, 
 				xOff = 22.0
 			elseIf (bedRef.HasKeyword((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).AnimFurnBarStoolKY))
 				yOff = -8.5
+			elseIf (bedRef.HasKeyWord((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).AnimFurnChairWithTableKY))
+				xOff = 16.0
+				yOff = -4.2
 			elseIf ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsObjShower(bedRef, None))
-				xOff = 25.0
-				yOff = 14.0 
+				xOff = 22.0
+				yOff = 12.0 
 			endIf
 			placeBedPoint = DTSleep_CommonF.GetPointSeatPlace(ptBed, ptActor, xOff, yOff)
 		else
@@ -4653,8 +4656,13 @@ bool Function UndressActorBackPack(Actor actorRef, bool placeOnGround = true)
 							cornerVal = 1
 						elseIf (PlayerBedRef.HasKeyWord(IsSleepFurnitureKY) == false)
 							cornerVal = -1
-						elseIf ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsObjDesk(PlayerBedRef, PlayerBedRef.GetBaseObject()))
-							cornerVal = 3
+							Form baseForm = PlayerBedRef.GetBaseObject()
+							
+							if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsObjDesk(PlayerBedRef, baseForm))
+								cornerVal = 3
+							elseIf ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).DTSleep_IntimateDoorJailList.HasForm(baseForm))
+								cornerVal = 2
+							endIf
 						endIf
 						
 						placedCount += UndressPlaceExtraArmorForBed(PlayerBedRef, actorRef, backpack, cornerVal, DressData.PlayerBackPackNoGOModel)

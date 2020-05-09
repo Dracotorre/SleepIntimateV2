@@ -274,6 +274,22 @@ pDTSleep_SettingNapOnly.SetValue(0.0)
 EndFunction
 ;END FRAGMENT
 
+;BEGIN FRAGMENT Fragment_Terminal_36
+Function Fragment_Terminal_36(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingHealthRecover.SetValue(0.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_37
+Function Fragment_Terminal_37(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingHealthRecover.SetValue(1.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
 ;END FRAGMENT CODE - Do not edit anything between this and the begin comment
 
 GlobalVariable Property pDTSleep_SettingNapOnly Auto Const Mandatory
@@ -301,3 +317,5 @@ GlobalVariable Property pDTSleep_SettingFastSleepEffect Auto Const Mandatory
 GlobalVariable Property pDTSleep_SettingNapRecover Auto Const Mandatory
 
 GlobalVariable Property pDTSleep_SettingIncludeExtSlots Auto Const Mandatory
+
+GlobalVariable Property pDTSleep_SettingHealthRecover Auto Const Mandatory

@@ -526,6 +526,18 @@ Point3DOrient Function GetPointDistOnHeading(Point3DOrient pt, float dist, float
 	return positionResult
 endFunction
 
+Point3DOrient Function GetPointXYDistOnHeading(Point3DOrient pt, float xDist, float yDist, float offsetAngle = 0.0) global
+	Point3DOrient positionResult = new Point3DOrient
+	positionResult.X = xDist
+	positionResult.Y = yDist
+	positionResult.Z = pt.Z
+	
+	positionResult = GetPointOrientedFromPointByAngle(positionResult, pt.Heading + offsetAngle)
+	positionResult.Heading = pt.Heading
+	
+	return positionResult
+endFunction
+
 ; relative to pt
 Point3DOrient Function GetPointXDistOnHeading(Point3DOrient pt, float xdist) global
 	Point3DOrient positionResult = new Point3DOrient
@@ -745,12 +757,14 @@ ObjectReference Function PlaceFormAtObjectRef(Form formToPlace, ObjectReference 
 	
 	if (objRef != None && formToPlace != None)
 		ObjectReference newObj = objRef.PlaceAtMe(formToPlace, 1, persist)
-		newObj = Ensure3DIsLoadedForNewObjRef(newObj, blockActivate)
-		newObj.SetPosition(objRef.GetPositionX(), objRef.GetPositionY(), objRef.GetPositionZ() + 0.1)
-		if (alignAngle)
-			newObj.SetAngle(0.0, 0.0, objRef.GetAngleZ())
+		if (newObj != None)
+			newObj = Ensure3DIsLoadedForNewObjRef(newObj, blockActivate)
+			newObj.SetPosition(objRef.GetPositionX(), objRef.GetPositionY(), objRef.GetPositionZ() + 0.1)
+			if (alignAngle)
+				newObj.SetAngle(0.0, 0.0, objRef.GetAngleZ())
+			endIf
+			return newObj
 		endIf
-		return newObj
 	endIf
 	
 	return None
