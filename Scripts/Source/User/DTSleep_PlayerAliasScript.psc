@@ -1997,6 +1997,11 @@ Function CheckCompatibility()
 							patchVal = -1.0
 							DTSleep_IsLeitoActive.SetValue(-1.0)
 						endIf
+					elseIf (patchVal <= 1)				;v2.40a
+						RevertLeitoLists()
+						DTSleep_IsLeitoActive.SetValue(2.0)	; best-fit
+						LoadLeitoAnimForms(fo4LeitoPluginName)
+						LoadLeitoCreatureAnimForms(fo4LeitoPluginName)
 					endIf
 					
 				elseIf (leitoForm != None)
@@ -2133,14 +2138,6 @@ Function CheckCompatibility()
 				else
 					(DTSConditionals as DTSleep_Conditionals).IsGrayCreatureActive = false
 				endIf
-				
-				; BP70 -v2.2.1 a scene causes game crash with ZeX skeleton - also requires AAF.esm as master
-				;if (Game.IsPluginInstalled("rxl_bp70_animations.esp"))
-				;
-				;	(DTSConditionals as DTSleep_Conditionals).IsBP70Active = true
-				;else
-				;	(DTSConditionals as DTSleep_Conditionals).IsBP70Active = false
-				;endIf
 				
 				ValidateLeitoSettings()
 				

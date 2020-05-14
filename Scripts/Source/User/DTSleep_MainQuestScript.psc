@@ -9322,14 +9322,18 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 			; AAF fails if power armor bug - restrict by powerArmorFlag
 			
 			if ((DTSConditionals as DTSleep_Conditionals).IsLeitoAAFActive)
-				if (aafEnabled && powerArmorFlag)
+				if (aafEnabled && powerArmorFlag && DTSleep_IsLeitoActive.GetValueInt() <= 2)
 					animSetFailCount += 1
 				else
 					if ((DTSConditionals as DTSleep_Conditionals).IsLeitoActive)
 						; old loose files clash with new - must have new X_Anims patch
-						if (DTSleep_IsLeitoActive.GetValueInt() >= 4 || aafEnabled || (SleepPlayerAlias as DTSleep_PlayerAliasScript).DTSleep_SIXPatch.GetValueInt() <= 0)
+						if (aafEnabled)
 							hasLeitoV2Anims = true
 							animSetCount += 1
+						elseIf (DTSleep_IsLeitoActive.GetValueInt() < 4 || (SleepPlayerAlias as DTSleep_PlayerAliasScript).DTSleep_SIXPatch.GetValueInt() < 4)  ; v2.40a had:  || aafEnabled || (SleepPlayerAlias as DTSleep_PlayerAliasScript).DTSleep_SIXPatch.GetValueInt() <= 0)
+							; not allowed
+							hasLeitoV2Anims = false
+							hasLeitoAnims = false
 						endIf
 					else
 						hasLeitoV2Anims = true
