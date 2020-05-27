@@ -296,6 +296,14 @@ int Function CheckCustomCompanionsForActor(Actor akActor)
 			return 0
 		endIf
 	endIf
+	
+	;v2.41
+	if (DTSConditionals.ModPersonalGuardCtlKY != None)
+		if (akActor.HasKeyword(DTSConditionals.ModPersonalGuardCtlKY))
+			; PersonalGuard does not use affinity
+			return 2
+		endIf
+	endIf
 
 	return -1
 endFunction

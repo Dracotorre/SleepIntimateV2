@@ -375,7 +375,7 @@ EndFunction
 
 Function FinRestoreExtraActor(Actor akActor, ObjectReference akToRef)
 	akActor.StopTranslation()
-	
+	akActor.ChangeAnimFaceArchetype()
 	akActor.SetAnimationVariableBool("bHumanoidFootIKDisable", false)
 
 	akActor.MoveTo(akToRef, 0.0, 0.0, 0.0, true)

@@ -1186,6 +1186,15 @@ Function CheckCompatibility()
 		endIf
 	endIf
 	
+	; "Construct a Custom Companion" -v2.41
+	if ((DTSConditionals as DTSleep_Conditionals).ModPersonalGuardCtlKY == None)
+		if (Game.IsPluginInstalled("PersonalGuard.esp"))
+			(DTSConditionals as DTSleep_Conditionals).ModPersonalGuardCtlKY = Game.GetFormFromFile(0x09000801, "PersonalGuard.esp") as Keyword
+		endIf
+	elseIf (Game.IsPluginInstalled("PersonalGuard.esp") == false)
+		(DTSConditionals as DTSleep_Conditionals).ModPersonalGuardCtlKY = None
+	endIf
+	
 	; Let's dance
 	if ((DTSConditionals as DTSleep_Conditionals).IsLetsDanceActive == false)
 		Idle danceIdle = IsPluginActive(0x21000F9C, "AA Lets Dance.esp") as Idle   ; booty shake

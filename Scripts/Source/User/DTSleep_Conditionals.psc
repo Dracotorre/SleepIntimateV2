@@ -94,6 +94,7 @@ GlobalVariable property ModPlayerCommentsGlobMisc = None auto conditional hidden
 Quest property ModPlayerCommentsQuest = None auto conditional hidden
 bool property ModPlayerCommentsDisabled = false auto conditional hidden
 bool property ModPlayerCommentWarnShown = false auto conditional hidden
+Keyword property ModPersonalGuardCtlKY = None auto conditional hidden
 bool property IsUniqueFollowerFemActive = false auto conditional hidden
 bool property IsUniqueFollowerMaleActive = false auto conditional hidden
 bool property IsUniquePlayerMaleActive = false auto conditional hidden

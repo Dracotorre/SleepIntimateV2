@@ -1025,15 +1025,13 @@ Event Perk.OnEntryRun(Perk DTSleep_PlayerSleepBedPerk, int Fragment_Entry_01, Ob
 		endIf
 	elseIf (Fragment_Entry_01 == 14)
 		; picnic table
-		if (CanPlayerRestRadDam())
-			HandlePlayerActivateFurniture(akTarget, 104)
-		endIf
+		; v2.41 removed rad-dam check
+		HandlePlayerActivateFurniture(akTarget, 104)
 	
 	elseIf (Fragment_Entry_01 == 13)
 		; chair/stool/sofa naked Relax++
-		if (CanPlayerRestRadDam())
-			HandlePlayerActivateFurniture(akTarget, 2, true)
-		endIf
+		; v2.41 removed rad-dam check
+		HandlePlayerActivateFurniture(akTarget, 2, true)
 		
 	elseIf (Fragment_Entry_01 == 12)
 		; sedan
@@ -1041,15 +1039,13 @@ Event Perk.OnEntryRun(Perk DTSleep_PlayerSleepBedPerk, int Fragment_Entry_01, Ob
 		
 	elseIf (Fragment_Entry_01 == 11)
 		; PA station
-		if (CanPlayerRestRadDam())
-			HandlePlayerActivateFurniture(akTarget, 4)
-		endIf
+		; v2.41 removed rad-dam check
+		HandlePlayerActivateFurniture(akTarget, 4)
 		
 	elseIf (Fragment_Entry_01 == 10)
 		; desk
-		if (CanPlayerRestRadDam())
-			HandlePlayerActivateFurniture(akTarget, 3)
-		endIf
+		; v2.41 removed rad-dam check
+		HandlePlayerActivateFurniture(akTarget, 3)
 		
 	elseIf (Fragment_Entry_01 == 9)
 		; chair/stool/sofa - no sex Relax - allow hugs with radiation damage
@@ -1057,21 +1053,19 @@ Event Perk.OnEntryRun(Perk DTSleep_PlayerSleepBedPerk, int Fragment_Entry_01, Ob
 		
 	elseIf (Fragment_Entry_01 == 8)
 		; Torture Device - pillory
-		if (CanPlayerRestRadDam())
-			HandlePlayerActivateFurniture(akTarget, 1)
-		endIf
+		; v2.41 removed rad-dam check
+		HandlePlayerActivateFurniture(akTarget, 1)
 		
 	elseIf (Fragment_Entry_01 == 7)
 		; chair/stool/sofa Relax+
-		if (CanPlayerRestRadDam())
-			HandlePlayerActivateFurniture(akTarget, 2)
-		endIf
+		; v2.41 removed rad-dam check
+		HandlePlayerActivateFurniture(akTarget, 2)
+
 		
 	elseIf (Fragment_Entry_01 == 6)
 		; pillory activate - ZaZ
-		if (CanPlayerRestRadDam())
-			HandlePlayerActivateFurniture(akTarget, 1)
-		endIf
+		; v2.41 removed rad-dam check
+		HandlePlayerActivateFurniture(akTarget, 1)
 		
 		
 	elseIf (Fragment_Entry_01 == 5 && DTSleep_PlayerUsingBed.GetValue() >= 1.0)
@@ -2560,8 +2554,9 @@ EndFunction
 ;
 ;  The Perk activator displays warnings for power armor, encumbered, and combat, but
 ;  we must check here, too
+;  v2.41 - may disable rad-damage check
 ;
-bool Function CanPlayerPerformRest(ObjectReference onBedRef)
+bool Function CanPlayerPerformRest(ObjectReference onBedRef, bool doRadCheck = true)
 
 	if (Game.IsActivateControlsEnabled())
 		if (DTSleep_PlayerUsingBed.GetValue() == 0.0)
@@ -2602,9 +2597,10 @@ bool Function CanPlayerPerformRest(ObjectReference onBedRef)
 				return false
 			endIf
 			
-			
-			if (CanPlayerRestRadDam() == false)
-				return false
+			if (doRadCheck)
+				if (CanPlayerRestRadDam() == false)
+					return false
+				endIf
 			endIf
 			
 			if (PlayerRef.GetSitState() >= 2)			; v2.25 added since now using for non-perk entry
@@ -2651,11 +2647,11 @@ bool Function CanPlayerRestRadDam()
 		float difMin = DTSleep_CommonF.GetGameTimeHoursDifference(curTime, LastRadDamTime) * 60.0
 		if (difMin < 6.0)
 			
-			if (DTSleep_SettingTestMode.GetValueInt() <= 0 || DTSleep_DebugMode.GetValueInt() < 2)
+			;if (DTSleep_SettingTestMode.GetValueInt() <= 0 || DTSleep_DebugMode.GetValueInt() < 2)
 				DTSleep_NoRestRadDamMsg.Show()
 			
 				return false
-			endIf
+			;endIf
 			
 		elseIf (difMin > 10080.0)
 			; been a week - re-register
@@ -7305,7 +7301,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 		DTSleep_IntimateDisabledMsg.Show()
 		return
 
-	elseIf (specialFurn >= 1 && !CanPlayerPerformRest(None))			; don't check height of furniture 
+	elseIf (specialFurn >= 1 && !CanPlayerPerformRest(None, false))			; don't check height of furniture, v2.41 skip rad-damage check
 		return
 		
 	elseIf ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).GetTimeForPlayID(6001) != 224.16)
@@ -7327,6 +7323,10 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 		hugsOnly = true
 		doOtherProp = false
 	elseIf (specialFurn > 0 && !IsAdultAnimationAvailable())			; v2.26 check adult now
+		hugsOnly = true
+		doOtherProp = false
+	elseIf (specialFurn > 0 && specialFurn != 101 && !CanPlayerRestRadDam())				; v2.41 now do rad-damage check
+		Utility.Wait(0.33)
 		hugsOnly = true
 		doOtherProp = false
 	endIf
@@ -7437,6 +7437,8 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 		
 		return
 	endIf
+	
+	PlayerSleepPerkRemove()						; v2.41 remove until end for safety 
 	
 	HandlePlayerFurnitureBusy = true
 	
@@ -7880,7 +7882,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 			
 			; check 2nd lover prompt
 			
-			if (DTSleep_SettingLover2.GetValue() >= 1.0 && IntimateCompanionSecRef != None && (SceneData.SecondMaleRole != None || SceneData.SecondFemaleRole != None))
+			if (!hugsOnly && DTSleep_SettingLover2.GetValue() >= 1.0 && IntimateCompanionSecRef != None && (SceneData.SecondMaleRole != None || SceneData.SecondFemaleRole != None))
 				; yes/no question
 				if (SceneData.IsCreatureType == 0 || SceneData.IsCreatureType == CreatureTypeStrong || SceneData.IsCreatureType == CreatureTypeBehemoth)
 					if (SceneData.IsCreatureType == CreatureTypeStrong || SceneData.IsCreatureType == CreatureTypeBehemoth)
@@ -8557,6 +8559,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 		endIf
 	endIf
 	
+	PlayerSleepPerkAdd()					; v2.41 add back
 	HandlePlayerFurnitureBusy = false
 	
 EndFunction
@@ -12170,7 +12173,13 @@ Function SetExtraLovePartners(int forIntimateSecond = -1, bool seatedOK = true)
 								isPartner = true
 							elseIf (DTSleep_SettingIntimate.GetValue() >= 2.0 && PlayerHasPerkOfCompanion(ac))
 								isPartner = true
+							elseIf ((DTSConditionals as DTSleep_Conditionals).ModPersonalGuardCtlKY != None)
+								; v2.41
+								if (ac.HasKeyword((DTSConditionals as DTSleep_Conditionals).ModPersonalGuardCtlKY))
+									isPartner = true
+								endIf
 							endIf
+							
 							if (isPartner)
 									
 								if ((DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).GetGenderForActor(ac) == 1)
@@ -12192,6 +12201,15 @@ Function SetExtraLovePartners(int forIntimateSecond = -1, bool seatedOK = true)
 						if (IsNWSBarbInLove())
 							
 							SceneData.SecondFemaleRole = ac
+						endIf
+					elseIf ((DTSConditionals as DTSleep_Conditionals).ModPersonalGuardCtlKY != None)				; v2.41
+						if (ac.HasKeyword((DTSConditionals as DTSleep_Conditionals).ModPersonalGuardCtlKY))
+							if ((DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).GetGenderForActor(ac) == 1)
+							
+								SceneData.SecondFemaleRole = ac
+							elseIf (SceneData.SecondMaleRole == None)
+								SceneData.SecondMaleRole = ac
+							endIf
 						endIf
 					endIf
 				endIf

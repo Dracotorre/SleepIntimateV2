@@ -144,6 +144,9 @@ FormList property DTSleep_JailDoorwayAltLocList auto const			; v2.40
 FormList property DTSleep_JailDoor2AltLoclList auto const				;
 Static property DTSleep_MainNode auto const Mandatory
 Static property DTSleep_DummyNode auto const Mandatory
+ObjectReference property JailDoor1Quincy1Ref auto const
+ObjectReference property JailDoor1Quincy2Ref auto const
+ObjectReference property JailDoor1Quincy3Ref auto const
 Idle property LooseIdleStop auto const
 { not used }
 Idle property LooseIdleStop2 auto const
@@ -3770,26 +3773,28 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 								bedUseNodeMarker = true
 								markerIsBed = false
 								
-							elseIf (id == 795)
-								; bar seperation = 20.0										
+							elseIf (id == 795)									
 								headingAngle = SleepBedRef.GetAngleZ() + 0.001
 								bedUseNodeMarker = true
 								markerIsBed = false
 								bool jailFound = false
 								
 								; need to review:
-								; Quincy, CoastGuardPier, NatickBanks (crooked), CovenantHQ, SouthBoston PD, Goodneighbor Statehouse, MassBayTheater, 
+								; NatickBanks (crooked), Goodneighbor Statehouse
 								
 								ObjectReference jailRef = DTSleep_CommonF.FindNearestObjectInListFromObjRef(DTSleep_JailAllList, SleepBedRef, 200.0)
 								if (jailRef != None)
 									
-									Form jailForm = jailRef.GetBaseObject() as Form
-									if (DTSleep_JailTinyList.HasForm(jailForm))
+									Form jailForm = None
+									if (jailRef != None)
+										jailForm = jailRef.GetBaseObject() as Form
+									endIf
+									if (jailForm != None && DTSleep_JailTinyList.HasForm(jailForm))
 										jailFound = true
 										SleepBedAltRef = jailRef		; switch
 										bedUseNodeMarker = false
 										markerIsBed = true
-									elseIf (DTSleep_JailSmallList.HasForm(jailForm))
+									elseIf (jailForm != None && DTSleep_JailSmallList.HasForm(jailForm))
 										jailFound = true
 										SleepBedAltRef = jailRef		; switch
 										head2AngleOffset = 0.01
@@ -3823,18 +3828,36 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 								markerIsBed = false
 								bool jailFound = false
 								ObjectReference jailRef = DTSleep_CommonF.FindNearestObjectInListFromObjRef(DTSleep_JailAllList, SleepBedRef, 200.0)
+								;Cell curCell = SleepBedRef.GetParentCell()
+								bool isTinyJailDoor = false
+								if (SleepBedRef == JailDoor1Quincy1Ref || SleepBedRef == JailDoor1Quincy2Ref || SleepBedRef == JailDoor1Quincy3Ref)
+									isTinyJailDoor = true
+								endIf
 								
-								if (jailRef != None)
-									;DEbug.Trace(myScriptName + " found JailRef " + jailRef)
-									Form jailForm = jailRef.GetBaseObject() as Form
-									if (DTSleep_JailTinyList.HasForm(jailForm))
+								if (jailRef != None || isTinyJailDoor)
+									;DEbug.Trace(myScriptName + " found a JailRef " + jailRef + " ... isTinyJailDoor ? " + isTinyJailDoor)
+									Form jailForm = None
+									if (jailRef != None)
+										jailForm = jailRef.GetBaseObject() as Form
+									endIf
+									
+									if (isTinyJailDoor)
 										jailFound = true
 										SleepBedAltRef = jailRef		; switch
 										headingAngle = SleepBedRef.GetAngleZ() + 180.001		; spin around against side where door opens
-										yOffset = -14.0			; -15.5 had nuckle against bar positive moves away from front
+										yOffset = 53.0  			; positive moves away from front
+										head2AngleOffset = -90.0			; angle when using bedUseNodeMarker
+										xOffset = 32.0		; distance to side of jail-Tiny - negative moves outward
+									elseIf (jailForm != None && DTSleep_JailTinyList.HasForm(jailForm))
+										;DEbug.Trace(myScriptName + " found tiny JailRef " + jailRef)
+										jailFound = true
+										SleepBedAltRef = jailRef		; switch
+										headingAngle = SleepBedRef.GetAngleZ() + 180.001		; spin around against side where door opens
+										yOffset = -11.5  ;-14.0			; -15.5 had nuckle against bar positive moves away from front
 										head2AngleOffset = -90.0			; angle when using bedUseNodeMarker
 										xOffset = 48.0		; distance to side of jail-Tiny - negative moves outward
-									elseIf (DTSleep_JailSmallList.HasForm(jailForm))
+									elseIf (jailForm != None && DTSleep_JailSmallList.HasForm(jailForm))
+										;DEbug.Trace(myScriptName + " found small JailRef " + jailRef)
 										jailFound = true
 										SleepBedAltRef = jailRef		; switch
 										bedUseNodeMarker = false
@@ -3905,7 +3928,7 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 												Debug.Trace(myScriptName + "---------------------- 796 jail location (" + SleepBedLocation + ") slide-door other  heading: " + jailAngle)
 											endIf
 											yOffset = 60.5 		; negative moves towards handle --normal?  BADTFL (180 angle)
-											xOffset = -129.0	; negative moves inside jail
+											xOffset = -128.5	; negative moves inside jail
 										endIf
 									endIf
 								endIf
