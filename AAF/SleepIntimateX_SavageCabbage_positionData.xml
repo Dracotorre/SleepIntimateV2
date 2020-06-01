@@ -63,7 +63,7 @@
 
 <position id="DTSIX_745_S1" animation="SIX_SC_FM-RoundTable02-03RoughSideways" isHidden="true"/>
 
-<position id="DTSIX_746_S1" animation="SIX_SC-FM-Human-Motorbike01-01Teasel" isHidden="true"/>
+<position id="DTSIX_746_S1" animation="SIX_SC-FM-Human-Motorbike01-01Tease" isHidden="true"/>
 <position id="DTSIX_746_S2" animation="SIX_SC_FM-Motorbike01-03Cowgirl" isHidden="true"/>
 
 <position id="DTSIX_747_S1" animation="SIX_SC_FM-ShowerPlayerHouse01-01Tease" isHidden="true"/>
