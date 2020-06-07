@@ -142,6 +142,7 @@ FormList property DTSleep_JailSmallList auto const					;
 FormList property DTSleep_JailReversedLocList auto const			; v2.40 
 FormList property DTSleep_JailDoorwayAltLocList auto const			; v2.40
 FormList property DTSleep_JailDoor2AltLoclList auto const				;
+FormList property DTSleep_JailDoorTinyLocList auto const			; v2.43
 Static property DTSleep_MainNode auto const Mandatory
 Static property DTSleep_DummyNode auto const Mandatory
 ObjectReference property JailDoor1Quincy1Ref auto const
@@ -3842,8 +3843,11 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 								bool jailFound = false
 								ObjectReference jailRef = DTSleep_CommonF.FindNearestObjectInListFromObjRef(DTSleep_JailAllList, SleepBedRef, 200.0)
 								bool isTinyJailDoor = false
-								if (SleepBedRef == JailDoor1Quincy1Ref || SleepBedRef == JailDoor1Quincy2Ref || SleepBedRef == JailDoor1Quincy3Ref)
-									isTinyJailDoor = true
+								if (SleepBedLocation != None && DTSleep_JailDoorTinyLocList.HasForm(SleepBedLocation))
+									if (SleepBedRef == JailDoor1Quincy1Ref || SleepBedRef == JailDoor1Quincy2Ref || SleepBedRef == JailDoor1Quincy3Ref)
+										Debug.Trace(myScriptName + " ----*---*--- Jail Door is Tiny Quincy ---------Ref: " + SleepBedRef)
+										isTinyJailDoor = true
+									endIf
 								endIf
 								
 								if (jailRef != None || isTinyJailDoor)
@@ -3856,13 +3860,15 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 									if (isTinyJailDoor)
 										jailFound = true
 										SleepBedAltRef = jailRef		; switch
-										yOffset = 53.0  	; positive moves away from front
-										xOffset = 32.0		; distance to side of jail-Tiny - negative moves outward
+										;yOffset = 53.0  	; positive moves away from front
+										;xOffset = 32.0		; distance to side of jail-Tiny - negative moves outward
+										yOffset = -11.5  ;-14.0			; -15.5 had nuckle against bar positive moves away from front
+										xOffset = 48.0		; distance to side of jail-Tiny - negative moves outward				
 										headingAngle = SleepBedRef.GetAngleZ() + 180.001		; spin around against side where door opens
 										head2AngleOffset = -90.0			; angle when using bedUseNodeMarker
 										
 									elseIf (jailForm != None && DTSleep_JailTinyList.HasForm(jailForm))
-										DEbug.Trace(myScriptName + " found tiny JailRef " + jailRef)
+										;DEbug.Trace(myScriptName + " found tiny JailRef " + jailRef)
 										jailFound = true
 										SleepBedAltRef = jailRef		; switch
 										yOffset = -11.5  ;-14.0			; -15.5 had nuckle against bar positive moves away from front
@@ -3871,7 +3877,7 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 										head2AngleOffset = -90.0			; angle when using bedUseNodeMarker
 										
 									elseIf (jailForm != None && DTSleep_JailSmallList.HasForm(jailForm))
-										DEbug.Trace(myScriptName + " found small JailRef " + jailRef)
+										;DEbug.Trace(myScriptName + " found small JailRef " + jailRef)
 										jailFound = true
 										SleepBedAltRef = jailRef		; switch
 										bedUseNodeMarker = false
