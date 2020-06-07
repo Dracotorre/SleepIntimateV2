@@ -2264,6 +2264,14 @@
 	</actor>
 </animation>
 
+<animation id="SIX_SC-FM-Human-Bed04-01Tease" frames="200">
+	<actor gender="F">
+		<idle form="2DEAB"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2DEAC"/>
+	</actor>
+</animation>
 
 <animation id="SIX_SC-FM-Human-Bed04-03Missionary" time="500">
 	<actor gender="F">
@@ -2301,6 +2309,15 @@
 	</actor>
 </animation>
 
+<animation id="SIX_SC-FM-Human-Bed04-07ClimaxLoop" frames="200">
+	<actor gender="F">
+		<idle form="2DEAD"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2DEAE"/>
+	</actor>
+</animation>
+
 <animation id="SIX_SC-FM-Human-DinerBooth01-01Tease" time="500">
 	<actor gender="F">
 		<idle form="2B866"/>
@@ -2325,6 +2342,24 @@
 	</actor>
 	<actor gender="M">
 		<idle form="2B0B8"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-FederalistCouch02-05ReverseCowGirl" frames="500">
+	<actor gender="F">
+		<idle form="2DEB7"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2DEB8"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-FederalistCouch02-06ReverseCowGirl" frames="500">
+	<actor gender="F">
+		<idle form="2DEB9"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2DEBA"/>
 	</actor>
 </animation>
 
@@ -2416,6 +2451,14 @@
 	</actor>
 	<actor gender="M">
 		<idle form="2B0BC"/>
+	</actor>
+</animation>
+<animation id="SIX_SC-FM-Human-JailCellTinyWithDoor01-01Tease" frames="500">
+	<actor gender="F">
+		<idle form="2D6FD"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2D6FE"/>
 	</actor>
 </animation>
 

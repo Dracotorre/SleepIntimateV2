@@ -1814,11 +1814,18 @@ Function CheckCompatibility()
 					(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.10
 				endIf
 			endIf
-			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.2)
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.20)
 		
 				idleForm = Game.GetFormFromFile(0x0802C023, "SavageCabbage_Animations.esp")
 				if (idleForm  != None)
 					(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.20
+				endIf
+			endIf
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.210)
+		
+				idleForm = Game.GetFormFromFile(0x0802DEBA, "SavageCabbage_Animations.esp")
+				if (idleForm  != None)
+					(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.210
 				endIf
 			endIf
 		else

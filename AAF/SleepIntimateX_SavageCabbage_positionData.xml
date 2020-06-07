@@ -15,10 +15,12 @@
 <position id="DTSIX_701_S5" animation="SIX_SC_FM-DoubleBed03-06Missionary" isHidden="true"/>
 <position id="DTSIX_701_S6" animation="SIX_SC-FM-Human-DoubleBed03-07ClimaxLoop" isHidden="true"/>
 
+<position id="DTSIX_706_S0" animation="SIX_SC-FM-Human-Bed04-01Tease" isHidden="true"/>
 <position id="DTSIX_706_S1" animation="SIX_SC-FM-Human-Bed04-03Missionary" isHidden="true"/>
-<position id="DTSIX_706_S2" animation="SIX_SC-FM-Human-Bed04-03Missionary" isHidden="true"/>
-<position id="DTSIX_706_S3" animation="SIX_SC-FM-Human-Bed04-03Missionary" isHidden="true"/>
-<position id="DTSIX_706_S4" animation="SIX_SC-FM-Human-Bed04-03Missionary" isHidden="true"/>
+<position id="DTSIX_706_S2" animation="SIX_SC-FM-Human-Bed04-04Missionary" isHidden="true"/>
+<position id="DTSIX_706_S3" animation="SIX_SC-FM-Human-Bed04-05Missionary" isHidden="true"/>
+<position id="DTSIX_706_S4" animation="SIX_SC-FM-Human-Bed04-06Missionary" isHidden="true"/>
+<position id="DTSIX_706_S5" animation="SIX_SC-FM-Human-Bed04-07ClimaxLoop" isHidden="true"/>
 
 <position id="DTSIX_702_S1" animation="SIX_SC_FM-DoubleBed01-01Doggy" isHidden="true"/>
 <position id="DTSIX_702_S2" animation="SIX_SC_FM-DoubleBed01-03Doggy" isHidden="true" />
@@ -223,6 +225,8 @@
 
 <position id="DTSIX_785_S1" animation="SIX_SC-FM-Human-FederalistCouch02-03ReverseCowGirl" isHidden="true"/>
 <position id="DTSIX_785_S2" animation="SIX_SC-FM-Human-FederalistCouch02-04ReverseCowGirl" isHidden="true"/>
+<position id="DTSIX_785_S3" animation="SIX_SC-FM-Human-FederalistCouch02-05ReverseCowGirl" isHidden="true"/>
+<position id="DTSIX_785_S4" animation="SIX_SC-FM-Human-FederalistCouch02-06ReverseCowGirl" isHidden="true"/>
 
 <position id="DTSIX_786_S1" animation="SIX_SC-FM-Human-KitchenPostWar01-03Doggy" isHidden="true"/>
 <position id="DTSIX_786_S2" animation="SIX_SC-FM-Human-KitchenPostWar01-04Doggy" isHidden="true"/>
@@ -241,6 +245,7 @@
 <position id="DTSIX_791_S1" animation="SIX_SC_FM-SedanPreWar02-03Blowjob" isHidden="true"/>
 <position id="DTSIX_791_S2" animation="SIX_SC_FM-SedanPreWar02-04Cowgirl" isHidden="true"/>
 
+<position id="DTSIX_795_S0" animation="SIX_SC-FM-Human-JailCellTinyWithDoor01-01Tease" isHidden="true"/>
 <position id="DTSIX_795_S1" animation="SIX_SC-FM-Human-JailCellTinyWithDoor01-03Blowjob" isHidden="true"/>
 <position id="DTSIX_795_S2" animation="SIX_SC-FM-Human-JailCellTinyWithDoor01-04Blowjob" isHidden="true"/>
 <position id="DTSIX_795_S3" animation="SIX_SC-FM-Human-JailCellTinyWithDoor01-05Blowjob" isHidden="true"/>

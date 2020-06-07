@@ -151,7 +151,7 @@ Event OnEffectStart(Actor akfActor, Actor akmActor)
 			SecondActorOriginMarkRef = DTSleep_CommonF.PlaceFormAtObjectRef(DTSleep_MainNode, SecondActor)
 			SecondActor.SetAnimationVariableBool("bHumanoidFootIKDisable", true)
 			Utility.Wait(0.2)
-			SecondActor.ChangeAnimFaceArchetype(AnimFaceArchetypeHappy)
+			;SecondActor.ChangeAnimFaceArchetype(AnimFaceArchetypeHappy)
 			SecondActor.SetGhost(true)
 
 			; v2.35 fix for broken missing actor and duplicated actor when same genders choose third
@@ -183,7 +183,7 @@ Event OnEffectStart(Actor akfActor, Actor akmActor)
 			
 			if (ThirdActor != None)
 				ThirdActor.SetAnimationVariableBool("bHumanoidFootIKDisable", true)
-				ThirdActor.ChangeAnimFaceArchetype(AnimFaceArchetypeHappy)
+				;ThirdActor.ChangeAnimFaceArchetype(AnimFaceArchetypeHappy)
 				ThirdActor.SetGhost(true)
 				ThirdActor.SetRestrained()
 				ThirdActorOriginMarkRef = DTSleep_CommonF.PlaceFormAtObjectRef(DTSleep_MainNode, ThirdActor)
@@ -254,7 +254,7 @@ Event OnEffectFinish(Actor akfActor, Actor akmActor)
 			MainActor.SetAlpha(0.0)
 		endIf
 	
-		MainActor.ChangeAnimFaceArchetype()
+		;MainActor.ChangeAnimFaceArchetype()
 		MainActor.SetAnimationVariableBool("bHumanoidFootIKDisable", false)
 
 		if ((MainActor.GetLeveledActorBase() as ActorBase).GetSex() == 0)
@@ -375,7 +375,7 @@ EndFunction
 
 Function FinRestoreExtraActor(Actor akActor, ObjectReference akToRef)
 	akActor.StopTranslation()
-	akActor.ChangeAnimFaceArchetype()
+	;akActor.ChangeAnimFaceArchetype()
 	akActor.SetAnimationVariableBool("bHumanoidFootIKDisable", false)
 
 	akActor.MoveTo(akToRef, 0.0, 0.0, 0.0, true)
@@ -500,11 +500,19 @@ Function InitSceneAndPlay()
 			endIf
 		endIf
 	elseIf (SequenceID == 701 || SequenceID == 746 || SequenceID == 752 || SequenceID == 736 || SequenceID == 760 || SequenceID == 766)
-		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.2)
+		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
+			longScene = 1
+		endIf
+	elseIf (SequenceID == 795)
+		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.21)
+			longScene = 1
+		endIf
+	elseIf (SequenceID == 785)
+		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.21)
 			longScene = 1
 		endIf
 	elseIf (SequenceID == 768 && SceneData.SecondMaleRole != None)
-		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.2)
+		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
 			longScene = 1
 		endIf
 	elseIf (DTSleep_IntimateSceneLen.GetValueInt() >= 3)
@@ -914,7 +922,7 @@ Function StopSecondActorDone()
 		
 		SecondActor.SetGhost(false)
 		SecondActor.PlayIdle(LooseIdleStop)
-		SecondActor.ChangeAnimFaceArchetype()
+		;SecondActor.ChangeAnimFaceArchetype()
 		SecondActor.SetAnimationVariableBool("bHumanoidFootIKDisable", false)
 		SecondActor.SetAvoidPlayer(true)
 		
