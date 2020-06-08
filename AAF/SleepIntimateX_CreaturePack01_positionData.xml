@@ -1,5 +1,4 @@
 <meta title="SleepIntimateX_CreaturePack01_positionData.xml" version="1.0" dataSet="position"/>
-<defaults startEquipmentSet="None" stopEquipmentSet="None" />
 <!--<defaults startEquipmentSet="unEquip" stopEquipmentSet="reEquip" startMorphSet="ready" stopMorphSet="unReady"/>-->
 
 <position id="DTSIXSM_962_S1" animation="SIX_GCP_FSM-Mutantstage01" isHidden="True"/>

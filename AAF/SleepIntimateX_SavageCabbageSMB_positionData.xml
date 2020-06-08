@@ -1,5 +1,5 @@
 <meta title="SleepIntimateX_SavageCabbageSMB_positionData.xml" version="2.40" dataSet="position"/>
-<defaults startEquipmentSet="None" stopEquipmentSet="None" startMorphSet="ready" stopMorphSet="unReady" />
+<defaults startMorphSet="ready" stopMorphSet="unReady" />
 <!-- for use with SavageCabbage v1.2 -->
 
 <position id="DTSIXSM_774_S1" animation="SIX_SC-FM-SMBehemoth-Floor01-03ReverseCowgirl" isHidden="true"/>

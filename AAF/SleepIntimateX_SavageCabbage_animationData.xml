@@ -1,7 +1,7 @@
 <meta title="SleepIntimateX_SavageCabbage_animationData.xml" version="2.40" dataSet="animation"/>
 <defaults source="SavageCabbage_Animations.esp"/>
 
-<animation id="SIX_SC_FM-Bed01-01Handjob" time="390">
+<animation id="SIX_SC_FM-Bed01-01Handjob" frames="390">
 	<actor gender="F">
 		<idle form="FD3"/>
 	</actor>
@@ -11,7 +11,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Bed01-02Handjob" time="390">
+<animation id="SIX_SC_FM-Bed01-02Handjob" frames="390">
 	<actor gender="F">
 		<idle form="FD5"/>
 	</actor>
@@ -21,7 +21,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Bed01-03Titjob" time="390">
+<animation id="SIX_SC_FM-Bed01-03Titjob" frames="390">
 	<actor gender="F">
 		<idle form="FD7"/>
 	</actor>
@@ -31,7 +31,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Bed01-04Handjob" time="500">
+<animation id="SIX_SC_FM-Bed01-04Handjob" frames="500">
 	<actor gender="F">
 		<idle form="FD9"/>
 	</actor>
@@ -40,7 +40,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Bed01-05Titjob" time="500">
+<animation id="SIX_SC_FM-Bed01-05Titjob" frames="500">
 	<actor gender="F">
 		<idle form="FDB"/>
 	</actor>
@@ -49,7 +49,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Bed01-06Blowjob" time="500">
+<animation id="SIX_SC_FM-Bed01-06Blowjob" frames="500">
 	<actor gender="F">
 		<idle form="FDD"/>
 	</actor>
@@ -58,7 +58,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Bed02-01Straddle" time="330">
+<animation id="SIX_SC_FM-Bed02-01Straddle" frames="350">
 	<actor gender="F">
 		<idle form="FE8"/>
 	</actor>
@@ -68,7 +68,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Bed02-02Straddle" time="390">
+<animation id="SIX_SC_FM-Bed02-02Straddle" frames="390">
 	<actor gender="F">
 		<idle form="FEA"/>
 	</actor>
@@ -78,7 +78,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Bed02-03Straddle" time="390">
+<animation id="SIX_SC_FM-Bed02-03Straddle" frames="390">
 	<actor gender="F">
 		<idle form="FEC"/>
 	</actor>
@@ -88,7 +88,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Bed02-04Straddle" time="390">
+<animation id="SIX_SC_FM-Bed02-04Straddle" frames="390">
 	<actor gender="F">
 		<idle form="FEE"/>
 	</actor>
@@ -98,7 +98,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Bed02-05Straddle" time="390">
+<animation id="SIX_SC_FM-Bed02-05Straddle" frames="390">
 	<actor gender="F">
 		<idle form="6C08"/>
 	</actor>
@@ -108,7 +108,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Bed03-01Tease" time="520">
+<animation id="SIX_SC_FM-Bed03-01Tease" frames="520">
 	<actor gender="F">
 		<idle form="99DA"/>
 	</actor>
@@ -118,7 +118,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Bed03-03Cowgirl" time="500">
+<animation id="SIX_SC_FM-Bed03-03Cowgirl" frames="500">
 	<actor gender="F">
 		<idle form="6C0A"/>
 	</actor>
@@ -128,7 +128,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Bed03-04Cowgirl" time="450">
+<animation id="SIX_SC_FM-Bed03-04Cowgirl" frames="450">
 	<actor gender="F">
 		<idle form="923C"/>
 	</actor>
@@ -138,7 +138,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Bed03-05Cowgirl" time="300">
+<animation id="SIX_SC_FM-Bed03-05Cowgirl" frames="350">
 	<actor gender="F">
 		<idle form="E62A"/>
 	</actor>
@@ -148,7 +148,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Bed04-03Missionary" time="390">
+<animation id="SIX_SC_FM-Bed04-03Missionary" frames="390">
 	<actor gender="F">
 		<idle form="E62C"/>
 	</actor>
@@ -158,7 +158,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-DoubleBed01-01Doggy" time="390">
+<animation id="SIX_SC_FM-DoubleBed01-01Doggy" frames="390">
 	<actor gender="F">
 		<idle form="1008"/>
 	</actor>
@@ -168,7 +168,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-DoubleBed01-03Doggy" time="390">
+<animation id="SIX_SC_FM-DoubleBed01-03Doggy" frames="390">
 	<actor gender="F">
 		<idle form="100A"/>
 	</actor>
@@ -178,7 +178,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-DoubleBed01-04Doggy" time="390">
+<animation id="SIX_SC_FM-DoubleBed01-04Doggy" frames="390">
 	<actor gender="F">
 		<idle form="100C"/>
 	</actor>
@@ -188,7 +188,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-DoubleBed01-05Doggy" time="390">
+<animation id="SIX_SC_FM-DoubleBed01-05Doggy" frames="390">
 	<actor gender="F">
 		<idle form="4D6A"/>
 	</actor>
@@ -198,7 +198,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-DoubleBed01-06Doggy" time="390">
+<animation id="SIX_SC_FM-DoubleBed01-06Doggy" frames="390">
 	<actor gender="F">
 		<idle form="4D6C"/>
 	</actor>
@@ -208,7 +208,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-DoubleBed01-07Doggy" time="300">
+<animation id="SIX_SC_FM-DoubleBed01-07Doggy" frames="350">
 	<actor gender="F">
 		<idle form="7386"/>
 	</actor>
@@ -218,7 +218,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-DoubleBed02-01Tease" time="500">
+<animation id="SIX_SC_FM-DoubleBed02-01Tease" frames="500">
 	<actor gender="F">
 		<idle form="CF43"/>
 	</actor>
@@ -228,7 +228,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-DoubleBed02-03Missionary" time="390">
+<animation id="SIX_SC_FM-DoubleBed02-03Missionary" frames="390">
 	<actor gender="F">
 		<idle form="17FE"/>
 	</actor>
@@ -238,7 +238,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-DoubleBed02-04Missionary" time="390">
+<animation id="SIX_SC_FM-DoubleBed02-04Missionary" frames="390">
 	<actor gender="F">
 		<idle form="644E"/>
 	</actor>
@@ -248,7 +248,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-DoubleBed03-01Tease" time="560">
+<animation id="SIX_SC_FM-DoubleBed03-01Tease" frames="560">
 	<actor gender="F">
 		<idle form="99DE"/>
 	</actor>
@@ -258,7 +258,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-DoubleBed03-03Missionary" time="420">
+<animation id="SIX_SC_FM-DoubleBed03-03Missionary" frames="420">
 	<actor gender="F">
 		<idle form="5CA9"/>
 	</actor>
@@ -268,7 +268,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-DoubleBed03-04Missionary" time="420">
+<animation id="SIX_SC_FM-DoubleBed03-04Missionary" frames="420">
 	<actor gender="F">
 		<idle form="B80B"/>
 	</actor>
@@ -278,7 +278,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-DoubleBed03-05Missionary" time="390">
+<animation id="SIX_SC_FM-DoubleBed03-05Missionary" frames="390">
 	<actor gender="F">
 		<idle form="DE15"/>
 	</actor>
@@ -288,7 +288,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-DoubleBed03-06Missionary" time="390">
+<animation id="SIX_SC_FM-DoubleBed03-06Missionary" frames="390">
 	<actor gender="F">
 		<idle form="DE17"/>
 	</actor>
@@ -298,7 +298,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-Human-DoubleBed03-07ClimaxLoop" time="500">
+<animation id="SIX_SC-FM-Human-DoubleBed03-07ClimaxLoop" frames="500">
 	<actor gender="F">
 		<idle form="27AE4"/>
 	</actor>
@@ -307,7 +307,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-DoubleBed04-01Tease" time="390">
+<animation id="SIX_SC_FM-DoubleBed04-01Tease" frames="390">
 	<actor gender="F">
 		<idle form="99E0"/>
 	</actor>
@@ -317,7 +317,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-DoubleBed04-03Doggy" time="390">
+<animation id="SIX_SC_FM-DoubleBed04-03Doggy" frames="390">
 	<actor gender="F">
 		<idle form="4D70"/>
 	</actor>
@@ -327,7 +327,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-DoubleBed04-04Doggy" time="390">
+<animation id="SIX_SC_FM-DoubleBed04-04Doggy" frames="390">
 	<actor gender="F">
 		<idle form="B80D"/>
 	</actor>
@@ -337,7 +337,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-DoubleBed04-05Doggy" time="390">
+<animation id="SIX_SC_FM-DoubleBed04-05Doggy" frames="390">
 	<actor gender="F">
 		<idle form="6C0E"/>
 	</actor>
@@ -347,7 +347,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-DoubleBed04-06Doggy" time="390">
+<animation id="SIX_SC_FM-DoubleBed04-06Doggy" frames="390">
 	<actor gender="F">
 		<idle form="8A9E"/>
 	</actor>
@@ -357,7 +357,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-LapDance01-01LapDance" time="1000">
+<animation id="SIX_SC_FM-LapDance01-01LapDance" frames="1000">
 	<actor gender="F">
 		<idle form="1800"/>
 	</actor>
@@ -367,7 +367,7 @@
 	</actor>
 </animation>
 
-<animation id="SIXFF_SC_FF-LapDance01-01LapDance" time="1000">
+<animation id="SIXFF_SC_FF-LapDance01-01LapDance" frames="1000">
 	<actor gender="F">
 		<idle form="1800"/>
 	</actor>
@@ -376,7 +376,7 @@
 	</actor>
 </animation>
 
-<animation id="SIXFF_SC_FF-Dance02-01TwerkStart" time="500">
+<animation id="SIXFF_SC_FF-Dance02-01TwerkStart" frames="500">
 	<actor gender="F">
 		<idle form="182D"/>
 	</actor>
@@ -385,7 +385,7 @@
 	</actor>
 </animation>
 
-<animation id="SIXFF_SC_FF-Dance03-01TwerkStart" time="500">
+<animation id="SIXFF_SC_FF-Dance03-01TwerkStart" frames="500">
 	<actor gender="F">
 		<idle form="182E"/>
 	</actor>
@@ -394,7 +394,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-HydroPillory01-02Doggy" time="500">
+<animation id="SIX_SC_FM-HydroPillory01-02Doggy" frames="500">
 	<actor gender="F">
 		<idle form="100E"/>
 	</actor>
@@ -406,7 +406,7 @@
 
 <!-- **** couches ************** -->
 
-<animation id="SIX_SC_FM-Couch01-01Tease" time="390">
+<animation id="SIX_SC_FM-Couch01-01Tease" frames="390">
 	<actor gender="F">
 		<idle form="C001"/>
 	</actor>
@@ -416,7 +416,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Couch01-03Spoon" time="390">
+<animation id="SIX_SC_FM-Couch01-03Spoon" frames="390">
 	<actor gender="F">
 		<idle form="3E34"/>
 	</actor>
@@ -426,7 +426,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Couch01-04Spoon" time="390">
+<animation id="SIX_SC_FM-Couch01-04Spoon" frames="390">
 	<actor gender="F">
 		<idle form="4D6E"/>
 	</actor>
@@ -436,7 +436,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Couch01-05Spoon" time="300">
+<animation id="SIX_SC_FM-Couch01-05Spoon" frames="300">
 	<actor gender="F">
 		<idle form="6444"/>
 	</actor>
@@ -446,7 +446,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-Human-Couch01-06Spoon" time="500">
+<animation id="SIX_SC-FM-Human-Couch01-06Spoon" frames="500">
 	<actor gender="F">
 		<idle form="2B0AB"/>
 	</actor>
@@ -455,7 +455,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Couch02-01Tease" time="390">
+<animation id="SIX_SC_FM-Couch02-01Tease" frames="390">
 	<actor gender="F">
 		<idle form="C7A4"/>
 	</actor>
@@ -465,7 +465,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Couch02-03Handjob" time="390">
+<animation id="SIX_SC_FM-Couch02-03Handjob" frames="390">
 	<actor gender="F">
 		<idle form="6448"/>
 	</actor>
@@ -475,7 +475,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Couch02-04Handjob" time="390">
+<animation id="SIX_SC_FM-Couch02-04Handjob" frames="390">
 	<actor gender="F">
 		<idle form="644A"/>
 	</actor>
@@ -485,7 +485,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Couch02-05Blowjob" time="210">
+<animation id="SIX_SC_FM-Couch02-05Blowjob" frames="210">
 	<actor gender="F">
 		<idle form="644C"/>
 	</actor>
@@ -495,7 +495,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Couch02-06Blowjob" time="500">
+<animation id="SIX_SC_FM-Couch02-06Blowjob" frames="500">
 	<actor gender="F">
 		<idle form="27321"/>
 	</actor>
@@ -506,7 +506,7 @@
 
 <!---- chairs ---->
 
-<animation id="SIX_SC_FM-Throne01-03Handjob" time="500">
+<animation id="SIX_SC_FM-Throne01-03Handjob" frames="500">
 	<actor gender="F">
 		<idle form="101A"/>
 	</actor>
@@ -515,7 +515,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Throne01-04Handjob" time="500">
+<animation id="SIX_SC_FM-Throne01-04Handjob" frames="500">
 	<actor gender="F">
 		<idle form="E62E"/>
 	</actor>
@@ -524,7 +524,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Throne01-05Blowjob" time="500">
+<animation id="SIX_SC_FM-Throne01-05Blowjob" frames="500">
 	<actor gender="F">
 		<idle form="27335"/>
 	</actor>
@@ -533,7 +533,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Throne01-06Blowjob" time="500">
+<animation id="SIX_SC_FM-Throne01-06Blowjob" frames="500">
 	<actor gender="F">
 		<idle form="27343"/>
 	</actor>
@@ -542,7 +542,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Armchair01-01Tease" time="390">
+<animation id="SIX_SC_FM-Armchair01-01Tease" frames="390">
 	<actor gender="F">
 		<idle form="FF0"/>
 	</actor>
@@ -552,7 +552,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Armchair01-02Start" time="500">
+<animation id="SIX_SC_FM-Armchair01-02Start" frames="500">
 	<actor gender="F">
 		<idle form="263E3"/>
 	</actor>
@@ -561,7 +561,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Armchair01-03Cowgirl" time="390">
+<animation id="SIX_SC_FM-Armchair01-03Cowgirl" frames="390">
 	<actor gender="F">
 		<idle form="FF2"/>
 	</actor>
@@ -571,7 +571,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Armchair01-04Cowgirl" time="390">
+<animation id="SIX_SC_FM-Armchair01-04Cowgirl" frames="390">
 	<actor gender="F">
 		<idle form="FF4"/>
 	</actor>
@@ -581,7 +581,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Armchair01-05Cowgirl" time="210">
+<animation id="SIX_SC_FM-Armchair01-05Cowgirl" frames="350">
 	<actor gender="F">
 		<idle form="73B5"/>
 	</actor>
@@ -591,7 +591,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Armchair01-06Cowgirl" time="390">
+<animation id="SIX_SC_FM-Armchair01-06Cowgirl" frames="390">
 	<actor gender="F">
 		<idle form="21EF0"/>
 	</actor>
@@ -601,7 +601,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Armchair01-07ClimaxLoop" time="200">
+<animation id="SIX_SC_FM-Armchair01-07ClimaxLoop" frames="350">
 	<actor gender="F">
 		<idle form="26B80"/>
 	</actor>
@@ -610,7 +610,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Armchair01-08Finish" time="500">
+<animation id="SIX_SC_FM-Armchair01-08Finish" frames="500">
 	<actor gender="F">
 		<idle form="26B82"/>
 	</actor>
@@ -619,7 +619,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Armchair02-01Tease" time="500">
+<animation id="SIX_SC_FM-Armchair02-01Tease" frames="500">
 	<actor gender="F">
 		<idle form="263E5"/>
 	</actor>
@@ -628,7 +628,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Armchair02-02Start" time="390">
+<animation id="SIX_SC_FM-Armchair02-02Start" frames="390">
 	<actor gender="F">
 		<idle form="FF6"/>
 	</actor>
@@ -638,7 +638,7 @@
 	<!--<value path="morph" value="Erection" to="1"/>-->
 </animation>
 
-<animation id="SIX_SC_FM-Armchair02-03Handjob" time="390">
+<animation id="SIX_SC_FM-Armchair02-03Handjob" frames="390">
 	<actor gender="F">
 		<idle form="FF8"/>
 	</actor>
@@ -648,7 +648,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Armchair02-04Handjob" time="390">
+<animation id="SIX_SC_FM-Armchair02-04Handjob" frames="390">
 	<actor gender="F">
 		<idle form="FFA"/>
 	</actor>
@@ -658,7 +658,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Armchair02-05Handjob" time="390">
+<animation id="SIX_SC_FM-Armchair02-05Handjob" frames="390">
 	<actor gender="F">
 		<idle form="FFC"/>
 	</actor>
@@ -668,7 +668,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Armchair02-06Blowjob" time="390">
+<animation id="SIX_SC_FM-Armchair02-06Blowjob" frames="390">
 	<actor gender="F">
 		<idle form="FFE"/>
 	</actor>
@@ -678,7 +678,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Armchair02-07Blowjob" time="310">
+<animation id="SIX_SC_FM-Armchair02-07Blowjob" frames="310">
 	<actor gender="F">
 		<idle form="17F8"/>
 	</actor>
@@ -688,7 +688,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Armchair02-08Deepthroat" time="390">
+<animation id="SIX_SC_FM-Armchair02-08Deepthroat" frames="390">
 	<actor gender="F">
 		<idle form="17FA"/>
 	</actor>
@@ -698,7 +698,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-LapDance01-01LapDance" time="1000">
+<animation id="SIX_SC_FM-LapDance01-01LapDance" frames="1000">
 	<actor gender="F">
 		<idle form="1800"/>
 	</actor>
@@ -708,7 +708,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Stool01-03Doggy" time="325">
+<animation id="SIX_SC_FM-Stool01-03Doggy" frames="350">
 	<actor gender="F">
 		<idle form="2761"/>
 	</actor>
@@ -718,7 +718,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Stool01-04Doggy" time="390">
+<animation id="SIX_SC_FM-Stool01-04Doggy" frames="390">
 	<actor gender="F">
 		<idle form="D67A"/>
 	</actor>
@@ -728,7 +728,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Stool01-05Doggy" time="390">
+<animation id="SIX_SC_FM-Stool01-05Doggy" frames="390">
 	<actor gender="F">
 		<idle form="6C14"/>
 	</actor>
@@ -738,7 +738,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-ChairHigh01-02Doggy" time="500">
+<animation id="SIX_SC_FM-ChairHigh01-02Doggy" frames="500">
 	<actor gender="F">
 		<idle form="1000"/>
 	</actor>
@@ -748,7 +748,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-ChairLow01-02Doggy" time="500">
+<animation id="SIX_SC_FM-ChairLow01-02Doggy" frames="500">
 	<actor gender="F">
 		<idle form="1002"/>
 	</actor>
@@ -758,7 +758,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-ChairMedium01-02Doggy" time="500">
+<animation id="SIX_SC_FM-ChairMedium01-02Doggy" frames="500">
 	<actor gender="F">
 		<idle form="1004"/>
 	</actor>
@@ -768,7 +768,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Bench01-01Tease" time="500">
+<animation id="SIX_SC_FM-Bench01-01Tease" frames="500">
 	<actor gender="F">
 		<idle form="99DC"/>
 	</actor>
@@ -778,7 +778,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Bench01-03ReverseCowgirlAnal" time="500">
+<animation id="SIX_SC_FM-Bench01-03ReverseCowgirlAnal" frames="500">
 	<actor gender="F">
 		<idle form="550B"/>
 	</actor>
@@ -788,7 +788,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Bench01-04ReverseCowgirlAnal" time="500">
+<animation id="SIX_SC_FM-Bench01-04ReverseCowgirlAnal" frames="500">
 	<actor gender="F">
 		<idle form="C744"/>
 	</actor>
@@ -798,7 +798,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Bench01-05ReverseCowgirlAnal" time="500">
+<animation id="SIX_SC_FM-Bench01-05ReverseCowgirlAnal" frames="500">
 	<actor gender="F">
 		<idle form="6C0C"/>
 	</actor>
@@ -808,7 +808,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Bench01-06ReverseCowgirlAnal" time="500">
+<animation id="SIX_SC_FM-Bench01-06ReverseCowgirlAnal" frames="500">
 	<actor gender="F">
 		<idle form="2731F"/>
 	</actor>
@@ -818,7 +818,7 @@
 </animation>
 
 
-<animation id="SIX_SC_FM-Seat01-03Cowgirl" time="500">
+<animation id="SIX_SC_FM-Seat01-03Cowgirl" frames="500">
 	<actor gender="F">
 		<idle form="6446"/>
 	</actor>
@@ -828,7 +828,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Seat01-04Cowgirl" time="500">
+<animation id="SIX_SC_FM-Seat01-04Cowgirl" frames="500">
 	<actor gender="F">
 		<idle form="82FD"/>
 	</actor>
@@ -838,7 +838,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Seat01-05Cowgirl" time="500">
+<animation id="SIX_SC_FM-Seat01-05Cowgirl" frames="500">
 	<actor gender="F">
 		<idle form="CF45"/>
 	</actor>
@@ -848,7 +848,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-WeightBench01-01Tease" time="500">
+<animation id="SIX_SC_FM-WeightBench01-01Tease" frames="500">
 	<actor gender="F">
 		<idle form="27337"/>
 	</actor>
@@ -858,7 +858,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-WeightBench01-03Cowgirl" time="500">
+<animation id="SIX_SC_FM-WeightBench01-03Cowgirl" frames="500">
 	<actor gender="F">
 		<idle form="27339"/>
 	</actor>
@@ -867,7 +867,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-WeightBench01-04Cowgirl" time="500">
+<animation id="SIX_SC_FM-WeightBench01-04Cowgirl" frames="500">
 	<actor gender="F">
 		<idle form="2733B"/>
 	</actor>
@@ -876,7 +876,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-WeightBench01-05Cowgirl" time="500">
+<animation id="SIX_SC_FM-WeightBench01-05Cowgirl" frames="500">
 	<actor gender="F">
 		<idle form="2733D"/>
 	</actor>
@@ -885,7 +885,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-WeightBench01-06Cowgirl" time="500">
+<animation id="SIX_SC_FM-WeightBench01-06Cowgirl" frames="500">
 	<actor gender="F">
 		<idle form="2733F"/>
 	</actor>
@@ -894,7 +894,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Stocks01-01Tease" time="500">
+<animation id="SIX_SC_FM-Stocks01-01Tease" frames="500">
 	<actor gender="F">
 		<idle form="CEDF"/>
 	</actor>
@@ -903,7 +903,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Stocks01-02Start" time="500">
+<animation id="SIX_SC_FM-Stocks01-02Start" frames="500">
 	<actor gender="F">
 		<idle form="1818"/>
 	</actor>
@@ -912,7 +912,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Stocks01-03Doggy" time="500">
+<animation id="SIX_SC_FM-Stocks01-03Doggy" frames="500">
 	<actor gender="F">
 		<idle form="1018"/>
 	</actor>
@@ -921,7 +921,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Stocks01-04Doggy" time="500">
+<animation id="SIX_SC_FM-Stocks01-04Doggy" frames="500">
 	<actor gender="F">
 		<idle form="181A"/>
 	</actor>
@@ -930,7 +930,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Stocks01-05Doggy" time="500">
+<animation id="SIX_SC_FM-Stocks01-05Doggy" frames="500">
 	<actor gender="F">
 		<idle form="1325E"/>
 	</actor>
@@ -939,7 +939,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FMM-Stocks01-02DoubleTeam" time="500">
+<animation id="SIX_SC_FMM-Stocks01-02DoubleTeam" frames="500">
 	<actor gender="F">
 		<idle form="104F"/>
 	</actor>
@@ -951,7 +951,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Table01-03Missionary" time="500">
+<animation id="SIX_SC_FM-Table01-03Missionary" frames="500">
 	<actor gender="F">
 		<idle form="45CF"/>
 	</actor>
@@ -960,7 +960,7 @@
 		<!--<value path="morph" value="Erection" to="1"/>-->
 	</actor>
 </animation>
-<animation id="SIX_SC_FM-RoundTable01-03Doggy" time="500">
+<animation id="SIX_SC_FM-RoundTable01-03Doggy" frames="500">
 	<actor gender="F">
 		<idle form="B070"/>
 	</actor>
@@ -970,7 +970,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-RoundTable02-03RoughSideways" time="500">
+<animation id="SIX_SC_FM-RoundTable02-03RoughSideways" frames="500">
 	<actor gender="F">
 		<idle form="6C12"/>
 	</actor>
@@ -980,7 +980,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Desk01-01Tease" time="500">
+<animation id="SIX_SC_FM-Desk01-01Tease" frames="500">
 	<actor gender="F">
 		<idle form="C003"/>
 	</actor>
@@ -990,7 +990,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Desk01-03Doggy" time="500">
+<animation id="SIX_SC_FM-Desk01-03Doggy" frames="500">
 	<actor gender="F">
 		<idle form="1FC9"/>
 	</actor>
@@ -1000,7 +1000,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Desk01-04Doggy" time="500">
+<animation id="SIX_SC_FM-Desk01-04Doggy" frames="500">
 	<actor gender="F">
 		<idle form="C005"/>
 	</actor>
@@ -1010,7 +1010,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-Human-Desk01-05Doggy" time="500">
+<animation id="SIX_SC-FM-Human-Desk01-05Doggy" frames="500">
 	<actor gender="F">
 		<idle form="2B0AD"/>
 	</actor>
@@ -1019,7 +1019,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-Human-Desk01-06Doggy" time="500">
+<animation id="SIX_SC-FM-Human-Desk01-06Doggy" frames="500">
 	<actor gender="F">
 		<idle form="2B0B3"/>
 	</actor>
@@ -1028,7 +1028,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-PoolTable01-01Tease" time="500">
+<animation id="SIX_SC_FM-PoolTable01-01Tease" frames="500">
 	<actor gender="F">
 		<idle form="1802"/>
 	</actor>
@@ -1038,7 +1038,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-PoolTable01-02Start" time="100">
+<animation id="SIX_SC_FM-PoolTable01-02Start" frames="350">
 	<actor gender="F">
 		<idle form="1804"/>
 	</actor>
@@ -1048,7 +1048,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-PoolTable01-03Cunnilingus" time="500">
+<animation id="SIX_SC_FM-PoolTable01-03Cunnilingus" frames="500">
 	<actor gender="F">
 		<idle form="1807"/>
 	</actor>
@@ -1058,7 +1058,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-PoolTable01-04Cunnilingus" time="500">
+<animation id="SIX_SC_FM-PoolTable01-04Cunnilingus" frames="500">
 	<actor gender="F">
 		<idle form="1808"/>
 	</actor>
@@ -1068,7 +1068,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-PoolTable01-05Missionary" time="500">
+<animation id="SIX_SC_FM-PoolTable01-05Missionary" frames="500">
 	<actor gender="F">
 		<idle form="180A"/>
 	</actor>
@@ -1078,7 +1078,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-PoolTable01-06Missionary" time="500">
+<animation id="SIX_SC_FM-PoolTable01-06Missionary" frames="500">
 	<actor gender="F">
 		<idle form="6C10"/>
 	</actor>
@@ -1088,7 +1088,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-PoolTable01-07Missionary" time="500">
+<animation id="SIX_SC_FM-PoolTable01-07Missionary" frames="500">
 	<actor gender="F">
 		<idle form="C7A6"/>
 	</actor>
@@ -1098,7 +1098,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-PoolTable02-01RoughTease" time="500">
+<animation id="SIX_SC_FM-PoolTable02-01RoughTease" frames="500">
 	<actor gender="F">
 		<idle form="180C"/>
 	</actor>
@@ -1108,7 +1108,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-PoolTable02-02RoughStart" time="500">
+<animation id="SIX_SC_FM-PoolTable02-02RoughStart" frames="500">
 	<actor gender="F">
 		<idle form="180E"/>
 	</actor>
@@ -1118,7 +1118,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-PoolTable02-03RoughDoggy" time="500">
+<animation id="SIX_SC_FM-PoolTable02-03RoughDoggy" frames="500">
 	<actor gender="F">
 		<idle form="1810"/>
 	</actor>
@@ -1128,7 +1128,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-PoolTable02-04RoughDoggy" time="500">
+<animation id="SIX_SC_FM-PoolTable02-04RoughDoggy" frames="500">
 	<actor gender="F">
 		<idle form="1812"/>
 	</actor>
@@ -1138,7 +1138,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-PoolTable02-05RoughDoggy" time="500">
+<animation id="SIX_SC_FM-PoolTable02-05RoughDoggy" frames="500">
 	<actor gender="F">
 		<idle form="1814"/>
 	</actor>
@@ -1148,7 +1148,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-Human-Motorbike01-01Tease" time="500">
+<animation id="SIX_SC-FM-Human-Motorbike01-01Tease" frames="500">
 	<actor gender="F">
 		<idle form="2B868"/>
 	</actor>
@@ -1157,7 +1157,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Motorbike01-03Cowgirl" time="500">
+<animation id="SIX_SC_FM-Motorbike01-03Cowgirl" frames="500">
 	<actor gender="F">
 		<idle form="2171E"/>
 	</actor>
@@ -1167,7 +1167,7 @@
 </animation>
 
 
-<animation id="SIX_SC_FM-ShowerPlayerHouse01-01Tease" time="500">
+<animation id="SIX_SC_FM-ShowerPlayerHouse01-01Tease" frames="500">
 	<actor gender="F">
 		<idle form="2732B"/>
 	</actor>
@@ -1176,7 +1176,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-ShowerPlayerHouse01-03Doggy" time="500">
+<animation id="SIX_SC_FM-ShowerPlayerHouse01-03Doggy" frames="500">
 	<actor gender="F">
 		<idle form="2732D"/>
 	</actor>
@@ -1185,7 +1185,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-ShowerPlayerHouse01-04Doggy" time="500">
+<animation id="SIX_SC_FM-ShowerPlayerHouse01-04Doggy" frames="500">
 	<actor gender="F">
 		<idle form="2732F"/>
 	</actor>
@@ -1194,7 +1194,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-ShowerPlayerHouse01-05Doggy" time="500">
+<animation id="SIX_SC_FM-ShowerPlayerHouse01-05Doggy" frames="500">
 	<actor gender="F">
 		<idle form="27331"/>
 	</actor>
@@ -1203,7 +1203,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-ShowerPlayerHouse01-06Doggy" time="500">
+<animation id="SIX_SC_FM-ShowerPlayerHouse01-06Doggy" frames="500">
 	<actor gender="F">
 		<idle form="27333"/>
 	</actor>
@@ -1213,7 +1213,7 @@
 </animation>
 
 
-<animation id="SIX_SC_FM-FederalistCouch01-01Tease" time="500">
+<animation id="SIX_SC_FM-FederalistCouch01-01Tease" frames="500">
 	<actor gender="F">
 		<idle form="2547D"/>
 	</actor>
@@ -1222,7 +1222,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-FederalistCouch01-02Start" time="600">
+<animation id="SIX_SC_FM-FederalistCouch01-02Start" frames="600">
 	<actor gender="F">
 		<idle form="2547F"/>
 	</actor>
@@ -1231,7 +1231,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-FederalistCouch01-03Missionary" time="500">
+<animation id="SIX_SC_FM-FederalistCouch01-03Missionary" frames="500">
 	<actor gender="F">
 		<idle form="25481"/>
 	</actor>
@@ -1240,7 +1240,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-FederalistCouch01-04Missionary" time="500">
+<animation id="SIX_SC_FM-FederalistCouch01-04Missionary" frames="500">
 	<actor gender="F">
 		<idle form="25483"/>
 	</actor>
@@ -1249,7 +1249,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-FederalistCouch01-05Missionary" time="500">
+<animation id="SIX_SC_FM-FederalistCouch01-05Missionary" frames="500">
 	<actor gender="F">
 		<idle form="25485"/>
 	</actor>
@@ -1258,7 +1258,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-FederalistCouch01-06Missionary" time="500">
+<animation id="SIX_SC_FM-FederalistCouch01-06Missionary" frames="500">
 	<actor gender="F">
 		<idle form="25487"/>
 	</actor>
@@ -1267,7 +1267,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-FederalistCouch01-07Climax" time="600">
+<animation id="SIX_SC_FM-FederalistCouch01-07Climax" frames="600">
 	<actor gender="F">
 		<idle form="25489"/>
 	</actor>
@@ -1276,7 +1276,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-FederalistCouch01-08Finish" time="500">
+<animation id="SIX_SC_FM-FederalistCouch01-08Finish" frames="500">
 	<actor gender="F">
 		<idle form="2548B"/>
 	</actor>
@@ -1285,7 +1285,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Standing01-03Doggy" time="500">
+<animation id="SIX_SC_FM-Standing01-03Doggy" frames="500">
 	<actor gender="F">
 		<idle form="263DB"/>
 	</actor>
@@ -1294,7 +1294,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Standing01-04Doggy" time="500">
+<animation id="SIX_SC_FM-Standing01-04Doggy" frames="500">
 	<actor gender="F">
 		<idle form="263DD"/>
 	</actor>
@@ -1303,7 +1303,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Standing01-05Doggy" time="500">
+<animation id="SIX_SC_FM-Standing01-05Doggy" frames="500">
 	<actor gender="F">
 		<idle form="263DF"/>
 	</actor>
@@ -1312,7 +1312,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-Standing01-06Doggy" time="500">
+<animation id="SIX_SC_FM-Standing01-06Doggy" frames="500">
 	<actor gender="F">
 		<idle form="263E1"/>
 	</actor>
@@ -1323,7 +1323,7 @@
 
 <!-- ******* grouip FMF *********************** -->
 
-<animation id="SIX_SC_FMF-DoubleBed01-03Doggy-AnalFingering" time="500">
+<animation id="SIX_SC_FMF-DoubleBed01-03Doggy-AnalFingering" frames="500">
 	<actor gender="F">
 		<idle form="2360A"/>
 	</actor>
@@ -1339,7 +1339,7 @@
 
 <!-- ****** group FMM ***************************-->
 
-<animation id="SIX_SC_FMM-Bed01-01Handjob-Doggy" time="500">
+<animation id="SIX_SC_FMM-Bed01-01Handjob-Doggy" frames="500">
 	<actor gender="F">
 		<idle form="101C"/>
 	</actor>
@@ -1353,7 +1353,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FMM-Bed01-02Handjob-Doggy" time="500">
+<animation id="SIX_SC_FMM-Bed01-02Handjob-Doggy" frames="500">
 	<actor gender="F">
 		<idle form="101F"/>
 	</actor>
@@ -1367,7 +1367,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FMM-Bed01-03Titjob-Doggy" time="500">
+<animation id="SIX_SC_FMM-Bed01-03Titjob-Doggy" frames="500">
 	<actor gender="F">
 		<idle form="1022"/>
 	</actor>
@@ -1381,7 +1381,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FMM-Bed01-04Blowjob-Doggy" time="500">
+<animation id="SIX_SC_FMM-Bed01-04Blowjob-Doggy" frames="500">
 	<actor gender="F">
 		<idle form="1025"/>
 	</actor>
@@ -1395,7 +1395,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FMM-Chair01-02Handjob-Doggy" time="500">
+<animation id="SIX_SC_FMM-Chair01-02Handjob-Doggy" frames="500">
 	<actor gender="F">
 		<idle form="1028"/>
 	</actor>
@@ -1409,7 +1409,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FMM-Chair01-03Handjob-Doggy" time="500">
+<animation id="SIX_SC_FMM-Chair01-03Handjob-Doggy" frames="500">
 	<actor gender="F">
 		<idle form="102B"/>
 	</actor>
@@ -1423,7 +1423,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FMM-Chair01-04Handjob-Doggy" time="500">
+<animation id="SIX_SC_FMM-Chair01-04Handjob-Doggy" frames="500">
 	<actor gender="F">
 		<idle form="102E"/>
 	</actor>
@@ -1437,7 +1437,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FMM-Chair01-05Blowjob-Doggy" time="500">
+<animation id="SIX_SC_FMM-Chair01-05Blowjob-Doggy" frames="500">
 	<actor gender="F">
 		<idle form="1031"/>
 	</actor>
@@ -1451,7 +1451,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FMM-Chair01-06Blowjob-Doggy" time="500">
+<animation id="SIX_SC_FMM-Chair01-06Blowjob-Doggy" frames="500">
 	<actor gender="F">
 		<idle form="181C"/>
 	</actor>
@@ -1465,7 +1465,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FMM-Chair01-07Deepthroat-Doggy" time="500">
+<animation id="SIX_SC_FMM-Chair01-07Deepthroat-Doggy" frames="500">
 	<actor gender="F">
 		<idle form="181F"/>
 	</actor>
@@ -1479,7 +1479,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FMM-HydroPillory01-02DoubleTeam" time="500">
+<animation id="SIX_SC_FMM-HydroPillory01-02DoubleTeam" frames="500">
 	<actor gender="F">
 		<idle form="1040"/>
 	</actor>
@@ -1493,7 +1493,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FMM-Standing01-01Caught" time="500">
+<animation id="SIX_SC_FMM-Standing01-01Caught" frames="500">
 	<actor gender="F">
 		<idle form="1825"/>
 	</actor>
@@ -1507,7 +1507,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FMM-Standing01-02DoubleTeam" time="500">
+<animation id="SIX_SC_FMM-Standing01-02DoubleTeam" frames="500">
 	<actor gender="F">
 		<idle form="104C"/>
 	</actor>
@@ -1521,7 +1521,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FMM-Standing01-03DoubleTeam" time="500">
+<animation id="SIX_SC_FMM-Standing01-03DoubleTeam" frames="500">
 	<actor gender="F">
 		<idle form="1828"/>
 	</actor>
@@ -1535,7 +1535,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FMM-Couch02-03Handjob" time="500">
+<animation id="SIX_SC_FMM-Couch02-03Handjob" frames="500">
 	<actor gender="F">
 		<idle form="2763"/>
 	</actor>
@@ -1549,7 +1549,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FMM-Couch02-04Handjob" time="500">
+<animation id="SIX_SC_FMM-Couch02-04Handjob" frames="500">
 	<actor gender="F">
 		<idle form="12319"/>
 	</actor>
@@ -1563,7 +1563,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FMM-Couch02-05Blowjob" time="500">
+<animation id="SIX_SC_FMM-Couch02-05Blowjob" frames="500">
 	<actor gender="F">
 		<idle form="3698"/>
 	</actor>
@@ -1577,7 +1577,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FMM-DoubleBed01-03DoubleTeam" time="500">
+<animation id="SIX_SC_FMM-DoubleBed01-03DoubleTeam" frames="500">
 	<actor gender="F">
 		<idle form="21EF5"/>
 	</actor>
@@ -1589,7 +1589,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FMM-Floor04-03DoubleTeam" time="500">
+<animation id="SIX_SC_FMM-Floor04-03DoubleTeam" frames="500">
 	<actor gender="F">
 		<idle form="82C9"/>
 	</actor>
@@ -1601,7 +1601,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FMM-Floor05-03DoubleTeam" time="500">
+<animation id="SIX_SC_FMM-Floor05-03DoubleTeam" frames="500">
 	<actor gender="F">
 		<idle form="BFA8"/>
 	</actor>
@@ -1613,7 +1613,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FMM-BunkBed01-03Threesome" time="500">
+<animation id="SIX_SC_FMM-BunkBed01-03Threesome" frames="500">
 	<actor gender="F">
 		<idle form="10C3C"/>
 	</actor>
@@ -1625,7 +1625,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FMM-DoubleBed02-03ReverseCowgirl-Blowjob" time="500">
+<animation id="SIX_SC_FMM-DoubleBed02-03ReverseCowgirl-Blowjob" frames="500">
 	<actor gender="F">
 		<idle form="21EF2"/>
 	</actor>
@@ -1639,7 +1639,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FMM-Floor04-03DoubleTeam" time="500">
+<animation id="SIX_SC_FMM-Floor04-03DoubleTeam" frames="500">
 	<actor gender="F">
 		<idle form="82C9"/>
 	</actor>
@@ -1653,7 +1653,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FMM-Floor01-01DoubleTeam" time="500">
+<animation id="SIX_SC_FMM-Floor01-01DoubleTeam" frames="500">
 	<actor gender="F">
 		<idle form="1034"/>
 	</actor>
@@ -1667,7 +1667,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FMM-Floor01-02DoubleTeam" time="500">
+<animation id="SIX_SC_FMM-Floor01-02DoubleTeam" frames="500">
 	<actor gender="F">
 		<idle form="1037"/>
 	</actor>
@@ -1684,7 +1684,7 @@
 <!-- ********** Supermutant! ********************-->
 
 
-<animation id="SIX_SC_FSM-DoubleBed01-02Start" time="325">
+<animation id="SIX_SC_FSM-DoubleBed01-02Start" frames="325">
 	<actor gender="F">
 		<idle form="21F0B"/>
 	</actor>
@@ -1694,7 +1694,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-DoubleBed01-03Doggy" time="390">
+<animation id="SIX_SC_FSM-DoubleBed01-03Doggy" frames="390">
 	<actor gender="F">
 		<idle form="7B5B"/>
 	</actor>
@@ -1704,7 +1704,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-DoubleBed01-04Doggy" time="390">
+<animation id="SIX_SC_FSM-DoubleBed01-04Doggy" frames="390">
 	<actor gender="F">
 		<idle form="923E"/>
 	</actor>
@@ -1714,7 +1714,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-DoubleBed01-05Doggy" time="390">
+<animation id="SIX_SC_FSM-DoubleBed01-05Doggy" frames="390">
 	<actor gender="F">
 		<idle form="D6E2"/>
 	</actor>
@@ -1724,7 +1724,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-DoubleBed01-06Doggy" time="390">
+<animation id="SIX_SC_FSM-DoubleBed01-06Doggy" frames="390">
 	<actor gender="F">
 		<idle form="D6E4"/>
 	</actor>
@@ -1734,7 +1734,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-DoubleBed02-03Blowjob" time="390">
+<animation id="SIX_SC_FSM-DoubleBed02-03Blowjob" frames="390">
 	<actor gender="F">
 		<idle form="7B5D"/>
 	</actor>
@@ -1744,7 +1744,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-DoubleBed02-04Blowjob" time="390">
+<animation id="SIX_SC_FSM-DoubleBed02-04Blowjob" frames="390">
 	<actor gender="F">
 		<idle form="99E2"/>
 	</actor>
@@ -1754,7 +1754,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-DoubleBed02-05Standing69" time="390">
+<animation id="SIX_SC_FSM-DoubleBed02-05Standing69" frames="390">
 	<actor gender="F">
 		<idle form="A91F"/>
 	</actor>
@@ -1764,7 +1764,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-DoubleBed02-06Standing69" time="390">
+<animation id="SIX_SC_FSM-DoubleBed02-06Standing69" frames="390">
 	<actor gender="F">
 		<idle form="E624"/>
 	</actor>
@@ -1774,7 +1774,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-DoubleBed02-07Standing69" time="390">
+<animation id="SIX_SC_FSM-DoubleBed02-07Standing69" frames="390">
 	<actor gender="F">
 		<idle form="12313"/>
 	</actor>
@@ -1784,7 +1784,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-DoubleBed02-08Deepthroat69" time="390">
+<animation id="SIX_SC_FSM-DoubleBed02-08Deepthroat69" frames="390">
 	<actor gender="F">
 		<idle form="12315"/>
 	</actor>
@@ -1794,7 +1794,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-DoubleBed03-01Tease" time="390">
+<animation id="SIX_SC_FSM-DoubleBed03-01Tease" frames="390">
 	<actor gender="F">
 		<idle form="21EDA"/>
 	</actor>
@@ -1804,7 +1804,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-SuperMutant-DoubleBed03-02Start" time="500">
+<animation id="SIX_SC-FM-SuperMutant-DoubleBed03-02Start" frames="500">
 	<actor gender="F">
 		<idle form="2A151"/>
 	</actor>
@@ -1813,7 +1813,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-DoubleBed03-03Cowgirl" time="390">
+<animation id="SIX_SC_FSM-DoubleBed03-03Cowgirl" frames="390">
 	<actor gender="F">
 		<idle form="E626"/>
 	</actor>
@@ -1823,7 +1823,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-DoubleBed03-04Cowgirl" time="390">
+<animation id="SIX_SC_FSM-DoubleBed03-04Cowgirl" frames="390">
 	<actor gender="F">
 		<idle form="E628"/>
 	</actor>
@@ -1833,7 +1833,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-DoubleBed03-05Cowgirl" time="390">
+<animation id="SIX_SC_FSM-DoubleBed03-05Cowgirl" frames="390">
 	<actor gender="F">
 		<idle form="EDCB"/>
 	</actor>
@@ -1843,7 +1843,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-DoubleBed03-06Cowgirl" time="390">
+<animation id="SIX_SC_FSM-DoubleBed03-06Cowgirl" frames="390">
 	<actor gender="F">
 		<idle form="F566"/>
 	</actor>
@@ -1853,7 +1853,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-Floor01-03Doggy" time="390">
+<animation id="SIX_SC_FSM-Floor01-03Doggy" frames="390">
 	<actor gender="F">
 		<idle form="1493E"/>
 	</actor>
@@ -1863,7 +1863,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-Floor01-04Doggy" time="390">
+<animation id="SIX_SC_FSM-Floor01-04Doggy" frames="390">
 	<actor gender="F">
 		<idle form="14940"/>
 	</actor>
@@ -1873,7 +1873,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-Floor01-05Wheelbarrow" time="390">
+<animation id="SIX_SC_FSM-Floor01-05Wheelbarrow" frames="390">
 	<actor gender="F">
 		<idle form="14942"/>
 	</actor>
@@ -1883,7 +1883,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-Floor01-06Wheelbarrow" time="390">
+<animation id="SIX_SC_FSM-Floor01-06Wheelbarrow" frames="390">
 	<actor gender="F">
 		<idle form="14944"/>
 	</actor>
@@ -1893,7 +1893,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-SMBed01-01Tease" time="225">
+<animation id="SIX_SC_FSM-SMBed01-01Tease" frames="225">
 	<actor gender="F">
 		<idle form="3E3D"/>
 	</actor>
@@ -1903,7 +1903,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-SMBed01-02Start" time="390">
+<animation id="SIX_SC_FSM-SMBed01-02Start" frames="390">
 	<actor gender="F">
 		<idle form="3E3F"/>
 	</actor>
@@ -1913,7 +1913,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-SMBed01-03Missionary" time="390">
+<animation id="SIX_SC_FSM-SMBed01-03Missionary" frames="390">
 	<actor gender="F">
 		<idle form="3E41"/>
 	</actor>
@@ -1923,7 +1923,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-SMBed01-04Missionary" time="390">
+<animation id="SIX_SC_FSM-SMBed01-04Missionary" frames="390">
 	<actor gender="F">
 		<idle form="3E43"/>
 	</actor>
@@ -1933,7 +1933,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-SMBed01-05Missionary" time="390">
+<animation id="SIX_SC_FSM-SMBed01-05Missionary" frames="390">
 	<actor gender="F">
 		<idle form="3E45"/>
 	</actor>
@@ -1943,7 +1943,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-SMBed02-03Doggy" time="390">
+<animation id="SIX_SC_FSM-SMBed02-03Doggy" frames="390">
 	<actor gender="F">
 		<idle form="C7A2"/>
 	</actor>
@@ -1953,7 +1953,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-SMBed02-04Doggy" time="390">
+<animation id="SIX_SC_FSM-SMBed02-04Doggy" frames="390">
 	<actor gender="F">
 		<idle form="139F9"/>
 	</actor>
@@ -1963,7 +1963,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-SMBed02-05Doggy" time="390">
+<animation id="SIX_SC_FSM-SMBed02-05Doggy" frames="390">
 	<actor gender="F">
 		<idle form="139FB"/>
 	</actor>
@@ -1973,7 +1973,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-SMBed02-06Doggy" time="390">
+<animation id="SIX_SC_FSM-SMBed02-06Doggy" frames="390">
 	<actor gender="F">
 		<idle form="139FD"/>
 	</actor>
@@ -1983,7 +1983,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-Standing01-03Doggy" time="390">
+<animation id="SIX_SC_FSM-Standing01-03Doggy" frames="390">
 	<actor gender="F">
 		<idle form="2F04"/>
 	</actor>
@@ -1993,7 +1993,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-Standing01-04Doggy" time="390">
+<animation id="SIX_SC_FSM-Standing01-04Doggy" frames="390">
 	<actor gender="F">
 		<idle form="B85F"/>
 	</actor>
@@ -2003,7 +2003,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-Standing01-05Doggy" time="390">
+<animation id="SIX_SC_FSM-Standing01-05Doggy" frames="390">
 	<actor gender="F">
 		<idle form="B861"/>
 	</actor>
@@ -2013,7 +2013,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-Standing01-06Doggy" time="390">
+<animation id="SIX_SC_FSM-Standing01-06Doggy" frames="390">
 	<actor gender="F">
 		<idle form="B863"/>
 	</actor>
@@ -2023,7 +2023,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-Standing02-03Handjob" time="390">
+<animation id="SIX_SC_FSM-Standing02-03Handjob" frames="390">
 	<actor gender="F">
 		<idle form="7B5F"/>
 	</actor>
@@ -2033,7 +2033,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-Standing02-04Blowjob" time="390">
+<animation id="SIX_SC_FSM-Standing02-04Blowjob" frames="390">
 	<actor gender="F">
 		<idle form="DE87"/>
 	</actor>
@@ -2043,7 +2043,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-Standing02-05Blowjob" time="390">
+<animation id="SIX_SC_FSM-Standing02-05Blowjob" frames="390">
 	<actor gender="F">
 		<idle form="150E6"/>
 	</actor>
@@ -2053,7 +2053,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-Standing02-06Blowjob" time="390">
+<animation id="SIX_SC_FSM-Standing02-06Blowjob" frames="390">
 	<actor gender="F">
 		<idle form="150E8"/>
 	</actor>
@@ -2063,7 +2063,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-Standing03-01Tease" time="390">
+<animation id="SIX_SC_FSM-Standing03-01Tease" frames="390">
 	<actor gender="F">
 		<idle form="D6E6"/>
 	</actor>
@@ -2073,7 +2073,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-Standing03-03Carry" time="390">
+<animation id="SIX_SC_FSM-Standing03-03Carry" frames="390">
 	<actor gender="F">
 		<idle form="D6E8"/>
 	</actor>
@@ -2083,7 +2083,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-Standing03-04Carry" time="390">
+<animation id="SIX_SC_FSM-Standing03-04Carry" frames="390">
 	<actor gender="F">
 		<idle form="12317"/>
 	</actor>
@@ -2093,7 +2093,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSM-Standing03-05Carry" time="390">
+<animation id="SIX_SC_FSM-Standing03-05Carry" frames="390">
 	<actor gender="F">
 		<idle form="12326"/>
 	</actor>
@@ -2103,7 +2103,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-SuperMutant-Standing03-06Carry" time="500">
+<animation id="SIX_SC-FM-SuperMutant-Standing03-06Carry" frames="500">
 	<actor gender="F">
 		<idle form="2A156"/>
 	</actor>
@@ -2112,7 +2112,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FF-Floor01-01TeaseRestrained" time="500">
+<animation id="SIX_SC_FF-Floor01-01TeaseRestrained" frames="500">
 	<actor gender="F">
 		<idle form="23607"/>
 	</actor>
@@ -2121,7 +2121,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FF-Floor01-02StartRestrained" time="500">
+<animation id="SIX_SC_FF-Floor01-02StartRestrained" frames="500">
 	<actor gender="F">
 		<idle form="23611"/>
 	</actor>
@@ -2130,7 +2130,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-SedanPostWar01-03Doggy" time="500">
+<animation id="SIX_SC_FM-SedanPostWar01-03Doggy" frames="500">
 	<actor gender="F">
 		<idle form="21EC5"/>
 	</actor>
@@ -2139,7 +2139,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-SedanPostWar01-04Doggy" time="500">
+<animation id="SIX_SC_FM-SedanPostWar01-04Doggy" frames="500">
 	<actor gender="F">
 		<idle form="27345"/>
 	</actor>
@@ -2148,7 +2148,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-SedanPostWar01-05Doggy" time="500">
+<animation id="SIX_SC_FM-SedanPostWar01-05Doggy" frames="500">
 	<actor gender="F">
 		<idle form="27347"/>
 	</actor>
@@ -2157,7 +2157,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-SedanPostWar01-06Doggy" time="500">
+<animation id="SIX_SC_FM-SedanPostWar01-06Doggy" frames="500">
 	<actor gender="F">
 		<idle form="27349"/>
 	</actor>
@@ -2167,7 +2167,7 @@
 </animation>
 
 
-<animation id="SIX_SC_FM-SedanPreWar01-03Backseat" time="500">
+<animation id="SIX_SC_FM-SedanPreWar01-03Backseat" frames="500">
 	<actor gender="F">
 		<idle form="2171C"/>
 	</actor>
@@ -2176,7 +2176,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-Human-SedanPreWar01-04MissionaryBackseat" time="500">
+<animation id="SIX_SC-FM-Human-SedanPreWar01-04MissionaryBackseat" frames="500">
 	<actor gender="F">
 		<idle form="2C01E"/>
 	</actor>
@@ -2185,7 +2185,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-SedanPreWar02-03Blowjob" time="500">
+<animation id="SIX_SC_FM-SedanPreWar02-03Blowjob" frames="500">
 	<actor gender="F">
 		<idle form="27327"/>
 	</actor>
@@ -2194,7 +2194,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-SedanPreWar02-04Cowgirl" time="500">
+<animation id="SIX_SC_FM-SedanPreWar02-04Cowgirl" frames="500">
 	<actor gender="F">
 		<idle form="27341"/>
 	</actor>
@@ -2203,43 +2203,43 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_F_797" time="500">
+<animation id="SIX_SC_F_797" frames="500">
 	<actor gender="F">
 		<idle form="99DE"/>
 	</actor>
 </animation>
 
-<animation id="SIX_SC_M_797" time="500">
+<animation id="SIX_SC_M_797" frames="500">
 	<actor gender="M">
 		<idle form="CF44"/>
 	</actor>
 </animation>
 
-<animation id="SIX_SC_F_798" time="500">
+<animation id="SIX_SC_F_798" frames="500">
 	<actor gender="F">
 		<idle form="FD3"/>
 	</actor>
 </animation>
 
-<animation id="SIX_SC_M_798" time="500">
+<animation id="SIX_SC_M_798" frames="500">
 	<actor gender="M">
 		<idle form="FD4"/>
 	</actor>
 </animation>
 
-<animation id="SIX_SC_F_799" time="500">
+<animation id="SIX_SC_F_799" frames="500">
 	<actor gender="F">
 		<idle form="CF43"/>
 	</actor>
 </animation>
 
-<animation id="SIX_SC_M_799" time="500">
+<animation id="SIX_SC_M_799" frames="500">
 	<actor gender="M">
 		<idle form="CF44"/>
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FSMSM-Standing01-03DoubleTeam" time="500">
+<animation id="SIX_SC_FSMSM-Standing01-03DoubleTeam" frames="500">
 	<actor gender="F">
 		<idle form="104A0"/>
 	</actor>
@@ -2255,7 +2255,7 @@
 
 <!-- **************************** v1.2 ****************** -->
 
-<animation id="SIX_SC-FM-Human-Crane01-03Carry" time="500">
+<animation id="SIX_SC-FM-Human-Crane01-03Carry" frames="500">
 	<actor gender="F">
 		<idle form="2C012"/>
 	</actor>
@@ -2273,7 +2273,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-Human-Bed04-03Missionary" time="500">
+<animation id="SIX_SC-FM-Human-Bed04-03Missionary" frames="500">
 	<actor gender="F">
 		<idle form="E62C"/>
 	</actor>
@@ -2282,7 +2282,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-Human-Bed04-04Missionary" time="500">
+<animation id="SIX_SC-FM-Human-Bed04-04Missionary" frames="500">
 	<actor gender="F">
 		<idle form="2B0A5"/>
 	</actor>
@@ -2291,7 +2291,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-Human-Bed04-05Missionary" time="500">
+<animation id="SIX_SC-FM-Human-Bed04-05Missionary" frames="500">
 	<actor gender="F">
 		<idle form="2B0A7"/>
 	</actor>
@@ -2300,7 +2300,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-Human-Bed04-06Missionary" time="500">
+<animation id="SIX_SC-FM-Human-Bed04-06Missionary" frames="500">
 	<actor gender="F">
 		<idle form="2B0A9"/>
 	</actor>
@@ -2318,7 +2318,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-Human-DinerBooth01-01Tease" time="500">
+<animation id="SIX_SC-FM-Human-DinerBooth01-01Tease" frames="500">
 	<actor gender="F">
 		<idle form="2B866"/>
 	</actor>
@@ -2327,7 +2327,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-Human-FederalistCouch02-03ReverseCowGirl" time="500">
+<animation id="SIX_SC-FM-Human-FederalistCouch02-03ReverseCowGirl" frames="500">
 	<actor gender="F">
 		<idle form="2B0B5"/>
 	</actor>
@@ -2336,7 +2336,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-Human-FederalistCouch02-04ReverseCowGirl" time="500">
+<animation id="SIX_SC-FM-Human-FederalistCouch02-04ReverseCowGirl" frames="500">
 	<actor gender="F">
 		<idle form="2B0B7"/>
 	</actor>
@@ -2363,7 +2363,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-Human-Ottoman01-03Handjob" time="500">
+<animation id="SIX_SC-FM-Human-Ottoman01-03Handjob" frames="500">
 	<actor gender="F">
 		<idle form="2B86A"/>
 	</actor>
@@ -2372,7 +2372,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-Human-Ottoman01-04Blowjob" time="500">
+<animation id="SIX_SC-FM-Human-Ottoman01-04Blowjob" frames="500">
 	<actor gender="F">
 		<idle form="2B86C"/>
 	</actor>
@@ -2381,7 +2381,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-Human-KitchenPostWar01-03Doggy" time="500">
+<animation id="SIX_SC-FM-Human-KitchenPostWar01-03Doggy" frames="500">
 	<actor gender="F">
 		<idle form="2C016"/>
 	</actor>
@@ -2390,7 +2390,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-Human-KitchenPostWar01-04Doggy" time="500">
+<animation id="SIX_SC-FM-Human-KitchenPostWar01-04Doggy" frames="500">
 	<actor gender="F">
 		<idle form="2C018"/>
 	</actor>
@@ -2399,7 +2399,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-Human-KitchenPostWar01-05Doggy" time="500">
+<animation id="SIX_SC-FM-Human-KitchenPostWar01-05Doggy" frames="500">
 	<actor gender="F">
 		<idle form="2C01A"/>
 	</actor>
@@ -2408,7 +2408,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-Human-Throne02-03ReverseCowgirl" time="500">
+<animation id="SIX_SC-FM-Human-Throne02-03ReverseCowgirl" frames="500">
 	<actor gender="F">
 		<idle form="2C022"/>
 	</actor>
@@ -2418,7 +2418,7 @@
 </animation>
 
 
-<animation id="SIX_SC-FM-Human-JailCellSmall01-03Standing" time="500">
+<animation id="SIX_SC-FM-Human-JailCellSmall01-03Standing" frames="500">
 	<actor gender="F">
 		<idle form="2A135"/>
 	</actor>
@@ -2427,7 +2427,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-Human-JailCellSmall01-04Standing" time="500">
+<animation id="SIX_SC-FM-Human-JailCellSmall01-04Standing" frames="500">
 	<actor gender="F">
 		<idle form="2A137"/>
 	</actor>
@@ -2436,7 +2436,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-Human-JailCellSmall01-05Carry" time="500">
+<animation id="SIX_SC-FM-Human-JailCellSmall01-05Carry" frames="500">
 	<actor gender="F">
 		<idle form="2B0B9"/>
 	</actor>
@@ -2445,7 +2445,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-Human-JailCellSmall01-06Carry" time="500">
+<animation id="SIX_SC-FM-Human-JailCellSmall01-06Carry" frames="500">
 	<actor gender="F">
 		<idle form="2B0BB"/>
 	</actor>
@@ -2462,7 +2462,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-Human-JailCellTinyWithDoor01-03Blowjob" time="500">
+<animation id="SIX_SC-FM-Human-JailCellTinyWithDoor01-03Blowjob" frames="500">
 	<actor gender="F">
 		<idle form="2B0BD"/>
 	</actor>
@@ -2471,7 +2471,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-Human-JailCellTinyWithDoor01-04Blowjob" time="500">
+<animation id="SIX_SC-FM-Human-JailCellTinyWithDoor01-04Blowjob" frames="500">
 	<actor gender="F">
 		<idle form="2B0BF"/>
 	</actor>
@@ -2480,7 +2480,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-Human-JailCellTinyWithDoor01-05Blowjob" time="500">
+<animation id="SIX_SC-FM-Human-JailCellTinyWithDoor01-05Blowjob" frames="500">
 	<actor gender="F">
 		<idle form="2B0C1"/>
 	</actor>
@@ -2489,7 +2489,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-Human-JailCellTinyWithDoor01-06Facefuck" time="500">
+<animation id="SIX_SC-FM-Human-JailCellTinyWithDoor01-06Facefuck" frames="500">
 	<actor gender="F">
 		<idle form="2C014"/>
 	</actor>
@@ -2500,7 +2500,7 @@
 
 <!-- ----------- new super mutant 1.2 ---------------------- -->
 
-<animation id="SIX_SC-FM-SuperMutant-Standing04-01Tease" time="500">
+<animation id="SIX_SC-FM-SuperMutant-Standing04-01Tease" frames="500">
 	<actor gender="F">
 		<idle form="2A158"/>
 	</actor>

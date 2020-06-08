@@ -1,7 +1,7 @@
 <meta title="SleepIntimateX_SavageCabbageSMB_animationData.xml" version="2.40" dataSet="animation"/>
 <defaults source="SavageCabbage_Animations.esp"/>
 
-<animation id="SIX_SC-FM-SMBehemoth-Floor01-03ReverseCowgirl" time="500">
+<animation id="SIX_SC-FM-SMBehemoth-Floor01-03ReverseCowgirl" frames="500">
 	<actor gender="F">
 		<idle form="2A141"/>
 	</actor>
@@ -10,7 +10,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-SMBehemoth-Floor01-04Blowjob" time="500">
+<animation id="SIX_SC-FM-SMBehemoth-Floor01-04Blowjob" frames="500">
 	<actor gender="F">
 		<idle form="2A143"/>
 	</actor>
@@ -19,7 +19,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-SMBehemoth-Floor01-05Cowgirl" time="500">
+<animation id="SIX_SC-FM-SMBehemoth-Floor01-05Cowgirl" frames="500">
 	<actor gender="F">
 		<idle form="2A145"/>
 	</actor>
@@ -28,7 +28,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-SMBehemoth-Floor01-06Cowgirl" time="500">
+<animation id="SIX_SC-FM-SMBehemoth-Floor01-06Cowgirl" frames="500">
 	<actor gender="F">
 		<idle form="2A147"/>
 	</actor>
@@ -38,7 +38,7 @@
 </animation>
 
 
-<animation id="SIX_SC-FM-SMBehemoth-Floor02-03Missionary" time="500">
+<animation id="SIX_SC-FM-SMBehemoth-Floor02-03Missionary" frames="500">
 	<actor gender="F">
 		<idle form="27AE6"/>
 	</actor>
@@ -47,7 +47,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-SMBehemoth-Floor02-04Missionary" time="500">
+<animation id="SIX_SC-FM-SMBehemoth-Floor02-04Missionary" frames="500">
 	<actor gender="F">
 		<idle form="24546"/>
 	</actor>
@@ -56,7 +56,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-SMBehemoth-Floor02-05Missionary" time="500">
+<animation id="SIX_SC-FM-SMBehemoth-Floor02-05Missionary" frames="500">
 	<actor gender="F">
 		<idle form="27AE9"/>
 	</actor>
@@ -65,7 +65,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-SMBehemoth-Floor02-06Missionary" time="500">
+<animation id="SIX_SC-FM-SMBehemoth-Floor02-06Missionary" frames="500">
 	<actor gender="F">
 		<idle form="27AED"/>
 	</actor>
@@ -75,7 +75,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-SMBehemoth-Floor03-03Handjob" time="500">
+<animation id="SIX_SC-FM-SMBehemoth-Floor03-03Handjob" frames="500">
 	<actor gender="F">
 		<idle form="2A149"/>
 	</actor>
@@ -84,7 +84,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-SMBehemoth-Floor03-04Titjob" time="500">
+<animation id="SIX_SC-FM-SMBehemoth-Floor03-04Titjob" frames="500">
 	<actor gender="F">
 		<idle form="2A14B"/>
 	</actor>
@@ -94,7 +94,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-SMBehemoth-Floor03-05Blowjob" time="500">
+<animation id="SIX_SC-FM-SMBehemoth-Floor03-05Blowjob" frames="500">
 	<actor gender="F">
 		<idle form="2A14D"/>
 	</actor>
@@ -104,7 +104,7 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC-FM-SMBehemoth-Floor03-06Blowjob" time="500">
+<animation id="SIX_SC-FM-SMBehemoth-Floor03-06Blowjob" frames="500">
 	<actor gender="F">
 		<idle form="2A14F"/>
 	</actor>
