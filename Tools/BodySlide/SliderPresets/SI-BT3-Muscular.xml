@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<SliderPresets>
+    <Preset name="BT3-Muscular-SI" set="BodyTalk3">
+        <Group name="BodyTalk3 - Bodies"/>
+        <SetSlider name="BT2AdonisBelt" size="big" value="44"/>
+        <SetSlider name="BTAMPecAdjust" size="big" value="48"/>
+        <SetSlider name="BTARYAYDA" size="big" value="50"/>
+        <SetSlider name="BTAbDefinition" size="big" value="60"/>
+        <SetSlider name="BTBack" size="big" value="36"/>
+        <SetSlider name="BTBackArch" size="big" value="45"/>
+        <SetSlider name="BTBallSize" size="big" value="0"/>
+        <SetSlider name="BTButt" size="big" value="44"/>
+        <SetSlider name="BTButtWidth" size="big" value="0"/>
+        <SetSlider name="BTCalves" size="big" value="18"/>
+        <SetSlider name="BTChest" size="big" value="0"/>
+        <SetSlider name="BTChestSmoothing" size="big" value="0"/>
+        <SetSlider name="BTElbowAdjust" size="big" value="30"/>
+        <SetSlider name="BTFootSize" size="big" value="14"/>
+        <SetSlider name="BTForearms" size="big" value="22"/>
+        <SetSlider name="BTHips-In" size="big" value="28"/>
+        <SetSlider name="BTKneeAdust" size="big" value="30"/>
+        <SetSlider name="BTNippleSize" size="big" value="0"/>
+        <SetSlider name="BTPectorals" size="big" value="30"/>
+        <SetSlider name="BTRibcage" size="big" value="0"/>
+        <SetSlider name="BTShinSize" size="big" value="39"/>
+        <SetSlider name="BTShoulders" size="big" value="0"/>
+        <SetSlider name="BTStomach" size="big" value="0"/>
+        <SetSlider name="BTStomachFat" size="big" value="32"/>
+        <SetSlider name="BTStomachSmooth" size="big" value="90"/>
+        <SetSlider name="BTTHinCalf" size="big" value="13"/>
+        <SetSlider name="BTThigh" size="big" value="0"/>
+        <SetSlider name="BTThinArm" size="big" value="36"/>
+        <SetSlider name="BTToeSmaller" size="big" value="39"/>
+        <SetSlider name="BTTraps" size="big" value="52"/>
+        <SetSlider name="BTWaist-In" size="big" value="0"/>
+        <SetSlider name="BTWaist-Smoothing" size="big" value="0"/>
+        <SetSlider name="Balls" size="big" value="0"/>
+        <SetSlider name="Erection" size="big" value="100"/>
+        <SetSlider name="Hips" size="big" value="14"/>
+        <SetSlider name="ThinThigh" size="big" value="76"/>
+        <SetSlider name="TigerSanBBMale" size="big" value="40"/>
+    </Preset>
+</SliderPresets>

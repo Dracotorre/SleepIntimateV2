@@ -275,6 +275,10 @@ Function StopAllCancel()
 		SleepTimeIntimacyCount = 0					; v2.33 reset
 	endIf
 	
+	if (FastSleepStatus > 0 || FastTimeISMOn)
+		FastSleepEffectOff()
+	endIf
+	
 endFunction
 
 Function StopAllDone(bool fullRecover)
@@ -534,10 +538,10 @@ Function FadeOutSec(float secs, bool doWait = true)
 	endIf
 endFunction
 
-Function FastSleepEffectOff()
+Function FastSleepEffectOff(bool forced = false)
 
 	FastSleepStatus = 0
-	if (FastTimeISMOn)
+	if (FastTimeISMOn || forced)
 		FastTimeISMOn = false
 		FastTimeISM.PopTo(FastTimeFadeOutISM)
 		Utility.Wait(1.0)
@@ -741,8 +745,7 @@ Function HandleStop(bool fullRecover = false, bool fullSleep = false)
 		;	DTSleep_TimePassRestoreMsg.Show()
 		;	Utility.Wait(1.2)
 		;endIf
-	elseIf (FastSleepStatus > 0 || FastTimeISMOn)
-		FastSleepEffectOff()
+		
 	endIf
 	
 	if (SleepWaitHours > 0.0)
@@ -813,7 +816,7 @@ Function PlayerNapRecover(float fractionVal = 0.03333, float nextTimerHours = 0.
 			else
 				StartTimerGameTime(nextTimerHours, SleepNapRecGameTimerID)
 				SleepWaitTimeCount = 4							; v2.35 end fast-wait mode
-				if (FastSleepStatus == 1)					
+				if (FastSleepStatus >= 1)					
 					FastSleepEffectOff()
 					DTSleep_TimePassRestoreMsg.Show()
 				endIf
@@ -845,7 +848,7 @@ Function PlayerNapRecover(float fractionVal = 0.03333, float nextTimerHours = 0.
 		endIf
 		StopAllCancel()
 		
-	elseIf (!GoodSleep && FastSleepStatus == 1)
+	elseIf (!GoodSleep && FastSleepStatus >= 1)
 		FastSleepEffectOff()
 		if (DTSleep_SettingNotifications.GetValue() >= 1.0)
 			DTSleep_TimePassRestoreMsg.Show()

@@ -481,12 +481,14 @@ Function InitSceneAndPlay()
 	int longScene = 0
 	int genders = -1		; FM, 0 = MM, 1 = FF
 	int otherActor = 0
-	bool forceEVB = true
+	bool forceEVB = false
 	DTAACSceneStageStruct[] seqStagesArray = None
 	
 	if (SceneData.AnimationSet == 7 && DTSleep_SettingUseBT2Gun.GetValueInt() > 0)
-		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.10)
-			forceEVB = false
+		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.10)
+			forceEVB = true
+		elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers == 1.10 && SceneData.SecondMaleRole != None)
+			forceEVB = true
 		endIf
 	endIf
 	
