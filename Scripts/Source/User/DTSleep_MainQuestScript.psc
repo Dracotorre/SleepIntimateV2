@@ -11915,7 +11915,8 @@ Function ResetAll()
 	endIf
 	if (DTSleep_HealthRecoverQuestP.IsRunning())
 		(DTSleep_HealthRecoverQuestP as DTSleep_HealthRecoverQuestScript).StopAllCancel()
-	else
+		
+	elseIf ((DTSleep_HealthRecoverQuestP as DTSleep_HealthRecoverQuestScript).DTSleep_SettingFastSleepEffect.GetValueInt() > 0)
 		(DTSleep_HealthRecoverQuestP as DTSleep_HealthRecoverQuestScript).FastSleepEffectOff()
 	endIf
 	
@@ -12454,10 +12455,6 @@ int Function RestoreTestSettings(float oldVersion = 0.0)
 	
 	if (oldVersion > 1.0 && oldVersion < 1.5420 && DTSleep_PlayerUsingBed.GetValue() <= 0.0)
 		RegisterForMenuOpenCloseEvent("WorkshopMenu")
-	endIf
-	
-	if (DTSleep_PlayerUsingBed.GetValueInt() <= 0)
-		(DTSleep_HealthRecoverQuestP as DTSleep_HealthRecoverQuestScript).FastSleepEffectOff(true)
 	endIf
 	
 	if (DTSleep_AdultContentOn.GetValue() <= 1.5)
@@ -14551,7 +14548,7 @@ Function Shutdown(bool completely = false)
 		; v2.44 make sure recover quest stopped
 		if (DTSleep_PlayerUsingBed.GetValueInt() > 0)
 			(DTSleep_HealthRecoverQuestP as DTSleep_HealthRecoverQuestScript).StopAllCancel()
-		else
+		elseIf ((DTSleep_HealthRecoverQuestP as DTSleep_HealthRecoverQuestScript).DTSleep_SettingFastSleepEffect.GetValueInt() > 0)
 			(DTSleep_HealthRecoverQuestP as DTSleep_HealthRecoverQuestScript).FastSleepEffectOff(true)
 		endIf
 
