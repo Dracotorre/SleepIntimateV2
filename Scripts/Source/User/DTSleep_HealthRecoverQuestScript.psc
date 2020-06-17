@@ -276,6 +276,7 @@ Function StopAllCancel()
 	endIf
 	
 	if (FastSleepStatus > 0 || FastTimeISMOn)
+
 		FastSleepEffectOff()
 	endIf
 	
@@ -289,6 +290,11 @@ Function StopAllDone(bool fullRecover)
 		HandleStop(fullRecover, true)
 		SleepTimeIntimacyCount = 0					; v2.33 reset
 		Utility.Wait(0.2)
+	endIf
+	
+	if (FastSleepStatus > 0 || FastTimeISMOn)
+
+		FastSleepEffectOff()
 	endIf
 endFunction
 
@@ -745,7 +751,8 @@ Function HandleStop(bool fullRecover = false, bool fullSleep = false)
 		;	DTSleep_TimePassRestoreMsg.Show()
 		;	Utility.Wait(1.2)
 		;endIf
-		
+	elseIf (FastSleepStatus >= 1)
+		FastSleepEffectOff()
 	endIf
 	
 	if (SleepWaitHours > 0.0)

@@ -12312,8 +12312,8 @@ Function SetExtraMutantPartner()
 	; must have mutant stink and with Strong
 	if (IntimateCompanionRef == StrongCompanionRef && PlayerRef.IsInFaction(DTSleep_MutantAllyFaction) && DTSleep_SettingLover2.GetValue() >= 1.0)
 		int skillOkay = 0
-		if (IntimacySMCount > 26 && DTSleep_SettingTestMode.GetValue() >= 1.0 && DTSleep_DebugMode.GetValue() >= 1.0 && TestVersion == -2)
-			;TODO no Behemoth body swap -- maybe with morph support
+		if (IntimacySMCount > 26 && TestVersion == -2)
+			
 			skillOkay = 2
 		elseIf (IntimacySMCount > 15)
 			skillOkay = 1
@@ -13798,7 +13798,7 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 			endIf
 			
 			if (SceneData.MaleRoleGender == 0)
-				if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).DTSleep_SettingUseBT2Gun.GetValue() <= 0.0 || (SceneData.AnimationSet > 4 && SceneData.AnimationSet != 8))
+				if (bt2Val <= 0.0 || (SceneData.AnimationSet > 4 && SceneData.AnimationSet != 8))
 					; compatible animation packs
 					if (SceneData.MaleRole == PlayerRef)
 						if (DressData.PlayerEquippedIntimateAttireItem != None)
@@ -14763,6 +14763,7 @@ Function UpdateIntimateAnimPreferences(int playerChoice)
 
 
 	; playerChoice -- see DTSleep_IntimateScenePickMessage for index
+	; playerChoice == 0 is let companion pick
 
 	if (playerChoice == 1)
 		(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePlayerPrefCuddle()
@@ -14886,7 +14887,7 @@ Function UpdateIntimateAnimPreferences(int playerChoice)
 				(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePrefDance(true)
 			endIf
 		elseIf (IntimateCompanionRef == StrongCompanionRef)
-			if (playerChoice <= 1)
+			if (playerChoice >= 0 && playerChoice <= 1)
 				(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePlayerPrefDoggy()
 				(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePlayerPrefCowgirl()
 				if (playerChoice == 0)

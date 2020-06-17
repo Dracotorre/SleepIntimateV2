@@ -37,6 +37,15 @@
 	</actor>
 </animation>
 
+<animation id="SIX_SC-FM-SMBehemoth-Floor01-07Climax" frames="500">
+	<actor gender="F">
+		<idle form="2DEDB"/>
+	</actor>
+	<actor gender="M" skeleton="SupermutantBehemoth">
+		<idle form="2DEDC"/>
+	</actor>
+</animation>
+
 
 <animation id="SIX_SC-FM-SMBehemoth-Floor02-03Missionary" frames="500">
 	<actor gender="F">
@@ -71,7 +80,7 @@
 	</actor>
 	<actor gender="M" skeleton="SupermutantBehemoth">
 		<idle form="27AEE"/>
-		<value path="morph" value="Erection Up" to="1"/>
+		<!-- <value path="morph" value="Erection Up" to="1"/> -->
 	</actor>
 </animation>
 
@@ -90,7 +99,7 @@
 	</actor>
 	<actor gender="M" skeleton="SupermutantBehemoth">
 		<idle form="2A14C"/>
-		<value path="morph" value="Erection Up" to="1"/>
+		<!-- <value path="morph" value="Erection Up" to="1"/> -->
 	</actor>
 </animation>
 
@@ -100,7 +109,7 @@
 	</actor>
 	<actor gender="M" skeleton="SupermutantBehemoth">
 		<idle form="2A14E"/>
-		<value path="morph" value="Erection Up" to="1"/>
+		<!-- <value path="morph" value="Erection Up" to="1"/> -->
 	</actor>
 </animation>
 

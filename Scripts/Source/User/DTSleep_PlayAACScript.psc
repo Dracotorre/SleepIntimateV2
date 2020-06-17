@@ -29,6 +29,7 @@ GlobalVariable property DTSleep_SettingUseLeitoGun auto const
 GlobalVariable property DTSleep_SettingUseBT2Gun auto const
 GlobalVariable property DTSleep_SettingSynthHuman auto const
 GlobalVariable property DTSleep_SettingCancelScene auto const
+GlobalVariable property DTSleep_SettingUseSMMorph auto const
 EndGroup
 
 Group A_GameData
@@ -50,6 +51,7 @@ Armor property DTSleep_NudeSuitPlayerUp auto const
 ;Armor property DTSleep_LeitoNudeDogmeat auto const
 ;Armor property SkinDogmeat auto const
 Static property DTSleep_MainNode auto const
+Keyword property DTSleep_MorphKeyword auto const
 EndGroup
 
 Group C_Idles
@@ -69,6 +71,7 @@ ObjectReference property MainActorOriginMarkRef auto hidden
 ObjectReference property SecondActorOriginMarkRef auto hidden
 ObjectReference property ThirdActorOriginMarkRef auto hidden
 ObjectReference property PlayerOriginMarkerRef auto hidden
+bool property MaleBodyMorphEnabled auto hidden
 
 
 
@@ -119,10 +122,25 @@ Event OnEffectStart(Actor akfActor, Actor akmActor)
 	MaleRoleSex = -1
 	SecondRoleSex = -1
 	ThirdActor = None
+	MaleBodyMorphEnabled = false
 	bool secondActorOkay = true
 	
 	if (SceneData.IsCreatureType == 2)
 		MaleRoleSex = 0
+	endIf
+	
+	if ((DTSConditionals as DTSleep_Conditionals).IsF4SE && (DTSConditionals as DTSleep_Conditionals).IsLooksMenuActive && SceneData.IsCreatureType != 3)
+		if (DTSleep_SettingUseBT2Gun.GetValue() >= 2.0 && SceneData.AnimationSet != 8 && SceneData.IsCreatureType < 5 && SceneData.IsCreatureType != 1)
+			;Debug.Trace("[DTSleep_PlayAAC] enable male morphs by setting")
+			if (SceneData.SameGender == false || SceneData.MaleRoleGender == 0)
+				MaleBodyMorphEnabled = true
+			endIf
+		elseIf (SceneData.IsCreatureType == 1 || SceneData.IsCreatureType == 6)
+			if (DTSleep_SettingUseSMMorph.GetValue() >= 1.0)
+				;Debug.Trace("[DTSleep_PlayAAC] enable male morphs for super mutant")
+				MaleBodyMorphEnabled = true
+			endIf
+		endIf
 	endIf
 	
 	;Debug.Trace("[DTSleep_PlayAAC] onStart cast " + akmActor + "/" + akfActor)
@@ -397,7 +415,7 @@ Armor Function GetArmorNudeGun(int kind)
 	if (!Debug.GetPlatformName() as bool)
 		return None
 	endIf
-	
+
 	int evbVal = DTSleep_SettingUseLeitoGun.GetValueInt()
 	int bt2Val = DTSleep_SettingUseBT2Gun.GetValueInt()
 	int synthVal = DTSleep_SettingSynthHuman.GetValueInt()
@@ -413,7 +431,7 @@ Armor Function GetArmorNudeGun(int kind)
 		bt2Val = -1
 		evbVal = 2
 		synthVal = 1
-	elseIf (SceneData.IsCreatureType >= 5)
+	elseIf (SceneData.IsCreatureType >= 6)
 		return None
 		
 	elseIf (DTSConditionals.IsUniquePlayerMaleActive && evbVal > 0 && SceneData.MaleRole == PlayerRef)
@@ -466,6 +484,18 @@ Armor Function GetArmorNudeGun(int kind)
 	return gun
 endFunction
 
+String Function GetArmorNudeMorphString(int kind)
+	if (kind == 1)
+		return "Erection Up"
+	elseIf (kind == 2)
+		return "Erection Down"
+	endIf
+	if (SceneData.IsCreatureType == 5 || SceneData.IsCreatureType == 1)
+		return "CErection"
+	endIf
+	return "Erection"
+endFunction
+
 Function InitSceneAndPlay()
 
 	float angleOffset = 0.0
@@ -494,15 +524,62 @@ Function InitSceneAndPlay()
 	
 	if (SceneData.CompanionInPowerArmor)
 		longScene = -1
-	elseIf (SequenceID == 737 || SequenceID == 765 || SequenceID == 733 || SequenceID == 742 || SequenceID == 748 || SequenceID == 749)
+	elseIf (SequenceID == 737 || SequenceID == 733 || SequenceID == 742 || SequenceID == 748 || SequenceID == 749)
 		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.1)
 			longScene = 1
 			if (SequenceID == 737 && DTSleep_IntimateSceneLen.GetValueInt() >= 3)
 				longScene = 2
 			endIf
 		endIf
-	elseIf (SequenceID == 701 || SequenceID == 746 || SequenceID == 752 || SequenceID == 736 || SequenceID == 760 || SequenceID == 766)
+	elseIf (SequenceID == 765)
+		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
+			longScene = 2
+		elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.1)
+			longScene = 1
+		endIf
+	elseIf (SequenceID == 701 || SequenceID == 760)
 		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
+			longScene = 1
+		endIf
+	elseIf (SequenceID == 735)
+		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
+			longScene = 1
+		endIf
+	elseIf (SequenceID == 736)
+		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
+			longScene = 2
+		elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
+			longScene = 1
+		endIf
+	elseIf (SequenceID == 746)
+		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
+			longScene = 2
+		elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
+			longScene = 1
+		endIf
+		
+	elseIf (SequenceID == 752)
+		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
+			longScene = 2
+		elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
+			longScene = 1
+		endIf
+	elseIf (SequenceID == 759)
+		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
+			longScene = 1
+		endIf
+	elseIf (SequenceID >= 763 && SequenceID <= 764)
+		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
+			longScene = 1
+		endIf
+	elseIf (SequenceID == 766)
+		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
+			longScene = 2
+		elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
+			longScene = 1
+		endIf
+	elseIf (SequenceID == 774)
+		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
 			longScene = 1
 		endIf
 	elseIf (SequenceID == 795)
@@ -697,6 +774,9 @@ Function PlaySequence(DTAACSceneStageStruct[] seqStagesArray)
 			waitSecs = startSecs
 		elseIf (seqCount == seqLen - 1)
 			waitSecs = 8.33
+			if (seqStagesArray[seqCount].StageTime > 0.0)
+				waitSecs = seqStagesArray[seqCount].StageTime
+			endIf
 		else
 			waitSecs = SceneData.WaitSecs
 			if (seqStagesArray[seqCount].StageTime > 0.0)
@@ -779,16 +859,23 @@ Function PlayAnimAtStage(DTAACSceneStageStruct stage, Actor mActor, Actor fActor
 		if (a1 != None)
 		
 			if (stage.ArmorNudeAGun != LastGunAIndex)
-				LastGunAIndex = stage.ArmorNudeAGun
-				Armor armS1 = GetArmorNudeGun(stage.ArmorNudeAGun)
-				;Debug.Trace("[DTSleep_PlayAAC] got armor-nude index " + stage.ArmorNudeAGun + " armor " + armS1)
-				if (MaleRoleSex < 0 && mActor != None)
-					MaleRoleSex = (mActor.GetLeveledActorBase() as ActorBase).GetSex()
-				endIf
-				if (armS1 != None && mActor != None && MaleRoleSex == 0)
-					mActor.EquipItem(armS1, true, true)
+				
+				if (MaleBodyMorphEnabled)
+					;Debug.Trace("[DTSleep_PlayAAC] setting morph " + stage.ArmorNudeAGun + " on actor " + mActor)
+					SetMorphForActor(mActor, LastGunAIndex, stage.ArmorNudeAGun)
 					
+				else
+					Armor armS1 = GetArmorNudeGun(stage.ArmorNudeAGun)
+					;Debug.Trace("[DTSleep_PlayAAC] got armor-nude index " + stage.ArmorNudeAGun + " armor " + armS1)
+					if (MaleRoleSex < 0 && mActor != None)
+						MaleRoleSex = (mActor.GetLeveledActorBase() as ActorBase).GetSex()
+					endIf
+					if (armS1 != None && mActor != None && MaleRoleSex == 0)
+						mActor.EquipItem(armS1, true, true)
+						
+					endIf
 				endIf
+				LastGunAIndex = stage.ArmorNudeAGun
 			endIf
 			if (oActor != None && stage.ArmorNudeBGun >= 0 && LastGunBIndex != stage.ArmorNudeBGun)
 				; v2.25 - check secondActor gender
@@ -796,11 +883,17 @@ Function PlayAnimAtStage(DTAACSceneStageStruct stage, Actor mActor, Actor fActor
 					SecondRoleSex = (oActor.GetLeveledActorBase() as ActorBase).GetSex()
 				endIf
 				if (SecondRoleSex == 0)
-					LastGunBIndex = stage.ArmorNudeBGun
-					Armor armB1 = GetArmorNudeGun(stage.ArmorNudeBGun)
-					if (armB1 != None)
-						oActor.EquipItem(armB1, true, true)
+					
+					if (MaleBodyMorphEnabled)
+						SetMorphForActor(oActor, LastGunBIndex, stage.ArmorNudeBGun)
+						
+					else
+						Armor armB1 = GetArmorNudeGun(stage.ArmorNudeBGun)
+						if (armB1 != None)
+							oActor.EquipItem(armB1, true, true)
+						endIf
 					endIf
+					LastGunBIndex = stage.ArmorNudeBGun
 				endIf
 			endIf
 			
@@ -845,6 +938,12 @@ Function RemoveLeitoGuns(Actor aActor)
 	
 	if (DTSleep_SettingUseBT2Gun.GetValueInt() > 0 || DTSleep_SettingSynthHuman.GetValueInt() >= 2)
 		RemoveBT2Guns(aActor)
+	elseIf (MaleBodyMorphEnabled)
+		if (DTSleep_SettingUseSMMorph.GetValueInt() > 0 && (SceneData.IsCreatureType == 1 || SceneData.IsCreatureType == 5))
+			RemoveMorphs(aActor)
+			
+			return
+		endIf
 	endIf	
 	
 	if (DTSleep_SettingSynthHuman.GetValueInt() == 1 && SceneData.IsCreatureType == 4 && DTSleep_LeitoGunSynthList != None) ;v2.19
@@ -882,7 +981,10 @@ Function RemoveLeitoGuns(Actor aActor)
 EndFunction
 
 Function RemoveBT2Guns(Actor aActor)
-	if (DTSleep_BT2GunList != None)
+	if (MaleBodyMorphEnabled)
+		RemoveMorphs(aActor)
+	
+	elseIf (DTSleep_BT2GunList != None)
 		int len = DTSleep_BT2GunList.GetSize()
 		if (len > 3 && DTSleep_SettingSynthHuman.GetValueInt() < 2 && SceneData.IsCreatureType != 4)
 			len = 3
@@ -901,6 +1003,36 @@ Function RemoveBT2Guns(Actor aActor)
 			idx += 1
 		endWhile
 	endIf
+endFunction
+
+Function RemoveMorphs(Actor aActor)
+	;Debug.Trace("[DTSleep_PlayAAC] removing morphs from actor " + aActor)
+	BodyGen.RemoveMorphsByKeyword(aActor, false, DTSleep_MorphKeyword)
+	BodyGen.UpdateMorphs(aActor)
+endFunction
+
+
+Function SetMorphForActor(Actor aActor, int lastKind, int toKind)
+
+	if (lastKind < 0)
+		BodyGen.SetMorph(aActor, false, GetArmorNudeMorphString(0), DTSleep_MorphKeyword, 1.0)
+	elseIf (lastKind > 0)
+		; remove
+		BodyGen.SetMorph(aActor, false, GetArmorNudeMorphString(lastKind), DTSleep_MorphKeyword, 0.0)
+	endIf
+	if (toKind > 0)
+		float morphVal = 1.0
+		if (SceneData.IsCreatureType == 5)
+			morphVal = 0.88
+		elseIf (SceneData.AnimationSet == 7 && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
+			morphVal = -1.0
+		endIf
+		if (morphVal > 0.0)
+			BodyGen.SetMorph(aActor, false, GetArmorNudeMorphString(toKind), DTSleep_MorphKeyword, morphVal)
+		endIf
+	endIf
+	
+	BodyGen.UpdateMorphs(aActor)
 endFunction
 
 Function StopActor(Actor aActor)

@@ -89,7 +89,7 @@ int property MCMSoSActiveOff = 0 auto hidden
 Event OnQuestInit()
     DTSleep_MCMEnable.SetValueInt(2)
     RegisterCustomEvents()
-	Update()
+	Update(false)
 
 EndEvent
 
@@ -99,12 +99,12 @@ EndEvent
 Function DoOnLoad()
 	;Debug.Trace("[DTSleep_MCM] onPlayerLoad")
     RegisterCustomEvents()
-	Update()
+	Update(false)
 EndFunction
 
 Function OnMCMOpen()
 
-	Update()
+	Update(true)
 EndFunction
 
 Function OnMCMSettingChange(string modName, string id)
@@ -288,7 +288,7 @@ Function WakePlayer(float val)
 EndFunction
 
 
-Function Update()
+Function Update(bool doRefresh)
 	if (MCMPlayerFemale < 0)
 		ActorBase actBase = PlayerRef.GetBaseObject() as ActorBase
 		MCMPlayerFemale = actBase.GetSex()
@@ -388,7 +388,9 @@ Function Update()
 	endIf
 	UpdateSoS()
 	
-	MCM.RefreshMenu()
+	if (doRefresh)
+		MCM.RefreshMenu()
+	endIf
 EndFunction
 
 Function UpdateAdultValues()

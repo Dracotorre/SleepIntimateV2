@@ -1899,7 +1899,10 @@ float Function GetTimeForPlayID(int id)
 			
 		elseIf (id == 766)
 			DTSleep_IntimateSceneLen.SetValueInt(1)
-			return 84.5
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
+				return 92.0
+			endIf
+			return 82.5
 			
 		elseIf (SceneData.CompanionInPowerArmor || SceneData.IsCreatureType == 3)
 			DTSleep_IntimateSceneLen.SetValueInt(0)
@@ -1935,11 +1938,13 @@ float Function GetTimeForPlayID(int id)
 				DTSleep_IntimateSceneLen.SetValueInt(0)
 				return 36.0
 			elseIf (id == 746)
-				DTSleep_IntimateSceneLen.SetValueInt(0)
-				if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
+				DTSleep_IntimateSceneLen.SetValueInt(0)	
+				if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20 && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers <= 1.21)
 					return 49.0
+				elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.20)
+					return 32.0
+				; else fall through to regular length
 				endIf
-				return 32.0
 			elseIf (id == 732)
 				DTSleep_IntimateSceneLen.SetValueInt(0)
 				return 48.0
@@ -1964,6 +1969,14 @@ float Function GetTimeForPlayID(int id)
 				; no ping-pong allowed
 				DTSleep_IntimateSceneLen.SetValueInt(1)
 				return 80.0
+			elseIf (id >= 764 && id <= 766)
+				; no ping-pong
+				DTSleep_IntimateSceneLen.SetValueInt(1)
+				if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
+					return 86.0
+				endIf
+				return 73.0
+				
 			elseIf (id >= 780 && id <= 784)
 				DTSleep_IntimateSceneLen.SetValueInt(0)
 				
@@ -2047,8 +2060,7 @@ float Function GetTimeForPlayID(int id)
 				return baseSec + 8.8
 			elseIf (id == 756)
 				return baseSec + 20.0
-			elseIf (id >= 764 && id < 767)
-				return baseSec + 8.8
+			
 			elseIf (id >= 795 && id <= 795)
 				return baseSec + 12.0
 			elseIf (id >= 850)
@@ -5031,7 +5043,7 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 			
 				if (packID == 5 && (DTSConditionals as DTSleep_Conditionals).AtomicLustVers >= 2.43 && !SceneData.IsUsingCreature && !SceneData.SameGender)
 					if (MySleepBedFurnType == FurnTypeIsSeatIntimateChair)
-						if (SceneData.SecondMaleRole == None && SceneData.SecondFemaleRole == None)
+						if (SceneData.SecondMaleRole == None && SceneData.SecondFemaleRole == None && playerPick && DoesMainActorPrefID(50))
 							sidArray.Add(38)
 						endIf
 					endIf
@@ -5446,7 +5458,7 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 
 							if ((DTSConditionals as DTSleep_Conditionals).AtomicLustVers >= 2.42)
 
-								if (RestrictScenesToErectAngle == 1 || RestrictScenesToErectAngle < 0 || DTSleep_SettingUseBT2Gun.GetValueInt() > 0)
+								if (RestrictScenesToErectAngle == 1 || RestrictScenesToErectAngle < 0 || DTSleep_SettingUseBT2Gun.GetValueInt() == 1)
 									if (!SceneData.SameGender)
 										if (MySleepBedFurnType == FurnTypeIsDoubleBed && !standOnly)
 											sidArray.Add(5); cowgirl double-bed
@@ -6177,7 +6189,7 @@ bool Function SceneIDAtPlayerPosition(int sid)
 		return true
 	elseIf (sid == 769)
 		return true
-	elseIf (sid >= 770 && sid <= 773)
+	elseIf (sid >= 770 && sid <= 776)
 		return true
 	elseIf (sid == 784)
 		return true

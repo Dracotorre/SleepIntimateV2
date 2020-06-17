@@ -113,7 +113,7 @@ EndFunction
 ;BEGIN FRAGMENT Fragment_Terminal_11
 Function Fragment_Terminal_11(ObjectReference akTerminalRef)
 ;BEGIN CODE
-pDTSleep_SettingUseBT2Gun.SetValue(0.0)
+pDTSleep_SettingUseBT2Gun.SetValue(2.0)
 ;END CODE
 EndFunction
 ;END FRAGMENT
@@ -462,6 +462,30 @@ pDTSleep_SettingProps.SetValue(1.0)
 EndFunction
 ;END FRAGMENT
 
+;BEGIN FRAGMENT Fragment_Terminal_55
+Function Fragment_Terminal_55(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingUseBT2Gun.SetValue(0.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_56
+Function Fragment_Terminal_56(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingUseSMMorph.SetValue(1.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_57
+Function Fragment_Terminal_57(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingUseSMMorph.SetValue(0.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
 ;END FRAGMENT CODE - Do not edit anything between this and the begin comment
 
 GlobalVariable Property pDTSleep_SettingIntimate Auto Const Mandatory
@@ -519,3 +543,5 @@ GlobalVariable Property pDTSleep_SettingSpectate Auto Const Mandatory
 GlobalVariable Property pDTSleep_SettingDoorsEnabled Auto Const Mandatory
 
 GlobalVariable Property pDTSleep_SettingProps Auto Const Mandatory
+
+GlobalVariable Property pDTSleep_SettingUseSMMorph Auto Const Mandatory

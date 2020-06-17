@@ -1,5 +1,5 @@
-<meta title="SleepIntimateX_SavageCabbage_positionData.xml" version="2.43" dataSet="position"/>
-<!-- for use with SavageCabbage v1.2 -->
+<meta title="SleepIntimateX_SavageCabbage_positionData.xml" version="2.45" dataSet="position"/>
+<!-- for use with SavageCabbage v1.2.2 -->
 
 
 <position id="DTSIX_700_S1" animation="SIX_SC_FM-DoubleBed02-01Tease" isHidden="true"/>
@@ -66,6 +66,9 @@
 
 <position id="DTSIX_746_S1" animation="SIX_SC-FM-Human-Motorbike01-01Tease" isHidden="true"/>
 <position id="DTSIX_746_S2" animation="SIX_SC_FM-Motorbike01-03Cowgirl" isHidden="true"/>
+<position id="DTSIX_746_S3" animation="SIX_SC_FM-Motorbike01-04Cowgirl" isHidden="true"/>
+<position id="DTSIX_746_S4" animation="SIX_SC_FM-Motorbike01-05Cowgirl" isHidden="true"/>
+<position id="DTSIX_746_S5" animation="SIX_SC_FM-Motorbike01-06Cowgirl" isHidden="true"/>
 
 <position id="DTSIX_747_S1" animation="SIX_SC_FM-ShowerPlayerHouse01-01Tease" isHidden="true"/>
 <position id="DTSIX_747_S2" animation="SIX_SC_FM-ShowerPlayerHouse01-03Doggy" isHidden="true"/>
@@ -92,6 +95,7 @@
 <position id="DTSIX_752_S3" animation="SIX_SC_FM-Desk01-04Doggy" isHidden="true"/>
 <position id="DTSIX_752_S4" animation="SIX_SC-FM-Human-Desk01-05Doggy" isHidden="true"/>
 <position id="DTSIX_752_S5" animation="SIX_SC-FM-Human-Desk01-06Doggy" isHidden="true"/>
+<position id="DTSIX_752_S6" animation="SIX_SC-FM-Human-Desk01-07ClimaxLoop" isHidden="true"/>
 
 <position id="DTSIX_753_S1" animation="SIX_SC_FM-Stool01-03Doggy" isHidden="true"/>
 <position id="DTSIX_753_S2" animation="SIX_SC_FM-Stool01-04Doggy" isHidden="true"/>
@@ -126,7 +130,7 @@
 <position id="DTSIX_759_S3" animation="SIX_SC_FM-Bench01-04ReverseCowgirlAnal" isHidden="true"/>
 <position id="DTSIX_759_S4" animation="SIX_SC_FM-Bench01-05ReverseCowgirlAnal" isHidden="true"/>
 <position id="DTSIX_759_S5" animation="SIX_SC_FM-Bench01-06ReverseCowgirlAnal" isHidden="true"/>
-<position id="DTSIX_759_S6" animation="SIX_SC_FM-Bench01-04ReverseCowgirlAnal" isHidden="true"/>
+<position id="DTSIX_759_S6" animation="SIX_SC_FM-Bench01-07ClimaxLoop" isHidden="true"/>
 
 <position id="DTSIX_732_S1" animation="SIX_SC-FM-Human-Ottoman01-03Handjob" isHidden="true"/>
 <position id="DTSIX_732_S2" animation="SIX_SC-FM-Human-Ottoman01-04Blowjob" isHidden="true"/>
@@ -148,12 +152,14 @@
 <position id="DTSIX_735_S3" animation="SIX_SC_FM-Couch02-04Handjob" isHidden="true"/>
 <position id="DTSIX_735_S4" animation="SIX_SC_FM-Couch02-05Blowjob" isHidden="true"/>
 <position id="DTSIX_735_S5" animation="SIX_SC_FM-Couch02-06Blowjob" isHidden="true"/>
+<position id="DTSIX_735_S6" animation="SIX_SC_FM-Couch02-07ClimaxLoop" isHidden="true"/>
 
 <position id="DTSIX_736_S1" animation="SIX_SC_FM-Couch01-01Tease" isHidden="true"/>
 <position id="DTSIX_736_S2" animation="SIX_SC_FM-Couch01-03Spoon" isHidden="true"/>
 <position id="DTSIX_736_S3" animation="SIX_SC_FM-Couch01-04Spoon" isHidden="true"/>
 <position id="DTSIX_736_S4" animation="SIX_SC_FM-Couch01-05Spoon" isHidden="true"/>
 <position id="DTSIX_736_S5" animation="SIX_SC-FM-Human-Couch01-06Spoon" isHidden="true"/>
+<position id="DTSIX_736_S6" animation="SIX_SC-FM-Human-Couch01-07ClimaxLoop" isHidden="true"/>
 
 <position id="DTSIX_737_S1" animation="SIX_SC_FM-Armchair01-01Tease" isHidden="true"/>
 <position id="DTSIX_737_S2" animation="SIX_SC_FM-Armchair01-02Start" isHidden="true"/>
@@ -220,6 +226,8 @@
 
 <position id="DTSIX_780_S1" animation="SIX_SC-FM-Human-DinerBooth01-01Tease" isHidden="true"/>
 
+<position id="DTSIX_781_S1" animation="SIX_SC-FM-Human-Couch_PlayerHouse01-03Facefuck" isHidden="true"/>
+
 <position id="DTSIX_784_S1" animation="SIX_SC-FM-Human-Crane01-03Carry" isHidden="true"/>
 
 <position id="DTSIX_785_S1" animation="SIX_SC-FM-Human-FederalistCouch02-03ReverseCowGirl" isHidden="true"/>
@@ -280,20 +288,22 @@
 <position id="DTSIXSM_763_S2" animation="SIX_SC_FSM-Floor01-04Doggy" isHidden="true"/>
 <position id="DTSIXSM_763_S3" animation="SIX_SC_FSM-Floor01-05Wheelbarrow" isHidden="true"/>
 <position id="DTSIXSM_763_S4" animation="SIX_SC_FSM-Floor01-04Doggy" isHidden="true"/>
+<position id="DTSIXSM_763_S6" animation="SIX_SC_FM-SuperMutant-Floor01-07ClimaxLoop" isHidden="true"/>
 
 <position id="DTSIXSM_764_S1" animation="SIX_SC_FSM-DoubleBed02-03Blowjob" isHidden="true"/>
 <position id="DTSIXSM_764_S2" animation="SIX_SC_FSM-DoubleBed02-04Blowjob" isHidden="true"/>
 <position id="DTSIXSM_764_S3" animation="SIX_SC_FSM-DoubleBed02-05Standing69" isHidden="true"/>
 <position id="DTSIXSM_764_S4" animation="SIX_SC_FSM-DoubleBed02-06Standing69" isHidden="true"/>
 <position id="DTSIXSM_764_S5" animation="SIX_SC_FSM-DoubleBed02-07Standing69" isHidden="true"/>
-<position id="DTSIXSM_764_S6" animation="SIX_SC_FSM-DoubleBed02-05Standing69" isHidden="true"/>
+<position id="DTSIXSM_764_S6" animation="SIX_SC_FSM-DoubleBed02-08Deepthroat69" isHidden="true"/>
+<position id="DTSIXSM_764_S7" animation="SIX_SC_FM-SuperMutant-DoubleBed02-09ClimaxLoop" isHidden="true"/>
 
 <position id="DTSIXSM_765_S1" animation="SIX_SC_FSM-DoubleBed01-02Start" isHidden="true"/>
 <position id="DTSIXSM_765_S2" animation="SIX_SC_FSM-DoubleBed01-03Doggy" isHidden="true"/>
 <position id="DTSIXSM_765_S3" animation="SIX_SC_FSM-DoubleBed01-04Doggy" isHidden="true"/>
 <position id="DTSIXSM_765_S4" animation="SIX_SC_FSM-DoubleBed01-05Doggy" isHidden="true"/>
 <position id="DTSIXSM_765_S5" animation="SIX_SC_FSM-DoubleBed01-06Doggy" isHidden="true"/>
-<position id="DTSIXSM_765_S6" animation="SIX_SC_FSM-DoubleBed01-02Start" isHidden="true"/>
+<position id="DTSIXSM_765_S6" animation="SIX_SC_FSM-DoubleBed01-07ClimaxLoop" isHidden="true"/>
 
 <position id="DTSIXSM_766_S1" animation="SIX_SC_FSM-DoubleBed03-01Tease" isHidden="true"/>
 <position id="DTSIXSM_766_S2" animation="SIX_SC-FM-SuperMutant-DoubleBed03-02Start" isHidden="true"/>

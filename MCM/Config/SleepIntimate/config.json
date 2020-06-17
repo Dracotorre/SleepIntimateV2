@@ -766,12 +766,12 @@
 		},
 		{
 			"id": "MCM_SettingUseBT2Gun:Intimacy",
-			"text": "BodyTalk2 nude-suits",
+			"text": "BodyTalk ",
 			"type": "dropdown",
-			"help": "male nude-suit swap - use BodySlide to build 3 suits: SI-BodyTalk2-V2-Erect, SI-BodyTalk2-V2-ErectDown, SI-BodyTalk2-V2-ErectUp",
+			"help": "for male nude-suit swap - use BodySlide to build 3 suits: SI-BodyTalk2-V2-Erect, SI-BodyTalk2-V2-ErectDown, SI-BodyTalk2-V2-ErectUp",
 			"groupCondition": 10,
 			"valueOptions": {
-				"options": ["Disabled", "Enabled"],
+				"options": ["Disabled", "nude-suit Enabled", "Morph Enabled"],
 				"sourceType": "GlobalValue",
 				"sourceForm": "SleepIntimate.esp|13A94F",
 				"propertyName": "DTSleep_SettingUseBT2Gun"
@@ -788,6 +788,19 @@
 				"sourceType": "GlobalValue",
 				"sourceForm": "SleepIntimate.esp|13FCED",
 				"propertyName": "DTSleep_SettingAltFemBody"
+			}
+		},
+		{
+			"id": "MCM_SettingUseSMMorph:Intimacy",
+			"text": "Super Mutant Body Morph",
+			"type": "dropdown",
+			"help": "enable for super mutant body use morph; disabled will use body swap",
+			"groupCondition": 10,
+			"valueOptions": {
+				"options": ["Disabled", "Enabled"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|1A137A",
+				"propertyName": "DTSleep_SettingUseSMMorph"
 			}
 		},
 		{
