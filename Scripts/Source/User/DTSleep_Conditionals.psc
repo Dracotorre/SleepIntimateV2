@@ -27,6 +27,7 @@ Actor property RobotAdaRef = None auto conditional hidden
 ; mod compatibility 
 bool property HasModReqNormSleep = false auto conditional hidden
 Actor property NoraSpouseRef = None auto conditional hidden
+Actor property NoraSpouse2Ref = None auto conditional hidden
 Actor property DualSurvivorsNateRef = None auto conditional hidden
 Actor property InsaneIvyRef = None auto conditional hidden
 Location property DepravityHotelRexLoc = None auto conditional hidden

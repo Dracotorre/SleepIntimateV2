@@ -88,6 +88,9 @@ bool Function IsAllowedLover(Actor akActor)
 	if ((DTSConditionals as DTSleep_Conditionals).NoraSpouseRef != None && akActor == (DTSConditionals as DTSleep_Conditionals).NoraSpouseRef)
 			
 		return true
+	elseIf ((DTSConditionals as DTSleep_Conditionals).NoraSpouse2Ref != None && akActor == (DTSConditionals as DTSleep_Conditionals).NoraSpouse2Ref)
+			
+		return true
 	elseIf ((DTSConditionals as DTSleep_Conditionals).DualSurvivorsNateRef != None && akActor == (DTSConditionals as DTSleep_Conditionals).DualSurvivorsNateRef)
 		return true
 	endIf

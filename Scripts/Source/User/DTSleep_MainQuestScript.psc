@@ -2757,7 +2757,11 @@ int Function ChanceForIntimateCompanionAdj(Actor companionRef)
 
 	int result = 0
 	if (companionRef != None)
-		if ((DTSConditionals as DTSleep_Conditionals).NoraSpouseRef != None && companionRef == (DTSConditionals as DTSleep_Conditionals).NoraSpouseRef)
+		Actor noraCompRef = (DTSConditionals as DTSleep_Conditionals).NoraSpouseRef
+		if (noraCompRef == None)
+			noraCompRef = (DTSConditionals as DTSleep_Conditionals).NoraSpouse2Ref
+		endIf
+		if (noraCompRef != None && companionRef == noraCompRef)
 			; bonus for Nora spouse - she is also a rank higher as if romanced
 			CompanionActorScript compAct = companionRef as CompanionActorScript
 			if (compAct.IsRomantic() || companionRef.GetValue(CA_AffinityAV) >= 1000.0)
@@ -5095,10 +5099,14 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 			if (aCompanion != None && aCompanion.IsEnabled() && !aCompanion.IsDead() && !aCompanion.IsUnconscious())
 			
 				; check NoraSpouse and DualSurvivor first - assume in love
-				if ((DTSConditionals as DTSleep_Conditionals).NoraSpouseRef != None && aCompanion == (DTSConditionals as DTSleep_Conditionals).NoraSpouseRef)
+				Actor noraCompRef = (DTSConditionals as DTSleep_Conditionals).NoraSpouseRef
+				if (noraCompRef == None)
+					noraCompRef = (DTSConditionals as DTSleep_Conditionals).NoraSpouse2Ref
+				endIf
+				if (noraCompRef != None && aCompanion == noraCompRef)
 				
 					if (aCompanion.GetDistance(PlayerRef) < 1600.0)
-						result.CompanionActor = (DTSConditionals as DTSleep_Conditionals).NoraSpouseRef
+						result.CompanionActor = noraCompRef
 						result.HasLoverRing = false
 						result.RelationRank = 4
 						if (aCompanion.IsRomantic() || aCompanion.GetValue(CA_AffinityAV) >= 900.0)
@@ -5659,6 +5667,8 @@ int Function GetRelationRankActor(Actor actorRef, bool isTrueLove)
 		elseIf (compActor.IsInFatuated())
 			return romanceRank - 1
 		elseIf ((DTSConditionals as DTSleep_Conditionals).NoraSpouseRef != None && actorRef == (DTSConditionals as DTSleep_Conditionals).NoraSpouseRef)
+			return romanceRank
+		elseIf ((DTSConditionals as DTSleep_Conditionals).NoraSpouse2Ref != None && actorRef == (DTSConditionals as DTSleep_Conditionals).NoraSpouse2Ref)
 			return romanceRank
 		elseIf ((DTSConditionals as DTSleep_Conditionals).DualSurvivorsNateRef != None && actorRef == (DTSConditionals as DTSleep_Conditionals).DualSurvivorsNateRef)
 			return romanceRank
@@ -9822,10 +9832,10 @@ endFunction
 
 int Function IsObjBelongPlayerWorkshop(ObjectReference objRef)
 	ObjectReference linkRef = objRef.GetLinkedRef(WorkshopItemKeyword)   ; takes 0.1 seconds - check keywords first
-	if (linkRef)
+	if (linkRef != None)
 
-		
-		if (linkRef.HasKeyword(DTSConditionals.ConquestWorkshopKW))
+		; v2.46 - check for none first
+		if (DTSConditionals.ConquestWorkshopKW != None && linkRef.HasKeyword(DTSConditionals.ConquestWorkshopKW))
 
 			return 2
 		elseIf (linkRef.GetValue(WorkshopPlayerOwned) >= 1.0)
@@ -12927,6 +12937,8 @@ Function SetProgressIntimacy(int sexAppealScore = -1, int creatureType = 0, int 
 	if (!SceneData.CompanionInPowerArmor && SceneData.IsCreatureType != CreatureTypeSynth)
 		if ((DTSConditionals as DTSleep_Conditionals).NoraSpouseRef != None && IntimateCompanionRef == (DTSConditionals as DTSleep_Conditionals).NoraSpouseRef)
 			; no disease
+		elseIf ((DTSConditionals as DTSleep_Conditionals).NoraSpouse2Ref != None && IntimateCompanionRef == (DTSConditionals as DTSleep_Conditionals).NoraSpouse2Ref)
+			; nope
 		elseIf ((DTSConditionals as DTSleep_Conditionals).DualSurvivorsNateRef != None && IntimateCompanionRef == (DTSConditionals as DTSleep_Conditionals).DualSurvivorsNateRef)
 			; no disease
 		else
@@ -14660,6 +14672,7 @@ Function TestModeOutput()
 		Debug.Trace(myScriptName + "      LastSucc: " + DTSleep_IntimateTime.GetValue() + " / " + IntimateLastTime)
 		Debug.Trace(myScriptName + "       LastHug: " + IntimateLastEmbraceTime)
 		Debug.Trace(myScriptName + "   LastDogSucc: " + DTSleep_IntimateDogTime.GetValue())
+		Debug.Trace(myScriptName + "  EquipMonInit: " + (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).DTSleep_EquipMonInit.GetValue())
 		
 		
 		Debug.Trace(myScriptName + " =====================================================================")
@@ -14688,7 +14701,7 @@ Function TestModeOutput()
 		Debug.Trace(myScriptName + "    Spectators: " + (DTSleep_SpectatorQuestP as DTSleep_SpectatorQuestScript).DTSleep_SettingSpectate.GetValue())
 		Debug.Trace(myScriptName + "    AltFemBody: " + (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).DTSleep_SettingAltFemBody.GetValue())
 		Debug.Trace(myScriptName + "  EVB Best-fit: " + (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).DTSleep_SettingUseLeitoGun.GetValue())
-		Debug.Trace(myScriptName + "BodyTalk2 swap: " + (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).DTSleep_SettingUseBT2Gun.GetValue())
+		Debug.Trace(myScriptName + "    BodyTalk2 : " + (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).DTSleep_SettingUseBT2Gun.GetValue())
 		Debug.Trace(myScriptName + "SynthGen2-to-3: " + DTSleep_SettingSynthHuman.GetValue())
 		
 		if (DTSleep_AdultContentOn.GetValueInt() >= 2)
@@ -14744,6 +14757,7 @@ Function TestModeOutput()
 		Debug.Trace(myScriptName + "  UF MalBodLen: " + (DTSConditionals as DTSleep_Conditionals).ModUniqueFollowerMaleBodyLength)
 		Debug.Trace(myScriptName + " HeatherBodIdx: " + (DTSConditionals as DTSleep_Conditionals).ModCompanionBodyHeatherIndex)
 		Debug.Trace(myScriptName + " HeatherActIdx: " + (DTSConditionals as DTSleep_Conditionals).ModCompanionActorHeatherIndex)
+		Debug.Trace(myScriptName + " VulpineRace:   " + (DTSConditionals as DTSleep_Conditionals).IsVulpineRacePlayerActive)
 		Debug.Trace(myScriptName + " =====================================================================")
 	endIf
 
@@ -14784,7 +14798,11 @@ Function UpdateIntimateAnimPreferences(int playerChoice)
 
 	if (IntimateCompanionRef != None)
 	
-		if ((DTSConditionals as DTSleep_Conditionals).NoraSpouseRef != None && IntimateCompanionRef == (DTSConditionals as DTSleep_Conditionals).NoraSpouseRef)
+		Actor noraCompRef = (DTSConditionals as DTSleep_Conditionals).NoraSpouseRef
+		if (noraCompRef == None)
+			noraCompRef = (DTSConditionals as DTSleep_Conditionals).NoraSpouse2Ref
+		endIf
+		if (noraCompRef != None && IntimateCompanionRef == noraCompRef)
 	
 			(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePrefSpanking(true)
 			if (playerChoice == 0)

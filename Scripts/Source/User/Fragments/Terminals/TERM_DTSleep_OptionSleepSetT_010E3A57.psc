@@ -290,6 +290,62 @@ pDTSleep_SettingHealthRecover.SetValue(1.0)
 EndFunction
 ;END FRAGMENT
 
+;BEGIN FRAGMENT Fragment_Terminal_38
+Function Fragment_Terminal_38(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingUndressPipboy.SetValue(2.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_39
+Function Fragment_Terminal_39(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingUndressPipboy.SetValue(0.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_40
+Function Fragment_Terminal_40(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingUndressPipboy.SetValue(1.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_41
+Function Fragment_Terminal_41(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingUndressWeapon.SetValue(1.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_42
+Function Fragment_Terminal_42(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingUndressWeapon.SetValue(2.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_43
+Function Fragment_Terminal_43(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingUndressWeapon.SetValue(3.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_44
+Function Fragment_Terminal_44(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingUndressWeapon.SetValue(0.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
 ;END FRAGMENT CODE - Do not edit anything between this and the begin comment
 
 GlobalVariable Property pDTSleep_SettingNapOnly Auto Const Mandatory
@@ -319,3 +375,7 @@ GlobalVariable Property pDTSleep_SettingNapRecover Auto Const Mandatory
 GlobalVariable Property pDTSleep_SettingIncludeExtSlots Auto Const Mandatory
 
 GlobalVariable Property pDTSleep_SettingHealthRecover Auto Const Mandatory
+
+GlobalVariable Property pDTSleep_SettingUndressPipboy Auto Const Mandatory
+
+GlobalVariable Property pDTSleep_SettingUndressWeapon Auto Const Mandatory

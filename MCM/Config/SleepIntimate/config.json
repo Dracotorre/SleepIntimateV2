@@ -488,6 +488,30 @@
 			}
 		},
 		{
+			"id": "MCM_SettingUndressPipboy:Rest",
+			"text": "Undress Pip-boy",
+			"type": "dropdown",
+			"help": "keep/show or remove Pip-boy",
+			"valueOptions": {
+				"options": ["Show", "Show in bed", "Always remove"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|53ACD",
+				"propertyName": "DTSleep_SettingUndressPipboy"
+			}
+		},
+		{
+			"id": "MCM_SettingUndressWeapon:Rest",
+			"text": "Undress Weapon",
+			"type": "dropdown",
+			"help": "remove main weapon for sleep--useful for show-holstered mods (weapon always removed for animations)",
+			"valueOptions": {
+				"options": ["Disabled", "Companion", "Player", "All"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|1A48AC",
+				"propertyName": "DTSleep_SettingUndressWeapon"
+			}
+		},
+		{
 			"id": "MCM_SettingIncludeExtSlots:Rest",
 			"text": "Undress Extended Slots",
 			"type": "dropdown",

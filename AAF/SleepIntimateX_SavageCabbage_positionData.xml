@@ -1,5 +1,5 @@
-<meta title="SleepIntimateX_SavageCabbage_positionData.xml" version="2.45" dataSet="position"/>
-<!-- for use with SavageCabbage v1.2.2 -->
+<meta title="SleepIntimateX_SavageCabbage_positionData.xml" version="2.46" dataSet="position"/>
+<!-- for use with SavageCabbage v1.2.3 -->
 
 
 <position id="DTSIX_700_S1" animation="SIX_SC_FM-DoubleBed02-01Tease" isHidden="true"/>
@@ -238,6 +238,9 @@
 <position id="DTSIX_786_S1" animation="SIX_SC-FM-Human-KitchenPostWar01-03Doggy" isHidden="true"/>
 <position id="DTSIX_786_S2" animation="SIX_SC-FM-Human-KitchenPostWar01-04Doggy" isHidden="true"/>
 <position id="DTSIX_786_S3" animation="SIX_SC-FM-Human-KitchenPostWar01-05Doggy" isHidden="true"/>
+<position id="DTSIX_786_S4" animation="SIX_SC-FM-Human-KitchenPostWar01-06Doggy" isHidden="true"/>
+
+<position id="DTSIXFMM_786_S1" animation="SIX_SC-FMM-Human-KitchenPostWar01-03Doggy" isHidden="true"/>
 
 <position id="DTSIX_787_S1" animation="SIX_SC-FM-Human-Throne02-03ReverseCowgirl" isHidden="true"/>
 
@@ -272,10 +275,11 @@
 <position id="DTSIXSM_760_S4" animation="SIX_SC_FSM-Standing03-05Carry" isHidden="true"/>
 <position id="DTSIXSM_760_S5" animation="SIX_SC-FM-SuperMutant-Standing03-06Carry" isHidden="true"/>
 
-<position id="DTSIXSM_761_S1" animation="SIX_SC_FSM-Standing01-03Doggy" isHidden="true"/>
-<position id="DTSIXSM_761_S2" animation="SIX_SC_FSM-Standing01-04Doggy" isHidden="true"/>
-<position id="DTSIXSM_761_S3" animation="SIX_SC_FSM-Standing01-05Doggy" isHidden="true"/>
-<position id="DTSIXSM_761_S4" animation="SIX_SC_FSM-Standing01-06Doggy" isHidden="true"/>
+<position id="DTSIXSM_761_S1" animation="SIX_SC_FM-SuperMutant-Standing01-02Start" isHidden="true"/>
+<position id="DTSIXSM_761_S2" animation="SIX_SC_FSM-Standing01-03Doggy" isHidden="true"/>
+<position id="DTSIXSM_761_S3" animation="SIX_SC_FSM-Standing01-04Doggy" isHidden="true"/>
+<position id="DTSIXSM_761_S4" animation="SIX_SC_FSM-Standing01-05Doggy" isHidden="true"/>
+<position id="DTSIXSM_761_S5" animation="SIX_SC_FSM-Standing01-06Doggy" isHidden="true"/>
 
 <position id="DTSIXSMSM_761_S1" animation="SIX_SC_FSMSM-Standing01-03DoubleTeam" isHidden="true"/>
 
@@ -284,10 +288,11 @@
 <position id="DTSIXSM_762_S3" animation="SIX_SC_FSM-Standing02-05Blowjob" isHidden="true"/>
 <position id="DTSIXSM_762_S4" animation="SIX_SC_FSM-Standing02-06Blowjob" isHidden="true"/>
 
-<position id="DTSIXSM_763_S1" animation="SIX_SC_FSM-Floor01-03Doggy" isHidden="true"/>
-<position id="DTSIXSM_763_S2" animation="SIX_SC_FSM-Floor01-04Doggy" isHidden="true"/>
-<position id="DTSIXSM_763_S3" animation="SIX_SC_FSM-Floor01-05Wheelbarrow" isHidden="true"/>
-<position id="DTSIXSM_763_S4" animation="SIX_SC_FSM-Floor01-04Doggy" isHidden="true"/>
+<position id="DTSIXSM_763_S1" animation="SIX_SC-FM-SuperMutant-Floor01-01Tease" isHidden="true"/>
+<position id="DTSIXSM_763_S2" animation="SIX_SC_FSM-Floor01-03Doggy" isHidden="true"/>
+<position id="DTSIXSM_763_S3" animation="SIX_SC_FSM-Floor01-04Doggy" isHidden="true"/>
+<position id="DTSIXSM_763_S4" animation="SIX_SC_FSM-Floor01-05Wheelbarrow" isHidden="true"/>
+<position id="DTSIXSM_763_S5" animation="SIX_SC_FSM-Floor01-04Doggy" isHidden="true"/>
 <position id="DTSIXSM_763_S6" animation="SIX_SC_FM-SuperMutant-Floor01-07ClimaxLoop" isHidden="true"/>
 
 <position id="DTSIXSM_764_S1" animation="SIX_SC_FSM-DoubleBed02-03Blowjob" isHidden="true"/>
@@ -316,13 +321,15 @@
 <position id="DTSIXSM_767_S2" animation="SIX_SC_FSM-SMBed01-02Start" isHidden="true"/>
 <position id="DTSIXSM_767_S3" animation="SIX_SC_FSM-SMBed01-03Missionary" isHidden="true"/>
 <position id="DTSIXSM_767_S4" animation="SIX_SC_FSM-SMBed01-04Missionary" isHidden="true"/>
-<position id="DTSIXSM_767_S5" animation="SIX_SC_FSM-SMBed01-03Missionary" isHidden="true"/>
-<position id="DTSIXSM_767_S6" animation="SIX_SC_FSM-SMBed01-01Tease" isHidden="true"/>
+<position id="DTSIXSM_767_S5" animation="SIX_SC_FSM-SMBed01-05Missionary" isHidden="true"/>
+<position id="DTSIXSM_767_S6" animation="SIX_SC_FM-SuperMutant-SMBed01-06Missionary" isHidden="true"/>
+<position id="DTSIXSM_767_S7" animation="SIX_SC_FM-SuperMutant-SMBed01-07ClimaxLoop" isHidden="true"/>
 
-<position id="DTSIXSM_768_S1" animation="SIX_SC_FSM-SMBed02-03Doggy" isHidden="true"/>
-<position id="DTSIXSM_768_S2" animation="SIX_SC_FSM-SMBed02-04Doggy" isHidden="true"/>
-<position id="DTSIXSM_768_S3" animation="SIX_SC_FSM-SMBed02-05Doggy" isHidden="true"/>
-<position id="DTSIXSM_768_S4" animation="SIX_SC_FSM-SMBed02-06Doggy" isHidden="true"/>
+<position id="DTSIXSM_768_S1" animation="SIX_SC_FM-SuperMutant-SMBed02-01Tease" isHidden="true"/>
+<position id="DTSIXSM_768_S2" animation="SIX_SC_FSM-SMBed02-03Doggy" isHidden="true"/>
+<position id="DTSIXSM_768_S3" animation="SIX_SC_FSM-SMBed02-04Doggy" isHidden="true"/>
+<position id="DTSIXSM_768_S4" animation="SIX_SC_FSM-SMBed02-05Doggy" isHidden="true"/>
+<position id="DTSIXSM_768_S5" animation="SIX_SC_FSM-SMBed02-06Doggy" isHidden="true"/>
 
 <position id="DTSIXSM_769_S1" animation="SIX_SC-FM-SuperMutant-Standing04-01Tease" isHidden="true"/>
 

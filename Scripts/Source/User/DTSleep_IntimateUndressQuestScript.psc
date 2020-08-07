@@ -78,6 +78,7 @@ GlobalVariable property DTSleep_DebugMode auto const
 GlobalVariable property DTSleep_IUndressStat auto
 GlobalVariable property DTSleep_SettingAltFemBody auto	; added v2.12 for alternate female body
 GlobalVariable property DTSleep_SettingIncludeExtSlots auto
+GlobalVariable property DTSleep_SettingUndressWeapon auto
 EndGroup
 
 Group B_Lists
@@ -454,10 +455,10 @@ endFunction
 ;
 bool Function StartForBedWake(bool includeClothing, ObjectReference mainBedRef, Actor companionActorRef, ObjectReference compBedRef, bool observeWinter = true, bool companionReqNudeSuit = true, bool includePipBoy = false, bool playerIsNaked = false)
 	if (PlayerBedRef != None)
-		DTDebug(" starting BedWake -- already have bed---cancel ", 2)
+		DTDebug(" starting BedWake -- already have bed---cancel ", 1)
 		return false
 	elseIf (PlayerRef.WornHasKeyword(ArmorTypePower))
-		DTDebug(" starting BedWake -- player in power armor --- cancel ", 2)
+		DTDebug(" starting BedWake -- player in power armor --- cancel ", 1)
 		return false
 	endIf
 	bool needInitEquipMon = false
@@ -524,7 +525,7 @@ bool Function StartForBedWake(bool includeClothing, ObjectReference mainBedRef, 
 	PlayerSleepEquippedFormArray = new Form[0]
 	CompanionSleepEquippedFormArray = new Form[0]
 	
-	DTDebug(" starting BedWake on beds: " + mainBedRef + "," + compBedRef + " with companion: " + companionActorRef + " with 2nd comp: " + CompanionSecondRef, 2)
+	DTDebug(" starting BedWake on beds: " + mainBedRef + "," + compBedRef + " with companion: " + companionActorRef + " with 2nd comp: " + CompanionSecondRef, 1)
 	
 	if (CompanionRef != None)
 	
@@ -1250,6 +1251,8 @@ Function CheckAndEquipMainSleepOutfit(Actor actorRef)
 		if (actorRef == PlayerRef)
 			if (DressData.PlayerEquippedSleepwearItem == None)
 			
+				DTDebug("player missing sleepwear, CheckAndEquipMainSleepOutfit LastEquippedSleepwearItem " + DressData.PlayerLastEquippedSleepwearItem, 1)
+			
 				if (UndressedForType >= 5 && PlayerRef.GetItemCount(DTSleep_PlayerNudeBodyNoPipBoy) > 0)
 					RedressActorRemoveNudeSuits(actorRef, DTSleep_PlayerNudeBodyNoPipBoy, " player nude-body-noPip", true)
 				endIf
@@ -1257,6 +1260,7 @@ Function CheckAndEquipMainSleepOutfit(Actor actorRef)
 					actorRef.UnequipItemSlot(3)
 					
 					PlayerRef.EquipItem(DressData.PlayerLastEquippedSleepwearItem, false, true)
+					
 				elseIf (DTSleep_DebugMode.GetValueInt() > 0)
 					Debug.Trace(myScriptName + " missing sleepwear!!")
 				endIf
@@ -1586,8 +1590,9 @@ Armor Function GetCustomNudeSuitForCompanion(Actor actorRef)
 	if (actorRef != None)
 	
 		int armorIndex = -1
+		int gender = GetGenderForActor(actorRef)
 		
-		if ((DTSConditionals as DTSleep_Conditionals).IsUniqueFollowerFemActive)
+		if (gender == 1 && (DTSConditionals as DTSleep_Conditionals).IsUniqueFollowerFemActive)
 			if (actorRef == CaitRef)
 				armorIndex = 0
 			elseIf (actorRef == CurieRef)
@@ -1601,7 +1606,7 @@ Armor Function GetCustomNudeSuitForCompanion(Actor actorRef)
 			endIf
 		endIf
 		
-		if (armorIndex < 0 && (DTSConditionals as DTSleep_Conditionals).IsUniqueFollowerMaleActive)
+		if (gender == 0 && armorIndex < 0 && (DTSConditionals as DTSleep_Conditionals).IsUniqueFollowerMaleActive)
 			
 			armorIndex = GetCompanionLeitoArmorIndexPublic(actorRef)
 			
@@ -1610,7 +1615,7 @@ Armor Function GetCustomNudeSuitForCompanion(Actor actorRef)
 			endIf
 		endIf
 			
-		if (armorIndex < 0 && (DTSConditionals as DTSleep_Conditionals).IsHeatherCompanionActive)
+		if (gender == 0 && armorIndex < 0 && (DTSConditionals as DTSleep_Conditionals).IsHeatherCompanionActive)
 			if (actorRef == GetHeatherActor())
 				armorIndex = (DTSConditionals as DTSleep_Conditionals).ModCompanionBodyHeatherIndex
 			endIf
@@ -2015,7 +2020,7 @@ bool Function HandleStartForCompanionSleepwear()
 		
 		if (DressData.CompanionEquippedSleepwearItem == None && !DressData.CompanionEquippedSlot58IsSleepwear && DressData.CompanionEquippedIntimateAttireItem == None)
 
-			DTDebug(" companion has sleepWear but didn't equip during UndressActor!! - equip now", 2)
+			DTDebug(" companion has sleepWear but didn't equip during UndressActor!! - equip now", 1)
 			 
 			CheckRemoveAllNudeSuits(CompanionRef, false)
 			
@@ -3530,7 +3535,7 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 		forBed = false
 	endIf
 	
-	DTDebug("  undress " + actorRef + ", includeClothing: " + includeClothing + ", includeExceptions: " + includeExceptions, 2)
+	DTDebug("  undress " + actorRef + ", includeClothing: " + includeClothing + ", includeExceptions: " + includeExceptions, 1)
 
 	bool hasSleepWearMainOutfit = false
 	int equipMonInitLevel = DTSleep_EquipMonInit.GetValueInt()
@@ -3542,6 +3547,7 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 	Form[] playerEquipArray = None
 	Armor toyCheckRef = None
 	int pipPadSlotIndex = (DTSConditionals as DTSleep_Conditionals).PipPadSlotIndex
+	int remWeaponVal = DTSleep_SettingUndressWeapon.GetValueInt()						;v2.47 (1=companion, 2=player, 3=both)
 	
 	if (DTSleep_ExtraArmorsEnabled.GetValueInt() > 0)
 		extraArmorosEnabled = true
@@ -3558,7 +3564,6 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 			pipPadSlotIndex = SetPlayerPipPadIndex()
 		endIf
 	endIf
-				 
 	
 	if (actorRef == PlayerRef)
 	
@@ -3570,8 +3575,19 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 			playerEquipArray = (DTSleep_UndressPAlias as DTSleep_EquipMonitor).GetMyPlayerEquipment()
 		endIf
 		
+		; v2.47 - weapon 
+		if (remWeaponVal >= 2)
+			UndressActorWeapon(PlayerRef)
+		endIf
+		
 	elseIf (actorRef == CompanionRef)
 		CompanionEquippedArrayUpdated = false
+		
+		if (remWeaponVal == 1 || remWeaponVal == 3)			;v2.47
+			UndressActorWeapon(actorRef)
+		endIf
+	elseIf (remWeaponVal == 1 || remWeaponVal == 3)			;v2.47
+		UndressActorWeapon(actorRef)
 	endIf
 	
 	if (includeClothing)
@@ -3617,7 +3633,7 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 		endIf
 	endIf
 	
-	DTDebug(" actor " + actorRef + " in sleepwear? " + hasSleepWearMainOutfit + " or intimate? " + actorWearingIntimateItem, 2)
+	DTDebug(" actor " + actorRef + " in sleepwear? " + hasSleepWearMainOutfit + " or intimate? " + actorWearingIntimateItem, 1)
 	
 	; register to fill equipment form using EquipMonitor
 	
@@ -3879,12 +3895,13 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 
 	; 60, pip-boy 
 	if (actorRef == PlayerRef && includeClothing && includePipBoy)
-		if (UndressedForType >= 5 && !hasSleepWearMainOutfit)
-			
-			PlayerRef.EquipItem(DTSleep_PlayerNudeBodyNoPipBoy, true, true)
-		else
+		; v2.47 - nude-suit inteferes with unique body--revert to old way by slot; Note: this may not remove custom pip-boy
+		;if (UndressedForType >= 5 && !hasSleepWearMainOutfit)					
+		;	
+		;	PlayerRef.EquipItem(DTSleep_PlayerNudeBodyNoPipBoy, true, true)
+		;else
 			actorRef.UnequipItemSlot(30)
-		endIf
+		;endIf
 	endIf
 	
 	;  extra parts list
@@ -3934,6 +3951,7 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 		CheckAndEquipStrapOnItem(actorRef, toyCheckRef)
 		
 	elseIf (hasSleepWearMainOutfit)
+		
 		CheckAndEquipMainSleepOutfit(actorRef)	
 	endIf
 
@@ -3973,7 +3991,7 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 			endIf
 			
 			if (DTSleep_SettingAltFemBody.GetValueInt() >= 1 && toyCheckRef == None && AltFemBodyEnabled && DTSleep_AdultContentOn.GetValue() >= 2.0 && DressData.PlayerGender == 1)
-				DTDebug(" ****** equip  Alt-Fem-Body on player *****", 2)
+				DTDebug(" ****** equip  Alt-Fem-Body on player *****", 1)
 				actorRef.EquipItem(DTSleep_AltFemNudeBody, true, true)
 			else
 				actorRef.UnequipItemSlot(3)
@@ -4496,7 +4514,11 @@ bool Function UndressActorArmorMainSleepwearPlaceAtFeet(Actor actorRef, bool pla
 		if (DressData.CompanionRequiresNudeSuit)
 			;Debug.Trace(myScriptName + " equip Nude Suit on " + actorRef)
 			
-			actorRef.EquipItem(DTSleep_NudeSuit, true, true)
+			if (DressData.CompanionNudeSuit != None)
+				actorRef.EquipItem(DressData.CompanionNudeSuit)				; v2.47 fix?
+			else
+				actorRef.EquipItem(DTSleep_NudeSuit, true, true)
+			endIf
 			Utility.WaitMenuMode(0.1)
 		endIf
 		
@@ -4802,13 +4824,25 @@ Function UndressActorCompanionDressNudeSuit(Actor actorRef, bool hasSleepMainOut
 	
 	elseIf (actorRef == CompanionSecondRef && !hasStrapOn && DTSleep_SettingAltFemBody.GetValue() >= 1.0 && AltFemBodyEnabled && DTSleep_AdultContentOn.GetValue() >= 2.0 && GetGenderForActor(actorRef) == 1)
 		;v2.26 - 2nd companion alt female body
-		actorRef.EquipItem(DTSleep_AltFemNudeBody, true, true)
+		;v2.47 - support custom body for 2nd companion
+		Armor customNudeSuit = GetCustomNudeSuitForCompanion(actorRef)
+		if (customNudeSuit != None)
+			actorRef.EquipItem(customNudeSuit, true, true)
+		else
+			actorRef.EquipItem(DTSleep_AltFemNudeBody, true, true)
+		endIf
 		
 	elseIf (actorRef == CompanionSecondRef)
 		;v2.26 - 2nd companion always need nude-suit
 		DTDebug(" equip default Nude Suit on 2nd companion, " + actorRef, 2)
-			
-		actorRef.EquipItem(DTSleep_NudeSuit, true, true)   ; prevent NPC main outfit auto-equip
+		
+		;v2.47 - support custom body for 2nd companion
+		Armor customNudeSuit = GetCustomNudeSuitForCompanion(actorRef)
+		if (customNudeSuit != None)
+			actorRef.EquipItem(customNudeSuit, true, true)
+		else
+			actorRef.EquipItem(DTSleep_NudeSuit, true, true)   ; prevent NPC main outfit auto-equip
+		endIf
 	else
 		DTDebug(" equip Nude Ring (no 33) on " + actorRef, 2)
 		int cnt = actorRef.GetItemCount(DTSleep_NudeRingArmorOuter)
@@ -5113,6 +5147,17 @@ bool Function UndressJacketForActor(Actor actorRef)
 	endIf
 	
 	return result
+endFunction
+
+Function UndressActorWeapon(Actor actorRef)
+	if (actorRef != None)
+		Weapon weapItem = actorRef.GetEquippedWeapon()
+		
+		if (weapItem != None)
+			actorRef.UnequipItem(weapItem, false, true)
+			
+		endIf
+	endIf
 endFunction
 
 Function WaitForEquipSleepwearActor(Actor actorRef)

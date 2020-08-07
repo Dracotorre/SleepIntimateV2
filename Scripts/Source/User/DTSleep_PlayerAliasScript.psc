@@ -1154,6 +1154,15 @@ Function CheckCompatibility()
 	endIf
 	
 	; Nora Spouse companion
+	if (Game.IsPluginInstalled("NoraSpouse.esm"))
+		if ((DTSConditionals as DTSleep_Conditionals).NoraSpouse2Ref == None) 
+			(DTSConditionals as DTSleep_Conditionals).NoraSpouse2Ref = Game.GetFormFromFile(0x21000F9A, "NoraSpouse.esm") as Actor
+			DTSleep_CompanionRomance2List.AddForm((DTSConditionals as DTSleep_Conditionals).NoraSpouse2Ref as Form)
+			DTSleep_CompanionIntimateAllList.AddForm((DTSConditionals as DTSleep_Conditionals).NoraSpouse2Ref as Form)
+		endIf
+	else
+		(DTSConditionals as DTSleep_Conditionals).NoraSpouse2Ref = None
+	endIf
 	if (Game.IsPluginInstalled("NoraSpouse.esp"))
 		if ((DTSConditionals as DTSleep_Conditionals).NoraSpouseRef == None) 
 			(DTSConditionals as DTSleep_Conditionals).NoraSpouseRef = Game.GetFormFromFile(0x21001735, "NoraSpouse.esp") as Actor
@@ -1807,6 +1816,13 @@ Function CheckCompatibility()
 				(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.04
 			endIf
 			Form idleForm = None
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.230)
+		
+				idleForm = Game.GetFormFromFile(0x0802F5E4, "SavageCabbage_Animations.esp")
+				if (idleForm  != None)
+					(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.230
+				endIf
+			endIf
 			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.220)
 		
 				idleForm = Game.GetFormFromFile(0x0802E685, "SavageCabbage_Animations.esp")
@@ -2586,7 +2602,7 @@ int Function CheckUniquePlayerFollowers()
 			(DTSConditionals as DTSleep_Conditionals).IsUniqueFollowerMaleActive = true
 			skinArmor = Game.GetFormFromFile(0x1600080A, upName) as Armor   ; Danse
 			
-			if (skinArmor && !DTSleep_ModCompanionBodiesLst.HasForm(skinArmor))
+			if (skinArmor != None && !DTSleep_ModCompanionBodiesLst.HasForm(skinArmor))
 				DTSleep_ModCompanionBodiesLst.AddForm(skinArmor)
 				(DTSConditionals as DTSleep_Conditionals).ModUniqueFollowerMaleBodyBaseIndex = DTSleep_ModCompanionBodiesLst.GetSize() - 1
 				skinArmor = Game.GetFormFromFile(0x16000855, upName) as Armor  ; Gage
@@ -2615,7 +2631,7 @@ int Function CheckUniquePlayerFollowers()
 			(DTSConditionals as DTSleep_Conditionals).IsUniqueFollowerFemActive = true
 			skinArmor = Game.GetFormFromFile(0x16000805, upName) as Armor  ; Cait
 			
-			if (skinArmor && !DTSleep_ModCompanionBodiesLst.HasForm(skinArmor))
+			if (skinArmor != None && !DTSleep_ModCompanionBodiesLst.HasForm(skinArmor))
 				DTSleep_ModCompanionBodiesLst.AddForm(skinArmor)
 				(DTSConditionals as DTSleep_Conditionals).ModUniqueFollowerFemBodyBaseIndex = DTSleep_ModCompanionBodiesLst.GetSize() - 1
 				
@@ -4562,6 +4578,11 @@ Function UpdateCompanionSupportRemoval()
 	; rebuild
 	DTSleep_ModCompanionActorList.Revert()
 	DTSleep_ModCompanionBodiesLst.Revert()
+	
+	if (DTSleep_LastVersion.GetValue() == DTSleep_Version.GetValue())
+		CheckUniquePlayerFollowers()  ; v2.47
+		;else we do this later
+	endIf
 	
 	if ((DTSConditionals as DTSleep_Conditionals).IsHeatherCompanionActive)
 		Form bodyNakedArmor = Game.GetFormFromFile(0x0200BA6D, "llamaCompanionHeather.esp")

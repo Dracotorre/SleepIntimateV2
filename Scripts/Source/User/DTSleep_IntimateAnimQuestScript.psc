@@ -1932,8 +1932,13 @@ float Function GetTimeForPlayID(int id)
 				return 32.0
 			
 			elseIf (id == 741)
+				if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.230)
+					DTSleep_IntimateSceneLen.SetValueInt(1)
+					return 120.0
+				endIf
 				DTSleep_IntimateSceneLen.SetValueInt(0)
-				return 56.0
+				return 60.0
+				
 			elseIf (id >= 743 && id <= 745)
 				DTSleep_IntimateSceneLen.SetValueInt(0)
 				return 36.0
@@ -1984,6 +1989,10 @@ float Function GetTimeForPlayID(int id)
 			elseIf (id == 785 && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.21)
 				DTSleep_IntimateSceneLen.SetValueInt(0)
 				return 45.0
+				
+			elseIf (id == 786 && SceneData.SecondMaleRole != None)		; only for 2nd male else timing is normal
+				DTSleep_IntimateSceneLen.SetValueInt(0)
+				return 30.0
 				
 			elseIf (id == 778 || id == 787 || id == 792)
 				DTSleep_IntimateSceneLen.SetValueInt(0)
@@ -5216,7 +5225,9 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 				endIf
 			endIf
 		elseIf (MySleepBedFurnType == FurnTypeIsTableKitchenCounter)
-			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
+			if (SceneData.SecondMaleRole != None && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.230)
+				sidArray.Add(86)
+			elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
 				sidArray.Add(86)
 			endIf
 		elseIf (MySleepBedFurnType == FurnTypeIsJail)
@@ -5948,6 +5959,8 @@ bool Function SceneIDIsGroupPlay(int sid)
 		elseIf (sid == 735 || sid == 737 || sid == 749 || sid == 748 || sid == 756 || sid == 758)
 			return true
 		elseIf (sid == 761 || sid == 768)
+			return true
+		elseIf (sid == 786 && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.230)
 			return true
 		endIf
 	elseIf (sid >= 551 && sid <= 552)
