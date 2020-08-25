@@ -48,6 +48,9 @@ int property MaleBodySwapEnabled = 1 auto conditional hidden
 ; additional scene info v2.35
 ;
 int property IntimateLocationType = 0 auto conditional hidden
+;
+; more info v2.48
+int property IntimateSceneIsDanceHug = 0 auto conditional hidden ; 0=no, 1 = sexy dance, 2 = normal dance, 3 = hug
 
 
 ; -------------------------- backup data if need to restore after reset ---------

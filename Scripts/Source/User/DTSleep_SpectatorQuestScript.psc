@@ -391,17 +391,27 @@ Function ProcessReactionForActor(Actor actorRef)
 			if (rand >= 3)
 				rIdle = IdleBooingStanding
 			endIf
-			
+		elseIf (SceneData.IntimateSceneIsDanceHug <= 0 && actorRef.IsChild())			; v2.48 - no clap or cheer for kids
+			if (rand >= 4)
+				rIdle = IdleHeadShakeNo
+			elseIf (rand >= 2)
+				rIdle = IdleBooingStanding
+			else
+				rIdle = IdleShrug
+			endIf
 		elseIf (rand <= 2)
 			rIdle = IdleClapping
 		elseIf (rand == 3)
 			rIdle = IdleShrug
-		elseIf (rand == 4)
+		elseIf (rand == 4 && SceneData.IntimateSceneIsDanceHug <= 0)				; v2.48 no head-shake for dancing
 			rIdle = IdleHeadShakeNo
-		else
+		elseIf (SceneData.IntimateSceneIsDanceHug < 3)								; v2.48 no cheer for hug
 			rIdle = IdleCheeringStanding
+		else
+			rIdle = IdleShrug
 		endIf
 	endIf
+	
 	
 	actorRef.PlayIdle(rIdle)
 

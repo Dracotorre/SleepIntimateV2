@@ -153,6 +153,7 @@ FormList property DTSleep_SexyClothesFList auto const
 FormList property DTSleep_SexyClothesMList auto const
 FormList property DTSleep_IntimateAttireOKUnderList auto const
 { must remove under armor on these intimate outfits -- usually slot-33 only with shoes }
+FormList property DTSleep_SleepAttireHandsList auto const
 EndGroup
 
 Group C_AnimSeqLists
@@ -831,6 +832,15 @@ Function CheckCompatibility()
 		Debug.Trace(myScriptName + " Conquest has been removed ")
 		(DTSConditionals as DTSleep_Conditionals).IsConquestActive = false
 		(DTSConditionals as DTSleep_Conditionals).ConquestWorkshopKW = None
+	endIf
+	
+	; APC Transport - not enough room inside APC for animation on sleeping bag
+	if (!(DTSConditionals as DTSleep_Conditionals).IsAPCTransportFound && Game.IsPluginInstalled("LR_APCTransport.esp"))
+		Form sleepBagForm = Game.GetFormFromFile(0x090036CA, "LR_APCTransport.esp")
+		if (sleepBagForm != None && !DTSleep_BadSheltersList.HasForm(sleepBagForm))
+			DTSleep_BadSheltersList.AddForm(sleepBagForm)
+			(DTSConditionals as DTSleep_Conditionals).IsAPCTransportFound = true
+		endIf
 	endIf
 	
 	; Campsite by Fadingsignal
@@ -3108,10 +3118,16 @@ int Function CheckCustomArmorsAndBackpacks()
 			; TheKite VTS
 			crossPluginName = "TheKite_VTS.esp"
 			extraArmor = IsPluginActive(0x0900216E, crossPluginName) as Armor   ; outfit
-			if (extraArmor != None && !DTSleep_IntimateAttireOKUnderList.HasForm(extraArmor as Form))
-				modCount += 1
-				DTSleep_IntimateAttireOKUnderList.AddForm(extraArmor as Form)
-				DTSleep_IntimateAttireFemaleOnlyList.AddForm(extraArmor as Form)
+			if (extraArmor != None)
+				if (!DTSleep_IntimateAttireOKUnderList.HasForm(extraArmor as Form))
+					modCount += 1
+					DTSleep_IntimateAttireOKUnderList.AddForm(extraArmor as Form)
+					DTSleep_IntimateAttireFemaleOnlyList.AddForm(extraArmor as Form)
+					DTSleep_SleepAttireHandsList.AddForm(extraArmor as Form)				; v2.48 - not a hand-slot, but gloves go with outfit
+				elseIf (!DTSleep_SleepAttireHandsList.HasForm(extraArmor as Form))
+					modCount += 1
+					DTSleep_SleepAttireHandsList.AddForm(extraArmor as Form)
+				endIf
 			endIf
 		endIf
 	
@@ -3720,6 +3736,17 @@ int Function CheckCustomArmorsAndBackpacks()
 		DTSleep_ArmorExtraClothingList.AddForm(Game.GetFormFromFile(0x0900B0D9, vtawPlugName))			; pantyhose in beard slot
 		DTSleep_ArmorExtraClothingList.AddForm(Game.GetFormFromFile(0x0900B0FA, vtawPlugName))			; pantyhose
 		DTSleep_ArmorChokerList.AddForm(Game.GetFormFromFile(0x09000830B, vtawPlugName))
+	endIf
+	
+	; Oakley M glasses
+	string oakleyName = "OakleyMFrame.esp"
+	if (!Game.IsPluginInstalled(oakleyName))
+		oakleyName = "OakleyMFrame.esl"
+	endIf
+	extraForm = IsPluginActive(0x09000802, oakleyName)
+	if (extraForm != None && !DTSleep_ArmorGlassesList.HasForm(extraForm))
+		modCount += 1
+		DTSleep_ArmorGlassesList.AddForm(extraForm)
 	endIf
 	
 	

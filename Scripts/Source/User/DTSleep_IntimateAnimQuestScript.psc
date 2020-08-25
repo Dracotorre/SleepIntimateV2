@@ -392,6 +392,7 @@ bool Function StartForActorsAndBed(Actor mainActor, Actor secondActor, ObjectRef
 	MySleepBedFurnType = -2
 	
 	SceneData.MarkerOrientationAllowance = 0
+	SceneData.IntimateSceneIsDanceHug = 0
 	
 	if (mainActor != None && !mainActor.WornHasKeyword(isPowerArmorFrame))
 		MainActorRef = mainActor
@@ -428,6 +429,8 @@ int Function SetAnimationPacksAndGetSceneID(int[] animSetsArray, bool hugsOnly =
 	if (hugsOnly)
 		includeHugs = 2
 	endIf
+	
+	SceneData.IntimateSceneIsDanceHug = 0
 	
 	if (SleepBedIsPillowBed && SleepBedRef != None)
 		ObjectReference bedFrameRef = DTSleep_CommonF.FindNearestAnyBedFromObject(SleepBedRef, DTSleep_BedPillowFrameDBList, None, 86.0)
@@ -862,6 +865,12 @@ bool Function PlayActionIntimateSeq(int seqID)
 			mainActorIsMaleRole = true
 		endIf
 		
+		if (seqID == 739 || seqID == 741)					; v2.48
+			SceneData.IntimateSceneIsDanceHug = 1
+		else
+			SceneData.IntimateSceneIsDanceHug = 0
+		endIf
+		
 		if (SleepBedRef != None)
 			
 			if (seqID >= 100 && SceneData.AnimationSet > 0)
@@ -917,6 +926,8 @@ bool Function PlayActionDancing()
 		return false
 	endIf
 	
+	SceneData.IntimateSceneIsDanceHug = 2
+	
 	if (DTSleep_SettingTestMode.GetValue() > 0.0 && DTSleep_DebugMode.GetValue() >= 1.0)
 		Debug.Trace(myScriptName + " -------------------------------------------------- ")
 		Debug.Trace(myScriptName + " Test-Mode output - may disable in Settings ")
@@ -959,6 +970,7 @@ bool Function PlayActionHugs()
 	endIf
 	
 	SceneData.AnimationSet = 0
+	SceneData.IntimateSceneIsDanceHug = 3
 	ClearSecondActors()
 	
 	if (DTSleep_SettingTestMode.GetValue() > 0.0 && DTSleep_DebugMode.GetValue() >= 1.0)
@@ -988,6 +1000,7 @@ bool Function PlayActionDancePole()
 	endIf
 	
 	SceneData.AnimationSet = 7
+	SceneData.IntimateSceneIsDanceHug = 1				; v2.48
 	ClearSecondActors()
 	
 	if (DTSleep_SettingTestMode.GetValue() > 0.0 && DTSleep_DebugMode.GetValue() >= 1.0)
@@ -1029,6 +1042,7 @@ bool Function PlayActionDanceSexy()
 	endIf
 	
 	SceneData.AnimationSet = 7
+	SceneData.IntimateSceneIsDanceHug = 1				; v2.48
 	ClearSecondActors()
 	
 	CheckRemoveToys(false, true)
@@ -1061,6 +1075,7 @@ bool Function PlayActionXOXO()
 	int[] sidArray = new int[0]
 	
 	SceneData.AnimationSet = 0
+	SceneData.IntimateSceneIsDanceHug = 0    ; v2.48 imagination sex -- not considered a hug
 	ClearSecondActors()
 	
 	sidArray = SceneIDArrayForAnimationSet(-3, false, true, true, sidArray, 2)
@@ -2641,7 +2656,7 @@ int Function PickIntimateSceneID(bool mainActorIsMaleRole, bool standOnly, int[]
 			endIf
 
 			; randomly replace for more variety
-			if (SceneData.SecondMaleRole != None && !MainActorPositionByCaller && LastSceneID != 758 && sceneIDToPlay != 735 && sceneIDToPlay >= 700 && sceneIDToPlay < 800 && sceneIDArray.Length <= 2 && Utility.RandomInt(1, 12) < 3)
+			if (SceneData.SecondMaleRole != None && MainActorScenePrefArray.Length == 0 && !MainActorPositionByCaller && LastSceneID != 758 && sceneIDToPlay != 735 && sceneIDToPlay >= 700 && sceneIDToPlay < 800 && sceneIDArray.Length <= 2 && Utility.RandomInt(1, 12) < 3)
 				sceneIDToPlay = 758
 				groupPlay = true
 				SceneData.SecondFemaleRole = None

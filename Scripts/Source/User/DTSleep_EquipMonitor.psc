@@ -18,6 +18,7 @@ GlobalVariable property DTSleep_EquipMonInit auto
 GlobalVariable property DTSleep_AdultContentOn auto const
 GlobalVariable property DTSleep_PlayerEquipBackpackCount auto
 GlobalVariable property DTSleep_PlayerEquipSleepwearCount auto
+GlobalVariable property DTSleep_PlayerEquipSleepGloveCount auto			; v2.48
 GlobalVariable property DTSleep_PlayerEquipIntimateItemCount auto
 GlobalVariable property DTSleep_PlayerEquipStrapOnCount auto
 GlobalVariable property DTSleep_PlayerEquipJacketCount auto
@@ -114,6 +115,7 @@ FormList property DTSleep_NudeRingList auto const
 FormList property DTSleep_SexyClothesFList auto const
 FormList property DTSleep_SexyClothesMList auto const
 FormList property DTSleep_ArmorJewelry58List auto const			; added v2.27
+FormList property DTSleep_SleepAttireHandsList auto const 		; added v2.48 to keep track of intimate outfit with gloves
 EndGroup
 
 ; -------------------  hidden
@@ -2361,6 +2363,7 @@ endFunction
 Function UpdateClothingCounts()
 	
 	int count = 0
+	DTSleep_PlayerEquipSleepGloveCount.SetValueInt(0)
 	
 	if (DressData.PlayerEquippedCarryPouchItem != None)
 		count = 1
@@ -2375,6 +2378,10 @@ Function UpdateClothingCounts()
 	
 	if (DressData.PlayerEquippedSleepwearItem != None)
 		count += 1
+		;v2.48 add a count if includes gloves
+		if (DTSleep_SleepAttireHandsList.HasForm(DressData.PlayerEquippedSleepwearItem))
+			DTSleep_PlayerEquipSleepGloveCount.SetValueInt(1)
+		endIf
 	endIf
 	if (DressData.PlayerEquippedSlot58IsSleepwear)
 		count += 1
@@ -2397,6 +2404,10 @@ Function UpdateClothingCounts()
 	
 	if (DressData.PlayerEquippedIntimateAttireItem != None)
 		count = 1
+		;v2.48 add a count if includes gloves
+		if (DTSleep_SleepAttireHandsList.HasForm(DressData.PlayerEquippedIntimateAttireItem))
+			DTSleep_PlayerEquipSleepGloveCount.SetValueInt(1)
+		endIf
 	endIf
 	
 	DTSleep_PlayerEquipIntimateItemCount.SetValueInt(count)

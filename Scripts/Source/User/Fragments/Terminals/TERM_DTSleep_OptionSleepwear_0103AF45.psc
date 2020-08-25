@@ -93,6 +93,38 @@ pDTSleep_SettingClothesBody.SetValue(1.0)
 EndFunction
 ;END FRAGMENT
 
+;BEGIN FRAGMENT Fragment_Terminal_16
+Function Fragment_Terminal_16(ObjectReference akTerminalRef)
+;BEGIN CODE
+(pDTSleep_MainQuest as DTSleep_MainQuestScript).CaptureIntimateApparelSetGlovesIncluded()
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_17
+Function Fragment_Terminal_17(ObjectReference akTerminalRef)
+;BEGIN CODE
+(pDTSleep_MainQuest as DTSleep_MainQuestScript).CaptureIntimateApparelSetGlovesNone()
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_18
+Function Fragment_Terminal_18(ObjectReference akTerminalRef)
+;BEGIN CODE
+(pDTSleep_MainQuest as DTSleep_MainQuestScript).CaptureSleepApparelSetGlovesIncluded()
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_19
+Function Fragment_Terminal_19(ObjectReference akTerminalRef)
+;BEGIN CODE
+(pDTSleep_MainQuest as DTSleep_MainQuestScript).CaptureSleepApparelSetGlovesNone()
+;END CODE
+EndFunction
+;END FRAGMENT
+
 ;END FRAGMENT CODE - Do not edit anything between this and the begin comment
 
 Quest Property pDTSleep_MainQuest Auto Const Mandatory

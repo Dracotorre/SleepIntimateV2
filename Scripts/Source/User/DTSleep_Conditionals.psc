@@ -34,6 +34,7 @@ Location property DepravityHotelRexLoc = None auto conditional hidden
 bool property IsSMMActive = false auto conditional hidden
 bool property IsAWKCRActive = false auto conditional hidden
 bool property IsAFTActive = false auto conditional hidden
+bool property IsAPCTransportFound = false auto conditional hidden
 Keyword property AWKCRPackKW = None auto conditional hidden
 Keyword property AWKCRSatchelKW = None auto conditional hidden
 Keyword property AWKCRBandolKW = None auto conditional hidden

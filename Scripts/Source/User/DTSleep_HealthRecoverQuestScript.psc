@@ -833,18 +833,20 @@ Function PlayerNapRecover(float fractionVal = 0.03333, float nextTimerHours = 0.
 			endIf
 		else
 			StartTimerGameTime(nextTimerHours, SleepNapRecGameTimerID)
+			
 			if (FastSleepStatus == 1)
 				FastSleepEffectOff()
 				DTSleep_TimePassRestoreMsg.Show()
 				
-			elseIf (TimeScaleOriginal != TimeScale.GetValue())
+			; v2.48 - fix by adding hourLimit check -- uncertain reason added in v2.35
+			elseIf (HourCount > hourLimit && TimeScaleOriginal != TimeScale.GetValue())		
 				if (DTSleep_SettingTestMode.GetValueInt() > 0 && DTSleep_DebugMode.GetValue() >= 2.0)
 					Debug.Trace("[DTSleep_HealthRec] restoring TimeScale to " + TimeScaleOriginal)
 				endIf
-				
 				TimeScale.SetValue(TimeScaleOriginal)
 				
 				FastSleepEffectOff()
+				DTSleep_TimePassRestoreMsg.Show()
 			endIf
 		endIf
 	

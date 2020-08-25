@@ -227,6 +227,7 @@ GlobalVariable property DTSleep_SettingLover2 auto const
 { include 2nd lover in scenes }
 GlobalVariable property DTSleep_SexStyleLevel auto
 GlobalVariable property DTSleep_AdultOutfitOn auto
+GlobalVariable property DTSleep_PlayerEquipSleepGloveCount auto			; added v2.48
 EndGroup
 
 Group BC_Globals_Settings
@@ -1896,12 +1897,36 @@ Function CaptureIntimateApparelEquipToMark()
 		endIf
 	endIf
 	
-	if (myCompanion)
+	if (myCompanion != None)
 		
 		(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).SetMonitorCompanionEquip(myCompanion)
 	endIf
 	
 	DTSleep_CaptureIntimateApparelEnable.SetValue(Utility.GetCurrentGameTime())
+endFunction
+
+; v2.48
+Function CaptureIntimateApparelSetGlovesIncluded()
+	if (DressData.PlayerEquippedIntimateAttireItem != None)
+		(SleepPlayerAlias as DTSleep_PlayerAliasScript).DTSleep_SleepAttireHandsList.AddForm(DressData.PlayerEquippedIntimateAttireItem)
+		
+		DTSleep_PlayerEquipSleepGloveCount.SetValueInt(1)
+	endIf
+
+endFunction
+
+; v2.48
+Function CaptureIntimateApparelSetGlovesNone()
+
+	if (DressData.PlayerEquippedIntimateAttireItem != None && DTSleep_PlayerEquipSleepGloveCount.GetValue() > 0.0)
+		(SleepPlayerAlias as DTSleep_PlayerAliasScript).DTSleep_SleepAttireHandsList.RemoveAddedForm(DressData.PlayerEquippedIntimateAttireItem)
+		
+		Utility.WaitMenuMode(0.1)
+		if ((SleepPlayerAlias as DTSleep_PlayerAliasScript).DTSleep_SleepAttireHandsList.HasForm(DressData.PlayerEquippedIntimateAttireItem) == false)
+			DTSleep_PlayerEquipSleepGloveCount.SetValueInt(0)
+		endIf
+	endIf
+
 endFunction
 
 Function CaptureIntimateApparelUnmarkCurrent()
@@ -1912,6 +1937,28 @@ Function CaptureIntimateApparelUnmarkCurrent()
 		Utility.WaitMenuMode(0.3)
 		PlayerRef.EquipItem(item, false, true)
 	endIf
+endFunction
+
+; v2.48
+Function CaptureSleepApparelSetGlovesIncluded()
+	if (DressData.PlayerEquippedSleepwearItem != None)
+		(SleepPlayerAlias as DTSleep_PlayerAliasScript).DTSleep_SleepAttireHandsList.AddForm(DressData.PlayerEquippedSleepwearItem)
+		DTSleep_PlayerEquipSleepGloveCount.SetValueInt(1)
+	endIf
+
+endFunction
+
+; v2.48
+Function CaptureSleepApparelSetGlovesNone()
+
+	if (DressData.PlayerEquippedSleepwearItem != None)
+		(SleepPlayerAlias as DTSleep_PlayerAliasScript).DTSleep_SleepAttireHandsList.RemoveAddedForm(DressData.PlayerEquippedSleepwearItem)
+		Utility.WaitMenuMode(0.1)
+		if ((SleepPlayerAlias as DTSleep_PlayerAliasScript).DTSleep_SleepAttireHandsList.HasForm(DressData.PlayerEquippedSleepwearItem) == false)
+			DTSleep_PlayerEquipSleepGloveCount.SetValueInt(0)
+		endIf
+	endIf
+
 endFunction
 
 Function CaptureJacketEquipToMark()
@@ -3024,7 +3071,12 @@ IntimateChancePair Function ChanceForIntimateScene(IntimateCompanionSet companio
 	;
 	chanceLastTime = ChanceForIntimateSceneByLastTime(companionRelRank, gameTime, failReset, forHugs, true)
 	if (chanceLastTime < 0 && locHourChance.MidSleepBonusChance > 0)
-		chanceLastTime = 0				; v2.33 - no penalty for mid-sleep
+		float daysSinceLastIntimate = gameTime - IntimateLastTime
+		if (daysSinceLastIntimate > 0.042)
+			chanceLastTime = 0				; v2.33 - no penalty for mid-sleep, v2.48 and been at least an hour since last
+		else
+			chanceLastTime = chanceLastTime / 2		; v2.48
+		endIf
 	endIf
 	chance += chanceLastTime
 	

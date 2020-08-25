@@ -134,8 +134,10 @@ int Function GetStageCountForSequenceID(int seqID, int longScene = 0, int other 
 			result = 6
 		elseIf (seqID >= 754 && seqID <= 755)
 			result = 1
-		elseIf (seqID == 752 && longScene > 0)
-			result = 6
+		elseIf (seqID == 752)
+			if (longScene > 0)
+				result = 6
+			endIf
 		elseIf (seqID == 749)
 			if (other == 0 && longScene >= 1)
 				result = 4
@@ -978,7 +980,9 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 				if (other > 0)
 					ssStruct.MAnimFormID = 0x050082CA
 					ssStruct.OAnimFormID = 0x050082CB
-					ssStruct.ArmorNudeBGun = 1
+					if (scEVB)
+						ssStruct.ArmorNudeBGun = 1
+					endIf
 					ssStruct.PositionID = "DTSIXFMM_713_S1"
 				else
 					ssStruct.MAnimFormID = 0x050082CB
@@ -1588,6 +1592,7 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 					ssStruct.PositionOrigID = "FM-Standing01-06Doggy"
 				endIf
 			elseIf (seqID == 752)
+				
 				if (stageNumber == 1)	
 					ssStruct.FAnimFormID = 0x0500C003
 					ssStruct.MAnimFormID = 0x0500C004
