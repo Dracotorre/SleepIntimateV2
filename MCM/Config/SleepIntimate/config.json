@@ -560,6 +560,18 @@
 			}
 		},
 		{
+			"id": "MCM_SettingRadCheck:Rest",
+			"text": "Rad Check",
+			"type": "dropdown",
+			"help": "high radiation resistance skips pre-Rest check and reduces chance for sleep interruption",
+			"valueOptions": {
+				"options": ["Disabled", "Low-20", "Default-40", "Mid-60", "High-100"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|1A5F79",
+				"propertyName": "DTSleep_SettingRadCheck"
+			}
+		},
+		{
 		  "text": "(~Sleep-or-Save Disable for Rest~)",
 		  "type": "button",
 		  "help": "disable Sleep-or-Save to show Rest on bed",

@@ -346,6 +346,38 @@ pDTSleep_SettingUndressWeapon.SetValue(0.0)
 EndFunction
 ;END FRAGMENT
 
+;BEGIN FRAGMENT Fragment_Terminal_45
+Function Fragment_Terminal_45(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingRadCheck.SetValue(1.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_46
+Function Fragment_Terminal_46(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingRadCheck.SetValue(0.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_47
+Function Fragment_Terminal_47(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingRadCheck.SetValue(4.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_48
+Function Fragment_Terminal_48(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingRadCheck.SetValue(2.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
 ;END FRAGMENT CODE - Do not edit anything between this and the begin comment
 
 GlobalVariable Property pDTSleep_SettingNapOnly Auto Const Mandatory
@@ -379,3 +411,5 @@ GlobalVariable Property pDTSleep_SettingHealthRecover Auto Const Mandatory
 GlobalVariable Property pDTSleep_SettingUndressPipboy Auto Const Mandatory
 
 GlobalVariable Property pDTSleep_SettingUndressWeapon Auto Const Mandatory
+
+GlobalVariable Property pDTSleep_SettingRadCheck Auto Const Mandatory

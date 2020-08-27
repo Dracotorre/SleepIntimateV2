@@ -268,6 +268,7 @@ GlobalVariable property DTSleep_SettingSynthHuman auto
 GlobalVariable property DTSleep_SettingMenuStyle auto
 GlobalVariable property DTSleep_SettingChemCraft auto
 GlobalVariable property DTSleep_SettingProps auto const					; v2.40
+GlobalVariable property DTSleep_SettingRadCheck auto const				; v2.48.1
 EndGroup
 
 Group C_GameData
@@ -1108,12 +1109,33 @@ Event Perk.OnEntryRun(Perk DTSleep_PlayerSleepBedPerk, int Fragment_Entry_01, Ob
 		
 		int checkVal = DTSleep_CaptureExtraPartsEnable.GetValueInt()
 		
+		; v2.48.1 - rad-check before bed
+		bool doRadCheck = true
+		float radResist = PlayerRef.GetValue(RadResistExposureAV)
+		int radLimVal = DTSleep_SettingRadCheck.GetValueInt()
+		float radLimit = 20.0
+		if (radLimVal == 2)
+			radLimit = 40.0
+		elseIf (radLimVal == 3)
+			radLimit = 60.0
+		elseIf (radLimVal >= 4)
+			radLimit = 100.0
+		endIf
+		
+		if (radResist >= radLimit)
+			doRadCheck = false
+			DTDebug("CanPlayerPerformRest disable Rad-Check for radResist = " + radResist + " and limit = " + radLimit, 1)
+		elseIf (radLimVal <= 1)
+			doRadCheck = false
+			DTDebug("CanPlayerPerformRest disable Rad-Check for setting", 1)
+		endIf
+		
 		if (checkVal <= 0 && IsUnsafeToRestBed(akTarget))
 		
 			DTDebug(" no rest (sleep instead) bed placed: " + akTarget, 1)
 			akTarget.Activate(PlayerRef)
 			
-		elseIf (checkVal > 0 || CanPlayerPerformRest(akTarget))
+		elseIf (checkVal > 0 || CanPlayerPerformRest(akTarget, doRadCheck))
 		
 			; player can't active double-bed if NPC in marker 0 or 1
 			if (checkVal > 0)
@@ -1627,21 +1649,25 @@ Event OnRadiationDamage(ObjectReference akTarget, bool abIngested)
 			; v1.55 - check if sleep started
 			;
 			if ((DTSleep_HealthRecoverQuestP as DTSleep_HealthRecoverQuestScript).SleepStarted)
-				int chanceLim = 12
-				float radResist = PlayerRef.GetValue(RadResistExposureAV)
-				if (radResist >= 40.0)
-					chanceLim = 5
-				elseIf (radResist >= 20.0)
-					chanceLim = 9
-				endIf
-				
-				if (Utility.RandomInt(1, 50) < chanceLim)
+				if (DTSleep_SettingRadCheck.GetValueInt() >= 1)
+					int chanceLim = 12
+					float radResist = PlayerRef.GetValue(RadResistExposureAV)
+					if (radResist >= 60.0)				; v2.48.1 - added 60
+						chanceLim = 3
+					elseIf (radResist >= 32.0)
+						chanceLim = 6		
+					elseIf (radResist >= 16.0)
+						chanceLim = 9		
+					endIf
 					
-					SleepBedInUseRef.Activate(PlayerRef)
-					
-					if (DTSleep_SettingNotifications.GetValue() > 0.0)
-						Utility.Wait(1.0)
-						DTSleep_RadInterruptSleepMsg.Show()
+					if (Utility.RandomInt(1, 50) < chanceLim)
+						
+						SleepBedInUseRef.Activate(PlayerRef)
+						
+						if (DTSleep_SettingNotifications.GetValue() > 0.0)
+							Utility.Wait(1.0)
+							DTSleep_RadInterruptSleepMsg.Show()
+						endIf
 					endIf
 				endIf
 			endIf
@@ -2677,7 +2703,7 @@ bool Function CanPlayerPerformRest(ObjectReference onBedRef, bool doRadCheck = t
 			UnregisterForSleepBed()
 			Utility.WaitMenuMode(0.05)
 			
-			return CanPlayerPerformRest(onBedRef)
+			return CanPlayerPerformRest(onBedRef, doRadCheck)
 		endIf
 	else
 		Debug.Trace(myScriptName + " CanPlayerRest: Player activate controls disabled")
@@ -8146,6 +8172,10 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 					checkVal = 0
 					if (specialFurn <= 0 || SceneData.IsCreatureType == CreatureTypeStrong || SceneData.IsCreatureType == CreatureTypeBehemoth || IntimateCompanionRef == None)
 						doDance = true
+					elseIf (specialFurn >= 100 && DTSleep_SettingChairsEnabled.GetValue() <= 1.0)		; v2.48.1 fix - dance is 3rd on menu when embrace default
+						doDance = true
+					elseIf (specialFurn >= 100 && DTSleep_AdultContentOn.GetValue() <= 1.0)				; v2.48.1 fix - dance just in case
+						doDance = true
 					endIf
 					doSexyDance = false
 					animPacks[0] = 0
@@ -8258,7 +8288,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 		if (doDance)
 			if (IntimateCompanionRef != None && IntimateCompanionRef.GetSitState() >= 2)
 				; no dance for seated companion
-				Debug.Trace(myScriptName + " companion seated -- no dance!")
+				;Debug.Trace(myScriptName + " companion seated -- no dance!")
 				IntimateCompanionRef = None
 			else
 				SetExtraLovePartners(-1, false)		; any gender, no seated lovers 
@@ -12500,6 +12530,8 @@ int Function RestoreSettingsDefault()
 			;DTSleep_SettingUseBT2Gun
 			(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).DTSleep_SettingUseLeitoGun.SetValue(2.0)
 			DTSleep_SettingWarnLoverBusy.SetValue(1.0)
+			
+			DTSleep_SettingRadCheck.SetValueInt(2)
 		
 			; may overide based on game settings
 			SetModDefaultSettingsForGame()
@@ -14725,6 +14757,7 @@ Function TestModeOutput()
 		Debug.Trace(myScriptName + "       LastHug: " + IntimateLastEmbraceTime)
 		Debug.Trace(myScriptName + "   LastDogSucc: " + DTSleep_IntimateDogTime.GetValue())
 		Debug.Trace(myScriptName + "  EquipMonInit: " + (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).DTSleep_EquipMonInit.GetValue())
+		Debug.Trace(myScriptName + " Rad resist:    " + PlayerRef.GetValue(RadResistExposureAV))
 		
 		
 		Debug.Trace(myScriptName + " =====================================================================")
@@ -14755,6 +14788,7 @@ Function TestModeOutput()
 		Debug.Trace(myScriptName + "  EVB Best-fit: " + (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).DTSleep_SettingUseLeitoGun.GetValue())
 		Debug.Trace(myScriptName + "    BodyTalk2 : " + (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).DTSleep_SettingUseBT2Gun.GetValue())
 		Debug.Trace(myScriptName + "SynthGen2-to-3: " + DTSleep_SettingSynthHuman.GetValue())
+		Debug.Trace(myScriptName + "Sleep RadCheck: " + DTSleep_SettingRadCheck.GetValue())
 		
 		if (DTSleep_AdultContentOn.GetValueInt() >= 2)
 			Debug.Trace(myScriptName + " =====================================================================")
