@@ -1215,6 +1215,7 @@ endFunction
 Function PlayerRestoreHealthByFraction(float fractionVal)
 
 	if (DTSleep_SettingHealthRecover.GetValueInt() >= 1)
+		
 		float healthTrueMax = PlayerRef.GetValue(HealthAV)
 		RestoreValueByFraction(HealthAV, fractionVal, healthTrueMax)
 		

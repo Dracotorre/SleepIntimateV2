@@ -289,7 +289,6 @@ Perk property LoneWanderer01 auto const
 ActorValue property CharismaAV auto const
 ActorValue property LuckAV auto const
 ActorValue property AddictionCountAV auto const
-ActorValue property HealthAV auto const
 ActorValue property HC_SleepEffectAV auto const
 ActorValue property RadResistExposureAV auto const
 ActorValue property CA_AffinityAV auto const
@@ -15296,5 +15295,6 @@ GlobalVariable property DTSleep_SettingCamera auto
 { deprecated }
 Quest property DTSleep_DogTrainQuestP auto
 { no longer used }
+ActorValue property HealthAV auto const									; not used
 EndGroup
 float IntimateLastEmbraceScoreTime ; not using

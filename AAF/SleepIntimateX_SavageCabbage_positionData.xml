@@ -1,4 +1,4 @@
-<meta title="SleepIntimateX_SavageCabbage_positionData.xml" version="2.46" dataSet="position"/>
+<meta title="SleepIntimateX_SavageCabbage_positionData.xml" version="2.49" dataSet="position"/>
 <!-- for use with SavageCabbage v1.2.3 -->
 
 
@@ -39,6 +39,7 @@
 <position id="DTSIX_704_S3" animation="SIX_SC_FM-Bed02-03Straddle" isHidden="true"/>
 <position id="DTSIX_704_S4" animation="SIX_SC_FM-Bed02-04Straddle" isHidden="true"/>
 <position id="DTSIX_704_S5" animation="SIX_SC_FM-Bed02-05Straddle" isHidden="true"/>
+<position id="DTSIX_704_S6" animation="SIX_SC_FM-Bed02-07ClimaxLoop" isHidden="true"/>
 
 <position id="DTSIX_705_S1" animation="SIX_SC_FM-Bed03-01Tease" isHidden="true"/>
 <position id="DTSIX_705_S2" animation="SIX_SC_FM-Bed03-03Cowgirl" isHidden="true"/>
@@ -74,6 +75,8 @@
 <position id="DTSIX_747_S2" animation="SIX_SC_FM-ShowerPlayerHouse01-03Doggy" isHidden="true"/>
 <position id="DTSIX_747_S3" animation="SIX_SC_FM-ShowerPlayerHouse01-04Doggy" isHidden="true"/>
 <position id="DTSIX_747_S4" animation="SIX_SC_FM-ShowerPlayerHouse01-05Doggy" isHidden="true"/>
+<position id="DTSIX_747_S5" animation="SIX_SC_FM-ShowerPlayerHouse01-06Doggy" isHidden="true"/>
+<position id="DTSIX_747_S6" animation="SIX_SC_FM-ShowerPlayerHouse01-07ClimaxLoop" isHidden="true"/>
 
 <position id="DTSIX_748_S1" animation="SIX_SC_FM-Stocks01-01Tease" isHidden="true"/>
 <position id="DTSIX_748_S2" animation="SIX_SC_FM-Stocks01-02Start" isHidden="true"/>
@@ -196,6 +199,7 @@
 
 <position id="DTSIXFMM_705_S1" animation="SIX_SC_FMM-Floor01-01DoubleTeam" isHidden="true"/>
 <position id="DTSIXFMM_705_S2" animation="SIX_SC_FMM-Floor01-02DoubleTeam" isHidden="true"/>
+<position id="DTSIXFMM_705_S3" animation="SIX_SC_FMM-Floor01-03DoubleTeam" isHidden="true"/>
 
 <position id="DTSIXFMM_706_S1" animation="SIX_SC_FMM-DoubleBed01-03DoubleTeam" isHidden="true"/>
 
@@ -205,6 +209,7 @@
 <position id="DTSIXFMM_714_S1" animation="SIX_SC_FMM-Floor05-03DoubleTeam" isHidden="true"/>
 
 <position id="DTSIXFMM_715_S1" animation="SIX_SC_FMM-BunkBed01-03Threesome" isHidden="true"/>
+<position id="DTSIXFMM_715_S2" animation="SIX_SC_FMM-BunkBed01-04Threesome" isHidden="true"/>
 
 <position id="DTSIXFMM_735_S1" animation="SIX_SC_FMM-Couch02-03Handjob" isHidden="true"/>
 <position id="DTSIXFMM_735_S2" animation="SIX_SC_FMM-Couch02-04Handjob" isHidden="true"/>
@@ -227,6 +232,7 @@
 <position id="DTSIX_780_S1" animation="SIX_SC-FM-Human-DinerBooth01-01Tease" isHidden="true"/>
 
 <position id="DTSIX_781_S1" animation="SIX_SC-FM-Human-Couch_PlayerHouse01-03Facefuck" isHidden="true"/>
+<position id="DTSIX_781_S2" animation="SIX_SC-FM-Human-Couch_PlayerHouse01-04Facefuck" isHidden="true"/>
 
 <position id="DTSIX_784_S1" animation="SIX_SC-FM-Human-Crane01-03Carry" isHidden="true"/>
 

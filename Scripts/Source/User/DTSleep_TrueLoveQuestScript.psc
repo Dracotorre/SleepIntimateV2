@@ -39,6 +39,7 @@ Perk property CompDeaconPerk auto const
 Perk property CompX6Perk auto const
 
 Race property HumanRace auto const								; to check in case mods like Ada-to-Human to allow Ada
+Keyword property ActorTypeRobotKY auto const					; v2.49 no robots
 
 ; ----------------------
 bool property PreparingToStop auto hidden
@@ -93,6 +94,11 @@ bool Function IsAllowedLover(Actor akActor)
 		return true
 	elseIf ((DTSConditionals as DTSleep_Conditionals).DualSurvivorsNateRef != None && akActor == (DTSConditionals as DTSleep_Conditionals).DualSurvivorsNateRef)
 		return true
+	endIf
+	
+	; v2.49
+	if (akActor.HasKeyword(ActorTypeRobotKY))
+		return false
 	endIf
 	
 	; check regular companions first

@@ -1826,37 +1826,44 @@ Function CheckCompatibility()
 				(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.04
 			endIf
 			Form idleForm = None
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.240)
+		
+				idleForm = Game.GetFormFromFile(0x0802FDA6, "SavageCabbage_Animations.esp")
+				if (idleForm != None)
+					(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.240
+				endIf
+			endIf
 			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.230)
 		
 				idleForm = Game.GetFormFromFile(0x0802F5E4, "SavageCabbage_Animations.esp")
-				if (idleForm  != None)
+				if (idleForm != None)
 					(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.230
 				endIf
 			endIf
 			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.220)
 		
 				idleForm = Game.GetFormFromFile(0x0802E685, "SavageCabbage_Animations.esp")
-				if (idleForm  != None)
+				if (idleForm != None)
 					(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.220
 				endIf
 			endIf
 			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.210)
 		
 				idleForm = Game.GetFormFromFile(0x0802DEBA, "SavageCabbage_Animations.esp")
-				if (idleForm  != None)
+				if (idleForm != None)
 					(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.210
 				endIf
 			endIf
 			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.20)
 		
 				idleForm = Game.GetFormFromFile(0x0802C023, "SavageCabbage_Animations.esp")
-				if (idleForm  != None)
+				if (idleForm != None)
 					(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.20
 				endIf
 			endIf
 			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.1)
 				idleForm = Game.GetFormFromFile(0x05024CE1, "SavageCabbage_Animations.esp")
-				if (idleForm  != None)
+				if (idleForm != None)
 					DTSleep_Dance2List.AddForm(idleForm)
 					(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.10
 				endIf
@@ -2869,6 +2876,21 @@ int Function CheckCustomArmorsAndBackpacks()
 			DTSleep_ArmorLegRightList.AddForm(Game.GetFormFromFile(0x09000873, crossPluginName))
 			DTSleep_ArmorArmLeftList.AddForm(Game.GetFormFromFile(0x0900086B, crossPluginName))
 			DTSleep_ArmorArmRightList.AddForm(Game.GetFormFromFile(0x0900086C, crossPluginName))
+		endIf
+	endIf
+	
+	; CROSS Flightsuit
+	crossPluginName = "CROSS_VertibirdFlightsuit.esl"
+	extraArmor = IsPluginActive(0x09000847, crossPluginName) as Armor
+	
+	if (extraArmor != None)
+		if (DTSleep_ExtraArmorsEnabled.GetValue() < 1.0)
+			DTSleep_ExtraArmorsEnabled.SetValue(1.0)
+		endIf
+		if (!DTSleep_ArmorHatHelmList.HasForm(extraArmor as Form))
+			modCount += 1
+			DTSleep_ArmorHatHelmList.AddForm(extraArmor as Form)
+			DTSleep_ArmorJacketsClothingList.AddForm(Game.GetFormFromFile(0x0900085C, crossPluginName))
 		endIf
 	endIf
 	

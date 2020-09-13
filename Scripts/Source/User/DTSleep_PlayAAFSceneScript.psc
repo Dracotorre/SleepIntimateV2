@@ -433,8 +433,16 @@ bool Function PlaySequence()
 	int genders = -1		; FM, 0 = MM, 1 = FF
 	int otherActor = 0
 	
+	if (SceneData.SecondMaleRole != None || SceneData.SecondFemaleRole != None)
+		otherActor = 1
+	endIf
+	
 	if (SceneData.CompanionInPowerArmor)
 		longScene = -1
+	elseIf (SequenceID == 705 || SequenceID == 715)
+		if (otherActor == 1 && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.24)
+			longScene = 1
+		endIf
 	elseIf (SequenceID == 737 || SequenceID == 733 || SequenceID == 742 || SequenceID == 748 || SequenceID == 749)
 		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.1)
 			longScene = 1
@@ -464,6 +472,10 @@ bool Function PlaySequence()
 		endIf
 	elseIf (SequenceID == 741)
 		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.230)
+			longScene = 1
+		endIf
+	elseIf (SequenceID == 747)
+		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.240)
 			longScene = 1
 		endIf
 	elseIf (SequenceID == 746)
@@ -513,6 +525,10 @@ bool Function PlaySequence()
 		elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
 			longScene = 1
 		endIf
+	elseIf (SequenceID == 781)
+		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.240)
+			longScene = 1
+		endIf
 	elseIf (SequenceID == 795)
 		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.21)
 			longScene = 1
@@ -525,9 +541,7 @@ bool Function PlaySequence()
 	elseIf (DTSleep_IntimateSceneLen.GetValueInt() >= 3)
 		longScene = 1
 	endIf
-	if (SceneData.SecondMaleRole != None || SceneData.SecondFemaleRole != None)
-		otherActor = 1
-	endIf
+	
 	
 	if (SceneData.SameGender && !SceneData.HasToyEquipped)
 		genders = SceneData.MaleRoleGender

@@ -1,4 +1,4 @@
-<meta title="SleepIntimateX_SavageCabbage_animationData.xml" version="2.46" dataSet="animation"/>
+<meta title="SleepIntimateX_SavageCabbage_animationData.xml" version="2.49" dataSet="animation"/>
 <defaults source="SavageCabbage_Animations.esp"/>
 
 <animation id="SIX_SC_FM-Bed01-01Handjob" frames="390">
@@ -97,6 +97,15 @@
 	</actor>
 	<actor gender="M">
 		<idle form="6C09"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-Bed02-07ClimaxLoop" frames="390">
+	<actor gender="F">
+		<idle form="2DEA7"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2DEA8"/>
 	</actor>
 </animation>
 
@@ -1196,6 +1205,23 @@
 		<idle form="27332"/>
 	</actor>
 </animation>
+<animation id="SIX_SC_FM-ShowerPlayerHouse01-06Doggy" frames="500">
+	<actor gender="F">
+		<idle form="27333"/>
+	</actor>
+	<actor gender="M">
+		<idle form="27334"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-ShowerPlayerHouse01-07ClimaxLoop" frames="500">
+	<actor gender="F">
+		<idle form="2FD94"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2FD95"/>
+	</actor>
+</animation>
 
 <animation id="SIX_SC_FM-ShowerPlayerHouse01-06Doggy" frames="500">
 	<actor gender="F">
@@ -1612,10 +1638,22 @@
 		<idle form="10C3C"/>
 	</actor>
 	<actor gender="M">
-		<idle form="10C3E"/>
+		<idle form="10C3D"/>
 	</actor>
 	<actor gender="M">
-		<idle form="10C3D"/>
+		<idle form="10C3E"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FMM-BunkBed01-04Threesome" frames="500">
+	<actor gender="F">
+		<idle form="2FD9E"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2FD9F"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2FDA0"/>
 	</actor>
 </animation>
 
@@ -1671,6 +1709,20 @@
 	</actor>
 	<actor gender="M">
 		<idle form="1039"/>
+		<!-- <value path="morph" value="Erection" to="1"/> -->
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FMM-Floor01-03DoubleTeam" frames="500">
+	<actor gender="F">
+		<idle form="2FDA1"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2FDA2"/>
+		<value path="morph" value="Erection" to="1"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2FDA3"/>
 		<!-- <value path="morph" value="Erection" to="1"/> -->
 	</actor>
 </animation>
@@ -2406,6 +2458,15 @@
 	</actor>
 	<actor gender="M">
 		<idle form="2C011"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-Couch_PlayerHouse01-04Facefuck" frames="500">
+	<actor gender="F">
+		<idle form="2FD89"/>
+	</actor>
+	<actor gender="M">
+		<idle form="2FD8A"/>
 	</actor>
 </animation>
 
