@@ -85,6 +85,11 @@ int Function GetStageCountForSequenceID(int seqID, int longScene = 0, int other 
 			return 1
 		elseIf (seqID >= 798 && seqID < 800)
 			return 1
+		elseIf (seqID == 796)
+			if (longScene)
+				return 6
+			endIf
+			return 4
 		elseIf (seqID == 784 || seqID == 787)
 			return 1
 		elseIf (seqID >= 780 && seqID <= 781)
@@ -184,8 +189,10 @@ int Function GetStageCountForSequenceID(int seqID, int longScene = 0, int other 
 		elseIf (seqID == 732)
 			result = 2
 		elseIf (seqID >= 713 && seqID <= 715)
-			if (longScene > 0)
+			if (longScene == 1)
 				result = 2
+			elseIf (longScene >= 2)
+				result = 3
 			else
 				result = 1
 			endIf
@@ -197,14 +204,27 @@ int Function GetStageCountForSequenceID(int seqID, int longScene = 0, int other 
 			result = 6
 		elseIf (seqID >= 701 && seqID <= 703)
 			result = 6
+		elseIf (seqID == 705)
+			result = 4
+			if (longScene > 0 && other <= 0)
+				result = 6
+			endIf
 		elseIf (seqID == 706)
 			if (other > 0)
-				result = 1
+				if (longScene > 0)
+					result = 2
+				else
+					result = 1
+				endIf
 			else
 				result = 6
 			endIf
 		elseIf (seqID == 707)
-			result = 1
+			if (other > 0 && longScene > 0)
+				result = 2
+			else
+				result = 1
+			endIf
 		elseIf (seqID == 737 && longScene >= 0 && other <= 0)
 			if (longScene > 1)
 				result = 8
@@ -219,13 +239,13 @@ int Function GetStageCountForSequenceID(int seqID, int longScene = 0, int other 
 			endIf
 		elseIf (seqID >= 770 && seqID <= 773)
 			result = 2
-		elseIf (seqID == 774)
+		elseIf (seqID >= 774 && seqID <= 775)
 			if (longScene > 0)
 				result = 6
 			else
 				result = 4
 			endIf
-		elseIf (seqID == 775 || seqID == 778)
+		elseIf (seqID == 778)
 			result = 2
 		elseIf (seqID == 777)
 			result = 3
@@ -845,7 +865,21 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 						if (scEVB)
 							ssStruct.ArmorNudeAGun = 1
 						endIf
-						ssStruct.PositionID = "DTSIX_705_S4"
+						ssStruct.PositionID = "DTSIX_705_S4"				
+					elseIf (stageNumber == 5)								; v2.50
+						ssStruct.FAnimFormID = 0x0502731D
+						ssStruct.MAnimFormID = 0x0502731E
+						if (scEVB)
+							ssStruct.ArmorNudeAGun = 1
+						endIf
+						ssStruct.PositionID = "DTSIX_705_S5"
+					elseIf (stageNumber == 6)								; v2.50
+						ssStruct.FAnimFormID = 0x0502DEA9
+						ssStruct.MAnimFormID = 0x0502DEAA
+						if (scEVB)
+							ssStruct.ArmorNudeAGun = 1
+						endIf
+						ssStruct.PositionID = "DTSIX_705_S5"
 					endIf
 				else
 					ssStruct.ArmorNudeBGun = 0
@@ -879,12 +913,24 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 						else
 							ssStruct.ArmorNudeBGun = 0
 						endIf
-						ssStruct.FAnimFormID = 0x05021EF5
-						ssStruct.MAnimFormID = 0x05021EF7
-						ssStruct.OAnimFormID = 0x05021EF6
-						ssStruct.StageTime = 36.0
-						ssStruct.PositionID = "DTSIXFMM_706_S1"
-						ssStruct.PositionOrigID = "SIX_SC_FMM-DoubleBed01-03DoubleTeam"
+						if (longScene <= 0)
+							ssStruct.StageTime = 36.0
+						else
+							ssStruct.StageTime = 18.0
+						endIf
+						if (stageNumber == 1)
+							ssStruct.FAnimFormID = 0x05021EF5
+							ssStruct.MAnimFormID = 0x05021EF7		; reversed male role
+							ssStruct.OAnimFormID = 0x05021EF6
+							ssStruct.PositionID = "DTSIXFMM_706_S1"
+							ssStruct.PositionOrigID = "SC_FMM-DoubleBed01-03DoubleTeam"
+						else
+							ssStruct.FAnimFormID = 0x0503056A				; v2.50  SC 1.2.5
+							ssStruct.MAnimFormID = 0x0503056C		; reversed male
+							ssStruct.OAnimFormID = 0x0503056B
+							ssStruct.PositionID = "DTSIXFMM_706_S2"
+							ssStruct.PositionOrigID = "SC_FMM-Human-DoubleBed01-04DoubleTeam"
+						endIf
 						
 					elseIf (stageNumber == 1)						;v1.21
 						ssStruct.FAnimFormID = 0x0502DEAB
@@ -922,18 +968,31 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 				
 			elseIf (seqID == 707)
 				if (other > 0)
-					ssStruct.FAnimFormID = 0x05021EF2
-					ssStruct.MAnimFormID = 0x05021EF3
-					ssStruct.OAnimFormID = 0x05021EF4
+					if (stageNumber == 1)
+						ssStruct.FAnimFormID = 0x05021EF2
+						ssStruct.MAnimFormID = 0x05021EF3
+						ssStruct.OAnimFormID = 0x05021EF4
+						ssStruct.PositionID = "DTSIXFMM_707_S1"
+						ssStruct.PositionOrigID = "FMM-DoubleBed02-03ReverseCowgirl-Blowjob"
+					else
+						ssStruct.FAnimFormID = 0x0503056D				; v2.50  SC 1.2.5
+						ssStruct.MAnimFormID = 0x0503056E
+						ssStruct.OAnimFormID = 0x0503056F
+						ssStruct.PositionID = "DTSIXFMM_707_S2"
+						ssStruct.PositionOrigID = "SC-FMM-Human-DoubleBed02-04ReverseCowgirl-Blowjob"
+					endIf
 					if (scEVB)
 						ssStruct.ArmorNudeAGun = 1
 						ssStruct.ArmorNudeBGun = 1
 					else
 						ssStruct.ArmorNudeBGun = 0
 					endIf
-					ssStruct.StageTime = 37.0
-					ssStruct.PositionID = "DTSIXFMM_707_S1"
-					ssStruct.PositionOrigID = "FMM-DoubleBed02-03ReverseCowgirl-Blowjob"
+					if (longScene <= 0)
+						ssStruct.StageTime = 37.0
+					else
+						ssStruct.StageTime = 18.5
+					endIf
+					
 				endIf	
 			elseIf (seqID == 711)
 				if (stageNumber == 1)
@@ -1032,8 +1091,16 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 				ssStruct.ArmorNudeAGun = 0
 				ssStruct.StageTime = 32.0
 				ssStruct.PositionOrigID = "FMM-Floor05-03DoubleTeam"
-			elseIf (seqID == 715)	
+			elseIf (seqID == 715)
+				if (longScene < 2)
+					stageNumber += 1
+				endIf
 				if (stageNumber == 1)
+					ssStruct.FAnimFormID = 0x05030564			; v2.50, SC 1.2.5
+					ssStruct.MAnimFormID = 0x05030566			; swapped order
+					ssStruct.OAnimFormID = 0x05030565
+					ssStruct.PositionID = "DTSIXFMM_715_S0"	
+				elseIf (stageNumber == 2 || stageNumber == 4)
 					ssStruct.FAnimFormID = 0x05010C3C
 					ssStruct.OAnimFormID = 0x05010C3E			; v2.49 swapped male roles so primary on bottom
 					ssStruct.MAnimFormID = 0x05010C3D
@@ -1051,7 +1118,11 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 					ssStruct.ArmorNudeBGun = 0
 				endIf
 				if (longScene > 0 || stageNumber > 1)
-					ssStruct.StageTime = 16.0
+					if (longScene >= 2)
+						ssStruct.StageTime = 10.67
+					else
+						ssStruct.StageTime = 16.0
+					endIf
 				else
 					ssStruct.StageTime = 32.0
 				endIf
@@ -1183,6 +1254,12 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 						ssStruct.OAnimFormID = 0x0500369A
 						ssStruct.PositionID = "DTSIXFMM_735_S3"
 						ssStruct.PositionOrigID = "FMM-Couch02-05Blowjob"
+					elseIf (stageNumber == 4 && longScene > 0)
+						ssStruct.FAnimFormID = 0x05030567				;v2.50  SC 1.2.5
+						ssStruct.MAnimFormID = 0x05030568
+						ssStruct.OAnimFormID = 0x05030569
+						ssStruct.PositionID = "DTSIXFMM_735_S4"
+						ssStruct.PositionOrigID = "FMM-Human-Couch02-06Blowjob"
 					else
 						ssStruct.FAnimFormID = 0x05002763
 						ssStruct.MAnimFormID = 0x05002764
@@ -1801,11 +1878,16 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 						ssStruct.MAnimFormID = 0x0500CF46
 						ssStruct.PositionID = "DTSIX_758_S3"
 						ssStruct.PositionOrigID = "FM-Seat01-05Cowgirl"
-					else
+					elseIf (stageNumber == 1 || longScene <= 0)
 						ssStruct.FAnimFormID = 0x05006446	; 1,4
 						ssStruct.MAnimFormID = 0x05006447
 						ssStruct.PositionID = "DTSIX_758_S1"
 						ssStruct.PositionOrigID = "FM-Seat01-03Cowgirl"
+					elseIf (stageNumber == 4)
+						ssStruct.FAnimFormID = 0x05030562				;v2.50  SC 1.2.5
+						ssStruct.MAnimFormID = 0x05030563
+						ssStruct.PositionID = "DTSIX_758_S4"
+						ssStruct.PositionOrigID = "SC-FM-Human-Seat01-06Cowgirl"
 					endIf
 				else				
 					if (stageNumber == 1)					
@@ -2343,22 +2425,30 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 					ssStruct.PositionOrigID = "SC-FM-SMBehemoth-Floor01-07-Climax"
 				endIf
 			elseIf (seqID == 775)
+				if (longScene <= 0)
+					stageNumber += 1
+				endIf
 				if (stageNumber == 1)		
+					ssStruct.FAnimFormID = 0x0503057C					;v2.50  SC 1.2.5
+					ssStruct.MAnimFormID = 0x0503057D
+					ssStruct.PositionID = "DTSIXSM_775_S0"
+					ssStruct.PositionOrigID = "SC-FM-SMBehemoth-Floor02-01Tease"
+				elseIf (stageNumber == 2)		
 					ssStruct.FAnimFormID = 0x05027AE6
 					ssStruct.MAnimFormID = 0x05027AE7
 					ssStruct.PositionID = "DTSIXSM_775_S1"
 					ssStruct.PositionOrigID = "SC-FM-SMBehemoth-Floor02-03Missionary"
-				elseIf (stageNumber == 2)
+				elseIf (stageNumber == 3)
 					ssStruct.FAnimFormID = 0x05024546
 					ssStruct.MAnimFormID = 0x05024548
 					ssStruct.PositionID = "DTSIXSM_775_S2"
 					ssStruct.PositionOrigID = "SC-FM-SMBehemoth-Floor02-04Missionary"
-				elseIf (stageNumber == 3)
+				elseIf (stageNumber == 4 || stageNumber == 6)
 					ssStruct.FAnimFormID = 0x05027AE9
 					ssStruct.MAnimFormID = 0x05027AEA
 					ssStruct.PositionID = "DTSIXSM_775_S3"
 					ssStruct.PositionOrigID = "SC-FM-SMBehemoth-Floor02-05Missionary"
-				elseIf (stageNumber == 4)
+				elseIf (stageNumber == 5)
 					ssStruct.FAnimFormID = 0x05027AED
 					ssStruct.MAnimFormID = 0x05027AEE
 					ssStruct.ArmorNudeAGun = 1
@@ -2603,17 +2693,27 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 			endIf
 		elseIf (seqID == 796)
 			;ssStruct.MPosYOffset = -28.0
+			if (longScene <= 0)
+				stageNumber += 1
+			endIf
+			
 			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x05030560								; v2.50  SC 1.2.5
+				ssStruct.MAnimFormID = 0x05030561
+				ssStruct.PositionID = "DTSIX_796_S0"
+				ssStruct.StageTime = 15.0
+				ssStruct.PositionOrigID = "SC-FM-Human-JailCellSmall01-01Tease"
+			elseIf (stageNumber == 2)
 				ssStruct.FAnimFormID = 0x0502A135
 				ssStruct.MAnimFormID = 0x0502A136
 				ssStruct.PositionID = "DTSIX_796_S1"
 				ssStruct.PositionOrigID = "SC-FM-Human-JailCellSmall01-03Standing"
-			elseIf (stageNumber == 2)
+			elseIf (stageNumber == 3)
 				ssStruct.FAnimFormID = 0x0502A137	
 				ssStruct.MAnimFormID = 0x0502A138
 				ssStruct.PositionID = "DTSIX_796_S2"
 				ssStruct.PositionOrigID = "SC-FM-Human-JailCellSmall01-04Standing"
-			elseIf (stageNumber == 3)
+			elseIf (stageNumber == 4 || stageNumber == 6)
 				ssStruct.FAnimFormID = 0x0502B0B9	
 				ssStruct.MAnimFormID = 0x0502B0BA
 				ssStruct.PositionID = "DTSIX_796_S3"

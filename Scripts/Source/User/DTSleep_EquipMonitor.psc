@@ -476,11 +476,51 @@ Event Actor.OnItemEquipped(Actor akSender, Form akBaseObject, ObjectReference ak
 					if (ProcessIntimateItem(akBaseObject, gender))
 						DressData.CompanionEquippedIntimateAttireItem = akBaseObject as Armor
 					else
-						SetArmorItem(akBaseObject as Armor)
+						SetCompanionArmorItem(akBaseObject as Armor)			; v2.50 - fix
 					endIf
 					
 					DTSleep_CaptureIntimateApparelEnable.SetValueInt(0)
 					
+				; v2.50 -- allow capture other items on companion
+				elseIf (DTSleep_CaptureMaskEnable.GetValue() > 0.0 && DTSleep_EquipMonInit.GetValue() > 0.0)
+					if (ProcessMaskItem(akBaseObject))
+						DressData.CompanionEquippedMask = akBaseObject as Armor
+					else
+						SetCompanionArmorItem(akBaseObject as Armor)
+					endIf
+					DTSleep_CaptureMaskEnable.SetValueInt(0)
+					
+				elseIf (DTSleep_CaptureStrapOnEnable.GetValue() > 0.0 && DTSleep_EquipMonInit.GetValue() > 0.0)
+					
+					if (ProcessStrapOnItem(akBaseObject))
+						DressData.CompanionEquippedStrapOnItem = akBaseObject as Armor
+					else
+						SetCompanionArmorItem(akBaseObject as Armor)
+					endIf
+					
+					DTSleep_CaptureStrapOnEnable.SetValueInt(0)
+					
+				elseIf (DTSleep_CaptureBackpackEnable.GetValue() > 0.0 && DTSleep_EquipMonInit.GetValue() > 0.0)
+					if (ProcessBackpackItem(akBaseObject))
+						DressData.CompanionEquippedBackpackItem = akBaseObject as Armor
+					else
+						SetCompanionArmorItem(akBaseObject as Armor)
+					endIf
+					
+					DTSleep_CaptureBackpackEnable.SetValueInt(0)
+					
+				elseIf (DTSleep_CaptureJacketEnable.GetValue() > 0.0 && DTSleep_EquipMonInit.GetValue() > 0.0)
+					if (ProcessJacketItem(akBaseObject))
+						if (DressData.CompanionEquippedJacketItem != None && DressData.CompanionEquippedJacketSecondItem == None)
+							DressData.CompanionEquippedJacketSecondItem = akBaseObject as Armor
+						else
+							DressData.CompanionEquippedJacketItem = akBaseObject as Armor
+						endIf
+					else
+						SetCompanionArmorItem(akBaseObject as Armor)
+					endIf
+					
+					DTSleep_CaptureJacketEnable.SetValueInt(0)
 				else
 					SetCompanionArmorItem(akBaseObject as Armor)
 				endIf
@@ -1941,7 +1981,6 @@ Function SetDressDataMatchArmorToArmor(Armor matchItem, Armor toItem)
 				endIf
 			endIf
 		endIf
-		
 	endIf
 endFunction
 

@@ -1815,8 +1815,6 @@ Function CheckCompatibility()
 		; SavageCabbage - allow in XOXO so player can have extra dance
 		if (Game.IsPluginInstalled("SavageCabbage_Animations.esp"))
 			
-			(DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive = true
-			
 			if (!(DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive)
 				Idle danceIdle = Game.GetFormFromFile(0x0800182C, "SavageCabbage_Animations.esp") as Idle
 				if (danceIdle != None && !DTSleep_Dance2List.HasForm(danceIdle))
@@ -1825,7 +1823,23 @@ Function CheckCompatibility()
 				endIf
 				(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.04
 			endIf
+			(DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive = true					;v2.50 moved below dance idle
+			
 			Form idleForm = None
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.250)
+		
+				idleForm = Game.GetFormFromFile(0x08030575, "SavageCabbage_Animations.esp")
+				if (idleForm != None)
+					(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.250
+				endIf
+				
+				; fix 
+				Idle danceIdle = Game.GetFormFromFile(0x0800182C, "SavageCabbage_Animations.esp") as Idle
+				if (danceIdle != None && !DTSleep_Dance2List.HasForm(danceIdle))
+					DTSleep_Dance2List.AddForm(danceIdle as Form)
+					DTSleep_Dance2List.AddForm(Game.GetFormFromFile(0x0800182D, "SavageCabbage_Animations.esp"))
+				endIf
+			endIf
 			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.240)
 		
 				idleForm = Game.GetFormFromFile(0x0802FDA6, "SavageCabbage_Animations.esp")
@@ -2852,6 +2866,28 @@ int Function CheckCustomArmorsAndBackpacks()
 			DTSleep_ArmorArmRightList.AddForm(Game.GetFormFromFile(0x0900086C, crossPluginName))
 			DTSleep_ArmorLegLeftList.AddForm(Game.GetFormFromFile(0x0900086D, crossPluginName))
 			DTSleep_ArmorLegRightList.AddForm(Game.GetFormFromFile(0x09000873, crossPluginName))
+		endIf
+	endIf
+	
+	; CROSS Courser
+	crossPluginName = "CROSS_CourserStrigidae.esl"
+	extraArmor = IsPluginActive(0x0900083F, crossPluginName) as Armor
+	
+	if (extraArmor == None)
+		crossPluginName = "CROSS_CourserStrigidae.esp"
+		extraArmor = IsPluginActive(0x0900083F, crossPluginName) as Armor
+	endIf
+	
+	if (extraArmor != None)
+		if (DTSleep_ExtraArmorsEnabled.GetValue() < 1.0)
+			DTSleep_ExtraArmorsEnabled.SetValue(1.0)
+		endIf
+		if (!DTSleep_ArmorHatHelmList.HasForm(extraArmor as Form))
+			modCount += 1
+			DTSleep_ArmorHatHelmList.AddForm(extraArmor as Form)
+			DTSleep_ArmorHatHelmList.AddForm(Game.GetFormFromFile(0x09000837, crossPluginName))
+			DTSleep_ArmorJacketsClothingList.AddForm(Game.GetFormFromFile(0x09000836, crossPluginName))
+			DTSleep_ArmorJacketsClothingList.AddForm(Game.GetFormFromFile(0x0900083E, crossPluginName))
 		endIf
 	endIf
 	

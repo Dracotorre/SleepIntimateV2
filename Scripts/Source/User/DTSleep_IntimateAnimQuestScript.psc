@@ -2655,13 +2655,14 @@ int Function PickIntimateSceneID(bool mainActorIsMaleRole, bool standOnly, int[]
 				endIf
 			endIf
 
+			; v2.50 - no replace on random -- have enough scenes
 			; randomly replace for more variety
-			if (SceneData.SecondMaleRole != None && MainActorScenePrefArray.Length == 0 && !MainActorPositionByCaller && LastSceneID != 758 && sceneIDToPlay != 735 && sceneIDToPlay >= 700 && sceneIDToPlay < 800 && sceneIDArray.Length <= 2 && Utility.RandomInt(1, 12) < 3)
-				sceneIDToPlay = 758
-				groupPlay = true
-				SceneData.SecondFemaleRole = None
-				SceneData.SecondMaleRole.PlayIdle(LooseIdleStop2)
-			endIf
+			;if (SceneData.SecondMaleRole != None && MainActorScenePrefArray.Length == 0 && !MainActorPositionByCaller && LastSceneID != 758 && sceneIDToPlay != 735 && sceneIDToPlay >= 700 && sceneIDToPlay < 800 && sceneIDArray.Length <= 2 && Utility.RandomInt(1, 12) < 3)
+			;	sceneIDToPlay = 758
+			;	groupPlay = true
+			;	SceneData.SecondFemaleRole = None
+			;	SceneData.SecondMaleRole.PlayIdle(LooseIdleStop2)
+			;endIf
 		endIf
 		
 	elseIf (sceneIDToPlay > 80)

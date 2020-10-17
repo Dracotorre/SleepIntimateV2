@@ -1512,6 +1512,8 @@ Event DTSleep_IntimateAnimQuestScript.IntimateSequenceDoneEvent(DTSleep_Intimate
 					endIf
 					
 					; prompt for rest? (normal sleep menu is a prompt so only for immersive rest and not already in bed)
+					; note: SleepBedUsesSpecialAnims not needed here any longer since before intimacy we set moveToBed = false
+					;
 					if (DTSleep_SettingNapOnly.GetValue() > 0.0 || SleepBedUsesSpecialAnims || !nakedPlayer)
 					
 						if (!inBed && !fadedOut && activateBedOK && DTSleep_SettingShowIntimateCheck.GetValueInt() > 0)

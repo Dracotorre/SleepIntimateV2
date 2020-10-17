@@ -1,4 +1,4 @@
-<meta title="SleepIntimateX_SavageCabbageSMB_positionData.xml" version="2.46" dataSet="position"/>
+<meta title="SleepIntimateX_SavageCabbageSMB_positionData.xml" version="2.50" dataSet="position"/>
 <defaults /> <!-- startMorphSet="ready" stopMorphSet="unReady" /> -->
 <!-- for use with SavageCabbage v1.2 
    Sleep Intimate morphs; to allow AAF to morph:
@@ -12,6 +12,7 @@
 <position id="DTSIXSM_774_S5" animation="SIX_SC-FM-SMBehemoth-Floor01-06Cowgirl" isHidden="true"/>
 <position id="DTSIXSM_774_S6" animation="SIX_SC-FM-SMBehemoth-Floor01-07Climax" isHidden="true"/>
 
+<position id="DTSIXSM_775_S0" animation="SIX_SC-FM-SMBehemoth-Floor02-01Tease" isHidden="true"/>
 <position id="DTSIXSM_775_S1" animation="SIX_SC-FM-SMBehemoth-Floor02-03Missionary" isHidden="true"/>
 <position id="DTSIXSM_775_S2" animation="SIX_SC-FM-SMBehemoth-Floor02-04Missionary" isHidden="true"/>
 <position id="DTSIXSM_775_S3" animation="SIX_SC-FM-SMBehemoth-Floor02-05Missionary" isHidden="true"/>

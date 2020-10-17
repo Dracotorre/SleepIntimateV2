@@ -1,4 +1,4 @@
-<meta title="SleepIntimateX_SavageCabbage_animationData.xml" version="2.49" dataSet="animation"/>
+<meta title="SleepIntimateX_SavageCabbage_animationData.xml" version="2.50" dataSet="animation"/>
 <defaults source="SavageCabbage_Animations.esp"/>
 
 <animation id="SIX_SC_FM-Bed01-01Handjob" frames="390">
@@ -816,6 +816,15 @@
 	</actor>
 </animation>
 
+<animation id="SIX_SC_FM-Seat01-06Cowgirl" frames="500">
+	<actor gender="F">
+		<idle form="30562"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30563"/>
+	</actor>
+</animation>
+
 <animation id="SIX_SC_FM-WeightBench01-01Tease" frames="500">
 	<actor gender="F">
 		<idle form="27337"/>
@@ -1561,11 +1570,9 @@
 	</actor>
 	<actor gender="M">
 		<idle form="2764"/>
-			<!--<value path="morph" value="Erection Up" to="1"/>-->
 	</actor>
 	<actor gender="M">
 		<idle form="2765"/>
-		<!--<value path="morph" value="Erection Up" to="1"/>-->
 	</actor>
 </animation>
 
@@ -1575,11 +1582,9 @@
 	</actor>
 	<actor gender="M">
 		<idle form="1231A"/>
-		<!--<value path="morph" value="Erection Up" to="1"/>-->
 	</actor>
 	<actor gender="M">
 		<idle form="1231B"/>
-		<!--<value path="morph" value="Erection Up" to="1"/>-->
 	</actor>
 </animation>
 
@@ -1589,11 +1594,21 @@
 	</actor>
 	<actor gender="M">
 		<idle form="3699"/>
-		<!--<value path="morph" value="Erection Up" to="1"/>-->
 	</actor>
 	<actor gender="M">
 		<idle form="369A"/>
-		<!--<value path="morph" value="Erection Up" to="1"/>-->
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FMM-Human-Couch02-06Blowjob" frames="500">
+	<actor gender="F">
+		<idle form="30567"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30568"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30569"/>
 	</actor>
 </animation>
 
@@ -1602,10 +1617,22 @@
 		<idle form="21EF5"/>
 	</actor>
 	<actor gender="M">
-		<idle form="21EF6"/>
+		<idle form="21EF7"/>
 	</actor>
 	<actor gender="M">
-		<idle form="21EF7"/>
+		<idle form="21EF6"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FMM-DoubleBed01-04DoubleTeam" frames="500">
+	<actor gender="F">
+		<idle form="3056A"/>
+	</actor>
+	<actor gender="M">
+		<idle form="3056C"/>
+	</actor>
+	<actor gender="M">
+		<idle form="3056B"/>
 	</actor>
 </animation>
 
@@ -1632,16 +1659,27 @@
 		<idle form="BFA9"/>
 	</actor>
 </animation>
+<animation id="SIX_SC_FMM-BunkBed01-01Threesome" frames="500">
+	<actor gender="F">
+		<idle form="30564"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30566"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30565"/>
+	</actor>
+</animation>
 
 <animation id="SIX_SC_FMM-BunkBed01-03Threesome" frames="500">
 	<actor gender="F">
 		<idle form="10C3C"/>
 	</actor>
 	<actor gender="M">
-		<idle form="10C3D"/>
+		<idle form="10C3E"/>
 	</actor>
 	<actor gender="M">
-		<idle form="10C3E"/>
+		<idle form="10C3D"/>
 	</actor>
 </animation>
 
@@ -1650,10 +1688,10 @@
 		<idle form="2FD9E"/>
 	</actor>
 	<actor gender="M">
-		<idle form="2FD9F"/>
+		<idle form="2FDA0"/>
 	</actor>
 	<actor gender="M">
-		<idle form="2FDA0"/>
+		<idle form="2FD9F"/>
 	</actor>
 </animation>
 
@@ -1663,11 +1701,21 @@
 	</actor>
 	<actor gender="M">
 		<idle form="21EF3"/>
-		<!--<value path="morph" value="Erection" to="1"/> -->
 	</actor>
 	<actor gender="M">
 		<idle form="21EF4"/>
-		<!--<value path="morph" value="Erection Up" to="1"/>-->
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FMM-DoubleBed02-04ReverseCowgirl-Blowjob" frames="500">
+	<actor gender="F">
+		<idle form="3056D"/>
+	</actor>
+	<actor gender="M">
+		<idle form="3056E"/>
+	</actor>
+	<actor gender="M">
+		<idle form="3056F"/>
 	</actor>
 </animation>
 
@@ -2581,6 +2629,14 @@
 	</actor>
 </animation>
 
+<animation id="SIX_SC-FM-Human-JailCellSmall01-01Tease" frames="500">
+	<actor gender="F">
+		<idle form="30560"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30561"/>
+	</actor>
+</animation>
 
 <animation id="SIX_SC-FM-Human-JailCellSmall01-03Standing" frames="500">
 	<actor gender="F">

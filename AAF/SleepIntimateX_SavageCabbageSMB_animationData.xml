@@ -1,4 +1,4 @@
-<meta title="SleepIntimateX_SavageCabbageSMB_animationData.xml" version="2.46" dataSet="animation"/>
+<meta title="SleepIntimateX_SavageCabbageSMB_animationData.xml" version="2.50" dataSet="animation"/>
 <defaults source="SavageCabbage_Animations.esp"/>
 
 <animation id="SIX_SC-FM-SMBehemoth-Floor01-01Tease" frames="500">
@@ -55,6 +55,14 @@
 	</actor>
 </animation>
 
+<animation id="SIX_SC-FM-SMBehemoth-Floor02-01Tease" frames="500">
+	<actor gender="F">
+		<idle form="3057C"/>
+	</actor>
+	<actor gender="M" skeleton="SupermutantBehemoth">
+		<idle form="3057D"/>
+	</actor>
+</animation>
 
 <animation id="SIX_SC-FM-SMBehemoth-Floor02-03Missionary" frames="500">
 	<actor gender="F">

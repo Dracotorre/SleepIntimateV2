@@ -529,7 +529,13 @@ Function InitSceneAndPlay()
 	if (SceneData.CompanionInPowerArmor)
 		longScene = -1
 	elseIf (SequenceID == 705 || SequenceID == 715)
-		if (otherActor == 1 && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.24)
+		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers == 1.24)
+			longScene = 1
+		elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.25)
+			longScene = 2
+		endIf
+	elseIf (SequenceID == 706 || SequenceID == 707)
+		if (otherActor > 0 && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.25)
 			longScene = 1
 		endIf
 	elseIf (SequenceID == 737 || SequenceID == 733 || SequenceID == 742 || SequenceID == 748 || SequenceID == 749)
@@ -550,7 +556,9 @@ Function InitSceneAndPlay()
 			longScene = 1
 		endIf
 	elseIf (SequenceID == 735)
-		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
+		if (otherActor == 0 && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
+			longScene = 1
+		elseIf (otherActor == 1 && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.250)
 			longScene = 1
 		endIf
 	elseIf (SequenceID == 736)
@@ -580,6 +588,10 @@ Function InitSceneAndPlay()
 		elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
 			longScene = 1
 		endIf
+	elseIf (SequenceID == 758)
+		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.250)
+			longScene = 1
+		endIf	
 	elseIf (SequenceID == 759)
 		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
 			longScene = 1
@@ -614,12 +626,20 @@ Function InitSceneAndPlay()
 		elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
 			longScene = 1
 		endIf
+	elseIf (SequenceID == 775)
+		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.250)
+			longScene = 1
+		endIf
 	elseIf (SequenceID == 781)
 		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.240)
 			longScene = 1
 		endIf
 	elseIf (SequenceID == 795)
 		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.21)
+			longScene = 1
+		endIf
+	elseIf (SequenceID == 796)
+		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.250)
 			longScene = 1
 		endIf
 	elseIf (SequenceID == 785)
