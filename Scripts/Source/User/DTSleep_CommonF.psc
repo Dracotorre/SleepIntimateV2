@@ -380,7 +380,7 @@ ObjectReference Function FindNearestObjectInListFromPoint(FormList list, Point3D
 	return None
 endFunction
 
-; point relative to bed (as if at origin)
+; point relative to bed (as if at origin)   -- assumes player-character facing bed as if activating it
 ; returns left edge or right edge from center of bed -- X-value only
 Point3DOrient Function FindNearestSideOfBedRelativeToBed(Point3DOrient bedPoint, Point3DOrient sideNearPoint) global
 	Point3DOrient ptRes = new Point3DOrient
@@ -391,6 +391,20 @@ Point3DOrient Function FindNearestSideOfBedRelativeToBed(Point3DOrient bedPoint,
 	endIf
 	ptRes.X = GetHalfBedWidth()
 	return ptRes
+EndFunction
+
+; returns relative angle between objects
+; 
+float Function FindRelativeAngleFromObjectToPoint(Point3DOrient objPoint, Point3DOrient fromPoint) global
+	float diffY = fromPoint.Y - objPoint.Y
+	float diffX = fromPoint.X - objPoint.X
+	if (diffX != 0.0)
+		float angleDegrees = Math.atan(diffY / diffX)
+		; relative to objPoint heading
+		return angleDegrees - objPoint.Heading
+	endIf
+	
+	return 0.0
 EndFunction
 
 float Function GetGameTimeHoursDifference(float time1, float time2) global

@@ -106,6 +106,8 @@ FormList property DTSleep_IntimateWeightBenchList auto const 		; added v2.25
 FormList property DTSleep_SettlerFactionList auto const
 FormList property DTSleep_IntimateDinerBoothTableAllList auto const ; added v2.35
 FormList property DTSleep_JailDoorBadLocationList auto const 		; added v2.40
+FormList property DTSleep_IntimateDeskList auto const 			; added v2.51
+FormList property DTSleep_IntimateDesk90List auto const 			; added v2.51
 Message property DTSleep_VersionMsg auto const
 Message property DTSleep_VersionExplicitMsg auto const
 Message property DTSleep_VersionSafeMsg auto const
@@ -297,7 +299,6 @@ endEvent
 
 Event OnTimer(int aiTimerID)
 	if (aiTimerID == 13)
-		
 		if (CheckGameSettings())
 		
 			CheckCompatibility()
@@ -670,6 +671,17 @@ Function CheckCompatibility()
 			(DTSConditionals as DTSleep_Conditionals).WeightBenchKY = (Game.GetFormFromFile(0x05001A52, "DLCWorkshop03.esm") as Keyword)
 			
 			DTSleep_IntimateDinerBoothTableAllList.AddForm(Game.GetFormFromFile(0x050049F3, "DLCWorkshop03.esm"))
+			
+			; v2.51 - desk-container
+			Form deskForm = Game.GetFormFromFile(0x0500539C, "DLCWorkshop03.esm")		; highTech
+			DTSleep_IntimateDeskList.AddForm(deskForm)
+			DTSleep_IntimateDesk90List.AddForm(deskForm)
+			deskForm = Game.GetFormFromFile(0x0500539D, "DLCWorkshop03.esm")		; highTech
+			DTSleep_IntimateDeskList.AddForm(deskForm)
+			DTSleep_IntimateDesk90List.AddForm(deskForm)
+			deskForm = Game.GetFormFromFile(0x05004987, "DLCWorkshop03.esm")		; vault desk
+			DTSleep_IntimateDeskList.AddForm(deskForm)
+			DTSleep_IntimateDesk90List.AddForm(deskForm)
 		endIf
 	endIf
 	
@@ -4600,6 +4612,21 @@ Function UpgradeToVersion()
 		if (lastVers < 2.400)
 			if ((DTSConditionals as DTSleep_Conditionals).IsRobotDLCActive)
 				DTSleep_JailDoorBadLocationList.AddForm(Game.GetFormFromFile(0x020008A4, "DLCRobot.esm"))		; DLC01LairLocation
+			endIf
+		endIf
+		
+		if (lastVers < 2.5100)
+			if ((DTSConditionals as DTSleep_Conditionals).IsWorkShop03DLCActive)
+				; v2.51 - desk-container
+				Form deskForm = Game.GetFormFromFile(0x0500539C, "DLCWorkshop03.esm")		; highTech
+				DTSleep_IntimateDeskList.AddForm(deskForm)
+				DTSleep_IntimateDesk90List.AddForm(deskForm)
+				deskForm = Game.GetFormFromFile(0x0500539D, "DLCWorkshop03.esm")		; highTech
+				DTSleep_IntimateDeskList.AddForm(deskForm)
+				DTSleep_IntimateDesk90List.AddForm(deskForm)
+				deskForm = Game.GetFormFromFile(0x05004987, "DLCWorkshop03.esm")		; vault desk
+				DTSleep_IntimateDeskList.AddForm(deskForm)
+				DTSleep_IntimateDesk90List.AddForm(deskForm)
 			endIf
 		endIf
 		

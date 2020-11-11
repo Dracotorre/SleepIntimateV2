@@ -1305,6 +1305,7 @@ Event DTSleep_IntimateAnimQuestScript.IntimateSequenceDoneEvent(DTSleep_Intimate
 						SceneData.MaleRole = IntimateCompanionRef
 						SceneData.MaleRoleGender = (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).GetGenderForActor(IntimateCompanionRef)
 					endIf
+					
 					SceneData.SecondFemaleRole = None
 					SceneData.SecondMaleRole = None
 				endIf
@@ -1325,7 +1326,7 @@ Event DTSleep_IntimateAnimQuestScript.IntimateSequenceDoneEvent(DTSleep_Intimate
 					self.SleepLoverBonusOnSleepID = -2	; no bonus for robots
 					RestoreSceneData()
 					IntimateCompanionRef = None
-					
+				
 				elseIf (PlayerHasActiveDogmeatCompanion.GetValue() >= 1.0 && DogmeatCompanionAlias != None)
 					Actor dogRef = DogmeatCompanionAlias.GetActorReference()
 					
@@ -1335,6 +1336,7 @@ Event DTSleep_IntimateAnimQuestScript.IntimateSequenceDoneEvent(DTSleep_Intimate
 						IntimateCompanionRef = None
 					endIf
 				endIf
+				
 			elseIf ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SceneIDIsSolo(akArgs[6] as int))
 				; no bonus for solo
 				self.SleepLoverBonusOnSleepID = -2
@@ -5172,7 +5174,10 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 		
 		if (PlayerHasActiveCompanion.GetValueInt() > 0 && CompanionAlias != None)
 		
-			; main companion
+			; *********     main companion
+			; *
+			; v2.51 don't mark seated main companion busy if is faithful lover
+			; 
 			CompanionActorScript aCompanion = CompanionAlias.GetActorReference() as CompanionActorScript
 			
 			if (aCompanion != None && aCompanion.IsEnabled() && !aCompanion.IsDead() && !aCompanion.IsUnconscious())
@@ -5184,7 +5189,7 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 				endIf
 				if (noraCompRef != None && aCompanion == noraCompRef)
 				
-					if (aCompanion.GetDistance(PlayerRef) < 1600.0)
+					if (aCompanion.GetDistance(PlayerRef) < 1800.0)
 						result.CompanionActor = noraCompRef
 						result.HasLoverRing = false
 						result.RelationRank = 4
@@ -5199,12 +5204,20 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 						if (aCompanion.GetSitState() <= 1 && aCompanion.GetSleepState() <= 2)
 							topRelBusy = false
 						elseIf (!mainCompanionPA)
-							topRelBusy = true
+							if (SceneData.CurrentLoverScenCount >= 5)			; v2.51
+								; main companion same lover, don't mark busy
+								topRelBusy = false
+								if (SceneData.CurrentLoverScenCount >= 10)
+									return result
+								endIf
+							else
+								topRelBusy = true
+							endIf
 						endIf
 					endIf
 					
 				elseIf ((DTSConditionals as DTSleep_Conditionals).DualSurvivorsNateRef != None && aCompanion == (DTSConditionals as DTSleep_Conditionals).DualSurvivorsNateRef)
-					if (aCompanion.GetDistance(PlayerRef) < 1600.0)
+					if (aCompanion.GetDistance(PlayerRef) < 1800.0)
 						result.CompanionActor = (DTSConditionals as DTSleep_Conditionals).DualSurvivorsNateRef
 						result.HasLoverRing = false
 						result.RelationRank = 4
@@ -5216,8 +5229,19 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 						elseIf (aCompanion.IsInPowerArmor())
 							result.PowerArmorFlag = true
 						endIf
-						if (aCompanion.GetSitState() <= 1 && aCompanion.GetSleepState() <= 2)
-							topRelBusy = false
+						
+						if (aCompanion.GetSleepState() <= 2)
+							if (aCompanion.GetSitState() <= 1)
+								topRelBusy = false
+							elseIf (SceneData.CurrentLoverScenCount >= 5)			; v2.51
+								; main companion same lover, don't mark busy
+								topRelBusy = false
+								if (SceneData.CurrentLoverScenCount >= 10)
+									return result
+								endIf
+							else
+								topRelBusy = true
+							endIf
 						else
 							topRelBusy = true
 						endIf
@@ -5232,7 +5256,7 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 								if (DTSleep_SettingIntimate.GetValue() >= 2.0 && DressData.PlayerGender == 1 && PlayerRef.HasPerk(CompStrongPerk) && aCompanion.GetValue(CA_AffinityAV) >= 900.0)
 								
 									float distance = aCompanion.GetDistance(PlayerRef)
-									if (distance < 1000.0)
+									if (distance < 1200.0)
 										result.CompanionActor = aCompanion as Actor
 										result.RelationRank = 2   ; default 
 										
@@ -5252,7 +5276,7 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 					elseIf (aCompanion.HasKeyword(ActorTypeRobotKY) && aCompanion != (DTSConditionals as DTSleep_Conditionals).RobotAdaRef)
 						if (DTSleep_SettingIntimate.GetValue() >= 2.0 && DressData.PlayerGender == 1 && DTSleep_AdultContentOn.GetValue() >= 2.0 && (DTSConditionals as DTSleep_Conditionals).ImaPCMod)
 							float distance = aCompanion.GetDistance(PlayerRef)
-							if (distance < 800.0)
+							if (distance < 1200.0)
 								if (IsCompanionRaceCompatible(aCompanion as Actor, None, false))
 									result.CompanionActor = aCompanion as Actor
 									result.RelationRank = 3   ; default
@@ -5308,11 +5332,20 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 									result.RelationRank = 2
 									topRelationRank = 2
 								endIf
-								
-								if (aCompanion.GetSitState() <= 1 && aCompanion.GetSleepState() <= 2)
-									topRelBusy = false
+								if (aCompanion.GetSleepState() <= 2)
+									if (aCompanion.GetSitState() <= 1)
+										topRelBusy = false
+									elseIf (SceneData.CurrentLoverScenCount >= 5)			; v2.51
+										; main companion same lover, don't mark busy
+										topRelBusy = false
+										if (SceneData.CurrentLoverScenCount >= 10)
+											return result
+										endIf
+									else
+										topRelBusy = true
+									endIf
 								else
-									topRelBusy = true
+									topRelBusy = true 
 								endIf
 							endIf
 						endIf
@@ -5338,7 +5371,7 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 					elseIf (!isCompRomantic && (DTSConditionals as DTSleep_Conditionals).IsRobotDLCActive && aCompanion == (DTSConditionals as DTSleep_Conditionals).RobotAdaRef)
 						;DTDebug("GetCompanion Alias Romance-able - skip check Extra-NPC " + aCompanion, 2)
 					
-					elseIf (distance < 1400.0 && !aCompanion.IsChild() && IsCompanionRaceCompatible((aCompanion as Actor), None, isCompRomantic))
+					elseIf (distance < 1800.0 && !aCompanion.IsChild() && IsCompanionRaceCompatible((aCompanion as Actor), None, isCompRomantic))
 						
 						if (aCompanion.WornHasKeyword(ArmorTypePower))
 							mainCompanionPA = true
@@ -5395,6 +5428,12 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 										; ready now
 										;result.Gender = (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).GetGenderForActor(aCompanion)
 										return result
+									elseIf (SceneData.CurrentLoverScenCount >= 5 && !sleeping)			; v2.51
+										; main companion same lover, don't mark busy
+										topRelBusy = false
+										if (SceneData.CurrentLoverScenCount >= 10)
+											return result
+										endIf
 									else
 										topRelBusy = true
 									endIf
@@ -5408,6 +5447,9 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 									result.CompanionActor = aCompanion as Actor
 									result.RelationRank = 3
 									if (!sitting && !sleeping)
+										topRelBusy = false
+									elseIf (SceneData.CurrentLoverScenCount >= 5 && !sleeping)			; v2.51
+										; main companion same lover, don't mark busy
 										topRelBusy = false
 									else
 										topRelBusy = true
@@ -5424,6 +5466,10 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 									result.CompanionActor = aCompanion as Actor
 									if (!sitting && !sleeping)
 										topRelBusy = false
+									elseIf (SceneData.CurrentLoverScenCount >= 5 && !sleeping)			; v2.51
+										; main companion same lover, don't mark busy
+										topRelBusy = false
+										
 									else
 										topRelBusy = true
 									endIf
@@ -5434,7 +5480,7 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 					endIf
 				endIf
 			endIf
-		endIf
+		endIf			; ********  end main companion
 		
 		if ((DTSConditionals as DTSleep_Conditionals).IsHeatherCompanionActive && prefGender >= 1)
 			
@@ -7018,7 +7064,11 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 					RegisterForRemoteEvent(targetRef, "OnActivate")			; watch for NPC activate
 					RegisterForCustomEvent((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript), "IntimateSequenceDoneEvent")
 					if (spectatorOkay)
-						SetStartSpectators(targetRef)
+						if (pickSpotSelected)
+							SetStartSpectators(PlayerRef)					; v2.51 pick-spot spectators face player
+						else
+							SetStartSpectators(targetRef)
+						endIf
 					endIf
 					
 				elseIf (!SceneData.IsUsingCreature && (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlayActionXOXO())
@@ -7722,6 +7772,9 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 		endIf
 	endIf
 	
+	bool secondLoverCheckPreferHugs = false								; v2.51 to handle case where same gender can find 2nd lover
+	bool sameGenderPickSpotOK = false									; v2.51 to handle pick-spot and 2nd lover checks
+	
 	if (companionCompatible)
 	
 		if (nearCompanion.Gender < 0)
@@ -7827,7 +7880,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 						companionReady = false
 						IntimateCompanionRef = None
 						
-					elseIf (doOtherProp && specialFurn >= 103 && specialFurn <= 104)
+					elseIf (doOtherProp && specialFurn >= 103 && specialFurn <= 104)				; table animations
 						if (SceneData.MaleRoleGender == 1)
 							if (!(DTSConditionals as DTSleep_Conditionals).IsAtomicLustActive && !(DTSConditionals as DTSleep_Conditionals).IsRufgtActive)
 								if ((DTSConditionals as DTSleep_Conditionals).IsLeitoAAFActive || (DTSConditionals as DTSleep_Conditionals).IsLeitoActive)
@@ -7840,16 +7893,16 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 									animPacks[0] = 0
 								endIf
 							elseIf ((DTSConditionals as DTSleep_Conditionals).IsRufgtActive)
-								DTSleep_SexStyleLevel.SetValue(9.0)
+								DTSleep_SexStyleLevel.SetValue(9.0)				; embrace or oral
 							endIf
 						elseIf (!(DTSConditionals as DTSleep_Conditionals).IsAtomicLustActive)
-							hugsOnly = true
 							animPacks[0] = 0
+							hugsOnly = true
 						endIf
 						
 					elseIf (doOtherProp)
+						animPacks[0] = 0				; no pick-spot for sedan or motorcycle
 						hugsOnly = true
-						animPacks[0] = 0
 					elseIf (specialFurn == 4)
 						if (nearCompanion.Gender == 0)
 							hugsOnly = true
@@ -7858,9 +7911,12 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 					elseIf (!doOtherProp)
 						if (specialFurn == 2 && IsSexyDanceCompatibleFurn(akFurniture, furnBaseForm, true))
 							lapDanceOkay = true
+						elseIf (SceneData.MaleRoleGender == 0 && DTSleep_SettingLover2.GetValue() >= 1.0)
+							; v2.51 - hold off to allow pick of female lover
+							secondLoverCheckPreferHugs = true
+							sameGenderPickSpotOK = true
 						else
-							hugsOnly = true
-							animPacks[0] = 0
+							sameGenderPickSpotOK = true
 						endIf
 					endIf
 				endIf
@@ -7950,15 +8006,65 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 					if (loverType >= 0)
 						; sets SceneData Second role and alias for name
 						SetExtraLovePartners(loverType)
+					elseIf (secondLoverCheckPreferHugs)					; v2.51 - since held off
+						if (!sameGenderPickSpotOK)
+							hugsOnly = true
+						endIf
+					endIf
+				elseIf (secondLoverCheckPreferHugs)						; v2.51 - since held off
+					if (!sameGenderPickSpotOK)
+						hugsOnly = true
 					endIf
 				endIf
 			elseIf (SceneData.IsCreatureType == CreatureTypeStrong)
 				; check for nearby mutants 
 				SetExtraMutantPartner()
+			elseIf (secondLoverCheckPreferHugs)
+				hugsOnly = true
+			endIf
+		elseIf (secondLoverCheckPreferHugs)
+			if (!sameGenderPickSpotOK)
+				hugsOnly = true
 			endIf
 		endIf
 		; ------------------------end partner set
 		
+		if (sameGenderPickSpotOK && SceneData.SecondMaleRole == None && SceneData.SecondFemaleRole == None) ; v2.51
+			animpacks.Clear()
+			if (SceneData.MaleRoleGender == 1 && !SceneData.HasToyAvailable)
+				; for speed, we skipped checking toy earlier (hugsOK) so let's check now if there is a supported animation pack
+				if ((DTSConditionals as DTSleep_Conditionals).IsLeitoActive || (DTSConditionals as DTSleep_Conditionals).IsLeitoAAFActive)
+					Armor strapOn = (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).GetStrapOnForActor(PlayerRef, true, None)
+					if (strapOn == None)
+						strapOn = (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).GetStrapOnForActor(nearCompanion.CompanionActor, false, None)
+					endIf
+					if (strapOn != None)
+						SceneData.HasToyAvailable = true
+						SceneData.ToyArmor = strapOn
+					endIf
+				endIf
+			endIf
+			
+			if (SceneData.MaleRoleGender == 0 || SceneData.HasToyAvailable)
+				if ((DTSConditionals as DTSleep_Conditionals).IsLeitoActive)
+					animPacks.Add(1)
+				elseIf ((DTSConditionals as DTSleep_Conditionals).IsLeitoAAFActive)
+					animPacks.Add(6)
+				endIf
+			endIf
+			if ((DTSConditionals as DTSleep_Conditionals).IsAtomicLustActive)
+				animPacks.Add(5)
+			endIf
+			if (animPacks.Length == 0)
+				animPacks.Add(0)
+				hugsOnly = true
+				DTDebug("sameGender pickSpot false--hugsOnly", 2)
+			else
+				pickSpot = true
+				DTSleep_SexStyleLevel.SetValueInt(6)
+				DTDebug("sameGender pickSpot true", 2)
+			endIf
+		endIf
 		
 		bool dogSafe = true ;IsSceneDogmeatSafe(furnToPlayObj)
 		
@@ -8045,9 +8151,16 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 							endIf
 						else
 							propObjRef = DTSleep_CommonF.FindNearestObjectInListFromObjRef(DTSleep_IntimateTablesAllList, akFurniture, 375.0, true) ;v2.19 limit to same plane
+							
 							if (propObjRef != None)
-								
-								DTSleep_SexStyleLevel.SetValue(1.0)
+								; table may be fallen over or upside-down
+								float angleX = propObjRef.GetAngleX()
+								float angleY = propObjRef.GetAngleY()
+								if (angleX < 10.0 && angleX > -10.0 &&  angleY < 10.0 && angleY > -10.0)
+									DTSleep_SexStyleLevel.SetValue(1.0)
+								else
+									propObjRef = None
+								endIf
 								
 							elseIf (akFurniture.HasKeyword((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).DTSleep_SMBed02KY))
 								; TODO: these may be stacked or facing a wall
@@ -8446,7 +8559,11 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 							RegisterForCustomEvent((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript), "IntimateSequenceDoneEvent")
 							if (specialFurn < 4 || specialFurn >= 100)
 								; spectators ignore radius on PA station so skip
-								SetStartSpectators(furnToPlayObj)
+								if (pickSpot)
+									SetStartSpectators(PlayerRef)					; v2.51 - pick-spot spectators face player
+								else
+									SetStartSpectators(furnToPlayObj)
+								endIf
 							endIf
 						else
 							noPreBedAnim = true
@@ -11898,7 +12015,6 @@ EndFunction
 
 Function ProcessCompatibleMods(bool showMsg = true)
 
-	
 	int sysCWActiveVal = DTSleep_IsSYSCWActive.GetValueInt()
 	
 	if (sysCWActiveVal > 0.0 && DTSleep_SettingPrefSYSC.GetValue() < 0.0)
@@ -12102,6 +12218,8 @@ endFunction
 Function RestoreSceneData()
 	SceneData.MaleRole = SceneData.BackupMaleRole
 	SceneData.FemaleRole = SceneData.BackupFemaleRole
+	SceneData.BackupMaleRole = None
+	SceneData.BackupFemaleRole = None
 	SceneData.MaleRoleGender = SceneData.BackupMaleRoleGender
 	SceneData.SameGender = SceneData.BackupSameGender
 	SceneData.CurrentLoverScenCount = SceneData.BackupCurrentLoverScenCount

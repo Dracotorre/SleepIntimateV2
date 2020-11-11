@@ -143,6 +143,7 @@ FormList property DTSleep_JailReversedLocList auto const			; v2.40
 FormList property DTSleep_JailDoorwayAltLocList auto const			; v2.40
 FormList property DTSleep_JailDoor2AltLoclList auto const				;
 FormList property DTSleep_JailDoorTinyLocList auto const			; v2.43
+FormList property DTSleep_IntimateDesk90List auto const				; v2.51
 Static property DTSleep_MainNode auto const Mandatory
 Static property DTSleep_DummyNode auto const Mandatory
 ObjectReference property JailDoor1Quincy1Ref auto const
@@ -230,6 +231,7 @@ int FurnTypeIsTableDinerBooth = 252 const
 int FurnTypeIsTablePicnic = 253 const
 int FurnTypeIsTablePool = 254 const
 int FurnTypeIsTableRound = 255 const
+int FurnTypeIsTableTable = 256 const
 
 ; other furniture
 int FurnTypeIsPillory = 300 const
@@ -3682,6 +3684,13 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 								bedUseNodeMarker = true
 								yOffset = -5.0
 								xOffset = 0.0
+								Form baseBedForm = SleepBedRef.GetBaseObject()
+								if (MySleepBedFurnType == FurnTypeIsTableDesk && DTSleep_IntimateDesk90List.HasForm(baseBedForm))
+									xOffset = -90.0				;v2.51
+								endIf
+
+								headingAngle = SleepBedRef.GetAngleZ() + xOffset
+								
 							elseIf (id == 753)
 								; stool facing normal sit-direction which bumps head into many counters
 								; let's turn at an angle
@@ -4878,8 +4887,10 @@ bool Function SceneIDArrayPrepMyFurnitureType()
 				MySleepBedFurnType = FurnTypeIsTableDining
 			elseIf (DTSleep_IntimateRoundTableList.HasForm(baseBedForm))
 				MySleepBedFurnType = FurnTypeIsTableRound	
-			else
+			elseIf (DTSleep_IntimateDeskList.HasForm(baseBedForm))
 				MySleepBedFurnType = FurnTypeIsTableDesk
+			else
+				MySleepBedFurnType = FurnTypeIsTableTable
 			endIf
 			
 		elseIf (IsObjSeat(SleepBedRef))
@@ -5171,7 +5182,7 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 			;		sidArray.Add(73) ; stand-only
 			;	endIf
 				
-			if (!SceneData.IsUsingCreature && !SceneData.CompanionInPowerArmor)
+			if (!SceneData.IsUsingCreature && !SceneData.CompanionInPowerArmor && !playerPick)				; v2.51 fix for playerPick oral
 				if (packID == 7)
 					if (!SceneData.SameGender)
 						if (MySleepBedFurnType == FurnTypeIsTablePool)
@@ -5197,24 +5208,38 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 					endIf
 				elseIf (packID == 6 || packID == 1)
 					if (MySleepBedFurnType == FurnTypeIsTablePool || MySleepBedFurnType == FurnTypeIsTablePicnic)
-						sidArray.Add(53)
+						
 						sidArray.Add(5)
-						sidArray.Add(9)
+						if (!SceneData.FemaleRaceHasTail)
+							sidArray.Add(53)
+							if (mainActorIsMaleRole)
+								sidArray.Add(3)					; v2.51 - replaced 9 since works poorly for FF
+							endIf
+						endIf
+						if (!SceneData.SameGender)
+							sidArray.Add(9)
+						endIf 
 					endIf
 				endIf
 			endIf
 			if (packID == 5)
 				if (MySleepBedFurnType == FurnTypeIsTablePool || MySleepBedFurnType == FurnTypeIsTablePicnic)
-				
+					; v2.51 - fix for playerPick oral
 					if (SceneData.SameGender && !SceneData.IsUsingCreature && !SceneData.CompanionInPowerArmor)
-						if ((DTSConditionals as DTSleep_Conditionals).IsAtomicLustActive)
+						if ((DTSConditionals as DTSleep_Conditionals).IsAtomicLustActive && !playerPick)
 							sidArray.Add(4)
 						endIf
 						if ((DTSConditionals as DTSleep_Conditionals).IsRufgtActive)
-							sidArray.Add(91)
-							sidArray.Add(90)
+							if (playerPick && DoesMainActorPrefID(50))
+								if (SceneData.MaleRoleGender == 1)
+									sidArray.Add(90)
+									sidArray.Add(92)
+								endIf
+							elseIf (SceneData.MaleRoleGender == 1)
+								sidArray.Add(91)
+							endIf
 						endIf
-					elseIf ((DTSConditionals as DTSleep_Conditionals).IsAtomicLustActive)
+					elseIf ((DTSConditionals as DTSleep_Conditionals).IsAtomicLustActive && !playerPick)
 						if (SceneData.CompanionInPowerArmor || SceneData.IsUsingCreature)
 							; self-play
 							sidArray.Add(40)
@@ -5390,6 +5415,7 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 			if (MySleepBedFurnType != FurnTypeIsCoffin && !bedIsSMBed && (DTSConditionals as DTSleep_Conditionals).IsRufgtActive && !SceneData.IsUsingCreature && !SceneData.CompanionInPowerArmor)
 				if (SceneData.SecondMaleRole == None && SceneData.SecondFemaleRole == None)
 					if (SceneData.SameGender && SceneData.MaleRoleGender == 1)
+						; female-female
 						okayAdd = true
 						if (SceneData.HasToyEquipped && !playerPick)
 							; give preference for toy scenes
