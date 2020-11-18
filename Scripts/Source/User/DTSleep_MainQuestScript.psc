@@ -7911,12 +7911,15 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 					elseIf (!doOtherProp)
 						if (specialFurn == 2 && IsSexyDanceCompatibleFurn(akFurniture, furnBaseForm, true))
 							lapDanceOkay = true
-						elseIf (SceneData.MaleRoleGender == 0 && DTSleep_SettingLover2.GetValue() >= 1.0)
+						elseIf (specialFurn == 2 && SceneData.MaleRoleGender == 0 && DTSleep_SettingLover2.GetValue() >= 1.0 && DTSleep_AdultContentOn.GetValueInt() >= 2)
 							; v2.51 - hold off to allow pick of female lover
 							secondLoverCheckPreferHugs = true
 							sameGenderPickSpotOK = true
-						else
+						elseIf (specialFurn == 2 && DTSleep_AdultContentOn.GetValueInt() >= 2)			; v2.51.1 fix Relax 
 							sameGenderPickSpotOK = true
+						else								; v2.51.1 fix Relax 
+							hugsOnly = true
+							animPacks[0] = 0
 						endIf
 					endIf
 				endIf
