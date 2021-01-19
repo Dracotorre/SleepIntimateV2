@@ -51,6 +51,7 @@ GlobalVariable property DTSleep_CompanionBelongWorkshop auto
 GlobalVariable property DTSleep_DebugMode auto const
 FormList property DTSleep_BedList auto const
 FormList property DTSleep_BedIntimateList auto const
+FormList property DTSleep_BedPrivateList auto const
 FormList property DTSleep_BedsBigDoubleList auto const
 FormList property DTSleep_BedPillowBedList auto const
 FormList property DTSleep_BedPillowFrameDBList auto const
@@ -130,8 +131,13 @@ int Function CheckBedOwnership(ObjectReference aBedRef, Form baseBedForm, Actor 
 				bedOwnSetting = 1
 				DTSleep_CompanionBelongWorkshop.SetValue(-2.0)
 			endIf
-		
-			if (!aBedRef.HasKeyword(AnimFurnFloorBedAnims) && DTSleep_BedIntimateList.HasForm(baseBedForm) && baseBedForm != WorkshopNPCBedPlayerHouseLay01)
+			
+			if (DTSleep_BedPrivateList.HasForm(baseBedForm))				; v2.53 - beds without Workshop resource for no assignments
+			
+				MarkBedsPrivate(aBedRef, None, false)			; check to be sure private keyword added
+				aBedRef.SetActorRefOwner(PlayerRef, true)
+				
+			elseIf (!aBedRef.HasKeyword(AnimFurnFloorBedAnims) && DTSleep_BedIntimateList.HasForm(baseBedForm) && baseBedForm != WorkshopNPCBedPlayerHouseLay01)
 				
 				if (DTSleep_CompIntimateAlias != None && companionRef != None)
 

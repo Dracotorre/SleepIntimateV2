@@ -12,6 +12,7 @@ Scriptname DTSleep_OutfitContainerScript extends ObjectReference
 
 Message property DTSleep_QuestItemTransMsg auto const mandatory
 FormList property DTSleep_QuestItemsList auto const mandatory		; items to restrict
+FormList property DTSleep_QuestItemModList auto const				; mod items to restrict		--v2.53
 Quest property MS04Quest auto const									; restrict quest items if quest incomplete
 FormList property DTSleep_ArmorPipBoyList auto const				; v1.92 - restrict these important items as backup measure
 FormList property DTSleep_ArmorPipPadList auto const
@@ -95,13 +96,18 @@ int Function AddOutfit(Form[] armorArray, ObjectReference fromRef, bool isSleepO
 						DTSleep_QuestItemTransMsg.Show()
 						hasShownQuestWarn = true
 					endIf
+				elseIf (DTSleep_QuestItemModList != None && DTSleep_QuestItemModList.HasForm(item))
+					; v2.53 - not adding --
+					if (fromRef != None && fromRef == Game.GetPlayer() as ObjectReference)
+						Game.GetPlayer().EquipItem(item, false, true)	; okay-remove, silent
+					endIf
 				elseIf (DTSleep_ArmorPipBoyList != None && DTSleep_ArmorPipBoyList.HasForm(item))
 					; not adding - 
 					if (fromRef != None && fromRef == Game.GetPlayer() as ObjectReference)
 						Game.GetPlayer().EquipItem(item, false, true)	; okay-remove, silent
 					endIf
 					
-				elseIf (DTSleep_ArmorPipBoyList != None && DTSleep_ArmorPipPadList.HasForm(item))
+				elseIf (DTSleep_ArmorPipPadList != None && DTSleep_ArmorPipPadList.HasForm(item))
 					; nope
 					if (fromRef != None && fromRef == Game.GetPlayer() as ObjectReference)
 						

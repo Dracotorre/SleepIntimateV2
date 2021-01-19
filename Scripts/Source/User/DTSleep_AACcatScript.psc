@@ -138,7 +138,7 @@ int Function GetStageCountForSequenceID(int seqID, int longScene = 0, int other 
 			endIf
 		elseIf (seqID == 760 && longScene > 0)
 			result = 6
-		elseIf (seqID == 757 || seqID == 759)
+		elseIf (seqID == 759)
 			result = 6
 		elseIf (seqID >= 754 && seqID <= 755)
 			result = 1
@@ -184,7 +184,19 @@ int Function GetStageCountForSequenceID(int seqID, int longScene = 0, int other 
 			endIf
 		elseIf (seqID == 739)
 			result = 1
-		elseIf (seqID >= 734 && seqID <= 737 && other <= 0)
+		elseIf (seqID == 738)
+			if (longScene > 0)
+				result = 8
+			else
+				result = 6
+			endIf
+		elseIf (seqID == 737 && longScene >= 0 && other <= 0)
+			if (longScene > 1)
+				result = 8
+			else
+				result = 6
+			endIf
+		elseIf (seqID >= 734 && seqID <= 736 && other <= 0)
 			result = 6
 		elseIf (seqID == 732)
 			result = 2
@@ -195,19 +207,15 @@ int Function GetStageCountForSequenceID(int seqID, int longScene = 0, int other 
 				result = 3
 			else
 				result = 1
-			endIf
-		elseIf (seqID == 712)
-			result = 4
-		elseIf (seqID == 711)
+			endIf								
+		elseIf (seqID >= 710 && seqID <= 712)	; v2.53 fix include 712
 			result = 6
-		elseIf (seqID == 704)
-			result = 6
-		elseIf (seqID >= 701 && seqID <= 703)
-			result = 6
-		elseIf (seqID == 705)
-			result = 4
-			if (longScene > 0 && other <= 0)
-				result = 6
+		
+		elseIf (seqID == 707)
+			if (other > 0 && longScene > 0)
+				result = 2
+			else
+				result = 1
 			endIf
 		elseIf (seqID == 706)
 			if (other > 0)
@@ -219,24 +227,16 @@ int Function GetStageCountForSequenceID(int seqID, int longScene = 0, int other 
 			else
 				result = 6
 			endIf
-		elseIf (seqID == 707)
-			if (other > 0 && longScene > 0)
-				result = 2
-			else
-				result = 1
-			endIf
-		elseIf (seqID == 737 && longScene >= 0 && other <= 0)
-			if (longScene > 1)
-				result = 8
-			else
+		elseIf (seqID == 705)
+			result = 4
+			if (longScene > 0 && other <= 0)
 				result = 6
 			endIf
-		elseIf (seqID == 738)
-			if (longScene > 0)
-				result = 8
-			else
-				result = 6
-			endIf
+		elseIf (seqID == 704)
+			result = 6
+		elseIf (seqID >= 701 && seqID <= 703)
+			result = 6
+		
 		elseIf (seqID >= 770 && seqID <= 773)
 			result = 2
 		elseIf (seqID >= 774 && seqID <= 775)
@@ -803,10 +803,16 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 						endIf
 						ssStruct.PositionID = "DTSIX_704_S5"
 					elseIf (stageNumber == 6 && longScene > 0)
-						ssStruct.FAnimFormID = 0x0502DEA7		; v2.49, SC 1.2.4  last 
-						ssStruct.MAnimFormID = 0x0502DEA8
+						if (Utility.RandomInt(1,6) < 4)
+							ssStruct.FAnimFormID = 0x0502DEA7		; v2.49, SC 1.2.4  last 
+							ssStruct.MAnimFormID = 0x0502DEA8
+							ssStruct.PositionOrigID = "SC-FM-Human-Bed02-07ClimaxLoop"
+						else
+							ssStruct.FAnimFormID = 0x0502FD85		; v2.53, SC 1.2.4  last 
+							ssStruct.MAnimFormID = 0x0502FD86
+							ssStruct.PositionOrigID = "SC-FM-Human-Bed02-08Finish"
+						endIf
 						ssStruct.PositionID = "DTSIX_704_S6"	
-						ssStruct.PositionOrigID = "SC-FM-Human-Bed02-07ClimaxLoop"
 					else
 						ssStruct.FAnimFormID = 0x05000FE8		; first and last
 						ssStruct.MAnimFormID = 0x05000FE9
@@ -993,7 +999,40 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 						ssStruct.StageTime = 18.5
 					endIf
 					
-				endIf	
+				endIf
+			elseIf (seqID == 710)													; v2.53 variation of 711 -- same AAF
+				if (stageNumber == 1)
+					ssStruct.FAnimFormID = 0x05000FD3
+					ssStruct.MAnimFormID = 0x05000FD4
+					ssStruct.StageTime = 12.0
+					ssStruct.PositionID = "DTSIX_711_S1"
+					ssStruct.PositionOrigID = "FM-Bed01-01Tease"
+				elseIf (stageNumber == 2)
+					ssStruct.FAnimFormID = 0x05000FD5
+					ssStruct.MAnimFormID = 0x05000FD6
+					ssStruct.PositionID = "DTSIX_711_S2"
+					ssStruct.PositionOrigID = "FM-Bed01-02Start"
+				elseIf (stageNumber == 3)
+					ssStruct.FAnimFormID = 0x05000FD7
+					ssStruct.MAnimFormID = 0x05000FD8
+					ssStruct.PositionID = "DTSIX_711_S3"
+					ssStruct.PositionOrigID = "SC-FM-Human-Bed01-06Blowjob"
+				elseIf (stageNumber == 4)
+					ssStruct.FAnimFormID = 0x05000FDF
+					ssStruct.MAnimFormID = 0x05000FE0
+					ssStruct.PositionID = "DTSIX_711_S4"
+					ssStruct.PositionOrigID = "SC-FM-Human-Bed01-07Deepthroat"
+				elseIf (stageNumber == 5)
+					ssStruct.FAnimFormID = 0x05000FE1
+					ssStruct.MAnimFormID = 0x05000FE2
+					ssStruct.PositionID = "DTSIX_711_S5"
+					ssStruct.PositionOrigID = "SC-FM-Human-Bed01-08Blowjob"
+				else
+					ssStruct.FAnimFormID = 0x05000FE3	
+					ssStruct.MAnimFormID = 0x05000FE4
+					ssStruct.PositionID = "DTSIX_711_S6"
+					ssStruct.PositionOrigID = "SC-FM-Human-Bed01-09Climax"
+				endIf
 			elseIf (seqID == 711)
 				if (stageNumber == 1)
 					ssStruct.FAnimFormID = 0x05000FD3
@@ -1022,10 +1061,10 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 					ssStruct.PositionID = "DTSIX_711_S5"
 					ssStruct.PositionOrigID = "FM-Bed01-05Titjob"
 				else
-					ssStruct.FAnimFormID = 0x05000FDD	
-					ssStruct.MAnimFormID = 0x05000FDE
+					ssStruct.FAnimFormID = 0x05000FE5	
+					ssStruct.MAnimFormID = 0x05000FE7
 					ssStruct.PositionID = "DTSIX_711_S6"
-					ssStruct.PositionOrigID = "FM-Bed01-06Blowjob"
+					ssStruct.PositionOrigID = "SC-FM-Human-Bed01-10Finish"
 				endIf
 			elseIf (seqID == 712)
 				if (stageNumber == 1)
@@ -1048,7 +1087,7 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 					ssStruct.MAnimFormID = 0x05025C2D
 					ssStruct.PositionID = "DTSIX_712_S4"
 					ssStruct.PositionOrigID = "FM-DoubleBedWoodPreWar01-04Doggy"
-				elseIf (stageNumber == 5)							; TODO: restarts off bed??
+				elseIf (stageNumber == 5)							
 					ssStruct.FAnimFormID = 0x05025C2E
 					ssStruct.MAnimFormID = 0x05025C2F
 					ssStruct.PositionID = "DTSIX_712_S5"
@@ -1441,6 +1480,7 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 						ssStruct.FAnimFormID = 0x05000FF8
 						ssStruct.MAnimFormID = 0x05000FF9
 						ssStruct.PositionID = "DTSIX_738_S3"
+						ssStruct.PositionOrigID = "SC-FM-Human-Armchair02-03Handjob"
 					else
 						ssStruct.FAnimFormID = 0x05000FF6
 						ssStruct.MAnimFormID = 0x05000FF7
@@ -1608,7 +1648,7 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 					ssStruct.MAnimFormID = 0x05027330
 					ssStruct.PositionID = "DTSIX_747_S3"	
 					ssStruct.PositionOrigID = "FM-ShowerPlayerHouse01-04Doggy"
-				elseIf (stageNumber == 4)
+				elseIf (stageNumber == 4 || stageNumber == 6)							; v2.53 -- skip climax
 					ssStruct.FAnimFormID = 0x05027331
 					ssStruct.MAnimFormID = 0x05027332
 					ssStruct.PositionID = "DTSIX_747_S4"	
@@ -1619,8 +1659,8 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 					ssStruct.PositionID = "DTSIX_747_S5"								
 					ssStruct.PositionOrigID = "SC-FM-Human-ShowerPlayerHouse01-06Doggy"
 				else																	; v2.49, SC 1.2.4
-					ssStruct.FAnimFormID = 0x0502FD94
-					ssStruct.MAnimFormID = 0x0502FD95
+					ssStruct.FAnimFormID = 0x0502FD94									
+					ssStruct.MAnimFormID = 0x0502FD95									; ?? appears to duplicate female stance
 					ssStruct.PositionID = "DTSIX_747_S6"									
 					ssStruct.PositionOrigID = "SC-FM-Human-ShowerPlayerHouse01-07ClimaxLoop"
 				endIf
@@ -1861,7 +1901,7 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 					ssStruct.FAnimFormID = 0x05001814
 					ssStruct.MAnimFormID = 0x05001815
 					ssStruct.PositionID = "DTSIX_757_S5"
-					ssStruct.PositionOrigID = "FM-PoolTable02-05RoughDoggy"			; on top
+					ssStruct.PositionOrigID = "SC-FM-Human-PoolTable02-05RoughBlowjob"			; this changed
 				endIf
 			elseIf (seqID == 758)								;SIX_SC_FM-Seat01			
 				if (other == 0)
@@ -1937,7 +1977,7 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 					ssStruct.MAnimFormID = 0x0500550C
 					ssStruct.PositionID = "DTSIX_759_S2"
 					ssStruct.PositionOrigID = "FM-Bench01-03ReverseCowgirlAnal"
-				elseIf (stageNumber == 3 || (stageNumber == 6 && longScene <= 0))
+				elseIf (stageNumber == 3 || (stageNumber >= 5 && longScene <= 0))
 					ssStruct.FAnimFormID = 0x0500C744
 					ssStruct.MAnimFormID = 0x0500C745
 					ssStruct.PositionID = "DTSIX_759_S3"

@@ -2703,7 +2703,7 @@ int Function PickIntimateSceneID(bool mainActorIsMaleRole, bool standOnly, int[]
 			return -2
 		endIf
 	endIf
-	
+
 	return sceneIDToPlay 
 endFunction
 
@@ -3721,9 +3721,19 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 									headingAngle = SleepBedRef.GetAngleZ() + 0.03
 								endIf
 								
-							;elseIf (id >= 756 && id <= 757)
+							elseIf (id == 756)				; 757 starts at end of pool table
 							;	; actual pool table
-							;	markerIsBed = true
+							;	v2.53 - turn animation to near side
+								float actH = MainActorRef.GetAngleZ()
+								float tabH = SleepBedRef.GetAngleZ()
+								;Debug.Trace("  **** actor angle: " + actH + " ***** table angle: " + tabH)
+								if (((actH - tabH) > 0 && (actH - tabH) <= 180) || ((actH - tabH) <= -180 && (actH - tabH) < -360))
+									zOffset = -7.00
+									markerIsBed = false
+									bedUseNodeMarker = false
+									matchRotation = true
+									revHeading = true
+								endIf
 								
 							elseIf (id == 758)
 								yOffset = -1.0
@@ -5073,7 +5083,7 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 			endIf
 			
 		elseIf (MySleepBedFurnType >= 220 && MySleepBedFurnType < 250 && SceneData.MaleRole != CompStrongRef && !standOnly && !MainActorPositionByCaller)
-			; chairs 
+			;  ****** chairs *******
 			
 			if (!SceneData.CompanionInPowerArmor && SceneData.IsCreatureType != 3 && SceneData.IsCreatureType < 5)
 			
@@ -5174,7 +5184,7 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 				endIf
 			endIf
 		elseIf (MySleepBedFurnType >= 250 && MySleepBedFurnType < 300 && !MainActorPositionByCaller)
-			; tables
+			; ***** tables ******
 			
 			;if (SceneData.IsUsingCreature && !SceneData.SameGender && SceneData.IsCreatureType == 2)
 			;	if (!IsAAFEnabled() && DTSleep_IntimateRoundTableList.HasForm(baseBedForm))
@@ -5182,13 +5192,28 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 			;		sidArray.Add(73) ; stand-only
 			;	endIf
 				
-			if (!SceneData.IsUsingCreature && !SceneData.CompanionInPowerArmor && !playerPick)				; v2.51 fix for playerPick oral
-				if (packID == 7)
+			if (!SceneData.IsUsingCreature && !SceneData.CompanionInPowerArmor)
+				if (playerPick && DoesMainActorPrefID(50))								; v2.53 -- moved 2.51 fix so can have oral
+					if (packID == 7)
+						if (MySleepBedFurnType == FurnTypeIsTablePool)
+							sidArray.Add(56)  ; Cunnilingus for pool table - includes FMM
+						endIf
+					elseIf (packID == 1 || packID == 6)
+						if (MySleepBedFurnType == FurnTypeIsTablePicnic)
+							sidArray.Add(50)
+						elseIf ((!(DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive && MySleepBedFurnType == FurnTypeIsTablePool))
+							sidArray.Add(50)
+						endIf
+					endIf
+				elseIf (packID == 7)
 					if (!SceneData.SameGender)
 						if (MySleepBedFurnType == FurnTypeIsTablePool)
 							; big so allow other animations, too
-							sidArray.Add(56)  ; for pool table - includes FMM
-							sidArray.Add(57)  ; for pool table
+							if (SceneData.SecondMaleRole != None)			; v2.53 restrict -- oral choice above
+								sidArray.Add(56)  ; for pool table - includes FMM
+							else
+								sidArray.Add(57)  ; for pool table
+							endIf
 						elseIf (MySleepBedFurnType == FurnTypeIsTablePicnic)
 							sidArray.Add(43)
 						elseIf (MySleepBedFurnType == FurnTypeIsTableDinerBooth)		;v2.35
@@ -5285,8 +5310,12 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 					if (MySleepBedFurnType == FurnTypeIsSedanPostWar)
 						sidArray.Add(90)
 					endIf
-					sidArray.Add(92)			; pre-war works for both
-					sidArray.Add(91)
+					; pre-war works for both
+					if (playerPick && DoesSecondActorPrefID(50))
+						sidArray.Add(91)				; blowjob + cowgirl
+					else
+						sidArray.Add(92)
+					endIf
 				endIf
 			endIf
 			
@@ -5617,7 +5646,7 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 						
 					elseIf (MySleepBedFurnType == FurnTypeIsDoubleBed)
 						if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.10)
-							sidArray.Add(7)
+							sidArray.Add(7)				; includes oral, but no selection for extra partners
 							sidArray.Add(6)
 						endIf
 					elseIf (bedIsFloorBed)
@@ -5731,7 +5760,8 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 						if (RestrictScenesToErectAngle <= 0 || ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.10 && DTSleep_SettingUseBT2Gun.GetValueInt() > 0))
 							
 							if (MySleepBedFurnType != FurnTypeIsBunkBed)
-								if (!playerPick || DoesMainActorPrefID(50))
+								if (playerPick && DoesMainActorPrefID(50))				; v2.53 only for oral/manual
+									sidArray.Add(10, numToAdd)  ; blow-job
 									sidArray.Add(11, numToAdd)  ; hand/tit-job
 								endIf
 							endIf

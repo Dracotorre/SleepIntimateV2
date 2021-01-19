@@ -3018,16 +3018,27 @@ IntimateChancePair Function ChanceForIntimateScene(IntimateCompanionSet companio
 	
 	if (sameLoverAsLast)
 		
-		sameLoveBonus = 1 + SceneData.CurrentLoverScenCount
+		sameLoveBonus = SceneData.CurrentLoverScenCount
+		; v2.53 - limit increment to same max
+		if (sameLoveBonus < 200)
+			sameLoveBonus += 1	
+		endIf
 		
-		if (SceneData.CurrentLoverScenCount > IntimacySceneCount)
+		if (SceneData.CurrentLoverScenCount > IntimacySceneCount)				; error check
 			sameLoveBonus = IntimacySceneCount
 			SceneData.CurrentLoverScenCount = sameLoveBonus
 		endIf
 		
 		if (sameLoveBonus > 9)
-			; after 10 - +5 bonus and increase at 1/4 per count
-			sameLoveBonus = 12 + ((sameLoveBonus * 0.25) as int)
+			; after 10 - +5 bonus and increase at 1/5 or 1/4 per count
+			if (sameLoveBonus < 41)
+				sameLoveBonus = 12 + ((sameLoveBonus * 0.500) as int)				; v2.53 increase
+			elseIf (sameLoveBonus < 200)
+				sameLoveBonus = 33 + ((sameLoveBonus * 0.250) as int)
+			else
+				; v2.53 - max
+				sameLoveBonus = 85
+			endIf
 		endIf
 		if (creatureType == 0 && companionRelRank > 2 && sameLoveBonus >= 5 && SceneData.CurrentLoverScenCount >= DTSleep_IntimateEXP.GetValueInt())
 			; faithful bonus - includes creature only if creature-EXP > human-EXP
@@ -3125,6 +3136,14 @@ IntimateChancePair Function ChanceForIntimateScene(IntimateCompanionSet companio
 		index += 1
 	endWhile
 	
+	; v2.53 - additional bonus for busy-day and exhibitionist
+	if (PlayerRef.HasPerk(DTSleep_BusyDayPerk))
+		specialsChance += 40
+	endIf
+	if (PlayerRef.HasPerk(DTSleep_ExhibitionPerk))
+		specialsChance += 40		; also includes +2 charisma for sex-appeal bonus
+	endIf
+	
 	chance += specialsChance
 	
 	; ------------------------------
@@ -3168,7 +3187,7 @@ IntimateChancePair Function ChanceForIntimateScene(IntimateCompanionSet companio
 		
 	elseIf (result.Chance > 95)
 	
-		if (chance >= (182 - locHourChance.MidSleepBonusChance))
+		if (chance >= (180 - locHourChance.MidSleepBonusChance))
 			result.Chance = 100		; v2.26 - very favorable 
 		else
 			result.Chance = 95
@@ -3336,34 +3355,39 @@ IntimateLocationHourSet Function ChanceForIntimateSceneByLocationHour(ObjectRefe
 		
 		if (holidayVal > 0 && !SceneData.IsUsingCreature)
 			if (holidayVal == 2)
-				chanceHoliday = 36		; Valentine
+				chanceHoliday = 54		; Valentine
 				if (SceneData.CurrentLoverScenCount > 1)
-					chanceHoliday += 32
+					chanceHoliday += 46
 				endIf
-			elseIf (holidayVal == 1)
-				chanceHoliday = 24
-				if (SceneData.CurrentLoverScenCount > 1)
-					chanceHoliday += 16
+			elseIf (holidayVal == 1)		; New Year
+				chanceHoliday = 28
+				if (SceneData.CurrentLoverScenCount > 9)
+					chanceHoliday += 22
 				endIf
 			elseIf (holidayVal == 8)
 				; Halloween
-				chanceHoliday = 28
+				chanceHoliday = 38
 				if (bedRef != None && bedRef.HasKeyword((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).AnimFurnLayDownUtilityBoxKY))
-					chanceHoliday += 24
+					chanceHoliday += 32
+				endIf
+				if (SceneData.CurrentLoverScenCount > 9)
+					chanceHoliday += 10
 				endIf
 				
 			elseIf (holidayVal >= 11 && holidayVal <= 12)
 				; Christmas
-				chanceHoliday = 32
-				if (SceneData.CurrentLoverScenCount > 2)
+				chanceHoliday = 46
+				if (SceneData.CurrentLoverScenCount > 4)
 					chanceHoliday += 24
 				endIf
 			elseIf (holidayVal == 13)
 				; new year eve
-				chanceHoliday = 24
-				
+				chanceHoliday = 34
+				if (SceneData.CurrentLoverScenCount > 1)
+					chanceHoliday += 16
+				endIf
 			else
-				chanceHoliday = 16
+				chanceHoliday = 20
 			endIf
 		endIf
 	endIf
@@ -3884,7 +3908,7 @@ IntimateLocationHourSet Function ChanceForIntimateSceneByLocationHour(ObjectRefe
 			endIf
 			
 			if (childCount > 0)
-				npcChance -= (childCount * 24)		; extra penalty for child nearby
+				npcChance -= (childCount * 30)		; extra penalty (in addition to nearbyCount) for child -- v2.53 increased from 24
 			endIf
 		endIf
 		
@@ -3967,12 +3991,28 @@ IntimateLocationHourSet Function ChanceForIntimateSceneByLocationHour(ObjectRefe
 		
 	elseIf (!forHugs)
 		; in private area - assume adults are guests and only check children
-		; generally child in private area if leading child by quest or using mod to add children
-		;
+		; generally child in private area if leading child by quest, main-quest child, or using mod to add children
+		; 
 		ObjectReference[] actorArray = PlayerRef.FindAllReferencesWithKeyword(ActorTypeChildKY, 800.0)
 		if (actorArray != None && actorArray.Length > 0)
-			childCount = actorArray.Length
-			npcChance -= (16 * childCount)
+			int aCnt = 0
+			; v2.53 check sleeping state
+			while (aCnt < actorArray.Length)
+				Actor ac = actorArray[aCnt] as Actor
+				if (ac.GetSleepState() == 3)
+					nearbyActorSleepCount += 1
+				else
+					childCount += 1
+				endIf
+				
+				aCnt += 1
+			endWhile
+			if (childCount > 0)
+				npcChance -= (30 * childCount)			; v2.53 increased from 16 since now counting awake child
+			endIf
+			if (nearbyActorSleepCount > 0)
+				npcChance -= (5 * nearbyActorSleepCount)
+			endIf
 		endIf
 	endIf
 	
@@ -4325,12 +4365,15 @@ int Function ChanceForIntimateSceneByLastTime(int companionRelRank, float gameTi
 	
 	if (IntimacyDayCount > 1)
 		int endurVal = (PlayerRef.GetValue((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).EnduranceAV) as int)
-		int penaltyFactor = 18 - endurVal + (IntimacyDayCount * 5)
-		if (penaltyFactor < 10)
-			penaltyFactor = 10
+																		; v2.53	- reduced penalty with more emphasis on endurance
+		int penaltyFactor = 36 - (endurVal * 3) + IntimacyDayCount		; 		- removed day-count multiplier and added endurance multiplier
+		if (penaltyFactor < 8)											;       - reduced min for endurance 10+
+			penaltyFactor = 8
 		endIf
 		sameDayPen = 0 - (IntimacyDayCount * penaltyFactor)
 		chance += sameDayPen
+		; end=5 -- -46, -72, -100, -130
+		; end=9 -- -22, -36, -52, -80
 	endIf
 	
 	if (DTSleep_SettingTestMode.GetValueInt() > 0 && DTSleep_DebugMode.GetValue() >= 2.0)
@@ -5203,6 +5246,10 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 						endIf
 						if (aCompanion.GetSitState() <= 1 && aCompanion.GetSleepState() <= 2)
 							topRelBusy = false
+							if (SceneData.CurrentLoverScenCount >= 10)			; v2.53
+								; main companion same lover, return now
+								return result
+							endIf
 						elseIf (!mainCompanionPA)
 							if (SceneData.CurrentLoverScenCount >= 5)			; v2.51
 								; main companion same lover, don't mark busy
@@ -7845,19 +7892,40 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 		endIf
 		
 		if (readyVal > 0)
-	
+			; update packs with SceneData gender info
+			
 			IntimateCompanionRef = nearCompanion.CompanionActor
 			
-			; update packs with SceneData gender info
-			if (specialFurn >= 103 && specialFurn <= 104 && DTSleep_AdultContentOn.GetValue() >= 2.0 && TestVersion == -2)
-				animPacks.Clear()
-				animPacks = IntimateAnimPacksPick(true, false, (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).GetGenderForActor(PlayerRef), akFurniture, furnBaseForm)
+			if (DTSleep_AdultContentOn.GetValue() >= 2.0 && TestVersion == -2 && !hugsOnly && specialFurn >= 102)	; check special furniture
 				
-				if (animPacks.Length == 0 || animPacks[0] <= 0)
-					animPacks = new int[1]
-					animPacks[0] = 0
-					hugsOnly = true
-					doOtherProp = false
+				if (specialFurn >= 103 && specialFurn <= 104)
+					; tables get multiple scenes from multiple packs
+					animPacks.Clear()
+					animPacks = IntimateAnimPacksPick(true, false, (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).GetGenderForActor(PlayerRef), akFurniture, furnBaseForm)
+					
+					if (animPacks.Length == 0 || animPacks[0] <= 0)
+						animPacks = new int[1]
+						animPacks[0] = 0
+						hugsOnly = true
+						doOtherProp = false
+						
+					; v2.53 check for oral   -- SameGender handled below
+					elseIf (!SceneData.SameGender)
+						if (specialFurn == 103 && DTSleep_CommonF.IsIntegerInArray(7, animPacks))
+							; pool table
+							DTSleep_SexStyleLevel.SetValue(9.0)				; embrace or oral
+						elseIf (DTSleep_CommonF.IsIntegerInArray(1, animPacks) || DTSleep_CommonF.IsIntegerInArray(6, animPacks))
+							DTSleep_SexStyleLevel.SetValue(9.0)				; embrace or oral
+						endIf
+					endIf
+				elseIf (specialFurn == 102)
+					; sedan or motorcycle
+					if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.1)
+						if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsObjSedan(akFurniture))
+							; any sedan post-war or pre-war support oral 
+							DTSleep_SexStyleLevel.SetValue(9.0)				; embrace or oral
+						endIf
+					endIf
 				endIf
 			endIf
 			
@@ -7874,7 +7942,8 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 						animPacks[0] = 0
 					endIf
 					
-				elseIf (SceneData.SameGender)
+				; --------- SameGender check -------------------
+				elseIf (SceneData.SameGender && specialFurn >= 2)				; v2.51.2 added specialFurn restriction
 					; TODO: check here for new animationpacks supporting chairs FMF or same-gender
 					if (isPillory)
 						companionReady = false
@@ -7892,7 +7961,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 									hugsOnly = true
 									animPacks[0] = 0
 								endIf
-							elseIf ((DTSConditionals as DTSleep_Conditionals).IsRufgtActive)
+							elseIf (DTSleep_AdultContentOn.GetValueInt() >= 2 && (DTSConditionals as DTSleep_Conditionals).IsRufgtActive)
 								DTSleep_SexStyleLevel.SetValue(9.0)				; embrace or oral
 							endIf
 						elseIf (!(DTSConditionals as DTSleep_Conditionals).IsAtomicLustActive)
@@ -8032,7 +8101,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 		endIf
 		; ------------------------end partner set
 		
-		if (sameGenderPickSpotOK && SceneData.SecondMaleRole == None && SceneData.SecondFemaleRole == None) ; v2.51
+		if (sameGenderPickSpotOK && specialFurn > 0 && SceneData.SecondMaleRole == None && SceneData.SecondFemaleRole == None) ; v2.51
 			animpacks.Clear()
 			if (SceneData.MaleRoleGender == 1 && !SceneData.HasToyAvailable)
 				; for speed, we skipped checking toy earlier (hugsOK) so let's check now if there is a supported animation pack
@@ -8133,7 +8202,8 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 						
 					elseIf (DTSleep_SettingProps.GetValueInt() >= 1)
 						; search for nearby tables and other props
-						propObjRef = DTSleep_CommonF.FindNearestObjectInListFromObjRef(DTSleep_IntimatePropList, akFurniture, 600.0)	
+						; v2.53 fix to include true to ignore floors above and below
+						propObjRef = DTSleep_CommonF.FindNearestObjectInListFromObjRef(DTSleep_IntimatePropList, akFurniture, 600.0, true)	
 						
 						if (propObjRef != None)
 							;
@@ -8217,6 +8287,10 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 					endIf
 				endIf
 			endIf
+			
+			if (hugsOnly || animPacks.Length == 0 || animpacks[0] == 0)		; v2.53 - in case reverted to hugs
+				DTSleep_SexStyleLevel.SetValue(0.0)
+			endIf 
 			
 			if (checkLoc)
 				locHourChance = ChanceForIntimateSceneByLocationHour(akFurniture, furnBaseForm, IntimateCompanionRef, nearCompanion.RelationRank, gameTime, hugsOnly)
@@ -9613,7 +9687,8 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 			
 			if (hasSavageCabbageAnims && !SceneData.SameGender && getSC)
 				animSets.Add(7)
-				if (Utility.RandomInt(2,9) > 4)
+				; v2.53 - picnic table always needs to include Leito for oral/manual choice
+				if (!furnObjRef.HasKeyword((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).AnimFurnPicnickTableKY) && Utility.RandomInt(2,9) > 4)
 					getMore = false
 				endIf
 			endIf
@@ -9697,7 +9772,7 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 			if (hasAtomicLustAnims)
 				animSets.Add(5)
 			endIf
-			if (hasSavageCabbageAnims)
+			if (hasSavageCabbageAnims)			; include for dance
 				animSets.Add(7)
 			endIf
 			if (hasGrayAnims)
@@ -14719,7 +14794,8 @@ int Function ShowFurnitureSpecPrompt(Message prompt, Message promptBegin, Messag
 		
 	; -------------------- hour limits, voyuer, holidays? -----------
 		
-	elseIf (nearbyActorEstimate > 1)
+	elseIf (nearbyActorEstimate > 1 && hoursSinceLastIntimate > 2.0 && DTSleep_AdultContentOn.GetValue() >= 2.0 && DTSleep_SettingChairsEnabled.GetValue() >= 2.0)
+		; v2.53 only warn for adult and limit by hours
 		checkVal = promptNPCWarn.Show(sexAppealScore, daysSinceLastIntimate, nearbyActorEstimate)
 		
 	elseIf (hoursSinceLastFail < 20.0 || hoursSinceLastIntimate < 12.0)

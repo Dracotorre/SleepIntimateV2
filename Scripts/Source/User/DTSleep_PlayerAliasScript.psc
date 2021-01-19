@@ -108,6 +108,7 @@ FormList property DTSleep_IntimateDinerBoothTableAllList auto const ; added v2.3
 FormList property DTSleep_JailDoorBadLocationList auto const 		; added v2.40
 FormList property DTSleep_IntimateDeskList auto const 			; added v2.51
 FormList property DTSleep_IntimateDesk90List auto const 			; added v2.51
+FormList property DTSleep_BedPrivateList auto const					; added v2.53
 Message property DTSleep_VersionMsg auto const
 Message property DTSleep_VersionExplicitMsg auto const
 Message property DTSleep_VersionSafeMsg auto const
@@ -156,6 +157,7 @@ FormList property DTSleep_SexyClothesMList auto const
 FormList property DTSleep_IntimateAttireOKUnderList auto const
 { must remove under armor on these intimate outfits -- usually slot-33 only with shoes }
 FormList property DTSleep_SleepAttireHandsList auto const
+FormList property DTSleep_QuestItemModList auto const				; added v2.53
 EndGroup
 
 Group C_AnimSeqLists
@@ -3130,6 +3132,216 @@ int Function CheckCustomArmorsAndBackpacks()
 			DTSleep_SleepAttireFemale.AddForm(Game.GetFormFromFile(0x11000806, cuteSleepName))
 			DTSleep_SleepAttireFemale.AddForm(Game.GetFormFromFile(0x11000807, cuteSleepName))
 		endIf
+	endIf
+	
+	; jags78 Utility Belt    - v2.53
+	string jagsStr = "jags78_UtilityBelt.esl"
+	if (!Game.IsPluginInstalled(jagsStr))
+		jagsStr = "jags78_UtilityBelt.esp"
+	endIf
+	Form jagsBeltForm = IsPluginActive(0x0100003E, jagsStr)
+	if (extraArmor != None && !DTSleep_QuestItemModList.HasForm(jagsBeltForm))
+		modCount += 1
+		DTSleep_QuestItemModList.AddForm(jagsBeltForm)
+	endIf
+	
+	; This is MY Bed  - v2.53
+	string thisBedName = "This is MY Bed (Extended).esp"
+	if (!Game.IsPluginInstalled(thisBedName))
+		thisBedName = "This is MY Bed (Basic).esp"
+		if (!Game.IsPluginInstalled(thisBedName))
+			thisBedName = "This is MY Bed.esp"
+		endIf
+	endIf
+	Form thisBedForm = IsPluginActive(0x0900080F, thisBedName)
+	if (thisBedForm != None && !DTSleep_BedPrivateList.HasForm(thisBedForm))
+		modCount += 1
+		DTSleep_BedPrivateList.AddForm(thisBedForm)
+		DTSleep_BedsBigList.AddForm(thisBedForm)
+		DTSleep_BedPrivateList.AddForm(Game.GetFormFromFile(0x0900081E, thisBedName))
+		DTSleep_BedsLimitedSpaceLst.AddForm(Game.GetFormFromFile(0x09000826, thisBedName))
+		DTSleep_BedsLimitedSpaceLst.AddForm(Game.GetFormFromFile(0x09000827, thisBedName))
+		thisBedForm = Game.GetFormFromFile(0x0900083D, thisBedName)
+		if (thisBedForm != None)
+			DTSleep_BedPrivateList.AddForm(thisBedForm)
+			DTSleep_BedPrivateList.AddForm(Game.GetFormFromFile(0x09000842, thisBedName))
+			thisBedForm = Game.GetFormFromFile(0x09000845, thisBedName)
+			DTSleep_BedsBunkList.AddForm(thisBedForm)
+			DTSleep_BedPrivateList.AddForm(thisBedForm)
+			DTSleep_BedPrivateList.AddForm(Game.GetFormFromFile(0x09000847, thisBedName))
+			DTSleep_BedPrivateList.AddForm(Game.GetFormFromFile(0x0900084F, thisBedName))
+			thisBedForm = Game.GetFormFromFile(0x09000860, thisBedName)
+			DTSleep_BedsBunkList.AddForm(thisBedForm)
+			DTSleep_BedPrivateList.AddForm(thisBedForm)
+			DTSleep_BedPrivateList.AddForm(Game.GetFormFromFile(0x09000865, thisBedName))
+		endIf	
+	endIf
+	
+	bool bedPrivate = true
+	
+	; BlackWidowBed
+	string ladyKillerBedName = "MyBlackWidowBed.esp"
+	
+	if (!Game.IsPluginInstalled(ladyKillerBedName))
+		ladyKillerBedName = "BlackWidowBed.esp"
+		bedPrivate = false
+	endIf
+	Form blackWidBedForm = IsPluginActive(0x09000901, ladyKillerBedName)
+	if (blackWidBedForm != None && !DTSleep_BedsBigDoubleList.HasForm(blackWidBedForm))
+		modCount += 1
+		DTSleep_BedsBigDoubleList.AddForm(blackWidBedForm)
+		if (bedPrivate)
+			DTSleep_BedPrivateList.AddForm(blackWidBedForm)
+		else
+			DTSleep_BedIntimateList.AddForm(blackWidBedForm)
+			DTSleep_BedList.AddForm(blackWidBedForm)
+		endIf
+	endIf
+	
+	; LadyKillerBed
+	ladyKillerBedName = "MyLadyKillerBed.esp"
+	
+	if (!Game.IsPluginInstalled(ladyKillerBedName))
+		ladyKillerBedName = "LadyKillerBed.esp"
+		bedPrivate = false
+	endIf
+	blackWidBedForm = IsPluginActive(0x09000901, ladyKillerBedName)
+	if (blackWidBedForm != None && !DTSleep_BedsBigDoubleList.HasForm(blackWidBedForm))
+		modCount += 1
+		DTSleep_BedsBigDoubleList.AddForm(blackWidBedForm)
+		if (bedPrivate)
+			DTSleep_BedPrivateList.AddForm(blackWidBedForm)
+		else
+			DTSleep_BedIntimateList.AddForm(blackWidBedForm)
+			DTSleep_BedList.AddForm(blackWidBedForm)
+		endIf
+	endIf
+	
+	; Cozy Beds
+	bedPrivate = false
+	string cozyBedName = "Cozy Beds.esp"
+	if (!Game.IsPluginInstalled(cozyBedName))
+		bedPrivate = true
+		cozyBedName = "Cozy Beds - My Bed.esp"
+	endIf
+	Form cozyBedForm = IsPluginActive(0x09000800,cozyBedName)
+	if (cozyBedForm != None && !DTSleep_BedsBigDoubleList.HasForm(cozyBedForm))
+		modCount += 1
+		DTSleep_BedsBigDoubleList.AddForm(cozyBedForm)
+		if (bedPrivate)
+			DTSleep_BedPrivateList.AddForm(cozyBedForm)
+			cozyBedForm = Game.GetFormFromFile(0x09000803, cozyBedName)
+			DTSleep_BedPrivateList.AddForm(cozyBedForm)
+			DTSleep_BedsBigDoubleList.AddForm(cozyBedForm)
+			cozyBedForm = Game.GetFormFromFile(0x09000804, cozyBedName)
+			DTSleep_BedPrivateList.AddForm(cozyBedForm)
+			DTSleep_BedsBigDoubleList.AddForm(cozyBedForm)
+			cozyBedForm = Game.GetFormFromFile(0x09000807, cozyBedName)
+			DTSleep_BedPrivateList.AddForm(cozyBedForm)
+			DTSleep_BedsBigDoubleList.AddForm(cozyBedForm)
+			cozyBedForm = Game.GetFormFromFile(0x09000824, cozyBedName)
+			DTSleep_BedPrivateList.AddForm(cozyBedForm)
+			DTSleep_BedsBigDoubleList.AddForm(cozyBedForm)
+			cozyBedForm = Game.GetFormFromFile(0x09000825, cozyBedName)
+			DTSleep_BedPrivateList.AddForm(cozyBedForm)
+			DTSleep_BedsBigDoubleList.AddForm(cozyBedForm)
+			cozyBedForm = Game.GetFormFromFile(0x09000826, cozyBedName)
+			DTSleep_BedPrivateList.AddForm(cozyBedForm)
+			DTSleep_BedsBigDoubleList.AddForm(cozyBedForm)
+			cozyBedForm = Game.GetFormFromFile(0x09000827, cozyBedName)
+			DTSleep_BedPrivateList.AddForm(cozyBedForm)
+			DTSleep_BedsBigDoubleList.AddForm(cozyBedForm)
+			cozyBedForm = Game.GetFormFromFile(0x09000828, cozyBedName)
+			DTSleep_BedPrivateList.AddForm(cozyBedForm)
+			DTSleep_BedsBigDoubleList.AddForm(cozyBedForm)
+			cozyBedForm = Game.GetFormFromFile(0x09000829, cozyBedName)
+			DTSleep_BedPrivateList.AddForm(cozyBedForm)
+			DTSleep_BedsBigDoubleList.AddForm(cozyBedForm)
+			cozyBedForm = Game.GetFormFromFile(0x0900082A, cozyBedName)
+			DTSleep_BedPrivateList.AddForm(cozyBedForm)
+			DTSleep_BedsBigDoubleList.AddForm(cozyBedForm)
+			cozyBedForm = Game.GetFormFromFile(0x0900082B, cozyBedName)
+			DTSleep_BedPrivateList.AddForm(cozyBedForm)
+			DTSleep_BedsBigDoubleList.AddForm(cozyBedForm)
+			cozyBedForm = Game.GetFormFromFile(0x0900082D, cozyBedName)
+			DTSleep_BedPrivateList.AddForm(cozyBedForm)
+			DTSleep_BedsBigDoubleList.AddForm(cozyBedForm)
+			cozyBedForm = Game.GetFormFromFile(0x09000844, cozyBedName)
+			DTSleep_BedPrivateList.AddForm(cozyBedForm)
+			DTSleep_BedsBigDoubleList.AddForm(cozyBedForm)
+			cozyBedForm = Game.GetFormFromFile(0x09000845, cozyBedName)
+			DTSleep_BedPrivateList.AddForm(cozyBedForm)
+			DTSleep_BedsBigDoubleList.AddForm(cozyBedForm)
+			cozyBedForm = Game.GetFormFromFile(0x0900084A, cozyBedName)
+			DTSleep_BedPrivateList.AddForm(cozyBedForm)
+			DTSleep_BedsBigDoubleList.AddForm(cozyBedForm)
+		else
+			DTSleep_BedIntimateList.AddForm(cozyBedForm)
+			DTSleep_BedList.AddForm(cozyBedForm)
+			AddToBedsList(Game.GetFormFromFile(0x09000803, cozyBedName), true)
+			AddToBedsList(Game.GetFormFromFile(0x09000804, cozyBedName), true)
+			AddToBedsList(Game.GetFormFromFile(0x09000807, cozyBedName), true)
+			AddToBedsList(Game.GetFormFromFile(0x09000809, cozyBedName), false)
+			AddToBedsList(Game.GetFormFromFile(0x0900080B, cozyBedName), false)
+			AddToBedsList(Game.GetFormFromFile(0x0900080C, cozyBedName), false)
+			AddToBedsList(Game.GetFormFromFile(0x0900080F, cozyBedName), false)
+			AddToBedsList(Game.GetFormFromFile(0x09000824, cozyBedName), true)
+			AddToBedsList(Game.GetFormFromFile(0x09000825, cozyBedName), true)
+			AddToBedsList(Game.GetFormFromFile(0x09000826, cozyBedName), true)
+			AddToBedsList(Game.GetFormFromFile(0x09000827, cozyBedName), true)
+			AddToBedsList(Game.GetFormFromFile(0x09000828, cozyBedName), true)
+			AddToBedsList(Game.GetFormFromFile(0x09000829, cozyBedName), true)
+			AddToBedsList(Game.GetFormFromFile(0x0900082A, cozyBedName), true)
+			AddToBedsList(Game.GetFormFromFile(0x0900082B, cozyBedName), true)
+			AddToBedsList(Game.GetFormFromFile(0x0900082D, cozyBedName), true)
+			AddToBedsList(Game.GetFormFromFile(0x09000832, cozyBedName), false)
+			AddToBedsList(Game.GetFormFromFile(0x09000833, cozyBedName), false)
+			AddToBedsList(Game.GetFormFromFile(0x09000834, cozyBedName), false)
+			AddToBedsList(Game.GetFormFromFile(0x09000835, cozyBedName), false)
+			AddToBedsList(Game.GetFormFromFile(0x0900083A, cozyBedName), false)
+			AddToBedsList(Game.GetFormFromFile(0x0900083B, cozyBedName), false)
+			AddToBedsList(Game.GetFormFromFile(0x0900083C, cozyBedName), false)
+			AddToBedsList(Game.GetFormFromFile(0x0900083D, cozyBedName), false)
+			AddToBedsList(Game.GetFormFromFile(0x0900083E, cozyBedName), false)
+			AddToBedsList(Game.GetFormFromFile(0x09000846, cozyBedName), false)
+			AddToBedsList(Game.GetFormFromFile(0x09000847, cozyBedName), false)
+			AddToBedsList(Game.GetFormFromFile(0x0900084B, cozyBedName), false)
+			AddToBedsList(Game.GetFormFromFile(0x09000844, cozyBedName), true)
+			AddToBedsList(Game.GetFormFromFile(0x09000845, cozyBedName), true)
+			AddToBedsList(Game.GetFormFromFile(0x0900084A, cozyBedName), true)
+		endIf
+		
+	endIf
+	
+	bedPrivate = false
+	
+	; CleanSettlement Beds
+	string cleanBedName = "CleanSettlement Beds.esp"
+	Form cleanBedForm = IsPluginActive(0x09000830, cleanBedName)
+	if (cleanBedForm != None && !DTSleep_BedList.HasForm(cleanBedForm))
+		modCount += 1
+		AddToBedsList(cleanBedForm, false, DTSleep_BedsBigList)
+		AddToBedsList(Game.GetFormFromFile(0x09000831, cleanBedForm), false)
+		AddToBedsList(Game.GetFormFromFile(0x09000832, cleanBedForm), false)
+		AddToBedsList(Game.GetFormFromFile(0x09000833, cleanBedForm), false)
+		AddToBedsList(Game.GetFormFromFile(0x09000840, cleanBedForm), false, DTSleep_BedsBigList)
+		AddToBedsList(Game.GetFormFromFile(0x09000842, cleanBedForm), false, DTSleep_BedsBigList)
+		AddToBedsList(Game.GetFormFromFile(0x09000843, cleanBedForm), false, DTSleep_BedsBigList)
+		AddToBedsList(Game.GetFormFromFile(0x09000845, cleanBedForm), false, DTSleep_BedsLimitedSpaceLst)
+		AddToBedsList(Game.GetFormFromFile(0x09000846, cleanBedForm), false, DTSleep_BedsLimitedSpaceLst)
+		AddToBedsList(Game.GetFormFromFile(0x09000847, cleanBedForm), false, DTSleep_BedsLimitedSpaceLst)
+		AddToBedsList(Game.GetFormFromFile(0x09000848, cleanBedForm), false, DTSleep_BedsLimitedSpaceLst)
+		AddToBedsList(Game.GetFormFromFile(0x09000849, cleanBedForm), false, DTSleep_BedsLimitedSpaceLst)
+		AddToBedsList(Game.GetFormFromFile(0x0900084A, cleanBedForm), false, DTSleep_BedsLimitedSpaceLst)
+		AddToBedsList(Game.GetFormFromFile(0x09000850, cleanBedForm), false, DTSleep_BedsLimitedSpaceLst)
+		AddToBedsList(Game.GetFormFromFile(0x09000860, cleanBedForm), false)
+		AddToBedsList(Game.GetFormFromFile(0x09000862, cleanBedForm), false)
+		AddToBedsList(Game.GetFormFromFile(0x09000863, cleanBedForm), false)
+		AddToBedsList(Game.GetFormFromFile(0x09000870, cleanBedForm), false)
+		AddToBedsList(Game.GetFormFromFile(0x09000871, cleanBedForm), false)
+		AddToBedsList(Game.GetFormFromFile(0x09000872, cleanBedForm), false)
+		AddToBedsList(Game.GetFormFromFile(0x09000873, cleanBedForm), false)
+		AddToBedsList(Game.GetFormFromFile(0x09000874, cleanBedForm), false)
 	endIf
 	
 	; ---------------- Adult only -------------
