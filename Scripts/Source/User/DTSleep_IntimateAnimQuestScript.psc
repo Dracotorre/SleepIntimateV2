@@ -80,6 +80,7 @@ Keyword Property AnimFurnFloorBedAnimKY auto const Mandatory
 Keyword property AnimFurnCouchKY auto const
 Keyword property AnimFurnBarStoolKY auto const
 Keyword property AnimFurnEatingNoodlesKY auto const
+Keyword property AnimFurnStoolWithBarKY auto const						; added v2.60
 Keyword property AnimFurnChairSitAnimsKY auto const
 Keyword property AnimFurnChairWithTableKY auto const
 Keyword property AnimFurnChairWithRadioKY auto const
@@ -1000,6 +1001,9 @@ bool Function PlayActionDancePole()
 	if (!SleepBedRef.HasKeyword(DTSleep_DancePoleKY))
 		return false
 	endIf
+	if (SceneData.RaceRestricted == 9)
+		return false
+	endIf
 	
 	SceneData.AnimationSet = 7
 	SceneData.IntimateSceneIsDanceHug = 1				; v2.48
@@ -1028,7 +1032,14 @@ bool Function PlayActionDanceSexy()
 	if (MainActorRef == None || SleepBedRef == None || (DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive == false)
 		return false
 	endIf
-	if (SceneData.IsUsingCreature || SceneData.CompanionInPowerArmor)
+	if (SceneData.RaceRestricted == 9)					; v2.60
+		return false
+	endIf
+	if (SceneData.IsUsingCreature)						; v2.60 allow synth or other race to sit in chair
+		if (SceneData.IsCreatureType != 3 && SceneData.IsCreatureType != 4 && SceneData.IsCreatureType != 7)
+			return false
+		endIf
+	elseIf (SceneData.CompanionInPowerArmor)
 		return false
 	endIf
 	if (!IsObjSeat(SleepBedRef))
@@ -1080,15 +1091,24 @@ bool Function PlayActionXOXO()
 	SceneData.IntimateSceneIsDanceHug = 0    ; v2.48 imagination sex -- not considered a hug
 	ClearSecondActors()
 	
+	int id = 98
+	
 	sidArray = SceneIDArrayForAnimationSet(-3, false, true, true, sidArray, 2)
 	
-	int id = 98
-	if (sidArray != None && sidArray.Length > 1)
-		id = sidArray[Utility.RandomInt(0, sidArray.Length - 1)]
+	if (sidArray.Length == 1)			; v2.60 fix - sometimes returned single
+		id = sidArray[0]
 		
-		if (id < 90 || id >= 100)
-			Debug.Trace(myScriptName + " found invalid hug/kiss id (" + id + ") - force 97 ")
-			id = 97
+	elseIf (sidArray != None && sidArray.Length > 1)
+		id = sidArray[Utility.RandomInt(0, sidArray.Length - 1)]
+	endIf
+	if (id < 90 || (id >= 100 && id != 780))
+		Debug.Trace(myScriptName + " found invalid hug/kiss id (" + id + ") - force 97 ")
+		id = 97
+	endIf
+	
+	if ((DTSConditionals as DTSleep_Conditionals).IsVulpineRacePlayerActive)				; v2.60 bad fit big nose
+		if (id >= 97 && id <= 98)
+			id = 99 ; hug
 		endIf
 	endIf
 	
@@ -1124,6 +1144,10 @@ bool Function PlayActionIntimateSoloSeq(int gender)
 	endIf
 	
 	if (!(DTSConditionals as DTSleep_Conditionals).ImaPCMod)
+		return false
+	endIf
+	
+	if (SceneData.RaceRestricted == 9)
 		return false
 	endIf
 	
@@ -1244,7 +1268,7 @@ bool Function CheckActorsIntimateCompatible(int seqID)
 	bool result = false
 	if (MainActorRef != None)
 	
-		if (seqID == 741)
+		if (seqID == 741 && SceneData.RaceRestricted < 9)
 			result = true
 		elseIf (SceneData.CompanionInPowerArmor)
 			result = true
@@ -1258,6 +1282,10 @@ bool Function CheckActorsIntimateCompatible(int seqID)
 		
 		if (SceneData.IsUsingCreature)
 			result = true
+		endIf
+		
+		if (!Debug.GetPlatformName() as bool)
+			return false
 		endIf
 		
 		CheckRemoveToysCount = 0
@@ -1889,6 +1917,8 @@ float Function GetTimeForPlayID(int id)
 		return 28.0
 	elseIf (id == 549)					; hug and kiss
 		return 28.0
+	elseIf (id == 780)					; booth flirt
+		return 28.0
 		
 	elseIf (id >= 100)
 		float baseSec = 59.5
@@ -2050,11 +2080,11 @@ float Function GetTimeForPlayID(int id)
 			DTSleep_IntimateSceneLen.SetValueInt(2)
 			baseSec += waitSecX2
 			
-		elseIf (baseSec > 40.0 && endurance >=3 && endurance <= 5 && Utility.RandomInt(-2, endurance) <= 0)
+		elseIf (id < 700 && baseSec > 40.0 && endurance >=3 && endurance <= 5 && Utility.RandomInt(-2, endurance) <= 0)		; v2.60 id limit
 			DTSleep_IntimateSceneLen.SetValueInt(0)
 			baseSec -= waitSecX2
 			
-		elseIf (baseSec > 40.0 && endurance < 3)
+		elseIf (baseSec > 40.0 && endurance < 3 && id < 700)				; v2.60 id limit
 			DTSleep_IntimateSceneLen.SetValueInt(0)
 			baseSec -= waitSecX2
 		else
@@ -2311,6 +2341,9 @@ bool Function IsObjSeat(ObjectReference obj)
 			return true
 			
 		elseIf (obj.HasKeyword(AnimFurnBarStoolKY) || obj.HasKeyword(AnimFurnCouchKY) || obj.HasKeyword(AnimFurnEatingNoodlesKY))
+			return true
+			
+		elseIf (obj.HasKeyword(AnimFurnStoolWithBarKY))				; v2.60
 			return true
 			
 		elseIf (obj.HasKeyword(AnimFurnChairWithTableKY) || obj.HasKeyword(AnimFurnChairWithRadioKY))
@@ -3659,8 +3692,8 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 								endIf
 							
 							elseIf (id == 748)
-								; check pillory
-								if (SleepBedRef.HasKeyword((DTSConditionals as DTSleep_Conditionals).ZaZPilloryKW))
+								; check pillory   v2.60 fix None check
+								if ((DTSConditionals as DTSleep_Conditionals).ZaZPilloryKW != None && SleepBedRef.HasKeyword((DTSConditionals as DTSleep_Conditionals).ZaZPilloryKW))
 									bedUseNodeMarker = true
 									markerIsBed = false
 									yOffset = 13.25
@@ -4016,8 +4049,8 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 							yOffset = 0.0
 							xOffset = 0.0
 							zOffset = 0.0
-							; check pillory
-							if (SleepBedRef.HasKeyword((DTSConditionals as DTSleep_Conditionals).DLC05PilloryKY))
+							; check pillory   v2.60 fix None check
+							if ((DTSConditionals as DTSleep_Conditionals).DLC05PilloryKY != None && SleepBedRef.HasKeyword((DTSConditionals as DTSleep_Conditionals).DLC05PilloryKY))
 								bedUseNodeMarker = true
 								markerIsBed = false
 								yOffset = -12.25
@@ -4906,7 +4939,7 @@ bool Function SceneIDArrayPrepMyFurnitureType()
 		elseIf (IsObjSeat(SleepBedRef))
 			if (SleepBedRef.HasKeyword(DTSleep_IntimateChairKeyword) || DTSleep_IntimateChairsList.HasForm(baseBedForm))
 				MySleepBedFurnType = FurnTypeIsSeatIntimateChair
-			elseIf (SleepBedRef.HasKeyword(AnimFurnCouchKY) || DTSleep_IntimateCouchList.HasForm(baseBedForm))
+			elseIf (SleepBedRef.HasKeyword(AnimFurnCouchKY) || DTSleep_IntimateCouchList.HasForm(baseBedForm) || DTSleep_IntimateCouchFedList.HasForm(baseBedForm))
 				MySleepBedFurnType = FurnTypeIsSeatSofa
 			elseIf (DTSleep_IntimateBenchList.HasForm(baseBedForm))
 				MySleepBedFurnType = FurnTypeIsSeatBench
@@ -4918,7 +4951,7 @@ bool Function SceneIDArrayPrepMyFurnitureType()
 				MySleepBedFurnType = FurnTypeIsSeatKitchen
 			elseIf (DTSleep_IntimateChairThroneList.HasForm(baseBedForm))
 				MySleepBedFurnType = FurnTypeIsSeatThrone
-			elseIf (SleepBedRef.HasKeyword(AnimFurnBarStoolKY) || SleepBedRef.HasKeyword(AnimFurnEatingNoodlesKY))
+			elseIf (SleepBedRef.HasKeyword(AnimFurnBarStoolKY) || SleepBedRef.HasKeyword(AnimFurnEatingNoodlesKY) || SleepBedRef.HasKeyword(AnimFurnStoolWithBarKY))
 				MySleepBedFurnType = FurnTypeIsSeatStool
 			elseIf (DTSleep_IntimateChairOttomanList.HasForm(baseBedForm))
 				MySleepBedFurnType = FurnTypeIsSeatOttoman
@@ -4956,6 +4989,7 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 	bool restricted = false   ; if same-gender no toy
 	bool pillowBedHasFrame = false
 	bool bedIsSMBed = false
+	Form baseBedForm = None
 	
 	if (MySleepBedFurnType != FurnTypeIsDoubleBed)
 		if (MySleepBedFurnType == FurnTypeIsCoffin)
@@ -5019,11 +5053,20 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 	if (includeHugs > 0 && (packID <= 0 || packID == 5))
 		; v2 included hugs/kisses
 		if ((!SceneData.IsUsingCreature || SceneData.IsCreatureType == 3) && !SceneData.CompanionInPowerArmor)
-			if (embraceType > 0)
-				sidArray.Add(98)
-				sidArray.Add(97)
+			
+			; v2.60 allow diner booth flirt for adult-pack users
+			if (DTSleep_AdultContentOn.GetValue() >= 2.0 && (DTSConditionals as DTSleep_Conditionals).ImaPCMod && IsObjDinerBoothTable(SleepBedRef, baseBedForm))
+				if ((DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive)
+					; booth-sit flirt
+					sidArray.Add(780)
+				endIf
+			else
+				sidArray.Add(99)
+				if (embraceType > 0)
+					sidArray.Add(98)
+					sidArray.Add(97)
+				endIf
 			endIf
-			sidArray.Add(99)
 		endIf
 	endIf
 	
@@ -5052,9 +5095,11 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 			elseIf (packID == 7 && !SceneData.FemaleRaceHasTail)
 				
 				if (!SceneData.SameGender)
-					Form baseBedForm = SleepBedRef.GetBaseObject() as Form
-					if (MySleepBedFurnType == FurnTypeIsPillory)
-						if (SceneData.SecondMaleRole != None || SleepBedRef.HasKeyword((DTSConditionals as DTSleep_Conditionals).DLC05PilloryKY))
+					if (baseBedForm == None)
+						baseBedForm = SleepBedRef.GetBaseObject() as Form
+					endIf
+					if (MySleepBedFurnType == FurnTypeIsPillory)				; v2.60 fix None check
+						if (SceneData.SecondMaleRole != None || ((DTSConditionals as DTSleep_Conditionals).DLC05PilloryKY != None && SleepBedRef.HasKeyword((DTSConditionals as DTSleep_Conditionals).DLC05PilloryKY)))
 							if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.10 || SceneData.SecondMaleRole == None)
 								sidArray.Add(48)
 							endIf
@@ -5141,7 +5186,9 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 							sidArray.Add(40)
 						elseIf (SceneData.SecondFemaleRole == None)
 							if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.10 && SceneData.SecondMaleRole == None)
-								Form baseBedForm = SleepBedRef.GetBaseObject() as Form
+								if (baseBedForm == None)
+									baseBedForm = SleepBedRef.GetBaseObject() as Form
+								endIf
 								if (!oralOnly && DTSleep_IntimateCouchFedList.HasForm(baseBedForm))
 									sidArray.Add(34)
 									if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
@@ -5750,7 +5797,9 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 							if (okayAdd)
 								sidArray.Add(4)
 								if (!MySleepBedFurnType == FurnTypeIsDoubleBed && MySleepBedFurnType != FurnTypeIsBunkBed && !SleepBedRef.HasKeyword(AnimFurnFloorBedAnimKY) && !IsSleepingBag(SleepBedRef))
-									Form baseBedForm = SleepBedRef.GetBaseObject() as Form
+									if (baseBedForm == None)
+										baseBedForm = SleepBedRef.GetBaseObject() as Form
+									endIf
 									if (!DTSleep_BedsBigList.HasForm(baseBedForm))	; v2.26 - limit to normal single bed
 										sidArray.Add(5, numToAdd)		; on edge of single bed - flip side to face player
 									endIf
@@ -6063,6 +6112,21 @@ bool Function ActorsIntimateCompatible()
 		Debug.Trace(MyScriptName + " A Child!!! ")
 		return false
 	endIf
+	
+	if (SceneData.RaceRestricted >= 9)
+		Debug.Trace(MyScriptName + " companion race intimate restricted!")
+		return false
+	endIf
+	
+	Race pr = (DTSConditionals as DTSleep_Conditionals).PlayerRace
+
+	if (pr != None && (DTSConditionals as DTSleep_Conditionals).NanaRace != None)
+	
+		if (pr == ((DTSConditionals as DTSleep_Conditionals).NanaRace || pr == (DTSConditionals as DTSleep_Conditionals).NanaRace2))
+			Debug.Trace(MyScriptName + " player AnimeRace intimate restricted!")
+			return false
+		endIf
+	endIf
 
 	return true
 endFunction
@@ -6110,6 +6174,8 @@ bool Function IsSceneAAFSafe(int sid)
 		if (SceneData.SecondMaleRole != None)
 			return false
 		endIf
+	elseIf (sid == 780)
+		return false
 
 	elseIf (sid >= 590 && sid <= 599)
 		return false
@@ -6123,6 +6189,7 @@ bool Function IsSceneAAFSafe(int sid)
 	return true
 endFunction
 
+
 Function MoveActorsToAACPositions(Actor mainActor, Actor secondActor, Actor thirdActor = None, float mainYOff = 0.0, float mainAngleOff = 0.0, float secondAngleOff = 0.0, float mainZOff = 0.0)
 
 	float posX = 0.0
@@ -6130,7 +6197,8 @@ Function MoveActorsToAACPositions(Actor mainActor, Actor secondActor, Actor thir
 	float secondYOff = 0.0 - mainYOff
 	float secondZOff = 0.0 - mainZOff
 
-	if (SceneData.MaleMarker != None)
+	; v2.60 - only clone to help fix shaky scenes -- embrace
+	if (MainActorCloneRef != None && SceneData.MaleMarker != None)
 
 		if (mainActor == MainActorRef)
 			if (DTSleep_CommonF.PositionObjsMatch(SceneData.MaleMarker, MainActorRef) == false)
@@ -6175,7 +6243,8 @@ Function MoveActorsToAACPositions(Actor mainActor, Actor secondActor, Actor thir
 		Utility.Wait(0.86)
 	endIf
 	
-	if (SceneData.MaleMarker != None)
+	; v2.60 - only clone to help fix shaky stand scenes -- embrace
+	if (MainActorCloneRef != None && SceneData.MaleMarker != None)
 		; check height
 		float posZ = mainActor.GetPositionZ()
 		float targetZ = SceneData.MaleMarker.GetPositionZ()

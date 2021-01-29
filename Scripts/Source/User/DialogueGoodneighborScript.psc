@@ -209,7 +209,12 @@ Function MagnoliaDateSI(Actor myPlayer)
 	Utility.Wait(0.2)
 	
 	if (DTSleep_AdultContentOn != None && DTSleep_AdultContentOn.GetValue() >= 2.0 && DTSConditionals != None && DTSConditionals.ImaPCMod)
-		adultOn = true
+	
+		; v2.60
+		if (DTSConditionals.PlayerRace != None && DTSConditionals.NanaRace == None)
+		
+			adultOn = true
+		endIf
 	endIf
 	
 	if (SceneData != None && DTSleep_IntimateAnimQuestP != None)

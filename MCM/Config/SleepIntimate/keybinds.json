@@ -20,6 +20,16 @@
         "function": "WakePlayer",
         "params": [1.0]
       }
+    },
+	{
+      "id": "DTSI_UndressRedressToggle",
+      "desc": "Sleep Intimate toggle Redress after Rest",
+      "action": {
+        "type": "CallFunction",
+        "form": "SleepIntimate.esp|A56A2",
+        "function": "ToggleRedress",
+        "params": [1.0]
+      }
     }
   ]
 }

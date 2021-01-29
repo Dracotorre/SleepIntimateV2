@@ -44,7 +44,9 @@ EndFunction
 ;BEGIN FRAGMENT Fragment_Terminal_06
 Function Fragment_Terminal_06(ObjectReference akTerminalRef)
 ;BEGIN CODE
-pDTSleep_SettingUndress.SetValue(2.0)
+int cval = pDTSleep_SettingUndress.GetValueInt()
+cval += 1
+pDTSleep_SettingUndress.SetValueInt(cval)
 ;END CODE
 EndFunction
 ;END FRAGMENT
@@ -60,7 +62,7 @@ EndFunction
 ;BEGIN FRAGMENT Fragment_Terminal_08
 Function Fragment_Terminal_08(ObjectReference akTerminalRef)
 ;BEGIN CODE
-pDTSleep_SettingUndress.SetValue(1.0)
+(pDTSleep_MainQuest as DTSleep_MainQuestScript).SetRestRedressDefault()
 ;END CODE
 EndFunction
 ;END FRAGMENT
@@ -374,6 +376,22 @@ EndFunction
 Function Fragment_Terminal_48(ObjectReference akTerminalRef)
 ;BEGIN CODE
 pDTSleep_SettingRadCheck.SetValue(2.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_49
+Function Fragment_Terminal_49(ObjectReference akTerminalRef)
+;BEGIN CODE
+(pDTSleep_MainQuest as DTSleep_MainQuestScript).SetToggleRedress()
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_50
+Function Fragment_Terminal_50(ObjectReference akTerminalRef)
+;BEGIN CODE
+(pDTSleep_MainQuest as DTSleep_MainQuestScript).SetToggleRedress()
 ;END CODE
 EndFunction
 ;END FRAGMENT

@@ -479,9 +479,9 @@
 			"id": "MCM_SettingUndress:Rest",
 			"text": "Undress for Rest",
 			"type": "dropdown",
-			"help": "",
+			"help": "disable also disables intimacy; Redress after Rest or not (player-character)",
 			"valueOptions": {
-				"options": ["Disabled", "Situational", "undress-all"],
+				"options": ["Disabled", "Situational", "undress-always", "Situational-No Redress", "always-No Redress"],
 				"sourceType": "GlobalValue",
 				"sourceForm": "SleepIntimate.esp|F99",
 				"propertyName": "DTSleep_SettingUndress"
@@ -605,9 +605,9 @@
 			"id": "MCM_SettingIntimate:Intimacy",
 			"text": "Intimate Scenes",
 			"type": "dropdown",
-			"help": "pre-bed scenes -Disable for sleep-only. Extra NPCs: includes non-romance companions for challenge - require companion perk.",
+			"help": "Disable for sleep-only. Extra NPCs: includes non-romance companions - require companion perk. May force XOXO-mode",
 			"valueOptions": {
-				"options": ["Disabled", "Enabled", "Extra NPCs"],
+				"options": ["Disabled", "Enabled", "Extra NPCs", "Enabled-XOXO", "Extra NPCs-XOXO"],
 				"sourceType": "GlobalValue",
 				"sourceForm": "SleepIntimate.esp|F9A",
 				"propertyName": "DTSleep_SettingIntimate"
@@ -2029,6 +2029,12 @@
           "text": "Hotkey for Awaken from sleep",
           "type": "hotkey",
           "help": "Awaken from sleep"
+        },
+		{
+          "id": "DTSI_UndressRedressToggle",
+          "text": "Hotkey for Redress after Rest toggle (player-character)",
+          "type": "hotkey",
+          "help": "toggle Redress after Rest"
         }
       ]
     },
@@ -2088,7 +2094,7 @@
           "type": "section"
         },
 		{
-		  "text": "Crouch/Sneak to redress. May have accidentally activated a nearby furniture. Remember to activate same bed sleeping in to exit.",
+		  "text": "Crouch to cancel and redress. May have accidentally activated a nearby furniture. Remember to activate same bed sleeping in to exit. Is Redress after Rest enabled?",
 		  "type": "text",
 		  "align": "left"
 		},

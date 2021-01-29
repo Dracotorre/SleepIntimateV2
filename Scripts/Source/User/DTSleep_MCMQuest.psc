@@ -99,7 +99,7 @@ EndEvent
 Function DoOnLoad()
 	;Debug.Trace("[DTSleep_MCM] onPlayerLoad")
     RegisterCustomEvents()
-	Update(false)
+	Update(true)
 EndFunction
 
 Function OnMCMOpen()
@@ -279,6 +279,10 @@ Function ToggleChairScenes(float val)
 	endIf
 	
 	DTSleep_SettingChairsEnabled.SetValueInt(chairVal)
+EndFunction
+
+Function ToggleRedress(float val)
+	(pDTSleep_MainQuest as DTSleep_MainQuestScript).SetToggleRedress()
 EndFunction
 
 Function WakePlayer(float val)

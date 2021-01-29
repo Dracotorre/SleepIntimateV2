@@ -2557,9 +2557,10 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 			if (seqID == 780)
 				ssStruct.FAnimFormID = 0x0502B866
 				ssStruct.MAnimFormID = 0x0502B867
-				ssStruct.StageTime = 24.0
+				ssStruct.StageTime = 25.0
 				ssStruct.PositionID = "DTSIX_780_S1"
 				ssStruct.PositionOrigID = "SC-FM-Human-DinerBooth01-01Tease"
+				ssStruct.ArmorNudeAGun = -1				; not naked
 
 			elseIf (seqID == 781)
 				if (stageNumber == 1)

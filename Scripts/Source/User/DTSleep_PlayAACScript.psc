@@ -408,8 +408,9 @@ EndFunction
 
 ; 0 = normal, 1 = up, 2 = down
 Armor Function GetArmorNudeGun(int kind)
+
 	Armor gun = None
-	if (kind < 0)
+	if (kind < 0 || SequenceID == 780)
 		return None
 	endIf
 	if (!Debug.GetPlatformName() as bool)
@@ -526,141 +527,142 @@ Function InitSceneAndPlay()
 		otherActor = 1
 	endIf
 	
-	if (SceneData.CompanionInPowerArmor)
-		longScene = -1
-	elseIf (SequenceID == 705 || SequenceID == 715)
-		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers == 1.24)
-			longScene = 1
-		elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.25)
-			longScene = 2
-		endIf
-	elseIf (SequenceID == 706 || SequenceID == 707)
-		if (otherActor > 0 && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.25)
-			longScene = 1
-		endIf
-	elseIf (SequenceID == 737 || SequenceID == 733 || SequenceID == 742 || SequenceID == 748 || SequenceID == 749)
-		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.1)
-			longScene = 1
-			if (SequenceID == 737 && DTSleep_IntimateSceneLen.GetValueInt() >= 3)
+	if (SequenceID >= 100)
+		if (SceneData.CompanionInPowerArmor)
+			longScene = -1
+		elseIf (SequenceID == 705 || SequenceID == 715)
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers == 1.24)
+				longScene = 1
+			elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.25)
 				longScene = 2
 			endIf
-		endIf
-	elseIf (SequenceID == 765)
-		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
-			longScene = 2
-		elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.1)
-			longScene = 1
-		endIf
-	elseIf (SequenceID == 701 || SequenceID == 760)
-		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
-			longScene = 1
-		endIf
-	elseIf (SequenceID == 735)
-		if (otherActor == 0 && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
-			longScene = 1
-		elseIf (otherActor == 1 && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.250)
-			longScene = 1
-		endIf
-	elseIf (SequenceID == 736)
-		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
-			longScene = 2
-		elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
-			longScene = 1
-		endIf
-	elseIf (SequenceID == 741)
-		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.230)
-			longScene = 1
-		endIf
-	elseIf (SequenceID == 747)
-		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.240)
-			longScene = 1
-		endIf
-	elseIf (SequenceID == 746)
-		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
-			longScene = 2
-		elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
+		elseIf (SequenceID == 706 || SequenceID == 707)
+			if (otherActor > 0 && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.25)
+				longScene = 1
+			endIf
+		elseIf (SequenceID == 737 || SequenceID == 733 || SequenceID == 742 || SequenceID == 748 || SequenceID == 749)
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.1)
+				longScene = 1
+				if (SequenceID == 737 && DTSleep_IntimateSceneLen.GetValueInt() >= 3)
+					longScene = 2
+				endIf
+			endIf
+		elseIf (SequenceID == 765)
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
+				longScene = 2
+			elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.1)
+				longScene = 1
+			endIf
+		elseIf (SequenceID == 701 || SequenceID == 760)
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
+				longScene = 1
+			endIf
+		elseIf (SequenceID == 735)
+			if (otherActor == 0 && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
+				longScene = 1
+			elseIf (otherActor == 1 && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.250)
+				longScene = 1
+			endIf
+		elseIf (SequenceID == 736)
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
+				longScene = 2
+			elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
+				longScene = 1
+			endIf
+		elseIf (SequenceID == 741)
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.230)
+				longScene = 1
+			endIf
+		elseIf (SequenceID == 747)
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.240)
+				longScene = 1
+			endIf
+		elseIf (SequenceID == 746)
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
+				longScene = 2
+			elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
+				longScene = 1
+			endIf
+			
+		elseIf (SequenceID == 752)
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
+				longScene = 2
+			elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
+				longScene = 1
+			endIf
+		elseIf (SequenceID == 758)
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.250)
+				longScene = 1
+			endIf	
+		elseIf (SequenceID == 759)
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
+				longScene = 1
+			endIf
+		elseIf (SequenceID == 761)
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.23)
+				longScene = 1
+			endIf
+		elseIf (SequenceID >= 763 && SequenceID <= 764)
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.23)
+				longScene = 2
+			elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
+				longScene = 1
+			endIf
+		elseIf (SequenceID == 766)
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
+				longScene = 2
+			elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
+				longScene = 1
+			endIf
+		elseIf (SequenceID >= 767 && SequenceID <= 768 && SceneData.SecondMaleRole == None)
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.23)
+				longScene = 1
+			endIf
+		elseIf (SequenceID == 768 && SceneData.SecondMaleRole != None)
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
+				longScene = 1
+			endIf
+		elseIf (SequenceID == 774)
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.23)
+				longScene = 2
+			elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
+				longScene = 1
+			endIf
+		elseIf (SequenceID == 775)
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.250)
+				longScene = 1
+			endIf
+		elseIf (SequenceID == 781)
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.240)
+				longScene = 1
+			endIf
+		elseIf (SequenceID == 795)
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.21)
+				longScene = 1
+			endIf
+		elseIf (SequenceID == 796)
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.250)
+				longScene = 1
+			endIf
+		elseIf (SequenceID == 785)
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.21)
+				longScene = 1
+			endIf
+		
+		elseIf (DTSleep_IntimateSceneLen.GetValueInt() >= 3)
 			longScene = 1
 		endIf
 		
-	elseIf (SequenceID == 752)
-		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
-			longScene = 2
-		elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
-			longScene = 1
+		if (SceneData.SameGender && !SceneData.HasToyEquipped)
+			genders = SceneData.MaleRoleGender
 		endIf
-	elseIf (SequenceID == 758)
-		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.250)
-			longScene = 1
-		endIf	
-	elseIf (SequenceID == 759)
-		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
-			longScene = 1
-		endIf
-	elseIf (SequenceID == 761)
-		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.23)
-			longScene = 1
-		endIf
-	elseIf (SequenceID >= 763 && SequenceID <= 764)
-		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.23)
-			longScene = 2
-		elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
-			longScene = 1
-		endIf
-	elseIf (SequenceID == 766)
-		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
-			longScene = 2
-		elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
-			longScene = 1
-		endIf
-	elseIf (SequenceID >= 767 && SequenceID <= 768 && SceneData.SecondMaleRole == None)
-		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.23)
-			longScene = 1
-		endIf
-	elseIf (SequenceID == 768 && SceneData.SecondMaleRole != None)
-		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
-			longScene = 1
-		endIf
-	elseIf (SequenceID == 774)
-		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.23)
-			longScene = 2
-		elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
-			longScene = 1
-		endIf
-	elseIf (SequenceID == 775)
-		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.250)
-			longScene = 1
-		endIf
-	elseIf (SequenceID == 781)
-		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.240)
-			longScene = 1
-		endIf
-	elseIf (SequenceID == 795)
-		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.21)
-			longScene = 1
-		endIf
-	elseIf (SequenceID == 796)
-		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.250)
-			longScene = 1
-		endIf
-	elseIf (SequenceID == 785)
-		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.21)
-			longScene = 1
-		endIf
-	
-	elseIf (DTSleep_IntimateSceneLen.GetValueInt() >= 3)
-		longScene = 1
-	endIf
-	
-	
-	if (SceneData.SameGender && !SceneData.HasToyEquipped)
-		genders = SceneData.MaleRoleGender
-	endIf
-	
-	if (SceneData.IsCreatureType == 2 && ChanceDogQuits())
-		StopSecondActorDone()
-		StartTimer(5.0, DoggyQuitTimer)
-		if (SequenceID >= 770)
-			SequenceID = 740 ; dance
+		
+		if (SceneData.IsCreatureType == 2 && ChanceDogQuits())
+			StopSecondActorDone()
+			StartTimer(5.0, DoggyQuitTimer)
+			if (SequenceID >= 770)
+				SequenceID = 740 ; dance
+			endIf
 		endIf
 	endIf
 	
@@ -689,12 +691,16 @@ Function InitSceneAndPlay()
 	if (MainActor == SceneData.MaleRole)
 		mainAngleOff = angleOffset + angleM
 		mainYOff = yOffM
-		if (seqStagesArray.Length > 0)
+		if (SequenceID < 100)
+			mainZOff = -2.2					; v2.60 - reduce embrace shaking
+		elseIf (seqStagesArray.Length > 0)
 			mainZOff = seqStagesArray[0].MPosZOffset
 		endIf
 	else
 		mainAngleOff = angleOffset + angleF
-		if (seqStagesArray.Length > 0)
+		if (SequenceID < 500)
+			mainZOff = -2.2					; v2.60 - reduce embrace shaking
+		elseIf (seqStagesArray.Length > 0)
 			mainZOff = 0.0 - seqStagesArray[0].MPosZOffset
 		endIf
 	endIf

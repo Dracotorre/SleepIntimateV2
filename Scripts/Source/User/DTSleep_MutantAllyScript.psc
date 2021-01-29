@@ -2,7 +2,7 @@ Scriptname DTSleep_MutantAllyScript extends ActiveMagicEffect
 
 
 ; ******************
-; DTSleep_SpectatorQuestScript for SleepIntimate
+; DTSleep_MutantAllyScript for SleepIntimate
 ; by DracoTorre
 ; www.dracotorre.com/mods/sleepintimate/
 ; https://github.com/Dracotorre/SleepIntimateV2

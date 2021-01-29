@@ -161,7 +161,7 @@ Event OnItemEquipped(Form akBaseObject, ObjectReference akReference)
 	if (akBaseObject as Armor)
 	
 		if (DTSleep_IntimateOutfitFemKY != None && akBaseObject.HasKeyword(DTSleep_IntimateOutfitFemKY))
-			if (DTSleep_AdultContentOn.GetValueInt() < 2 || !(Debug.GetPlatformName() as bool))
+			if (DTSleep_AdultContentOn.GetValueInt() < 2 || !(Debug.GetPlatformName() as bool) || (DTSConditionals as DTSleep_Conditionals).NanaRace != None)
 				Utility.WaitMenuMode(0.3)
 				Actor playerRef = self.GetActorReference()
 				playerRef.UnequipItem(akBaseObject)

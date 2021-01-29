@@ -8,6 +8,8 @@ Scriptname DTSleep_MainQSceneScript extends Quest
 ; no required Camera section changes in Fallout4Custom.ini
 ; will set bApplyCameraNodeAnimations
 ;
+; for default values, see https://forum.step-project.com/topic/9309-fallout-4-default-values-for-all-valid-ini-settings/
+;
 Actor property PlayerRef auto const Mandatory
 GlobalVariable property DTSleep_WasPlayerThirdPerson auto
 { keep track if player was in 3rd or 1st person view }
@@ -40,7 +42,8 @@ bool property IsMaleCamOffset auto hidden
 float property CamHeightOffset auto hidden
 
 Function GoSceneViewCamCustom(int lowCam = 1)
-	if (lowCam >= 0 && DTSL_CamCustomEnabled.GetValue() > 0.0 && DTSleep_SettingCamera.GetValue() > 0.0)
+	; v2.60 - include -1 for embrace scenes
+	if (lowCam >= -1 && DTSL_CamCustomEnabled.GetValue() > 0.0 && DTSleep_SettingCamera.GetValue() > 0.0)
 	; Utility.SetINIBool("bForceAutoVanityMode:Camera", false)
 	; Utility.SetINIFloat("fVanityModeMaxDist:Camera", 320.0)
 	; Utility.SetINIFloat("fVanityModeMinDist:Camera", 64.0)
@@ -65,18 +68,22 @@ Function GoSceneViewCamCustom(int lowCam = 1)
 			Utility.SetINIFloat("fOverShoulderPosZ:Camera", DTSL_CamDef_OverShoulderZ.GetValue() + CamHeightOffset)
 		endIf
 		
-		float overX = DTSL_CamCus_OverShoulderX.GetValue()
-		if (IsMaleCamOffset)
-			overX += 25.0
+		if (lowCam >= 0)					; v2.60 - since now include -1, we don't need this for embrace
+			float overX = DTSL_CamCus_OverShoulderX.GetValue()
+			if (IsMaleCamOffset)
+				overX += 25.0
+			endIf
+			if (overX != 0.0 && ReverseCamXOffset)
+				overX = -1 * overX - 2.0
+			endIf
+			Utility.SetINIFloat("fOverShoulderPosX:Camera", overX)
 		endIf
-		if (overX != 0.0 && ReverseCamXOffset)
-			overX = -1 * overX - 2.0
-		endIf
-		Utility.SetINIFloat("fOverShoulderPosX:Camera", overX)
 		;Utility.SetINIFloat("fOverShoulderPosX:Camera", 112.0)
 		;Utility.SetINIFloat("fOverShoulderPosY:Camera", -128.0)
 		;Utility.SetINIFloat("fFurnitureCameraAngle:Camera", 0.3927)
 		Utility.SetINIFloat("fMinCurrentZoom:Camera", DTSL_CamCus_MinCurZoom.GetValue())
+		Utility.SetINIFloat("fActorFadeOutLimit:Camera", 1.0)								; v2.60 - reduce companion fade-out during embrace
+		
 		Utility.Wait(0.08)
 	endIf
 endFunction
@@ -97,6 +104,7 @@ Function GoSceneViewCamDefault()
 		;Utility.SetINIFloat("fOverShoulderPosY:Camera", 0.0)
 		;Utility.SetINIFloat("fFurnitureCameraAngle:Camera", 0.3927)
 		Utility.SetINIFloat("fMinCurrentZoom:Camera", DTSL_CamDef_MinCurZoom.GetValue())
+		Utility.SetINIFloat("fActorFadeOutLimit:Camera", 30.0)								; v2.60 - restore to default
 		Utility.Wait(0.08)
 	endIf
 endFunction
@@ -111,6 +119,8 @@ Function GoSceneViewDone(bool goFirstOK)
 			;PlayerRef.SetAnimationVariableBool("IsFirstPerson", true)
 		endIf
 	;endIf
+	
+	
 	GoSceneViewCamDefault()
 	
 endFunction
@@ -134,7 +144,6 @@ Function GoSceneViewStart(int useLowCam = 1)
 			Utility.Wait(0.67)
 		endIf
 	endIf
-
 	
 	GoSceneViewCamCustom(useLowCam)  ; set custom cam before going third-person
 	Utility.Wait(0.06)

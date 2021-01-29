@@ -27,7 +27,9 @@ EndFunction
 ;BEGIN FRAGMENT Fragment_Terminal_02
 Function Fragment_Terminal_02(ObjectReference akTerminalRef)
 ;BEGIN CODE
-pDTSleep_SettingIntimate.SetValue(2.0)
+int cval = pDTSleep_SettingIntimate.GetValueInt()
+cval += 1
+pDTSleep_SettingIntimate.SetValueInt(cval)
 ;END CODE
 EndFunction
 ;END FRAGMENT
@@ -482,6 +484,22 @@ EndFunction
 Function Fragment_Terminal_57(ObjectReference akTerminalRef)
 ;BEGIN CODE
 pDTSleep_SettingUseSMMorph.SetValue(0.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_58
+Function Fragment_Terminal_58(ObjectReference akTerminalRef)
+;BEGIN CODE
+(pDTSleep_MainQuest as DTSleep_MainQuestScript).SetToggleXOXOMode()
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_59
+Function Fragment_Terminal_59(ObjectReference akTerminalRef)
+;BEGIN CODE
+(pDTSleep_MainQuest as DTSleep_MainQuestScript).SetToggleXOXOMode()
 ;END CODE
 EndFunction
 ;END FRAGMENT

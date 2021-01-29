@@ -159,6 +159,10 @@ endEvent
 Armor Function GetLeitoGun(int kind)
 	Armor gun = None
 	
+	; v2.54 - check body swap restrictions
+	if (SceneData.MaleBodySwapEnabled <= 0)
+		return None
+	endIf
 	if (DTSleep_SettingUseLeitoGun.GetValue() > 0)
 	
 		if (SceneData.MaleRole == PlayerRef || SceneData.FemaleRole == SecondActor)

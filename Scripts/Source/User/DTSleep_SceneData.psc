@@ -44,6 +44,7 @@ bool property PreferStandOnly = false auto conditional hidden
 bool property CompanionInPowerArmor = false auto conditional hidden
 int property PlayerRoleTranslated = 0 auto conditional hidden
 int property MaleBodySwapEnabled = 1 auto conditional hidden
+int property RaceRestricted = 0 auto conditional hidden						; v2.60 embrace only
 ;
 ; additional scene info v2.35
 ;

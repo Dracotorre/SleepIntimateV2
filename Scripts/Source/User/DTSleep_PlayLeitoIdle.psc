@@ -250,6 +250,11 @@ Armor Function GetArmorNudeGun(int kind)
 		return None
 	endIf
 	
+	; v2.54 - check body swap restrictions
+	if (SceneData.MaleBodySwapEnabled <= 0)
+		return None
+	endIf
+	
 	int evbVal = DTSleep_SettingUseLeitoGun.GetValueInt()
 	
 	if (SceneData.IsCreatureType == 1)

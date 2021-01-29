@@ -84,6 +84,8 @@ bool Function IsAllowedLover(Actor akActor)
 	elseIf (akActor == None)
 		Debug.Trace("[DTSleep_TrueLoveQuest] IsAllowed? actor is None!")
 		return false
+	elseIf (akActor.IsChild())					; v2.60
+		Debug.Trace("[DTSleep_TrueLoveQuest] IsAllowed? actor is child!")
 	endIf
 	
 	if ((DTSConditionals as DTSleep_Conditionals).NoraSpouseRef != None && akActor == (DTSConditionals as DTSleep_Conditionals).NoraSpouseRef)
