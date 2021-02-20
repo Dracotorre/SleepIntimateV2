@@ -2825,7 +2825,7 @@ endFunction
 int Function CheckUniquePlayerFollowers()
 	int modCount
 	
-	if (DTSleep_AdultContentOn.GetValue() <= 1.0)
+	if (DTSleep_AdultContentOn.GetValue() < 1.0)				; v2.61 - allow 1.0 although should not matter
 		return 0
 	endIf
 	
@@ -2839,11 +2839,13 @@ int Function CheckUniquePlayerFollowers()
 	
 	bool maleFollowers = false
 	bool femaleFollowers = false
-		
-
+	bool hasFemFollowerESP = false	
+	bool hasMaleFollowerESP = false
+	
 	; check male-player plugins
 	
 	string upName = "UniqueMalePlayer.esp"
+	
 	Armor skinArmor = IsPluginActive(0x16000833, upName) as Armor
 	
 	; old 
@@ -2855,26 +2857,34 @@ int Function CheckUniquePlayerFollowers()
 	if (skinArmor == None)
 		upName = "UniqueMalePlayerAndFollowers.esp"
 		skinArmor = IsPluginActive(0x16000833, upName) as Armor
-		maleFollowers = true 
-		femaleFollowers = true
+		if (skinArmor != None)
+			maleFollowers = true 
+			femaleFollowers = true
+		endIf
 	endIf
 	if (skinArmor == None)
 		upName = "UniqueMalePlayerAndFollowersDLC.esp"
 		skinArmor = IsPluginActive(0x16000833, upName) as Armor
-		maleFollowers = true 
-		femaleFollowers = true
+		if (skinArmor != None)
+			maleFollowers = true 
+			femaleFollowers = true
+		endIf
 	endIf
 	if (skinArmor == None)
 		upName = "UniqueMalePlayerAndFollowersDLCNoHancock.esp"
 		skinArmor = IsPluginActive(0x16000833, upName) as Armor
-		maleFollowers = true 
-		femaleFollowers = true
+		if (skinArmor != None)
+			maleFollowers = true 
+			femaleFollowers = true
+		endIf
 	endIf
 	if (skinArmor == None)
 		upName = "UniqueMalePlayerAndFollowersNoHancock.esp"
 		skinArmor = IsPluginActive(0x16000833, upName) as Armor
-		maleFollowers = true 
-		femaleFollowers = true
+		if (skinArmor != None)
+			maleFollowers = true 
+			femaleFollowers = true
+		endIf
 	endIf
 
 	
@@ -2884,7 +2894,7 @@ int Function CheckUniquePlayerFollowers()
 		(DTSConditionals as DTSleep_Conditionals).IsUniquePlayerMaleActive = false
 	endIf
 	
-	return modCount
+	; v2.61 removed early return
 	
 	if (!femaleFollowers)
 		skinArmor = None   ; reset 
@@ -2894,43 +2904,57 @@ int Function CheckUniquePlayerFollowers()
 	if (skinArmor == None)
 		upName = "UniqueFemalePlayerAndFollowersNoHancock.esp"
 		skinArmor = IsPluginActive(0x16000833, upName) as Armor
-		maleFollowers = true 
-		femaleFollowers = true
+		if (skinArmor != None)
+			maleFollowers = true 
+			femaleFollowers = true
+		endIf
 	endIf
 	if (skinArmor == None)
 		upName = "UniqueFemalePlayerAndFollowers.esp"
 		skinArmor = IsPluginActive(0x16000833, upName) as Armor
-		maleFollowers = true 
-		femaleFollowers = true
+		if (skinArmor != None)
+			maleFollowers = true 
+			femaleFollowers = true
+		endIf
 	endIf
 	if (skinArmor == None)
 		upName = "UniqueFemalePlayerAndFollowersDLC.esp"
 		skinArmor = IsPluginActive(0x16000833, upName) as Armor
-		maleFollowers = true 
-		femaleFollowers = true
+		if (skinArmor != None)
+			maleFollowers = true 
+			femaleFollowers = true
+		endIf
 	endIf
 	if (skinArmor == None)
 		upName = "UniqueFemalePlayerAndFollowersDLCNoHancock.esp"
 		skinArmor = IsPluginActive(0x16000833, upName) as Armor
-		maleFollowers = true 
-		femaleFollowers = true
-	endIf
-	if (skinArmor == None)
-		upName = "UniqueFemaleFollowers.esp"
-		skinArmor = IsPluginActive(0x16000805, upName) as Armor
-		if (skinArmor)
+		if (skinArmor != None)
+			maleFollowers = true 
 			femaleFollowers = true
 		endIf
-		upName = "UniqueMaleFollowers.esp"
-		skinArmor = IsPluginActive(0x1600080A, upName) as Armor
-		if (skinArmor)
+	endIf
+	
+	if (!femaleFollowers)
+		skinArmor = IsPluginActive(0x16000805, "UniqueFemaleFollowers.esp") as Armor
+		if (skinArmor != None)
+			femaleFollowers = true
+			hasFemFollowerESP = true
+		endIf
+	endIf
+	if (!maleFollowers)
+		skinArmor = IsPluginActive(0x1600080A, "UniqueMaleFollowers.esp") as Armor
+		if (skinArmor != None)
 			maleFollowers = true
+			hasMaleFollowerESP = true
 		endIf
 	endIf
 	
-	if (skinArmor != None)
+	if (femaleFollowers || maleFollowers)					; v2.61 fix for when female but no male
 	
 		if (maleFollowers)
+			if (hasMaleFollowerESP)
+				upName = "UniqueMaleFollowers.esp"
+			endIf
 			(DTSConditionals as DTSleep_Conditionals).IsUniqueFollowerMaleActive = true
 			skinArmor = Game.GetFormFromFile(0x1600080A, upName) as Armor   ; Danse
 			
@@ -2960,12 +2984,16 @@ int Function CheckUniquePlayerFollowers()
 		endIf
 		
 		if (femaleFollowers)
+			if (hasFemFollowerESP)
+				upName = "UniqueFemaleFollowers.esp"
+			endIf
 			(DTSConditionals as DTSleep_Conditionals).IsUniqueFollowerFemActive = true
 			skinArmor = Game.GetFormFromFile(0x16000805, upName) as Armor  ; Cait
 			
 			if (skinArmor != None && !DTSleep_ModCompanionBodiesLst.HasForm(skinArmor))
+				
+				(DTSConditionals as DTSleep_Conditionals).ModUniqueFollowerFemBodyBaseIndex = DTSleep_ModCompanionBodiesLst.GetSize()
 				DTSleep_ModCompanionBodiesLst.AddForm(skinArmor)
-				(DTSConditionals as DTSleep_Conditionals).ModUniqueFollowerFemBodyBaseIndex = DTSleep_ModCompanionBodiesLst.GetSize() - 1
 				
 				DTSleep_ModCompanionBodiesLst.AddForm(Game.GetFormFromFile(0x16000806, upName))  ;Curie
 				DTSleep_ModCompanionBodiesLst.AddForm(Game.GetFormFromFile(0x16000804, upName))  ;Piper

@@ -203,6 +203,8 @@ Function MagnoliaDateSI(Actor myPlayer)
 	bool modSafe = true
 	bool includeClothing = false
 	int scenID = 0
+	int intimateVal = -1
+	int undressVal = -1
 	
 	Utility.Wait(0.5)
 	Game.FadeOutGame(True, True, 0.0, 1.0, True)		; does not always work after teleport fade-in
@@ -248,8 +250,19 @@ Function MagnoliaDateSI(Actor myPlayer)
 		modSafe = false
 	endIf
 	
+	; v2.60.1 - check for XOXO mode and undress
+	if (DTSleep_SettingIntimate != None)
+		intimateVal = DTSleep_SettingIntimate.GetValueInt()
+		if (intimateVal >= 3)
+			adultOn = false
+		endIf
+	endIf
+	if (DTSleep_SettingUndress != None)
+		undressVal = DTSleep_SettingUndress.GetValueInt()
+	endIf
 	
-	if (DTSleep_IntimateAnimQuestP != None && DTSleep_SettingIntimate != None && DTSleep_SettingIntimate.GetValue() > 0.0 && DTSleep_SettingUndress.GetValue() > 0.0)
+	
+	if (DTSleep_IntimateAnimQuestP != None && intimateVal >= 1 && undressVal > 0)
 	
 		(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).FadeOutSec(0.5, false)		; make sure fade-to-black
 		
@@ -341,9 +354,15 @@ Function MagnoliaDateSI(Actor myPlayer)
 		endIf
 		
 		if (adultOn && doPlayAdultAnim)
-			
+			; v2.60.1 - player-redress
+			if (undressVal >= 3)
+				(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).PlayerRedressEnabled = false
+			else
+				(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).PlayerRedressEnabled = true
+			endIf
 			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).StartForManualStop(includeClothing, MagnoliaREF, false, true, None)
 		else
+			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).PlayerRedressEnabled = true
 			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).StartForManualStopRespect(MagnoliaREF)
 		endIf
 		

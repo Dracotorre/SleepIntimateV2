@@ -12387,6 +12387,13 @@ Function ProcessCompatibleMods(bool showMsg = true)
 	
 	if (Game.IsPluginInstalled("Z_Horizon.esp"))
 		(DTSleep_HealthRecoverQuestP as DTSleep_HealthRecoverQuestScript).DTSleep_SettingHealthRecover.SetValueInt(0)
+		
+		; v2.61 - disable sleep-save 
+		GlobalVariable sleepSavGV = Game.GetFormFromFile(0x09124CED, "Z_Horizon.esp") as GlobalVariable
+		if (sleepSavGV != None && sleepSavGV.GetValueInt() > 0)
+			Debug.Trace(myScriptName + " disabling Horizon SleepSaveAllowed")
+			sleepSavGV.SetValueInt(0)
+		endIf
 	endIf
 	
 	; v2.60 check to reset

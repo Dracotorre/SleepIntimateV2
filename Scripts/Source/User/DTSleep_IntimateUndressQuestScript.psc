@@ -1651,8 +1651,8 @@ Armor Function GetCustomNudeSuitForCompanion(Actor actorRef)
 			endIf
 		endIf
 				
-		; Heather
-		if (gender == 0 && armorIndex < 0 && (DTSConditionals as DTSleep_Conditionals).IsHeatherCompanionActive)
+		; Heather       ; v2.61 - fix gender
+		if (gender == 1 && armorIndex < 0 && (DTSConditionals as DTSleep_Conditionals).IsHeatherCompanionActive)
 			if (actorRef == GetHeatherActor())
 				armorIndex = (DTSConditionals as DTSleep_Conditionals).ModCompanionBodyHeatherIndex
 			endIf
@@ -1661,6 +1661,7 @@ Armor Function GetCustomNudeSuitForCompanion(Actor actorRef)
 		if (armorIndex >= 0)
 			int len = DTSleep_ModCompanionBodiesLst.GetSize()
 			if (armorIndex < len)
+				DTDebug(" getting Unique Body armor at index " + armorIndex + " for companion " + actorRef, 1)
 				return (DTSleep_ModCompanionBodiesLst.GetAt(armorIndex) as Armor)
 			else
 				Debug.Trace(myScriptName + " error GetCustomNudeSuitForCompanion - armor index > size (" + armorIndex + " > " + len + ")" )
@@ -4846,7 +4847,7 @@ Function UndressActorCompanionDressNudeSuit(Actor actorRef, bool hasSleepMainOut
 		return
 	endIf
 	
-	if (actorRef == CompanionRef && DressData.CompanionNudeSuit == None && !hasStrapOn && DTSleep_SettingAltFemBody.GetValue() >= 1.0 && BodySwapCompanionEnabled && AltFemBodyEnabled && DTSleep_AdultContentOn.GetValue() >= 2.0 && GetGenderForActor(actorRef) == 1)
+	if (actorRef == CompanionRef && DressData.CompanionNudeSuit == None && !hasStrapOn && !(DTSConditionals as DTSleep_Conditionals).IsUniqueFollowerFemActive && DTSleep_SettingAltFemBody.GetValue() >= 1.0 && BodySwapCompanionEnabled && AltFemBodyEnabled && DTSleep_AdultContentOn.GetValue() >= 2.0 && GetGenderForActor(actorRef) == 1)
 		
 		actorRef.EquipItem(DTSleep_AltFemNudeBody, true, true)
 		
@@ -4866,7 +4867,7 @@ Function UndressActorCompanionDressNudeSuit(Actor actorRef, bool hasSleepMainOut
 			Utility.WaitMenuMode(0.1)
 		else
 			; use ring to knock off armors then put on custom nude-suit 
-			DTDebug(" equip default Nude Suit on " + actorRef, 2)
+			DTDebug(" equip custom Nude Suit on " + actorRef, 2)
 			int cnt = actorRef.GetItemCount(DTSleep_NudeRingArmorOuter)
 			if (cnt > 0)
 				; swap for nude-ring
@@ -4887,7 +4888,7 @@ Function UndressActorCompanionDressNudeSuit(Actor actorRef, bool hasSleepMainOut
 
 		actorRef.EquipItem(DTSleep_SkinSynthGen2DirtyNude, true, true)
 	
-	elseIf (actorRef == CompanionSecondRef && !hasStrapOn && DTSleep_SettingAltFemBody.GetValue() >= 1.0 && BodySwapCompanionEnabled && AltFemBodyEnabled && DTSleep_AdultContentOn.GetValue() >= 2.0 && GetGenderForActor(actorRef) == 1)
+	elseIf (actorRef == CompanionSecondRef && !hasStrapOn && DTSleep_SettingAltFemBody.GetValue() >= 1.0 && !(DTSConditionals as DTSleep_Conditionals).IsUniqueFollowerFemActive && BodySwapCompanionEnabled && AltFemBodyEnabled && DTSleep_AdultContentOn.GetValue() >= 2.0 && GetGenderForActor(actorRef) == 1)
 		;v2.26 - 2nd companion alt female body
 		;v2.47 - support custom body for 2nd companion
 		Armor customNudeSuit = GetCustomNudeSuitForCompanion(actorRef)
