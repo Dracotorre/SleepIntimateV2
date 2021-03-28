@@ -366,6 +366,7 @@ FormList property DTSleep_TortureDList auto const
 FormList property DTSleep_FlagpoleList auto const
 FormList property DTSleep_IntimatePropList auto const
 FormList property DTSleep_IntimateTablesAllList auto const
+FormList property DTSleep_NotHumanList auto const			; added 2.62
 Spell property DTSleep_LoverBonusSpell auto const
 Spell property DTSleep_MutantAllySpell auto const			; added v2.35
 Spell property DTSleep_RemoveMutantAllySpell auto const		;
@@ -5112,6 +5113,9 @@ IntimateCompanionSet[] Function GetCompanionNearbyLoversArray(int minRank = 3, A
 			if ((DTSConditionals as DTSleep_Conditionals).IsWorkShop02DLCActive && (DTSConditionals as DTSleep_Conditionals).DLC05ArmorRackKY != None && ac.HasKeyword((DTSConditionals as DTSleep_Conditionals).DLC05ArmorRackKY))
 				; do nothing -
 				; don't want no workshop armor mannequin which is NPC
+				
+			elseIf (DTSleep_NotHumanList != None && DTSleep_NotHumanList.HasForm(ac as Form))
+				; not a human - do nothing
 				
 			elseIf (ac.GetSleepState() <= 2)
 				

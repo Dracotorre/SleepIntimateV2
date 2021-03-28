@@ -110,6 +110,7 @@ FormList property DTSleep_IntimateDeskList auto const 			; added v2.51
 FormList property DTSleep_IntimateDesk90List auto const 			; added v2.51
 FormList property DTSleep_BedPrivateList auto const					; added v2.53
 FormList property DTSleep_IntimateChairOttomanList auto const		; added v2.60
+FormList property DTSleep_NotHumanList auto const					; added 2.62
 Message property DTSleep_VersionMsg auto const
 Message property DTSleep_VersionDowngradeMsg auto const				; v2.60
 Message property DTSleep_VersionExplicitMsg auto const
@@ -2814,6 +2815,14 @@ int Function CheckCustomPlayerHomes()
 		DTSleep_IntimateCouchFedList.AddForm(Game.GetFormFromFile(0x09001368, aesFurnName))
 	endIf
 	
+	; Functional Displays  --added v2.62
+	Form mannequinForm = IsPluginActive(0x09000852, "FunctionalDisplays.esp")
+	if (mannequinForm != None && !DTSleep_NotHumanList.HasForm(mannequinForm))
+		modCount += 1
+		
+		DTSleep_NotHumanList.AddForm(mannequinForm)
+		DTSleep_NotHumanList.AddForm(Game.GetFormFromFile(0x090008C6, aesFurnName))
+	endIf
 	
 	; BasementLiving handled in regular section
 	
