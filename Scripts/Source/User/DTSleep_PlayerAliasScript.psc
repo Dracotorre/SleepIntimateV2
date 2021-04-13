@@ -1950,35 +1950,49 @@ Function CheckCompatibility()
 		
 			;Vio Strap-On by Vioxis
 			if ((DTSConditionals as DTSleep_Conditionals).IsVioStrapOnActive == false)
-				Armor strapOn = IsPluginActive(0x08000F9F, "VIO_Strap-On.esp") as Armor
-				if (strapOn)
+				String vioName = "VIO_Strap-On.esp"
+				int vioAltNameIdx = 0
+				
+				Armor strapOn = IsPluginActive(0x08000F9F, vioName) as Armor
+				if (strapOn == None)
+					; v2.63 -- alternate by an3k
+					vioName = "Vioxsis_Strap-Ons.esp"
+					vioAltNameIdx = 1
+					strapOn = IsPluginActive(0x08000F9F, vioName) as Armor
+				endIf
+				if (strapOn != None)
 					Debug.Trace(myScriptName + " found VIO Strap-On")
 					(DTSConditionals as DTSleep_Conditionals).IsVioStrapOnActive = true
 					DTSleep_ExtraArmorsEnabled.SetValue(1.0)
 					
 					if (!DTSleep_StrapOnList.HasForm(strapOn as Form))
 						AddStrapOnToLists(strapOn, DTSleep_ArmorSlot55List)
-						strapOn = Game.GetFormFromFile(0x08000FA0, "VIO_Strap-On.esp") as Armor
+						strapOn = Game.GetFormFromFile(0x08000FA0, vioName) as Armor
 						AddStrapOnToLists(strapOn, DTSleep_ArmorSlot55List)
-						strapOn = Game.GetFormFromFile(0x0800173B, "VIO_Strap-On.esp") as Armor
+						strapOn = Game.GetFormFromFile(0x0800173B, vioName) as Armor
 						AddStrapOnToLists(strapOn, DTSleep_ArmorSlot55List)
-						strapOn = Game.GetFormFromFile(0x08002E0A, "VIO_Strap-On.esp") as Armor
+						strapOn = Game.GetFormFromFile(0x08002E0A, vioName) as Armor
 						AddStrapOnToLists(strapOn, DTSleep_ArmorSlot55List)
 						; this is my addition - available with patch
-						strapOn = Game.GetFormFromFile(0x080044D9, "VIO_Strap-On_SIXPatch.esp") as Armor
-						if (strapOn)
+						string myPatchName = "VIO_Strap-On_SIXPatch.esp"
+						if (vioAltNameIdx == 1)
+							myPatchName = "Vioxsis_Strap-Ons_SIXPatch.esp"
+						endIf
+						strapOn = Game.GetFormFromFile(0x080044D9, myPatchName) as Armor
+						if (strapOn != None)
 							AddStrapOnToLists(strapOn, DTSleep_ArmorSlot55List)
 						endIf
 					endIf
-					strapOn = Game.GetFormFromFile(0x08005413, "VIO_Strap-On.esp") as Armor
+					; new from v3
+					strapOn = Game.GetFormFromFile(0x08005413, vioName) as Armor
 					if (strapOn != None)
 						AddStrapOnToLists(strapOn, DTSleep_ArmorSlot55List)
-						AddStrapOnToLists(Game.GetFormFromFile(0x08005414, "VIO_Strap-On.esp") as Armor, DTSleep_ArmorSlot55List)
-						AddStrapOnToLists(Game.GetFormFromFile(0x08005415, "VIO_Strap-On.esp") as Armor, DTSleep_ArmorSlot55List)
-						AddStrapOnToLists(Game.GetFormFromFile(0x08005416, "VIO_Strap-On.esp") as Armor, DTSleep_ArmorSlot55List)
+						AddStrapOnToLists(Game.GetFormFromFile(0x08005414, vioName) as Armor, DTSleep_ArmorSlot55List)
+						AddStrapOnToLists(Game.GetFormFromFile(0x08005415, vioName) as Armor, DTSleep_ArmorSlot55List)
+						AddStrapOnToLists(Game.GetFormFromFile(0x08005416, vioName) as Armor, DTSleep_ArmorSlot55List)
 					endIf
 				endIf
-			elseIf (!Game.IsPluginInstalled("VIO_Strap-On.esp"))
+			elseIf (!Game.IsPluginInstalled("VIO_Strap-On.esp") && !Game.IsPluginInstalled("VIO_Strap-Ons.esp"))
 				Debug.Trace(myScriptName + " VIO_Strap-On has been removed")
 				(DTSConditionals as DTSleep_Conditionals).IsVioStrapOnActive = false
 			endIf

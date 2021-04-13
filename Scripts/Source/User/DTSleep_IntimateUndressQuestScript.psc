@@ -1449,9 +1449,18 @@ bool Function CheckRemoveAllNudeSuits(Actor actorRef, bool checkCustom = true)
 		RedressActorRemoveNudeSuits(actorRef, DTSleep_NudeRingArmorOuter, " nude ring-ArmorOut")
 		RedressActorRemoveNudeSuits(actorRef, DTSleep_NudeRingNoHands, " nude ring no-hands ")
 		
+		; only checkCustom, because it gets removed first in HandleRedressActors
 		if (checkCustom && actorRef == CompanionRef && DressData.CompanionNudeSuit != None)
 			RedressActorRemoveNudeSuits(actorRef, DressData.CompanionNudeSuit, " custom nude suit ")
 		else
+			; v2.63 - fix for custom body on 2nd companion or if main companion lacks DressData.CompanionNudeSuit for some reason
+			if (actorRef == CompanionSecondRef || checkCustom)
+				Armor customNudeSuit = GetCustomNudeSuitForCompanion(actorRef)
+				if (customNudeSuit != None)
+					RedressActorRemoveNudeSuits(actorRef, customNudeSuit, " custom-discovered nude suit ")
+				endIf
+			endIf
+			
 			RedressActorRemoveNudeSuits(actorRef, DTSleep_NudeSuit, " nude suit ")
 		endIf
 	endIf
@@ -4905,6 +4914,7 @@ Function UndressActorCompanionDressNudeSuit(Actor actorRef, bool hasSleepMainOut
 		;v2.47 - support custom body for 2nd companion
 		Armor customNudeSuit = GetCustomNudeSuitForCompanion(actorRef)
 		if (customNudeSuit != None)
+			; 2nd companion needs to be checked later to confirm removal
 			actorRef.EquipItem(customNudeSuit, true, true)
 		else
 			actorRef.EquipItem(DTSleep_NudeSuit, true, true)   ; prevent NPC main outfit auto-equip

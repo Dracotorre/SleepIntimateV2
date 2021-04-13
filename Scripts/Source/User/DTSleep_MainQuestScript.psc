@@ -5115,7 +5115,7 @@ IntimateCompanionSet[] Function GetCompanionNearbyLoversArray(int minRank = 3, A
 				; don't want no workshop armor mannequin which is NPC
 				
 			elseIf (DTSleep_NotHumanList != None && DTSleep_NotHumanList.HasForm(ac as Form))
-				; not a human - do nothing
+				; v2.62 not a human - do nothing
 				
 			elseIf (ac.GetSleepState() <= 2)
 				
