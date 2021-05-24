@@ -30,6 +30,7 @@ GlobalVariable property DTSleep_SettingUseBT2Gun auto const
 GlobalVariable property DTSleep_SettingSynthHuman auto const
 GlobalVariable property DTSleep_SettingCancelScene auto const
 GlobalVariable property DTSleep_SettingUseSMMorph auto const
+GlobalVariable property DTSleep_SettingScaleActorKiss auto const				; v2.64 - if scale companion to better align kiss
 EndGroup
 
 Group A_GameData
@@ -74,7 +75,6 @@ ObjectReference property PlayerOriginMarkerRef auto hidden
 bool property MaleBodyMorphEnabled auto hidden
 
 
-
 ; *************************
 ;          variables
 
@@ -84,6 +84,7 @@ int MaleRoleSex = -1
 int SecondRoleSex = -1
 int SceneRunning = -1
 bool MeIsStopping = false
+float SecondActorScale = 0.0					; v2.64
 InputEnableLayer DTSleepPlayAACInputLayer
 int DoggyQuitTimer = 99 const
 int SeqLimitTimerID = 101 const
@@ -729,6 +730,49 @@ Function InitSceneAndPlay()
 	;Debug.Trace("[DTSleep_PlayAAC] actors (MST) " + MainActor + "/" + SecondActor + "/" + ThirdActor)
 	;Debug.Trace("[DTSleep_PlayAAC] actors (MFO) " + SceneData.MaleRole + "/" + SceneData.FemaleRole + "/" + SceneData.SecondMaleRole + "/" + SceneData.SecondFemaleRole)
 	
+	; ----------
+	; v2.64 - scale companion for kiss animation alignment correction
+	;	animation stretches female role up for face alignment
+	;    ...appears to be based on player male scale 1.000 and female NPC scale 0.980 (male player kissing Piper at scale 0.98 perfectly aligns)
+	;   preference correct alignment
+	;   restore during StopAnimationSequence if SecondActorScale > 0.0
+	;
+	SecondActorScale = -1.0				; init to no-scale
+	
+	if (DTSleep_SettingScaleActorKiss.GetValueInt() >= 1)
+		if (SequenceID >= 97 && SequenceID <= 98 && SecondActor != None)
+			SecondActorScale = SecondActor.GetScale()
+			
+			if (SecondActorScale >= 0.8 && SecondActorScale <= 1.20)	; limit to reasonably expected value
+				float scaleVal = 0.9840 								; female PC kiss male role
+				
+				if (SceneData.SameGender && SceneData.MaleRoleGender == 1 && MainActor == SceneData.FemaleRole)
+					scaleVal = 0.980									; female PC in female role kissing female
+					
+				elseIf (SceneData.MaleRole == MainActor && SceneData.MaleRoleGender == 0)
+					if (SceneData.SameGender)
+						scaleVal = 0.978
+					else
+						scaleVal = 0.980									; male PC kissing female (Piper's scale is 0.980)
+					endIf
+				elseIf (SceneData.SameGender && SceneData.MaleRoleGender == 1 && MainActor == SceneData.MaleRole)
+					scaleVal = 0.9964									; female PC in male role kissing female
+				endIf
+				
+				if (SecondActorScale == scaleVal)
+					SecondActorScale = -1.5
+					;Debug.Trace("[DTSleep_PlayAAC] kiss no scale actor " + SecondActor + " already at target scale " + scaleVal)
+				else
+					;Debug.Trace("[DTSleep_PlayAAC] kiss scale actor " + SecondActor + " to scale val " + scaleVal)
+					SecondActor.SetScale(scaleVal)
+				endIf
+			else
+				SecondActorScale = -2.0
+			endIf
+		endIf
+	endIf
+	; ------------------ end scale correction for kiss
+	
 	; fade-in
 	Game.FadeOutGame(false, true, 0.67, 2.1)
 		
@@ -1144,6 +1188,13 @@ Function StopAnimationSequence()
 		StopActor(MainActor)
 		StopActor(SecondActor)
 		StopActor(ThirdActor)
+		; v2.64 --- check restore scale
+		if (SecondActor != None && SecondActorScale > 0.0)
+			;Debug.Trace("[DTSleep_PlayAAC] rescale actor " + SecondActor + " to scale " + SecondActorScale)
+			SecondActor.SetScale(SecondActorScale)
+			SecondActorScale = 0.0
+		endIf
+		; -----
 		Utility.Wait(fadeTime * 0.5)
 		Game.FadeOutGame(false, true, 0.0, 0.5)  ; remove game fade
 		

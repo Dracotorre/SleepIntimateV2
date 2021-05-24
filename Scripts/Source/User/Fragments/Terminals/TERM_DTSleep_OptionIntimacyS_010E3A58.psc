@@ -504,6 +504,22 @@ Function Fragment_Terminal_59(ObjectReference akTerminalRef)
 EndFunction
 ;END FRAGMENT
 
+;BEGIN FRAGMENT Fragment_Terminal_60
+Function Fragment_Terminal_60(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingScaleActorKiss.SetValue(1.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_61
+Function Fragment_Terminal_61(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingScaleActorKiss.SetValue(0.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
 ;END FRAGMENT CODE - Do not edit anything between this and the begin comment
 
 GlobalVariable Property pDTSleep_SettingIntimate Auto Const Mandatory
@@ -563,3 +579,5 @@ GlobalVariable Property pDTSleep_SettingDoorsEnabled Auto Const Mandatory
 GlobalVariable Property pDTSleep_SettingProps Auto Const Mandatory
 
 GlobalVariable Property pDTSleep_SettingUseSMMorph Auto Const Mandatory
+
+GlobalVariable Property pDTSleep_SettingScaleActorKiss Auto Const Mandatory

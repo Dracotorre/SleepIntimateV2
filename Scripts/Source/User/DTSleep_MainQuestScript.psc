@@ -270,6 +270,7 @@ GlobalVariable property DTSleep_SettingMenuStyle auto
 GlobalVariable property DTSleep_SettingChemCraft auto
 GlobalVariable property DTSleep_SettingProps auto const					; v2.40
 GlobalVariable property DTSleep_SettingRadCheck auto const				; v2.48.1
+GlobalVariable property DTSleep_SettingScaleActorKiss auto const		; v2.64 - to reset to default
 EndGroup
 
 Group C_GameData
@@ -3210,7 +3211,10 @@ IntimateChancePair Function ChanceForIntimateScene(IntimateCompanionSet companio
 		Debug.Trace(myScriptName + " Sex Appeal score    : " + sexAppealScore)
 		Debug.Trace(myScriptName + " companion Rank(" + companionRelRank + ")   : " + companionRankChance + " (gender: " + companionGender + ") (" + companionRef + ")")
 		Debug.Trace(myScriptName + " creature(" + creatureType + ") penalty : " + creaturePenalty)
+		Debug.Trace(myScriptName + " SceneData-IsCreature: " + SceneData.IsUsingCreature)
 		Debug.Trace(myScriptName + " intimate same-lover : " + sameLoveBonus + " (count: " + SceneData.CurrentLoverScenCount + ")")
+		Debug.Trace(myScriptName + " RaceRestricted      : " + SceneData.RaceRestricted)
+		Debug.Trace(myScriptName + " HasToyAvailable     : " + SceneData.HasToyAvailable)
 		Debug.Trace(myScriptName + " intimate Location   : " + locHourChance.ChanceReal + " (" + locHourChance.Chance + ")")
 		Debug.Trace(myScriptName + "      mid-sleep bonus: " + locHourChance.MidSleepBonusChance)
 		Debug.Trace(myScriptName + " intimate time-since : " + chanceLastTime)
@@ -4832,7 +4836,8 @@ Actor Function GetCompanionInLoveUsingBed(ObjectReference bedRef)
 	
 		if (DTSleep_TrueLoveAlias != None)
 			Actor loverActor = DTSleep_TrueLoveAlias.GetActorReference()
-			if (loverActor != None && loverActor.GetItemCount(DTSleep_ArmorLoverRing) > 0 && loverActor.GetDistance(PlayerRef) < 500.0)
+			; v2.64 - changed DTSleep_ArmorLoverRing count to worn keyword
+			if (loverActor != None && loverActor.WornHasKeyword(DTSleep_LoverRingKY) && loverActor.GetDistance(PlayerRef) < 500.0)
 				if (DTSleep_CommonF.IsActorOnBed(loverActor, bedRef))
 				
 					return loverActor
@@ -5046,7 +5051,8 @@ IntimateCompanionSet[] Function GetCompanionNearbyLoversArray(int minRank = 3, A
 	
 		if (DTSleep_TrueLoveAlias != None)
 			Actor loverActor = DTSleep_TrueLoveAlias.GetActorReference()
-			if (loverActor != None && loverActor != notActor && loverActor.GetItemCount(DTSleep_ArmorLoverRing) > 0 && loverActor.GetDistance(PlayerRef) < 2000.0)
+			; v2.64 - changed DTSleep_ArmorLoverRing count to worn has keyword
+			if (loverActor != None && loverActor != notActor && loverActor.WornHasKeyword(DTSleep_LoverRingKY) && loverActor.GetDistance(PlayerRef) < 2000.0)
 				;DTDebug("found true love ring holder " + loverActor, 2)
 				if (loverActor.IsDead())
 					; ummm...
@@ -7612,7 +7618,8 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 			elseIf ((DTSConditionals as DTSleep_Conditionals).LoverRingEquipCount > 0)
 				if (DTSleep_TrueLoveAlias != None)
 					Actor loverActor = DTSleep_TrueLoveAlias.GetActorReference()
-					if (loverActor != None && loverActor.GetItemCount(DTSleep_ArmorLoverRing) > 0 && loverActor.GetDistance(PlayerRef) < 200.0)
+					; v2.64 - changed DTSleep_ArmorLoverRing count to keyword check
+					if (loverActor != None && loverActor.WornHasKeyword(DTSleep_LoverRingKY) && loverActor.GetDistance(PlayerRef) < 200.0)
 						if (DTSleep_CommonF.IsActorOnBed(loverActor, akFurniture))
 							; is ringer bearer so let normal find work below
 							okayToGo = true
@@ -9969,7 +9976,8 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 				if (hasSavageCabbageAnims)			
 					animSets[index] = 7
 					index += 1
-					if (stylePicked < 0 && playerSex == 1 && !limitedSpace && !furnObjRef.HasKeyword(AnimFurnFloorBedAnims))
+					; v2.64 - fix added no-same-gender restriction
+					if (stylePicked < 0 && !SceneData.SameGender && playerSex == 1 && !limitedSpace && !furnObjRef.HasKeyword(AnimFurnFloorBedAnims))
 						if (Utility.RandomInt(10, 26) > 15)
 							getLeito = false
 						endIf
@@ -10125,21 +10133,29 @@ bool Function IsCompanionPowerArmorGlitched(Actor companionActor)
 	return false
 endFunction
 
-bool Function IsCompanionRaceCompatible(Actor companionActor, ActorBase compBase = None, bool romantic = true)
+bool Function IsCompanion2RaceCompatible(Actor companionActor)					; v2.64
+	
+	return IsCompanionRaceCompatible(companionActor, None, false, false)
+endFunction
+
+bool Function IsCompanionRaceCompatible(Actor companionActor, ActorBase compBase = None, bool romantic = true, bool updateSceneData = true)
 
 	if (companionActor == None)
 		return false
 	endIf
 	
-	; reset before apply
-	SceneData.FemaleRaceHasTail = false
-	SceneData.IsUsingCreature = false
-	SceneData.IsCreatureType = 0
-	SceneData.RaceRestricted = 13				; v2.60 init to unknown race
+	if (updateSceneData)
+		; reset before apply
+		SceneData.FemaleRaceHasTail = false
+		SceneData.IsUsingCreature = false
+		SceneData.IsCreatureType = 0
+		SceneData.RaceRestricted = 13				; v2.60 init to unknown race
+	endIf
 	
-	if (companionActor == StrongCompanionRef)
+	if (updateSceneData && companionActor == StrongCompanionRef)
+
 		SceneData.RaceRestricted = 0
-		
+
 		if ((DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).GetGenderForActor(PlayerRef) == 1)
 			SceneData.IsUsingCreature = true
 			SceneData.IsCreatureType = CreatureTypeStrong
@@ -10159,38 +10175,41 @@ bool Function IsCompanionRaceCompatible(Actor companionActor, ActorBase compBase
 	endIf
 	
 	if (compBase != None)
-		DTDebug("-----*---checking companion race for " + compBase, 2)
+		DTDebug("-----*---checking companion race for " + compBase + ", updateSceneData = " + updateSceneData, 1)
 		Race compRace = compBase.GetRace()
 		; Curie synth shows as gen2-Valentine, male gender - so we include 
 		
 		if (compRace == HumanRace || compRace == GhoulRace)
-			SceneData.RaceRestricted = 0
+			if (updateSceneData)
+				SceneData.RaceRestricted = 0
+			endIf
 			return true
 								
-		elseIf ((DTSConditionals as DTSleep_Conditionals).IsVulpineRace != None && compRace == (DTSConditionals as DTSleep_Conditionals).IsVulpineRace)
+		elseIf (updateSceneData && (DTSConditionals as DTSleep_Conditionals).IsVulpineRace != None && compRace == (DTSConditionals as DTSleep_Conditionals).IsVulpineRace)
 			SceneData.RaceRestricted = 2			; limit body swaps companion
-			
+		
 			if (compBase.GetSex() == 1)
 				SceneData.FemaleRaceHasTail = true
 			else
 				SceneData.MaleBodySwapEnabled = -1
 			endIf
-			
+
 			return true
 			
 		; v2.60
-		elseIf ((DTSConditionals as DTSleep_Conditionals).NanaRace != None && (compRace == (DTSConditionals as DTSleep_Conditionals).NanaRace || compRace == (DTSConditionals as DTSleep_Conditionals).NanaRace2))
+		elseIf (updateSceneData && (DTSConditionals as DTSleep_Conditionals).NanaRace != None && (compRace == (DTSConditionals as DTSleep_Conditionals).NanaRace || compRace == (DTSConditionals as DTSleep_Conditionals).NanaRace2))
 			
 			SceneData.RaceRestricted = 10			; embrace only
 			if (compBase.GetSex() == 0)
 				SceneData.MaleBodySwapEnabled = -1
 			endIf
-			DTDebug(" companion race is Anime NanaRace, " + compRace, 1)
+			DTDebug(" companion race is Anime NanaRace, " + compRace + ", actor: " + companionActor, 1)
 			
 			return true
 		
-		elseIf (compRace == HandyRace)
+		elseIf (updateSceneData && compRace == HandyRace)
 			; may be Codsworth or Curie robot
+			DTDebug(" found HandyRace, " + compRace + ", actor: " + companionActor, 1)			; v2.64 for testing
 			if (DTSleep_AdultContentOn.GetValue() >= 2.0 && (DTSConditionals as DTSleep_Conditionals).ImaPCMod && DTSleep_SettingIntimate.GetValue() == 2.0)
 			
 				; TODO: only Test-Mode 
@@ -10209,11 +10228,13 @@ bool Function IsCompanionRaceCompatible(Actor companionActor, ActorBase compBase
 			
 			return false
 			
-		elseIf (compRace == SynthGen2RaceValentine)
+		elseIf (updateSceneData && compRace == SynthGen2RaceValentine)
 		
 			if (companionActor == CurieRef)
 				; human Curie may show as synth-2 even though gen-3 should be human
-				SceneData.RaceRestricted = 0
+				if (updateSceneData)
+					SceneData.RaceRestricted = 0
+				endIf
 				return true
 					
 			elseIf (romantic)
@@ -10231,11 +10252,13 @@ bool Function IsCompanionRaceCompatible(Actor companionActor, ActorBase compBase
 				return true
 
 			else
-				DTDebug(" not compatible SynthGen2: " + companionActor, 1)
+				DTDebug(" not compatible SynthGen2: " + companionActor + ", updateSceneData = " + updateSceneData, 1)
 			endIf
 		else
-			DTDebug(" not compatible race: " + compRace + ", actor: " + companionActor, 1)
+			DTDebug(" not compatible race: " + compRace + ", actor: " + companionActor + ", updateSceneData = " + updateSceneData, 1)
 		endIf
+	else
+		DTDebug(" IsCompanionRaceCompatible compBase is NONE!... actor: " + companionActor, 1)			; v2.64  - not expected 
 	endIf
 	
 	return false
@@ -10562,20 +10585,22 @@ int Function IsCompanionActorReadyForScene(IntimateCompanionSet intimateActor, b
 		endIf
 		
 		
-		if (companionGender < 0)
+		if (companionGender < 0 || SceneData.RaceRestricted >= 13)					; v2.64 - added race check to force update
 			if (compActor == StrongCompanionRef)
 			
 				companionGender = 0
 				SceneData.IsUsingCreature = true
 				SceneData.IsCreatureType = CreatureTypeStrong
+				SceneData.RaceRestricted = 0										; v2.64 - in case multi-follower
 			elseIf (compActor.HasKeyword(ActorTypeSuperMutantBehemothKY))
 				companionGender = 0
 				SceneData.IsUsingCreature = true
 				SceneData.IsCreatureType = CreatureTypeBehemoth
-			elseIf (compActor.HasKeyword(ActorTypeRobotKY))
-				companionGender = 0
-				SceneData.IsUsingCreature = true
-				SceneData.IsCreatureType = CreatureTypeHandy
+				SceneData.RaceRestricted = 0										; v2.64 - in case multi-follower
+			;elseIf (compActor.HasKeyword(ActorTypeRobotKY))						; v2.64 - skip this to force race check
+			;	companionGender = 0
+			;	SceneData.IsUsingCreature = true
+			;	SceneData.IsCreatureType = CreatureTypeHandy
 				
 			; v2.60 this may backfire--hide for now
 			;elseIf (DressData.CompanionActor == compActor && DressData.CompanionGender >= 0)
@@ -10605,7 +10630,9 @@ int Function IsCompanionActorReadyForScene(IntimateCompanionSet intimateActor, b
 					if (compBase == None)
 						compBase = (compActor.GetLeveledActorBase() as ActorBase)
 					endIf
-					companionGender = compBase.GetSex()
+					if (compBase != None)						; v2.64 just in case
+						companionGender = compBase.GetSex()
+					endIf
 				endIf
 				
 				if (DressData.CompanionActor == compActor)
@@ -12576,12 +12603,16 @@ Function RestoreSceneData()
 			endIf
 		endIf
 		
-		if (companionActor != None && companionActor != CurieRef && companionActor != CompanionPiperRef && companionActor != CompanionCaitRef && companionActor != CompanionHancockRef && companionActor != CompanionDeaconRef && companionActor != CompanionMacCreadyRef && companionActor != (DTSConditionals as DTSleep_Conditionals).NukaWorldDLCGageRef && companionActor != (DTSConditionals as DTSleep_Conditionals).FarHarborDLCLongfellowRef)
+		if (companionActor != None)
+			if (companionActor == CurieRef || companionActor == CompanionPiperRef || companionActor == CompanionCaitRef || companionActor == CompanionHancockRef || companionActor == CompanionDeaconRef || companionActor == CompanionMacCreadyRef || companionActor == (DTSConditionals as DTSleep_Conditionals).NukaWorldDLCGageRef || companionActor == (DTSConditionals as DTSleep_Conditionals).FarHarborDLCLongfellowRef)
+				; v2.64 - all good
+				SceneData.RaceRestricted = 0
 			
-			if (companionActor == CompanionDanseRef)
+			elseIf (companionActor == CompanionDanseRef)
 				if (companionActor.WornHasKeyword(ArmorTypePower))
 					SceneData.CompanionInPowerArmor = true
 				endIf
+				SceneData.RaceRestricted = 0				; v2.64
 			elseIf (DogmeatCompanionAlias != None && PlayerHasActiveDogmeatCompanion.GetValueInt() >= 1 && companionActor == DogmeatCompanionAlias.GetActorReference())
 				SceneData.IsUsingCreature = true
 				SceneData.IsCreatureType = CreatureTypeDog
@@ -12709,18 +12740,21 @@ Function SetExtraLovePartners(int forIntimateSecond = -1, bool seatedOK = true)
 						;if ((DTSleep_IntimateAffinityQuest as DTSleep_IntimateAffinityQuestScript).CompanionHatesIntimateOtherPublic(ac) == false)
 					
 							bool isPartner = false
-							if (aCompanion.IsRomantic())
-								isPartner = true
-							elseIf (aCompanion.IsInFatuated())
-								isPartner = true
-							elseIf (DTSleep_CompanionRomanceList.HasForm(ac as Form) && aCompanion.GetValue(CA_AffinityAV) >= 1000.0)
-								isPartner = true
-							elseIf ((intimateSetting == 2.0 || intimateSetting == 4.0) && PlayerHasPerkOfCompanion(ac))
-								isPartner = true
-							elseIf ((DTSConditionals as DTSleep_Conditionals).ModPersonalGuardCtlKY != None)
-								; v2.41
-								if (ac.HasKeyword((DTSConditionals as DTSleep_Conditionals).ModPersonalGuardCtlKY))
+							if (IsCompanion2RaceCompatible(ac))					; v2.64 - make sure 2nd lover is race-safe
+							
+								if (aCompanion.IsRomantic())
 									isPartner = true
+								elseIf (aCompanion.IsInFatuated())
+									isPartner = true
+								elseIf (DTSleep_CompanionRomanceList.HasForm(ac as Form) && aCompanion.GetValue(CA_AffinityAV) >= 1000.0)
+									isPartner = true
+								elseIf ((intimateSetting == 2.0 || intimateSetting == 4.0) && PlayerHasPerkOfCompanion(ac))
+									isPartner = true
+								elseIf ((DTSConditionals as DTSleep_Conditionals).ModPersonalGuardCtlKY != None)
+									; v2.41
+									if (ac.HasKeyword((DTSConditionals as DTSleep_Conditionals).ModPersonalGuardCtlKY))
+										isPartner = true
+									endIf
 								endIf
 							endIf
 							
@@ -12985,6 +13019,7 @@ int Function RestoreSettingsDefault()
 			DTSleep_SettingWarnLoverBusy.SetValue(1.0)
 			
 			DTSleep_SettingRadCheck.SetValueInt(2)
+			DTSleep_SettingScaleActorKiss.SetValueInt(0)
 		
 			; may overide based on game settings
 			SetModDefaultSettingsForGame()
@@ -15408,6 +15443,7 @@ Function TestModeOutput()
 		Debug.Trace(myScriptName + "    BodyTalk2 : " + (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).DTSleep_SettingUseBT2Gun.GetValue())
 		Debug.Trace(myScriptName + "SynthGen2-to-3: " + DTSleep_SettingSynthHuman.GetValue())
 		Debug.Trace(myScriptName + "Sleep RadCheck: " + DTSleep_SettingRadCheck.GetValue())
+		Debug.Trace(myScriptName + "    Kiss Align: " + DTSleep_SettingScaleActorKiss.GetValue())
 		
 		if (DTSleep_AdultContentOn.GetValueInt() >= 2)
 			Debug.Trace(myScriptName + " =====================================================================")

@@ -775,6 +775,18 @@
 			}
 		},
 		{
+			"id": "MCM_SettingScaleActorKiss:Intimacy",
+			"text": "Kiss Align",
+			"type": "dropdown",
+			"help": "scale companion for better kiss alignment",
+			"valueOptions": {
+				"options": ["Disabled", "Enabled"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|1B6973",
+				"propertyName": "DTSleep_SettingScaleActorKiss"
+			}
+		},
+		{
 			"id": "MCM_SettingAAF:Intimacy",
 			"text": "Intimate AAF Scenes",
 			"type": "dropdown",

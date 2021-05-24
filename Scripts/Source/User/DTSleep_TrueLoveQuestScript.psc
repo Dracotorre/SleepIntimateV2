@@ -54,6 +54,13 @@ Event OnQuestInit()
 		self.SetStage(10)
 		SetObjectiveDisplayed(10, true)		; mark quest journal with ring owner's name
 		; keep going until stopped, and a fragment hides the journal entry
+		Utility.WaitMenuMode(0.2)
+		Actor loverActor = DTSleep_TrueLoveAlias.GetActorReference()
+		if (loverActor == None)
+			Debug.Trace("[DTSleep_TrueLoveQuest] OnInit -- no TrueLoveAlias actor reference found ... stop")
+			SetObjectiveDisplayed(10, false)
+			self.Stop()
+		endIf
 	else
 		Debug.Trace("[DTSleep_TrueLoveQuest] OnInit -- mod inactive or ring count is zero! - stop quest")
 		Utility.WaitMenuMode(0.1)

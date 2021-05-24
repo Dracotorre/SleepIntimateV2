@@ -5070,6 +5070,9 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 		endIf
 	endIf
 	
+	if (DTSleep_SettingTestMode.GetValueInt() >= 1 && DTSleep_DebugMode.GetValueInt() >= 1)
+		Debug.Trace(myScriptName + " checking pack " + packID + ", includeHugs = "  + includeHugs + ", compInPowerArmor = " + SceneData.CompanionInPowerArmor)
+	endIf
 	
 	; sexual content
 	;
@@ -5821,8 +5824,9 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 		
 				
 		elseIf (packID == 1 || packID == 2 || packID == 6)
-		
+			
 			if (SceneData.CompanionInPowerArmor || SceneData.IsUsingCreature)
+				
 				if (packID == 2)
 					sidArray.Add(50)	; solo
 				elseIf (!(DTSConditionals as DTSleep_Conditionals).IsAtomicLustActive)
