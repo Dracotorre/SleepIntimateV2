@@ -1,4 +1,4 @@
-<meta title="SleepIntimateX_SavageCabbage_animationData.xml" version="2.50" dataSet="animation"/>
+<meta title="SleepIntimateX_SavageCabbage_animationData.xml" version="2.64" dataSet="animation"/>
 <defaults source="SavageCabbage_Animations.esp"/>
 
 <animation id="SIX_SC_FM-Bed01-01Handjob" frames="390">
@@ -54,6 +54,64 @@
 		<idle form="FDE"/>
 	</actor>
 </animation>
+
+<!-- v2.64 fix for missing 712 -->
+
+<animation id="SIX_SC_FM-DoubleBedWoodPreWar01-01Tease" frames="500">
+	<actor gender="F">
+		<idle form="25C26"/>
+	</actor>
+	<actor gender="M">
+		<idle form="25C27"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-DoubleBedWoodPreWar01-02Start" frames="500">
+	<actor gender="F">
+		<idle form="25C28"/>
+	</actor>
+	<actor gender="M">
+		<idle form="25C29"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-DoubleBedWoodPreWar01-03Doggy" frames="500">
+	<actor gender="F">
+		<idle form="25C2A"/>
+	</actor>
+	<actor gender="M">
+		<idle form="25C2B"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-DoubleBedWoodPreWar01-04Doggy" frames="500">
+	<actor gender="F">
+		<idle form="25C2C"/>
+	</actor>
+	<actor gender="M">
+		<idle form="25C2D"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-DoubleBedWoodPreWar01-05Sideways" frames="500">
+	<actor gender="F">
+		<idle form="25C2E"/>
+	</actor>
+	<actor gender="M">
+		<idle form="25C2F"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-DoubleBedWoodPreWar01-06Missionary" frames="500">
+	<actor gender="F">
+		<idle form="25C30"/>
+	</actor>
+	<actor gender="M">
+		<idle form="25C31"/>
+	</actor>
+</animation>
+
+<!-- end 712 -->
 
 <animation id="SIX_SC_FM-Bed02-01Straddle" frames="350">
 	<actor gender="F">

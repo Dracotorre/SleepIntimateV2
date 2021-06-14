@@ -14249,9 +14249,9 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 		testModeOn = true
 	endIf
 	
-	if (SceneData.AnimationSet >= 10 || SceneData.AnimationSet < 5)
-		aafIsReady = false
-	endIf
+	;if (SceneData.AnimationSet >= 10 || SceneData.AnimationSet < 5)			; v2.641 - not established yet
+	;	aafIsReady = false
+	;endIf
 	
 	
 	; ------------------------- setup scene order
