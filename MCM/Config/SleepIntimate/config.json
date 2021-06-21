@@ -1964,7 +1964,7 @@
 			"type": "dropdown",
 			"help": "default let decide Orbit-or-Look -- look locks position to avoid scene shaking and reduced character positioning",
 			"valueOptions": {
-				"options": ["Force Orbit", "Orbit-or-Look", "Look only"],
+				"options": ["Orbit-or-Look", "Orbit-or-Look", "Look only"],
 				"sourceType": "GlobalValue",
 				"sourceForm": "SleepIntimate.esp|10D73C",
 				"propertyName": "DTSleep_SettingAACV"

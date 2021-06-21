@@ -4166,6 +4166,7 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 									
 									SceneData.MaleMarker = DTSleep_CommonF.PlaceFormAtObjectRef(DTSleep_MainNode, mainNode, false, true, true)
 								endIf
+								
 							endIf
 							
 							;if (id > 800)
@@ -6373,7 +6374,7 @@ bool Function SceneOkayToClonePlayer(int sid)
 			return false
 		endIf
 		return true
-	elseIf (cloneOkay <= 0)
+	elseIf (cloneOkay < 0)					; v2.64.2 --- change to must be less than 0 to disable picking in MCM
 		return false
 	elseIf (MainActorPositionByCaller || SceneIDAtPlayerPosition(sid))
 		return false
