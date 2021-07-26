@@ -339,5 +339,7 @@ Function StopAnimationSequence()
 	
 	
 	;Utility.Wait(0.2)
-	self.Dispel()
+	if (self != None)
+		self.Dispel()
+	endIf
 endFunction

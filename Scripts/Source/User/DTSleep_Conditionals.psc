@@ -72,6 +72,7 @@ bool Property IsSmokableCigarsActive = false auto conditional hidden
 bool Property IsDXAtomGirlActive = false auto conditional hidden
 int property DXAtomGirlNukaBearIndex = -1 auto conditional hidden
 bool property IsDXBlackWidowActive = false auto conditional hidden
+bool property IsDXVaultOutfitActive = false auto conditional hidden				; added v2.70
 bool Property IsLacyUnderwearActive = false auto conditional hidden
 bool Property IsRangerGearActive = false auto conditional hidden
 ;bool Property IsDXOverbossActive = false auto conditional hidden
@@ -113,6 +114,13 @@ int property LocTourFHGHotelIndex = -1 auto conditional hidden
 int property LocTourNWTownIndex = -1 auto conditional hidden
 int property LocTourNWMansionIndex = -1 auto conditional hidden
 int property LocTourStat = -1 auto conditional hidden
+
+; special object handling   v2.70
+ObjectReference property DLCCoastDaltonRailingBackward01 = None auto conditional hidden
+ObjectReference property DLCCoastDaltonRailingBackward02 = None auto conditional hidden
+ObjectReference property DLCCoastDaltonRailingBackward03 = None auto conditional hidden
+ObjectReference property DLCCoastDaltonRailingBackward04 = None auto conditional hidden
+ObjectReference property DLCCoastDaltonRailingBackward05 = None auto conditional hidden
 
 ; mod companion index
 int property ModUniqueFollowerFemBodyBaseIndex = -1 auto conditional hidden

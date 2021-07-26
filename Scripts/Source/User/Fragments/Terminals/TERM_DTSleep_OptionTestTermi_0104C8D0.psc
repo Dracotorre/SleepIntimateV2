@@ -92,7 +92,7 @@ EndFunction
 ;BEGIN FRAGMENT Fragment_Terminal_12
 Function Fragment_Terminal_12(ObjectReference akTerminalRef)
 ;BEGIN CODE
-pDTSleep_SettingAACV.SetValue(1.0)
+pDTSleep_SettingAACV.SetValue(0.0)
 ;END CODE
 EndFunction
 ;END FRAGMENT
@@ -108,7 +108,7 @@ EndFunction
 ;BEGIN FRAGMENT Fragment_Terminal_14
 Function Fragment_Terminal_14(ObjectReference akTerminalRef)
 ;BEGIN CODE
-pDTSleep_SettingAACV.SetValue(2.0)
+pDTSleep_SettingAACV.SetValue(1.0)
 ;END CODE
 EndFunction
 ;END FRAGMENT
@@ -133,6 +133,14 @@ EndFunction
 Function Fragment_Terminal_17(ObjectReference akTerminalRef)
 ;BEGIN CODE
 pDTSleep_SettingSynthHuman.SetValue(0.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_18
+Function Fragment_Terminal_18(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingAACV.SetValue(3.0)
 ;END CODE
 EndFunction
 ;END FRAGMENT

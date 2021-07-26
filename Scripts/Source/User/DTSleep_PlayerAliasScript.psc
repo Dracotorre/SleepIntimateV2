@@ -44,6 +44,7 @@ GlobalVariable property DTSleep_ActivChairs auto
 GlobalVariable property DTSleep_ActivPAStation auto
 GlobalVariable property DTSleep_ActivFlagpole auto
 GlobalVariable property DTSleep_EquipMonInit auto const
+GlobalVariable property DTSleep_PlayerCollisionEnabled auto					; added v2.70 - check to reset collision
 Keyword property DTSleep_WorkshopRecipeKY auto const
 Armor property DTSleep_NudeSuit auto const
 Armor property DTSleep_ClothesBathrobePink auto const
@@ -111,6 +112,7 @@ FormList property DTSleep_IntimateDesk90List auto const 			; added v2.51
 FormList property DTSleep_BedPrivateList auto const					; added v2.53
 FormList property DTSleep_IntimateChairOttomanList auto const		; added v2.60
 FormList property DTSleep_NotHumanList auto const					; added 2.62
+FormList property DTSleep_IntimateRailingList auto const			; added v2.70
 Message property DTSleep_VersionMsg auto const
 Message property DTSleep_VersionDowngradeMsg auto const				; v2.60
 Message property DTSleep_VersionExplicitMsg auto const
@@ -149,6 +151,7 @@ FormList property DTSleep_ModCompanionBodiesLst auto const
 FormList property DTSleep_ArmorPipPadList auto const
 FormList property DTSleep_ArmorGlassesList auto const
 FormList property DTSleep_IntimateAttireFemaleOnlyList auto const
+FormList property DTSleep_IntimateAttireList auto const
 FormList property DTSleep_ArmorPipBoyList auto const
 FormList property DTSleep_ArmorTorsoList auto const
 FormList property DTSleep_ArmorArmLeftList auto const
@@ -227,6 +230,13 @@ endEvent
 Event OnPlayerLoadGame()
 	
 	(DTSConditionals as DTSleep_Conditionals).HasReloaded = true
+	
+	; v2.70 - check player collision
+	if (DTSleep_PlayerCollisionEnabled.GetValueInt() <= 0)
+		Utility.SetIniBool("bDisablePlayerCollision:Havok", false)			; reset
+		DTSleep_PlayerCollisionEnabled.SetValueInt(1)
+		Debug.Trace(myScriptName + " OnLoad re-enable player-collision!!!")
+	endIf
 	
 	if ((DTSConditionals as DTSleep_Conditionals).ImaPCMod)
 		if ((DTSConditionals as DTSleep_Conditionals).IsAAFActive)
@@ -505,6 +515,32 @@ Function CheckCompatibility()
 			DTSleep_ArmorLegLeftList.AddForm(Game.GetFormFromFile(0x0300F04C, "DLCCoast.esm"))
 			DTSleep_ArmorLegRightList.AddForm(Game.GetFormFromFile(0x0300F04D, "DLCCoast.esm"))
 			DTSleep_ArmorTorsoList.AddForm(Game.GetFormFromFile(0x0300F04E, "DLCCoast.esm"))
+			
+			; v2.70 - railings
+			; Echo Lake
+			Form railingForm = Game.GetFormFromFile(0x0303DC61, "DLCCoast.esm")
+			DTSleep_IntimateRailingList.AddForm(railingForm)
+			DTSleep_IntimatePropList.AddForm(railingForm)
+			railingForm = Game.GetFormFromFile(0x0303DC63, "DLCCoast.esm")
+			DTSleep_IntimateRailingList.AddForm(railingForm)
+			DTSleep_IntimatePropList.AddForm(railingForm)
+			railingForm = Game.GetFormFromFile(0x0303DC65, "DLCCoast.esm")
+			DTSleep_IntimateRailingList.AddForm(railingForm)
+			DTSleep_IntimatePropList.AddForm(railingForm)
+			; bouy railings Nakano, Far Harbor
+			railingForm = Game.GetFormFromFile(0x03001938, "DLCCoast.esm")
+			DTSleep_IntimateRailingList.AddForm(railingForm)
+			DTSleep_IntimatePropList.AddForm(railingForm)
+			railingForm = Game.GetFormFromFile(0x03001932, "DLCCoast.esm")
+			DTSleep_IntimateRailingList.AddForm(railingForm)
+			DTSleep_IntimatePropList.AddForm(railingForm)
+			
+			; backward rails at Dalton Farm
+			(DTSConditionals as DTSleep_Conditionals).DLCCoastDaltonRailingBackward01 = Game.GetFormFromFile(0x0300472F, "DLCCoast.esm") as ObjectReference
+			(DTSConditionals as DTSleep_Conditionals).DLCCoastDaltonRailingBackward02 = Game.GetFormFromFile(0x03004726, "DLCCoast.esm") as ObjectReference
+			(DTSConditionals as DTSleep_Conditionals).DLCCoastDaltonRailingBackward03 = Game.GetFormFromFile(0x0300472C, "DLCCoast.esm") as ObjectReference
+			(DTSConditionals as DTSleep_Conditionals).DLCCoastDaltonRailingBackward04 = Game.GetFormFromFile(0x03004730, "DLCCoast.esm") as ObjectReference
+			(DTSConditionals as DTSleep_Conditionals).DLCCoastDaltonRailingBackward05 = Game.GetFormFromFile(0x03004731, "DLCCoast.esm") as ObjectReference
 		endIf
 	endIf
 	
@@ -687,6 +723,10 @@ Function CheckCompatibility()
 			deskForm = Game.GetFormFromFile(0x05004987, "DLCWorkshop03.esm")		; vault desk
 			DTSleep_IntimateDeskList.AddForm(deskForm)
 			DTSleep_IntimateDesk90List.AddForm(deskForm)
+			
+			; v2.70 - ottoman
+			DTSleep_IntimateChairOttomanList.AddForm(Game.GetFormFromFile(0x050005341, "DLCWorkshop03.esm"))
+			DTSleep_IntimateChairOttomanList.AddForm(Game.GetFormFromFile(0x05000534B, "DLCWorkshop03.esm"))
 		endIf
 	endIf
 	
@@ -1385,14 +1425,23 @@ Function CheckCompatibility()
 	; DX Black Widow
 	if ((DTSConditionals as DTSleep_Conditionals).IsDXBlackWidowActive == false)
 		extraArmor = IsPluginActive(0x2E006BEC, "DX_Black_Widow.esp") as Armor ; main outfit
-		if (extraArmor)
+		if (extraArmor != None)
 			(DTSConditionals as DTSleep_Conditionals).IsDXBlackWidowActive = true
-			DTSleep_ArmorAllExceptionList.AddForm(extraArmor)
+			DTSleep_ArmorAllExceptionList.AddForm(extraArmor as Form)
 			DTSleep_ArmorHatHelmList.AddForm(Game.GetFormFromFile(0x2E001FBD, "DX_Black_Widow.esp"))
 		endIf
 	elseIf (!Game.IsPluginInstalled("DX_Black_Widow.esp"))
 		Debug.Trace(myScriptName + "DX_Black_Widow has been removed")
 		(DTSConditionals as DTSleep_Conditionals).IsDXBlackWidowActive = false
+	endIf
+	
+	; DX Vault 111 Outfit -- added v2.70
+	if ((DTSConditionals as DTSleep_Conditionals).IsDXVaultOutfitActive == false)
+		extraArmor = IsPluginActive(0x09011365, "DX_Vault_111_Outfit.esp") as Armor    ; backpack
+		if (extraArmor != None)
+			(DTSConditionals as DTSleep_Conditionals).IsDXVaultOutfitActive == true
+			DTSleep_ArmorBackPacksNoGOList.AddForm(extraArmor as Form)
+		endIf
 	endIf
 	
 	; Ranger Gear
@@ -1864,9 +1913,12 @@ Function CheckCompatibility()
 		; SavageCabbage - allow in XOXO so player can have extra dance
 		if (Game.IsPluginInstalled("SavageCabbage_Animations.esp"))
 			
+			bool fixNeeded = true
+			
 			if (!(DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive)
 				Idle danceIdle = Game.GetFormFromFile(0x0800182C, "SavageCabbage_Animations.esp") as Idle
 				if (danceIdle != None && !DTSleep_Dance2List.HasForm(danceIdle))
+					fixNeeded = false
 					DTSleep_Dance2List.AddForm(danceIdle as Form)
 					DTSleep_Dance2List.AddForm(Game.GetFormFromFile(0x0800182D, "SavageCabbage_Animations.esp"))
 				endIf
@@ -1875,18 +1927,26 @@ Function CheckCompatibility()
 			(DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive = true					;v2.50 moved below dance idle
 			
 			Form idleForm = None
-			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.250)
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.260)				; v2.70 changed to add SC 1.2.6
 		
-				idleForm = Game.GetFormFromFile(0x08030575, "SavageCabbage_Animations.esp")
+				idleForm = Game.GetFormFromFile(0x08030D9C, "SavageCabbage_Animations.esp")
 				if (idleForm != None)
-					(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.250
+					(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.260
+					
+				else 
+					idleForm = Game.GetFormFromFile(0x08030575, "SavageCabbage_Animations.esp")
+					if (idleForm != None)
+						(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.250
+					endIf
 				endIf
 				
-				; fix 
-				Idle danceIdle = Game.GetFormFromFile(0x0800182C, "SavageCabbage_Animations.esp") as Idle
-				if (danceIdle != None && !DTSleep_Dance2List.HasForm(danceIdle))
-					DTSleep_Dance2List.AddForm(danceIdle as Form)
-					DTSleep_Dance2List.AddForm(Game.GetFormFromFile(0x0800182D, "SavageCabbage_Animations.esp"))
+				; fix for if missing above
+				if (fixNeeded)
+					Idle danceIdle = Game.GetFormFromFile(0x0800182C, "SavageCabbage_Animations.esp") as Idle
+					if (danceIdle != None && !DTSleep_Dance2List.HasForm(danceIdle))
+						DTSleep_Dance2List.AddForm(danceIdle as Form)
+						DTSleep_Dance2List.AddForm(Game.GetFormFromFile(0x0800182D, "SavageCabbage_Animations.esp"))
+					endIf
 				endIf
 			endIf
 			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.240)
@@ -2048,7 +2108,10 @@ Function CheckCompatibility()
 				
 				; check sex chair-mod active - only 1 to check (TODO: Atomic Lust has a single scene -- consider for future if add more)
 				if ((DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive)
-					if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
+					if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.26)
+						DTSleep_ActivFlagpole.SetValue(2.0)
+						DTSleep_ActivChairs.SetValue(4.0)
+					elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
 						DTSleep_ActivFlagpole.SetValue(2.0)
 						DTSleep_ActivChairs.SetValue(3.0)
 					elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.10)
@@ -3544,8 +3607,9 @@ int Function CheckCustomArmorsAndBackpacks()
 					modCount += 1
 					DTSleep_IntimateAttireOKUnderList.AddForm(extraArmor as Form)
 					DTSleep_IntimateAttireFemaleOnlyList.AddForm(extraArmor as Form)
+					; do not include DTSleep_IntimateAttireList because outfit modification can cover all; let player add
 					DTSleep_SleepAttireHandsList.AddForm(extraArmor as Form)				; v2.48 - not a hand-slot, but gloves go with outfit
-				elseIf (!DTSleep_SleepAttireHandsList.HasForm(extraArmor as Form))
+				elseIf (!DTSleep_SleepAttireHandsList.HasForm(extraArmor as Form))				
 					modCount += 1
 					DTSleep_SleepAttireHandsList.AddForm(extraArmor as Form)
 				endIf
@@ -3569,6 +3633,7 @@ int Function CheckCustomArmorsAndBackpacks()
 			if (extraArmor != None && !DTSleep_IntimateAttireOKUnderList.HasForm(extraArmor as Form))
 				DTSleep_IntimateAttireOKUnderList.AddForm(extraArmor as Form)
 				DTSleep_IntimateAttireFemaleOnlyList.AddForm(extraArmor as Form)
+				 ; do not include DTSleep_IntimateAttireList
 			endIf
 		endIf
 	
@@ -3592,6 +3657,7 @@ int Function CheckCustomArmorsAndBackpacks()
 			if (extraArmor != None && !DTSleep_IntimateAttireOKUnderList.HasForm(extraArmor as Form))
 				DTSleep_IntimateAttireFemaleOnlyList.AddForm(extraArmor as Form)
 				DTSleep_IntimateAttireOKUnderList.AddForm(extraArmor as Form)
+				; do not include DTSleep_IntimateAttireList
 				DTSleep_SexyClothesFList.AddForm(extraArmor as Form)
 				DTSleep_SexyClothesMList.AddForm(extraArmor as Form)
 			endIf
@@ -3778,52 +3844,57 @@ int Function CheckCustomArmorsAndBackpacks()
 		if (!DTSleep_ArmorBackPacksList.HasForm(extraArmor))
 			modCount += 1
 			DTSleep_ArmorBackPacksList.AddForm(extraArmor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x01000833, "AnS Wearable Backpacks and Pouches.esp") as Armor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x01000835, "AnS Wearable Backpacks and Pouches.esp") as Armor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x01000847, "AnS Wearable Backpacks and Pouches.esp") as Armor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x01000848, "AnS Wearable Backpacks and Pouches.esp") as Armor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x01000849, "AnS Wearable Backpacks and Pouches.esp") as Armor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x0100086B, "AnS Wearable Backpacks and Pouches.esp") as Armor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x0100087D, "AnS Wearable Backpacks and Pouches.esp") as Armor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x0100087E, "AnS Wearable Backpacks and Pouches.esp") as Armor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x010008F5, "AnS Wearable Backpacks and Pouches.esp") as Armor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x010008F6, "AnS Wearable Backpacks and Pouches.esp") as Armor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x010008F7, "AnS Wearable Backpacks and Pouches.esp") as Armor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x010009AF, "AnS Wearable Backpacks and Pouches.esp") as Armor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x010009B0, "AnS Wearable Backpacks and Pouches.esp") as Armor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x010009B1, "AnS Wearable Backpacks and Pouches.esp") as Armor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x010009B2, "AnS Wearable Backpacks and Pouches.esp") as Armor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x010009B8, "AnS Wearable Backpacks and Pouches.esp") as Armor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x010009EA, "AnS Wearable Backpacks and Pouches.esp") as Armor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x010009EB, "AnS Wearable Backpacks and Pouches.esp") as Armor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x010009EC, "AnS Wearable Backpacks and Pouches.esp") as Armor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x010009F4, "AnS Wearable Backpacks and Pouches.esp") as Armor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x010009F5, "AnS Wearable Backpacks and Pouches.esp") as Armor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x010009F6, "AnS Wearable Backpacks and Pouches.esp") as Armor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x010009F7, "AnS Wearable Backpacks and Pouches.esp") as Armor)
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x01000833, "AnS Wearable Backpacks and Pouches.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x01000835, "AnS Wearable Backpacks and Pouches.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x01000847, "AnS Wearable Backpacks and Pouches.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x01000848, "AnS Wearable Backpacks and Pouches.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x01000849, "AnS Wearable Backpacks and Pouches.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x0100086B, "AnS Wearable Backpacks and Pouches.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x0100087D, "AnS Wearable Backpacks and Pouches.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x0100087E, "AnS Wearable Backpacks and Pouches.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x010008F5, "AnS Wearable Backpacks and Pouches.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x010008F6, "AnS Wearable Backpacks and Pouches.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x010008F7, "AnS Wearable Backpacks and Pouches.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x010009AF, "AnS Wearable Backpacks and Pouches.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x010009B0, "AnS Wearable Backpacks and Pouches.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x010009B1, "AnS Wearable Backpacks and Pouches.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x010009B2, "AnS Wearable Backpacks and Pouches.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x010009B8, "AnS Wearable Backpacks and Pouches.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x010009EA, "AnS Wearable Backpacks and Pouches.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x010009EB, "AnS Wearable Backpacks and Pouches.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x010009EC, "AnS Wearable Backpacks and Pouches.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x010009F4, "AnS Wearable Backpacks and Pouches.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x010009F5, "AnS Wearable Backpacks and Pouches.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x010009F6, "AnS Wearable Backpacks and Pouches.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x010009F7, "AnS Wearable Backpacks and Pouches.esp"))
 		endIf
 	endIf
 	
 	; Backpacks of the Commonwealth
-	extraArmor = IsPluginActive(0x04000F9C, "Backpacks of the Commonwealth.esp") as Armor
-	if (extraArmor)
+	extraArmor = IsPluginActive(0x4003E0CA, "Backpacks of the Commonwealth.esp") as Armor			; v2.70 updated to start with missing Wastlander's Backpack
+	if (extraArmor != None)
 		if (!DTSleep_ArmorBackPacksList.HasForm(extraArmor))
 			modCount += 1
 			DTSleep_ArmorBackPacksList.AddForm(extraArmor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x0400026E1, "Backpacks of the Commonwealth.esp") as Armor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x040002E76, "Backpacks of the Commonwealth.esp") as Armor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x040002E8B, "Backpacks of the Commonwealth.esp") as Armor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x040002E9A, "Backpacks of the Commonwealth.esp") as Armor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x040002E9D, "Backpacks of the Commonwealth.esp") as Armor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x04000636D, "Backpacks of the Commonwealth.esp") as Armor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x040006B1F, "Backpacks of the Commonwealth.esp") as Armor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x040007C2C, "Backpacks of the Commonwealth.esp") as Armor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x0400098C3, "Backpacks of the Commonwealth.esp") as Armor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x04000AD66, "Backpacks of the Commonwealth.esp") as Armor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x04000AD7C, "Backpacks of the Commonwealth.esp") as Armor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x04000B745, "Backpacks of the Commonwealth.esp") as Armor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x04000D27A, "Backpacks of the Commonwealth.esp") as Armor)
-			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x04000D3F4, "Backpacks of the Commonwealth.esp") as Armor)
+			if (DTSleep_ArmorBackPacksNoGOList.HasForm(extraArmor))
+				; fix to get ground object for missing backpack if player had added it to no-GroundObject list
+				DTSleep_ArmorBackPacksNoGOList.RemoveAddedForm(extraArmor)
+			endIf
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x400026E1, "Backpacks of the Commonwealth.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x40002E76, "Backpacks of the Commonwealth.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x40002E8B, "Backpacks of the Commonwealth.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x40002E9A, "Backpacks of the Commonwealth.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x40002E9D, "Backpacks of the Commonwealth.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x4000636D, "Backpacks of the Commonwealth.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x40006B1F, "Backpacks of the Commonwealth.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x40007C2C, "Backpacks of the Commonwealth.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x400098C3, "Backpacks of the Commonwealth.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x4000AD66, "Backpacks of the Commonwealth.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x4000AD7C, "Backpacks of the Commonwealth.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x4000B745, "Backpacks of the Commonwealth.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x4000D27A, "Backpacks of the Commonwealth.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x4000D3F4, "Backpacks of the Commonwealth.esp"))
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x40000F9C, "Backpacks of the Commonwealth.esp"))
 		endIf
 	endIf
 	
@@ -4993,6 +5064,41 @@ Function UpgradeToVersion()
 				deskForm = Game.GetFormFromFile(0x05004987, "DLCWorkshop03.esm")		; vault desk
 				DTSleep_IntimateDeskList.AddForm(deskForm)
 				DTSleep_IntimateDesk90List.AddForm(deskForm)
+			endIf
+		endIf
+		
+		if (lastVers < 2.7003)
+			if ((DTSConditionals as DTSleep_Conditionals).IsWorkShop03DLCActive)
+				; v2.70 - ottoman
+				DTSleep_IntimateChairOttomanList.AddForm(Game.GetFormFromFile(0x050005341, "DLCWorkshop03.esm"))
+				DTSleep_IntimateChairOttomanList.AddForm(Game.GetFormFromFile(0x05000534B, "DLCWorkshop03.esm"))
+			endIf
+			if ((DTSConditionals as DTSleep_Conditionals).IsCoastDLCActive)
+				; railings
+				; Echo Lake
+				Form railingForm = Game.GetFormFromFile(0x0303DC61, "DLCCoast.esm")
+				DTSleep_IntimateRailingList.AddForm(railingForm)
+				DTSleep_IntimatePropList.AddForm(railingForm)
+				railingForm = Game.GetFormFromFile(0x0303DC63, "DLCCoast.esm")
+				DTSleep_IntimateRailingList.AddForm(railingForm)
+				DTSleep_IntimatePropList.AddForm(railingForm)
+				railingForm = Game.GetFormFromFile(0x0303DC65, "DLCCoast.esm")
+				DTSleep_IntimateRailingList.AddForm(railingForm)
+				DTSleep_IntimatePropList.AddForm(railingForm)
+				; bouy railings Nakano
+				railingForm = Game.GetFormFromFile(0x03001938, "DLCCoast.esm")
+				DTSleep_IntimateRailingList.AddForm(railingForm)
+				DTSleep_IntimatePropList.AddForm(railingForm)
+				railingForm = Game.GetFormFromFile(0x03001932, "DLCCoast.esm")
+				DTSleep_IntimateRailingList.AddForm(railingForm)
+				DTSleep_IntimatePropList.AddForm(railingForm)
+				
+				; backward rails at Dalton Farm
+				(DTSConditionals as DTSleep_Conditionals).DLCCoastDaltonRailingBackward01 = Game.GetFormFromFile(0x0300472F, "DLCCoast.esm") as ObjectReference
+				(DTSConditionals as DTSleep_Conditionals).DLCCoastDaltonRailingBackward02 = Game.GetFormFromFile(0x03004726, "DLCCoast.esm") as ObjectReference
+				(DTSConditionals as DTSleep_Conditionals).DLCCoastDaltonRailingBackward03 = Game.GetFormFromFile(0x0300472C, "DLCCoast.esm") as ObjectReference
+				(DTSConditionals as DTSleep_Conditionals).DLCCoastDaltonRailingBackward04 = Game.GetFormFromFile(0x03004730, "DLCCoast.esm") as ObjectReference
+				(DTSConditionals as DTSleep_Conditionals).DLCCoastDaltonRailingBackward05 = Game.GetFormFromFile(0x03004731, "DLCCoast.esm") as ObjectReference
 			endIf
 		endIf
 		

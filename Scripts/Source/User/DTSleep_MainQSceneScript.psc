@@ -52,6 +52,7 @@ Function GoSceneViewCamCustom(int lowCam = 1)
 	; Utility.SetINIFloat("fFurnitureCameraAngle:Camera", 2.8)
 	; ; --Utility.SetINIFloat("fFurnitureCameraZoom:Camera", 300.0000)
 	; Utility.SetINIFloat("fMinCurrentZoom:Camera", 0.3)
+		
 		Utility.SetINIBool("bApplyCameraNodeAnimations:Camera", false)
 		Utility.SetINIFloat("fVanityModeMaxDist:Camera", DTSL_CamCus_VanModeMax.GetValue())
 		Utility.SetINIFloat("fVanityModeMinDist:Camera", DTSL_CamCus_VanModeMin.GetValue())

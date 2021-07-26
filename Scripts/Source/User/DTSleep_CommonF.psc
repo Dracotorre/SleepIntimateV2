@@ -718,14 +718,10 @@ EndFunction
 bool Function IsIntegerInArray(int anInt, int[] anArray) global
 	bool result = false
 	if (anArray != None)		; in Papyrus, array never None so check array None same as Length zero
-		int idx = 0
-		while (idx < anArray.Length)
-			if (anArray[idx] == anInt)
-				result = true
-				idx = anArray.Length + 100
-			endIf
-			idx += 1
-		endWhile
+		
+		if (anArray.Find(anInt) >= 0)
+			return true
+		endIf
 	endIf
 	
 	return result

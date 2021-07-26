@@ -1,4 +1,4 @@
-<meta title="SleepIntimateX_SavageCabbage_animationData.xml" version="2.64" dataSet="animation"/>
+<meta title="SleepIntimateX_SavageCabbage_animationData.xml" version="2.70" dataSet="animation"/>
 <defaults source="SavageCabbage_Animations.esp"/>
 
 <animation id="SIX_SC_FM-Bed01-01Handjob" frames="390">
@@ -1777,20 +1777,6 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FMM-Floor04-03DoubleTeam" frames="500">
-	<actor gender="F">
-		<idle form="82C9"/>
-	</actor>
-	<actor gender="M">
-		<idle form="82CA"/>
-		<!-- <value path="morph" value="Erection Up" to="1"/> -->
-	</actor>
-	<actor gender="M">
-		<idle form="82CB"/>
-		<!-- <value path="morph" value="Erection Up" to="1"/> -->
-	</actor>
-</animation>
-
 <animation id="SIX_SC_FMM-Floor01-01DoubleTeam" frames="500">
 	<actor gender="F">
 		<idle form="1034"/>
@@ -2786,3 +2772,511 @@
 		<idle form="2A159"/>
 	</actor>
 </animation>
+
+<!-- --------------- new for v2.60, SC 1.2.6 --------------- -->
+
+<animation id="SIX_SC-FMF-Human-DoubleBed02-01Tease" frames="500">
+	<actor gender="F">
+		<idle form="30D97"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30D98"/>
+	</actor>
+	<actor gender="F">
+		<idle form="30D99"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FMF-Human-DoubleBed02-02Start" frames="500">
+	<actor gender="F">
+		<idle form="30D9A"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30D9B"/>
+	</actor>
+	<actor gender="F">
+		<idle form="30D9C"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FMF-Human-DoubleBed02-03Threesome" frames="500">
+	<actor gender="F">
+		<idle form="30D9D"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30D9E"/>
+	</actor>
+	<actor gender="F">
+		<idle form="30D9F"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FMF-Human-DoubleBed02-04Threesome" frames="500">
+	<actor gender="F">
+		<idle form="30DA0"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30DA1"/>
+	</actor>
+	<actor gender="F">
+		<idle form="30DA2"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FMF-Human-DoubleBed02-05Threesome" frames="500">
+	<actor gender="F">
+		<idle form="30DA3"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30DA4"/>
+	</actor>
+	<actor gender="F">
+		<idle form="30DA5"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FMF-Human-DoubleBed02-06Threesome" frames="500">
+	<actor gender="F">
+		<idle form="30DA6"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30DA7"/>
+	</actor>
+	<actor gender="F">
+		<idle form="30DA8"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FMF-Human-DoubleBed02-07ClimaxLoop" frames="500">
+	<actor gender="F">
+		<idle form="30DA9"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30DAA"/>
+	</actor>
+	<actor gender="F">
+		<idle form="30DAB"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FMF-Human-DoubleBed02-08Finish" frames="500">
+	<actor gender="F">
+		<idle form="30DAC"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30DAD"/>
+	</actor>
+	<actor gender="F">
+		<idle form="30DAE"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-DoubleBed05-01Tease" frames="500">
+	<actor gender="F">
+		<idle form="30D44"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30D45"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-DoubleBed05-02Start" frames="500">
+	<actor gender="F">
+		<idle form="30D46"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30D47"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-DoubleBed05-03Doggy" frames="500">
+	<actor gender="F">
+		<idle form="30D48"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30D49"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-DoubleBed05-04Doggy" frames="500">
+	<actor gender="F">
+		<idle form="30D4A"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30D4B"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-DoubleBed05-05Doggy" frames="500">
+	<actor gender="F">
+		<idle form="30D4C"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30D4D"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-DoubleBed05-06Doggy" frames="500">
+	<actor gender="F">
+		<idle form="30D4E"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30D4F"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-DoubleBedInstitute01-01Tease" frames="500">
+	<actor gender="F">
+		<idle form="30D87"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30D88"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-DoubleBedInstitute01-02Start" frames="500">
+	<actor gender="F">
+		<idle form="30D89"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30D8A"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-DoubleBedInstitute01-03ReverseCowGirl" frames="500">
+	<actor gender="F">
+		<idle form="30D8B"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30D8C"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-DoubleBedInstitute01-04ReverseCowGirl" frames="500">
+	<actor gender="F">
+		<idle form="30D8D"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30D8E"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-DoubleBedInstitute01-05ReverseCowGirl" frames="500">
+	<actor gender="F">
+		<idle form="30D8F"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30D90"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-DoubleBedInstitute01-06ReverseCowGirl" frames="500">
+	<actor gender="F">
+		<idle form="30D91"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30D92"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-DoubleBedInstitute01-07ClimaxLoop" frames="500">
+	<actor gender="F">
+		<idle form="30D93"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30D94"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-DoubleBedInstitute01-08Finish" frames="500">
+	<actor gender="F">
+		<idle form="30D95"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30D96"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-ArmorBench01-01Tease" frames="500">
+	<actor gender="F">
+		<idle form="30D28"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30D29"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-ArmorBench01-03Doggy" frames="500">
+	<actor gender="F">
+		<idle form="30D2A"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30D2B"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-ArmorBench01-04Doggy" frames="500">
+	<actor gender="F">
+		<idle form="30D2C"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30D2D"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-ArmorBench01-05Doggy" frames="500">
+	<actor gender="F">
+		<idle form="30D2E"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30D2F"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-ArmorBench01-06Doggy" frames="500">
+	<actor gender="F">
+		<idle form="30D30"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30D31"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-ArmorBench01-07ClimaxLoop" frames="500">
+	<actor gender="F">
+		<idle form="30D32"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30D33"/>
+	</actor>
+</animation>
+
+<animation id="SC-FM-Human-WeaponWorkbenchLarge01-03Doggy" frames="500">
+	<actor gender="F">
+		<idle form="31D12"/>
+	</actor>
+	<actor gender="M">
+		<idle form="31D13"/>
+	</actor>
+</animation>
+
+<animation id="SC-FM-Human-WeaponWorkbenchLarge01-04Doggy" frames="500">
+	<actor gender="F">
+		<idle form="31D14"/>
+	</actor>
+	<actor gender="M">
+		<idle form="31D15"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-Railing01-01Tease" frames="500">
+	<actor gender="F">
+		<idle form="31D48"/>
+	</actor>
+	<actor gender="M">
+		<idle form="31D49"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-Railing01-02Start" frames="500">
+	<actor gender="F">
+		<idle form="31D4A"/>
+	</actor>
+	<actor gender="M">
+		<idle form="31D4B"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-Railing01-03Doggy" frames="500">
+	<actor gender="F">
+		<idle form="31D4C"/>
+	</actor>
+	<actor gender="M">
+		<idle form="31D4D"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-Railing01-04Sideways" frames="500">
+	<actor gender="F">
+		<idle form="31D4E"/>
+	</actor>
+	<actor gender="M">
+		<idle form="31D4F"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-Railing01-05Sideways" frames="500">
+	<actor gender="F">
+		<idle form="31D50"/>
+	</actor>
+	<actor gender="M">
+		<idle form="31D51"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-Railing01-06Sideways" frames="500">
+	<actor gender="F">
+		<idle form="31D52"/>
+	</actor>
+	<actor gender="M">
+		<idle form="31D53"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-Railing01-07ClimaxLoop" frames="500">
+	<actor gender="F">
+		<idle form="31D54"/>
+	</actor>
+	<actor gender="M">
+		<idle form="31D55"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-Railing01-08Finish" frames="500">
+	<actor gender="F">
+		<idle form="31D56"/>
+	</actor>
+	<actor gender="M">
+		<idle form="31D57"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-Human-Floor01-01Tease" frames="400">
+	<actor gender="F">
+		<idle form="30DAF"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30DB0" />
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-Human-Floor01-02Start" frames="400">
+	<actor gender="F">
+		<idle form="30DB1"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30DB2" />
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-Human-Floor01-03Blowjob" frames="400">
+	<actor gender="F">
+		<idle form="30DB3"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30DB4" />
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-Human-Floor01-04Blowjob" frames="400">
+	<actor gender="F">
+		<idle form="30DB5"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30DB6" />
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-Human-Floor01-07ClimaxLoop" frames="400">
+	<actor gender="F">
+		<idle form="30DBB"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30DBC" />
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-Human-Floor01-08Finish" frames="400">
+	<actor gender="F">
+		<idle form="30DBD"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30DBE" />
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FMM-Human-DoubleBed03-03Threesome" frames="400">
+	<actor gender="F">
+		<idle form="31574"/>
+	</actor>
+	<actor gender="M">
+		<idle form="31575" />
+	</actor>
+	<actor gender="M">
+		<idle form="31576" />
+	</actor>
+</animation>
+
+<!-- -----------------v2.70 SC 1.2.6 supermutant -------------------- -->
+<animation id="SIX_SC_FSM-Couch_PlayerHouse01-01Tease" frames="360">
+	<actor gender="F">
+		<idle form="30D54"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30D55" skeleton="Supermutant"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FSM-Couch_PlayerHouse01-02Start" frames="500">
+	<actor gender="F">
+		<idle form="30D56"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30D57" skeleton="Supermutant"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FSM-Couch_PlayerHouse01-03ReverseCowGirl" frames="500">
+	<actor gender="F">
+		<idle form="30D58"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30D59" skeleton="Supermutant"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FSM-Couch_PlayerHouse01-04ReverseCowGirl" frames="500">
+	<actor gender="F">
+		<idle form="30D5A"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30D5B" skeleton="Supermutant"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FSM-Couch_PlayerHouse01-05ReverseCowGirl" frames="500">
+	<actor gender="F">
+		<idle form="30D5C"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30D5D" skeleton="Supermutant"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FSM-Couch_PlayerHouse01-06ReverseCowGirl" frames="500">
+	<actor gender="F">
+		<idle form="30D5E"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30D5F" skeleton="Supermutant"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FSM-Couch_PlayerHouse01-07ClimaxLoop" frames="500">
+	<actor gender="F">
+		<idle form="30D60"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30D61" skeleton="Supermutant"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FSM-Couch_PlayerHouse01-08Finish" frames="500">
+	<actor gender="F">
+		<idle form="30D62"/>
+	</actor>
+	<actor gender="M">
+		<idle form="30D63" skeleton="Supermutant"/>
+	</actor>
+</animation>
+

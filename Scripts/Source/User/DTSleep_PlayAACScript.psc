@@ -22,7 +22,7 @@ import DTSleep_AACcatScript
 
 Group B_Globals
 GlobalVariable property DTSleep_IntimateIdleID auto Mandatory
-{expected < 150 pair bed sequences, 150+ for pair standing sequences}
+{expected < 150 pair bed sequences, 150-199 for pair standing sequences}
 GlobalVariable property DTSleep_IntimateSceneLen auto
 GlobalVariable property DTSleep_IntimateDogEXP auto
 GlobalVariable property DTSleep_SettingUseLeitoGun auto const
@@ -561,8 +561,12 @@ Function InitSceneAndPlay()
 		elseIf (SequenceID == 735)
 			if (otherActor == 0 && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
 				longScene = 1
-			elseIf (otherActor == 1 && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.250)
-				longScene = 1
+			elseIf (otherActor == 1)
+				if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.260)
+					longScene = 2
+				elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.250)
+					longScene = 1
+				endIf
 			endIf
 		elseIf (SequenceID == 736)
 			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
@@ -694,14 +698,14 @@ Function InitSceneAndPlay()
 		mainYOff = yOffM
 		if (SequenceID < 100)
 			mainZOff = -2.2					; v2.60 - reduce embrace shaking
-		elseIf (seqStagesArray.Length > 0)
+		elseIf (seqStagesArray.Length > 0 && seqStagesArray[0].MPosZOffset != 0.0)
 			mainZOff = seqStagesArray[0].MPosZOffset
 		endIf
 	else
 		mainAngleOff = angleOffset + angleF
 		if (SequenceID < 500)
 			mainZOff = -2.2					; v2.60 - reduce embrace shaking
-		elseIf (seqStagesArray.Length > 0)
+		elseIf (seqStagesArray.Length > 0 && seqStagesArray[0].MPosZOffset != 0.0)
 			mainZOff = 0.0 - seqStagesArray[0].MPosZOffset
 		endIf
 	endIf

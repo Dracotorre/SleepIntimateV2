@@ -787,6 +787,18 @@
 			}
 		},
 		{
+			"id": "MCM_SettingCollsion:Intimacy",
+			"text": "Scene View Look-view Camera",
+			"type": "dropdown",
+			"help": "camera pushed by NPC or not by setting player collision--if conflicts with another mod set to Solid",
+			"valueOptions": {
+				"options": ["Solid", "Ghost"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|1BA641",
+				"propertyName": "DTSleep_SettingCollsion"
+			}
+		},
+		{
 			"id": "MCM_SettingAAF:Intimacy",
 			"text": "Intimate AAF Scenes",
 			"type": "dropdown",
@@ -1960,11 +1972,11 @@
 		},
 		{
 			"id": "MCM_SettingAACV:Test",
-			"text": "Standard Scene View (no AAF)",
+			"text": "Standard Scene View (not AAF)",
 			"type": "dropdown",
-			"help": "default let decide Orbit-or-Look -- look locks position to avoid scene shaking and reduced character positioning",
+			"help": "Force Orbit-view is for testing. If issues using default, try -strict which on furniture clones player for Look-view without shake and better for alignement.",
 			"valueOptions": {
-				"options": ["Orbit-or-Look", "Orbit-or-Look", "Look only"],
+				"options": ["Force Orbit-view", "Orbit-or-Look-default", "Orbit-or-Look-strict", "Look-view only"],
 				"sourceType": "GlobalValue",
 				"sourceForm": "SleepIntimate.esp|10D73C",
 				"propertyName": "DTSleep_SettingAACV"

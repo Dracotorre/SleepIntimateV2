@@ -520,6 +520,38 @@ pDTSleep_SettingScaleActorKiss.SetValue(0.0)
 EndFunction
 ;END FRAGMENT
 
+;BEGIN FRAGMENT Fragment_Terminal_62
+Function Fragment_Terminal_62(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingAACV.SetValue(2.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_63
+Function Fragment_Terminal_63(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingAACV.SetValue(1.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_64
+Function Fragment_Terminal_64(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingCollision.SetValue(0.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_65
+Function Fragment_Terminal_65(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingCollision.SetValue(1.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
 ;END FRAGMENT CODE - Do not edit anything between this and the begin comment
 
 GlobalVariable Property pDTSleep_SettingIntimate Auto Const Mandatory
@@ -581,3 +613,7 @@ GlobalVariable Property pDTSleep_SettingProps Auto Const Mandatory
 GlobalVariable Property pDTSleep_SettingUseSMMorph Auto Const Mandatory
 
 GlobalVariable Property pDTSleep_SettingScaleActorKiss Auto Const Mandatory
+
+GlobalVariable Property pDTSleep_SettingAACV Auto Const Mandatory
+
+GlobalVariable Property pDTSleep_SettingCollision Auto Const Mandatory

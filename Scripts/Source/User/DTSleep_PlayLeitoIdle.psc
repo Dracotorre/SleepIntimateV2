@@ -961,7 +961,6 @@ Function StopAnimationSequence()
 	StopActor(SecondActor)
 	Utility.Wait(0.667)
 	
-	
 	;Utility.Wait(0.2)
-	self.Dispel()
+	(self as ActiveMagicEffect).Dispel()
 endFunction

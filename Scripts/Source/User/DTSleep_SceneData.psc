@@ -28,7 +28,7 @@ bool property SameGender = false auto conditional hidden
 int property AnimationSet = 0 auto conditional hidden
 { 0 for normal, 1 = Leito, 2 = CrazyGun, >5 = AAF scenes}
 int property Interrupted = 0 auto conditional hidden
-{ 10 and 50 reserved for AAF issues }
+{ 10 and 50 reserved for AAF issues, 1 for default, 2 for canceled by NPC, 7 for player cancel using pipboy, 4 is combat }
 int property LkbwLevel = 0 auto conditional hidden
 { LadyKiller / BlackWidow perk level record and keep }
 ObjectReference property MaleMarker = None auto conditional hidden
@@ -52,6 +52,11 @@ int property IntimateLocationType = 0 auto conditional hidden
 ;
 ; more info v2.48
 int property IntimateSceneIsDanceHug = 0 auto conditional hidden ; 0=no, 1 = sexy dance, 2 = normal dance, 3 = hug
+
+; additional scene info for v2.70
+;
+; 0 = unknown, 1 = clone-forced, 2 = never-clone, 3 = cloned, 4 = not-cloned, 5 = cloned-by-pref, 6 = not-cloned-by-pref, 10 = AAF 
+int property IntimateSceneViewType = 0 auto conditional hidden
 
 
 ; -------------------------- backup data if need to restore after reset ---------
