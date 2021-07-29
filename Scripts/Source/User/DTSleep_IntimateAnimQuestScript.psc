@@ -5890,11 +5890,9 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 		elseIf (packID == 7 && !pillowBedHasFrame)			
 			
 			if (SceneData.CompanionInPowerArmor || SceneData.IsCreatureType == 3)		; v2.17 added synth type
-				if (MySleepBedFurnType == FurnTypeIsDoubleBed)
+				if (MySleepBedFurnType == FurnTypeIsDoubleBed)							
 					sidArray.Add(99)
-					if (!SceneData.SameGender && SceneData.MaleRoleGender == 0)
-						sidArray.Add(97)
-					endIf
+					; v2.70.2 removed 97 since now used for railing
 				elseIf (!SceneData.SameGender && SceneData.MaleRoleGender == 0)
 					sidArray.Add(98)
 				elseIf (SceneData.SameGender && SceneData.MaleRoleGender == 1)

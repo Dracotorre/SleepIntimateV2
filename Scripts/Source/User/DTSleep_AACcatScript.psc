@@ -3092,6 +3092,19 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 				ssStruct.PositionID = "DTSIX_797_S8"
 				ssStruct.PositionOrigID = "SC-FM-Human-Railing01-078Finish"
 			endIf
+		elseIf (seqID == 798)
+			ssStruct.FAnimFormID = 0x05000FD3						; solo
+			ssStruct.MAnimFormID = 0x05000FD4
+			ssStruct.StageTime = 32.0
+			ssStruct.PositionID = "DTSIXF_798_S1"
+			ssStruct.PositionOrigID = "DTSIXM_798_S1"
+			
+		elseIf (seqID == 799)
+			ssStruct.FAnimFormID = 0x0500CF43						; solo
+			ssStruct.MAnimFormID = 0x0500CF44
+			ssStruct.StageTime = 32.0
+			ssStruct.PositionID = "DTSIXF_799_S1"
+			ssStruct.PositionOrigID = "DTSIXM_799_S1"
 		endIf
 		
 	; Atomic Lust
