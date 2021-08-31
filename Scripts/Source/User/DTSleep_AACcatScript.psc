@@ -2405,13 +2405,13 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 				elseIf (stageNumber == 2 && longScene > 0)
 					ssStruct.FAnimFormID = 0x0502A151
 					ssStruct.MAnimFormID = 0x0502A152
-					ssStruct.StageTime = 14.0
+					ssStruct.StageTime = 13.3
 					ssStruct.PositionID = "DTSIXSM_766_S2"
 					ssStruct.PositionOrigID = "SC-FM-SuperMutant-DoubleBed03-02Start"
 				elseIf (stageNumber == 3)
 					ssStruct.FAnimFormID = 0x0500E626
 					ssStruct.MAnimFormID = 0x0500E627
-					ssStruct.StageTime = 13.0
+					ssStruct.StageTime = 12.5
 					ssStruct.PositionID = "DTSIXSM_766_S3"
 					ssStruct.PositionOrigID = "FSM-DoubleBed03-03Cowgirl"
 				elseIf (stageNumber == 4 || (longScene <= 0 && stageNumber == 2))

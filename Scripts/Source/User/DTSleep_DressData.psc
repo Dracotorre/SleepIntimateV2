@@ -56,6 +56,10 @@ Armor property PlayerEquippedSleepwearItem auto conditional hidden
 { a sleep item of regular body slot only - see special slots }
 Armor property PlayerEquippedSlot41Item auto conditional hidden
 Armor property PlayerEquippedSlot55Item auto conditional hidden
+Armor property PlayerEquippedSlot56Item auto conditional hidden						; v2.71
+bool property PlayerEquippedSlot56IsJewelry = false auto conditional hidden			; v2.71
+Armor property PlayerEquippedSlot57Item auto conditional hidden						; v2.71
+bool property PlayerEquippedSlot57IsJewelry = false auto conditional hidden			; v2.71
 Armor property PlayerEquippedSlot58Item = None auto conditional hidden
 bool property PlayerEquippedSlot58IsSleepwear = false auto conditional hidden
 { if slot 58 is a sleepwear item }
@@ -130,6 +134,10 @@ Armor property CompanionEquippedSleepwearItem auto conditional hidden
 { a sleep item - may be duplicated in a custom slot here }
 Armor property CompanionEquippedSlot41Item auto conditional hidden
 Armor property CompanionEquippedSlot55Item auto conditional hidden
+Armor property CompanionEquippedSlot56Item auto conditional hidden						; v2.71
+bool property CompanionEquippedSlot56IsJewelry = false auto conditional hidden			; v2.71
+Armor property CompanionEquippedSlot57Item auto conditional hidden						; v2.71
+bool property CompanionEquippedSlot57IsJewelry = false auto conditional hidden			; v2.71
 Armor property CompanionEquippedSlot58Item auto conditional hidden
 bool property CompanionEquippedSlot58IsJewelry = false auto conditional hidden
 Armor property CompanionEquippedSlotFXItem auto conditional hidden

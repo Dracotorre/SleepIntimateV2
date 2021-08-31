@@ -139,6 +139,8 @@ FormList property DTSleep_ArmorSlot55List auto const
 FormList property DTSleep_ArmorSlot58List auto const
 FormList property DTSleep_ArmorSlotFXList auto const
 FormList property DTSleep_ArmorJewelry58List auto const
+FormList property DTSleep_ArmorJewelry57List auto const				; added v2.71
+FormList property DTSleep_ArmorJewelry56List auto const				; added v2.71
 FormList property DTSleep_ArmorAllExceptionList auto const
 FormList property DTSleep_StrapOnList auto const
 FormList property DTSleep_SleepAttireFemale auto const
@@ -1179,7 +1181,7 @@ Function CheckCompatibility()
 			(DTSConditionals as DTSleep_Conditionals).IsHeatherCompanionActive = true
 			
 			Armor heatherBag = Game.GetFormFromFile(0x02245C47, "llamaCompanionHeather.esp") as Armor
-			if (heatherBag)
+			if (heatherBag != None)
 				if (!DTSleep_ArmorBackPacksList.HasForm(heatherBag))
 					Debug.Trace(myScriptName + " adding heather bag to backpacks")
 					DTSleep_ArmorBackPacksList.AddForm(heatherBag)
@@ -2334,6 +2336,17 @@ Function CheckCompatibility()
 					(DTSConditionals as DTSleep_Conditionals).IsGrayCreatureActive = true
 				else
 					(DTSConditionals as DTSleep_Conditionals).IsGrayCreatureActive = false
+				endIf
+				
+				; FPFP Family Planning Enhanced  - v2.71
+				if ((DTSConditionals as DTSleep_Conditionals).ModFPFP_Married == None)
+					Perk fpMarriedPerk = Game.GetFormFromFile(0x0901E9A1, "FP_FamilyPlanningEnhanced.esp") as Perk
+					
+					if (fpMarriedPerk != None)
+						(DTSConditionals as DTSleep_Conditionals).ModFPFP_Married = fpMarriedPerk
+						(DTSConditionals as DTSleep_Conditionals).ModFPFP_Married2 = Game.GetFormFromFile(0x0901E9AA, "FP_FamilyPlanningEnhanced.esp") as Perk
+					endIf
+					
 				endIf
 				
 				ValidateLeitoSettings()
@@ -4239,6 +4252,20 @@ int Function CheckCustomArmorsAndBackpacks()
 	if (extraForm != None && !DTSleep_ArmorGlassesList.HasForm(extraForm))
 		modCount += 1
 		DTSleep_ArmorGlassesList.AddForm(extraForm)
+	endIf
+	
+	; DX Vintage Summer suit   - v2.71
+	string dxVintageName = "DX_Vintage_Summer.esp"
+	extraForm = IsPluginActive(0x090194FC, dxVintageName)						; glasses
+	if (extraForm != None && !DTSleep_ArmorGlassesList.HasForm(extraForm))
+		modCount += 1
+		DTSleep_ArmorGlassesList.AddForm(extraForm)
+		DTSleep_ArmorHatHelmList.AddForm(Game.GetFormFromFile(0x09019C9A, dxVintageName))
+		DTSleep_ArmorJewelry58List.AddForm(Game.GetFormFromFile(0x0901BB0A, dxVintageName))		; necklace
+		DTSleep_ArmorExtraClothingList.AddForm(Game.GetFormFromFile(0x0901A436, dxVintageName)) ; duck
+		; new lists for v2.71
+		DTSleep_ArmorJewelry56List.AddForm(Game.GetFormFromFile(0x0901ABD2, dxVintageName))		; bracelet
+		DTSleep_ArmorJewelry57List.AddForm(Game.GetFormFromFile(0x0901B36E, dxVintageName))		; anklet
 	endIf
 	
 	

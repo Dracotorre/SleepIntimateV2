@@ -116,6 +116,8 @@ FormList property DTSleep_SexyClothesFList auto const
 FormList property DTSleep_SexyClothesMList auto const
 FormList property DTSleep_ArmorJewelry58List auto const			; added v2.27
 FormList property DTSleep_SleepAttireHandsList auto const 		; added v2.48 to keep track of intimate outfit with gloves
+FormList property DTSleep_ArmorJewelry57List auto const				; added v2.71
+FormList property DTSleep_ArmorJewelry56List auto const				; added v2.71
 EndGroup
 
 ; -------------------  hidden
@@ -1460,6 +1462,20 @@ Function SetCompanionDataMatchArmorToArmor(Armor matchItem, Armor toItem)
 			DressData.CompanionEquippedSlot55Item = toItem
 		elseIf (DressData.CompanionLastEquippedSlot55Item == matchItem)
 			DressData.CompanionEquippedSlot55Item = toItem
+		elseIf (DressData.CompanionEquippedSlot56Item == matchItem)							; v2.71
+			; no last item
+			DressData.CompanionEquippedSlot56Item = toItem
+			DressData.CompanionEquippedSlot56IsJewelry = false
+			if (toItem != None && DTSleep_ArmorJewelry56List.HasForm(toItem as Form))
+				DressData.CompanionEquippedSlot56IsJewelry = true
+			endIf
+		elseIf (DressData.CompanionEquippedSlot57Item == matchItem)								; v2.71
+			; no last item
+			DressData.CompanionEquippedSlot57Item = toItem
+			DressData.CompanionEquippedSlot57IsJewelry = false
+			if (toItem != None && DTSleep_ArmorJewelry57List.HasForm(toItem as Form))
+				DressData.CompanionEquippedSlot56IsJewelry = true
+			endIf
 		elseIf (DressData.CompanionEquippedSlot58Item == matchItem)
 			DressData.CompanionLastEquippedSlot58Item = DressData.CompanionEquippedSlot58Item
 			DressData.CompanionEquippedSlot58Item = toItem
@@ -1644,13 +1660,29 @@ Function SetCompanionDressDataMatchingFormToArmor(Form matchForm, Armor toItem)
 			DressData.CompanionLastEquippedStrapOnItem = DressData.CompanionEquippedStrapOnItem
 			DressData.CompanionEquippedStrapOnItem = toItem 
 	; slots
-		elseIf (DTSleep_ArmorSlot41List && DTSleep_ArmorSlot41List.HasForm(matchForm))
+		elseIf (DTSleep_ArmorSlot41List != None && DTSleep_ArmorSlot41List.HasForm(matchForm))
 			DressData.CompanionLastEquippedSlot41Item = DressData.CompanionEquippedSlot41Item
 			DressData.CompanionEquippedSlot41Item = toItem 
-		elseIf (DTSleep_ArmorSlot55List && DTSleep_ArmorSlot55List.HasForm(matchForm))
+		elseIf (DTSleep_ArmorSlot55List != None && DTSleep_ArmorSlot55List.HasForm(matchForm))
 			DressData.CompanionLastEquippedSlot55Item = DressData.CompanionEquippedSlot55Item
 			DressData.CompanionEquippedSlot55Item = toItem
 			; could also be a strap-on - do we care?
+		elseIf (DTSleep_ArmorJewelry56List != None && DTSleep_ArmorJewelry56List.HasForm(matchForm))			; v2.71
+			DressData.CompanionEquippedSlot56Item = toItem
+			DressData.CompanionEquippedSlot56IsJewelry = false
+			if (toItem != None)
+				if (DTSleep_ArmorJewelry56List.HasForm(toItem))
+					DressData.CompanionEquippedSlot56IsJewelry = true
+				endIf
+			endIf
+		elseIf (DTSleep_ArmorJewelry57List != None && DTSleep_ArmorJewelry57List.HasForm(matchForm))			; v2.71
+			DressData.CompanionEquippedSlot57Item = toItem
+			DressData.CompanionEquippedSlot57IsJewelry = false
+			if (toItem != None)
+				if (DTSleep_ArmorJewelry57List.HasForm(toItem))
+					DressData.CompanionEquippedSlot57IsJewelry = true
+				endIf
+			endIf
 		elseIf (DTSleep_ArmorSlot58List && DTSleep_ArmorSlot58List.HasForm(matchForm))
 			
 			DressData.CompanionLastEquippedSlot58Item = DressData.CompanionEquippedSlot58Item
@@ -1856,6 +1888,20 @@ Function SetDressDataMatchArmorToArmor(Armor matchItem, Armor toItem)
 			DressData.PlayerEquippedSlot55Item = toItem 
 		elseIf (DressData.PlayerLastEquippedSlot55Item == matchItem)
 			DressData.PlayerEquippedSlot55Item = toItem 
+		elseIf (DressData.PlayerEquippedSlot56Item == matchItem)								; v2.71
+			; no last item
+			DressData.PlayerEquippedSlot56Item = toItem
+			DressData.PlayerEquippedSlot56IsJewelry = false
+			if (toItem != None && DTSleep_ArmorJewelry56List.HasForm(toItem as Form))
+				DressData.PlayerEquippedSlot56IsJewelry = true
+			endIf
+		elseIf (DressData.PlayerEquippedSlot57Item == matchItem)								; v2.71
+			; no last item
+			DressData.PlayerEquippedSlot57Item = toItem
+			DressData.PlayerEquippedSlot57IsJewelry = false
+			if (toItem != None && DTSleep_ArmorJewelry57List.HasForm(toItem as Form))
+				DressData.PlayerEquippedSlot56IsJewelry = true
+			endIf
 		elseIf (DressData.PlayerEquippedSlot58Item == matchItem)
 			
 			DressData.PlayerLastEquippedSlot58Item = DressData.PlayerEquippedSlot58Item
@@ -2076,6 +2122,22 @@ Function SetDressDataMatchingFormToArmor(Form matchForm, Armor toItem)
 			DressData.PlayerLastEquippedSlot55Item = DressData.PlayerEquippedSlot55Item
 			DressData.PlayerEquippedSlot55Item = toItem
 			; could also be a strap-on - do we care?
+		elseIf (DTSleep_ArmorJewelry56List != None && DTSleep_ArmorJewelry56List.HasForm(matchForm))			; v2.71
+			DressData.PlayerEquippedSlot56Item = toItem
+			DressData.PlayerEquippedSlot56IsJewelry = false
+			if (toItem != None)
+				if (DTSleep_ArmorJewelry56List.HasForm(toItem))
+					DressData.PlayerEquippedSlot56IsJewelry = true
+				endIf
+			endIf
+		elseIf (DTSleep_ArmorJewelry57List != None && DTSleep_ArmorJewelry57List.HasForm(matchForm))			; v2.71
+			DressData.PlayerEquippedSlot57Item = toItem
+			DressData.PlayerEquippedSlot57IsJewelry = false
+			if (toItem != None)
+				if (DTSleep_ArmorJewelry57List.HasForm(toItem))
+					DressData.PlayerEquippedSlot57IsJewelry = true
+				endIf
+			endIf
 		elseIf (DTSleep_ArmorSlot58List && DTSleep_ArmorSlot58List.HasForm(matchForm))
 			
 			DressData.PlayerLastEquippedSlot58Item = DressData.PlayerEquippedSlot58Item

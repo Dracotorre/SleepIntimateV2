@@ -501,7 +501,7 @@
 		},
 		{
 			"id": "MCM_SettingUndressWeapon:Rest",
-			"text": "Undress Weapon",
+			"text": "Undress Weapon Sleep/Relax",
 			"type": "dropdown",
 			"help": "remove main weapon for sleep--useful for show-holstered mods (weapon always removed for animations)",
 			"valueOptions": {
@@ -869,7 +869,7 @@
 			"type": "dropdown",
 			"help": "after scene go to bed if tired - disable for prompt or stay awake",
 			"valueOptions": {
-				"options": ["Disabled / Prompt", "Tired only"],
+				"options": ["Disabled / Prompt", "Tired or prompt"],
 				"sourceType": "GlobalValue",
 				"sourceForm": "SleepIntimate.esp|A56A1",
 				"propertyName": "DTSleep_SettingFadeEndScene"

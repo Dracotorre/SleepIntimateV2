@@ -2393,6 +2393,64 @@ bool Function IsActorWearingSlot55Exceptions(Actor actorRef)
 	return false
 endFunction
 
+; added v2.71
+bool Function IsActorWearingSlot56Exceptions(Actor actorRef, bool includeExceptions)
+	if (actorRef != None)
+		if (actorRef == PlayerRef)
+			if (DressData.PlayerEquippedSlot56IsJewelry && DressData.PlayerEquippedSlot56Item != None)
+				if (!includeExceptions)
+					return true
+				elseIf (DTSleep_SettingAltFemBody.GetValueInt() >= 1 && BodySwapPlayerEnabled && AltFemBodyEnabled)
+					return false
+				else
+					return true
+				endIf
+			endIf
+		elseIf (actorRef == CompanionRef)
+			if (DressData.CompanionEquippedSlot56IsJewelry && DressData.CompanionEquippedSlot56Item != None)
+				if (!includeExceptions)
+					return true
+				elseIf (DTSleep_SettingAltFemBody.GetValueInt() >= 1 && BodySwapCompanionEnabled && AltFemBodyEnabled)
+					return false
+				else
+					return true
+				endIf
+			endIf
+		endIf
+	endIf
+	
+	return false
+endFunction
+
+; added v2.71
+bool Function IsActorWearingSlot57Exceptions(Actor actorRef, bool includeExceptions)
+	if (actorRef != None)
+		if (actorRef == PlayerRef)
+			if (DressData.PlayerEquippedSlot57IsJewelry && DressData.PlayerEquippedSlot57Item != None)
+				if (!includeExceptions)
+					return true
+				elseIf (DTSleep_SettingAltFemBody.GetValueInt() >= 1 && BodySwapPlayerEnabled && AltFemBodyEnabled)
+					return false
+				else
+					return true
+				endIf
+			endIf
+		elseIf (actorRef == CompanionRef)
+			if (DressData.CompanionEquippedSlot57IsJewelry && DressData.CompanionEquippedSlot57Item != None)
+				if (!includeExceptions)
+					return true
+				elseIf (DTSleep_SettingAltFemBody.GetValueInt() >= 1 && BodySwapCompanionEnabled && AltFemBodyEnabled)
+					return false
+				else
+					return true
+				endIf
+			endIf
+		endIf
+	endIf
+	
+	return false
+endFunction
+
 bool Function IsActorWearingSlot58Exceptions(Actor actorRef)
 	if (actorRef == None)
 		Debug.Trace(myScriptName + " IsActorWearingSlot58Exceptions - actor is None!!")
@@ -3496,6 +3554,7 @@ Function UndressActorRespect(Actor actorRef, bool isIndoors, bool remHatsOutside
 		; too rainy
 		summer = false
 	endIf
+	int remWeaponVal = DTSleep_SettingUndressWeapon.GetValueInt()						;v2.71 (1=companion, 2=player, 3=both)
 	
 	if (actorRef == PlayerRef)
 		PlayerEquippedArrayUpdated = false
@@ -3552,8 +3611,16 @@ Function UndressActorRespect(Actor actorRef, bool isIndoors, bool remHatsOutside
 				endIf
 			endIf
 		endIf
+		
+		if (remWeaponVal >= 2)									; v2.71 include for Relax-Sit
+			UndressActorWeapon(PlayerRef)
+		endIf
 	else
 		UndressActorBackPack(actorRef, false)
+		
+		if (remWeaponVal == 1 || remWeaponVal == 3)				; v2.71
+			UndressActorWeapon(actorRef)
+		endIf
 	endIf
 	
 	; avoid removing torso armor if wearing jacket due to some re-equip armor mods
@@ -4169,8 +4236,14 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 		
 		; double check jacket - some include re-equip scripts
 		if (removeJacket && wearingJacket && DressData.CompanionEquippedJacketItem != None)
-			;DTDebug(myScriptName + " double-check jacket removal", 2)
+			DTDebug(myScriptName + " double-check jacket removal", 2)
 			UndressJacketForActor(actorRef)
+		endIf
+		
+		; v2.71 - check backpack 
+		if (DressData.CompanionEquippedBackpackItem != None)
+			DTDebug("backpack removed during double-check removal", 1)
+			actorRef.UnequipItem(DressData.CompanionEquippedBackpackItem, false, true)
 		endIf
 		
 		; 2nd companion goes second so may need to wait
@@ -4472,11 +4545,11 @@ Function UndressActorArmorExtendedSlots(Actor actorRef, bool forBed, bool includ
 	endIf
 	
 	; 56 - Atom Girl Panty, Ranger Bandoleer, TeddyBear BackPack, AnSBackpack, Butterfly wings, AWK-Harness, AWK-Bandoleer, TheKite_MilitiaWoman Overcoat, Azar Holstered
-	if (pipPadSlot != 26 && actorRef == PlayerRef && DTSleep_SettingIncludeExtSlots.GetValue() > 0.0)
+	if (pipPadSlot != 26 && actorRef == PlayerRef && DTSleep_SettingIncludeExtSlots.GetValue() > 0.0 && !IsActorWearingSlot56Exceptions(actorRef, includeExceptions))
 		actorRef.UnequipItemSlot(26)
 	endIf
 	; 57 - Atom Girl Skirt, ProvisionorBackPack, Field Scribe Backpack-full, ***AWK-Belt***, AWK-Vest, AWK-MeleeOnHip, Azar Holstered
-	if (pipPadSlot != 27 && actorRef == PlayerRef && DTSleep_SettingIncludeExtSlots.GetValue() > 0.0)
+	if (pipPadSlot != 27 && actorRef == PlayerRef && DTSleep_SettingIncludeExtSlots.GetValue() > 0.0 && !IsActorWearingSlot57Exceptions(actorRef, includeExceptions))
 		actorRef.UnequipItemSlot(27)
 	endIf
 	
@@ -4773,7 +4846,7 @@ bool Function UndressActorBackPack(Actor actorRef, bool placeOnGround = true)
 			
 			if (DressData.CompanionEquippedCarryPouchItem != None)
 				foundPack = true
-				actorRef.UnequipItem(DressData.CompanionEquippedCarryPouchItem, false, true)
+				actorRef.UnequipItem(DressData.CompanionEquippedCarryPouchItem, true, true)				; v2.71 - changed to block (2nd param)
 			endIf
 			
 			if (DressData.CompanionEquippedBackpackItem != None)
@@ -4790,7 +4863,7 @@ bool Function UndressActorBackPack(Actor actorRef, bool placeOnGround = true)
 					placedCount += UndressPlaceExtraArmorForBed(CompanionBedRef, actorRef, DressData.CompanionEquippedBackpackItem, cornerVal, DressData.CompanionBackPackNoGOModel)
 				endIf
 					
-				actorRef.UnequipItem(DressData.CompanionEquippedBackpackItem, false, true)
+				actorRef.UnequipItem(DressData.CompanionEquippedBackpackItem, true, true)				;v2.71 - changed to block (2nd param)
 			endIf
 		endIf
 	endIf
@@ -4997,6 +5070,12 @@ Function UndressActorFinalCheckArmors(Actor actorRef, bool skipUpperOuterArmorSl
 			actorRef.UnequipItem(DressData.CompanionEquippedArmorLegRightItem, false, true)
 			DTDebug(" companion final check: armor-right-leg needs removing " + DressData.CompanionEquippedArmorLegRightItem, 2)
 		endIf
+		
+		; v2.71 - check backpack 
+		if (DressData.CompanionEquippedBackpackItem != None)
+			DTDebug("companion backpack removed during UndressActorFinalCheckArmors removal", 1)
+			actorRef.UnequipItem(DressData.CompanionEquippedBackpackItem, false, true)
+		endIf
 	endIf
 
 endFunction
@@ -5020,7 +5099,7 @@ UndressPlacedSet Function UndressActorExtraArmorList(Actor actorRef, FormList in
 		while (idx < len)
 			Armor armorItem = inArmorList.GetAt(idx) as Armor
 			
-			if (armorItem && actorRef.GetItemCount(armorItem) > 0 && actorRef.IsEquipped(armorItem))   ; takes 0.05 seconds
+			if (armorItem != None && actorRef.GetItemCount(armorItem) > 0 && actorRef.IsEquipped(armorItem))   ; takes 0.05 seconds
 				actorRef.UnequipItem(armorItem, false, true)
 				foundCount += 1
 	
@@ -5232,6 +5311,10 @@ Function UndressActorWeapon(Actor actorRef)
 		if (weapItem != None)
 			actorRef.UnequipItem(weapItem, false, true)
 			
+		endIf
+		weapItem = actorRef.GetEquippedWeapon(1)				; v2.71 secondary weapon
+		if (weapItem != None)
+			actorRef.UnequipItem(weapItem, false, true)
 		endIf
 	endIf
 endFunction

@@ -5390,6 +5390,21 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 							topRelBusy = true
 						endIf
 					endIf
+				elseIf (IsFPFPMarriedActor(aCompanion as Actor))
+					; Family Planning Enhanced Redux married  - v2.71
+					result.CompanionActor = aCompanion as Actor
+					result.RelationRank = 4
+					if (aCompanion.WornHasKeyword(ArmorTypePower))
+						mainCompanionPA = true
+					elseIf (aCompanion.IsInPowerArmor())
+						result.PowerArmorFlag = true
+					endIf
+					if (aCompanion.GetSleepState() > 2)
+						topRelBusy = true
+					else
+						return result
+					endIf
+					
 				elseIf (minRank <= 2 && (intimateSetting == 2.0 || intimateSetting == 4.0))
 					; ---- optional extra NPCs -------------
 					
@@ -5587,6 +5602,20 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 									endIf
 								endIf
 								mainCompanionRank = 4
+							elseIf (IsFPFPMarriedActor(aCompanion as Actor))
+								; Family Planning Enhanced Redux married  - v2.71
+								result.CompanionActor = aCompanion as Actor
+								result.RelationRank = 4
+								if (aCompanion.WornHasKeyword(ArmorTypePower))
+									mainCompanionPA = true
+								elseIf (aCompanion.IsInPowerArmor())
+									result.PowerArmorFlag = true
+								endIf
+								if (aCompanion.GetSleepState() > 2)
+									topRelBusy = true
+								else
+									return result
+								endIf
 								
 							elseIf (aCompanion.IsInfatuated())
 								
@@ -10903,6 +10932,16 @@ int Function IsCompanionActorReadyForScene(IntimateCompanionSet intimateActor, b
 	endIf
 	
 	return 0
+EndFunction
+
+bool Function IsFPFPMarriedActor(Actor akActor)
+	if ((DTSConditionals as DTSleep_Conditionals).ModFPFP_Married != None && akActor.HasPerk((DTSConditionals as DTSleep_Conditionals).ModFPFP_Married))
+		return true
+	elseIf ((DTSConditionals as DTSleep_Conditionals).ModFPFP_Married2 != None && akActor.HasPerk((DTSConditionals as DTSleep_Conditionals).ModFPFP_Married2))
+	
+		return true
+	endIf
+	return false
 EndFunction
 
 

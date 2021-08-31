@@ -229,6 +229,10 @@ Event OnEffectStart(Actor akfActor, Actor akmActor)
 			MainActor.UnequipItem(mainW, false, true)
 			Utility.Wait(0.1)
 		endIf
+		Weapon secW = MainActor.GetEquippedWeapon(1)							; v2.71 secondary weapon in case of visible weapons mod
+		if (secW != None)
+			MainActor.UnequipItem(secW, false, true)
+		endIf
 		
 		; https://www.creationkit.com/fallout4/index.php?title=DisablePlayerControls_-_InputEnableLayer
 		; movement, fighting, camSwitch, Looking, sneaking, menus, activate, journal, VATS, Favs, running
@@ -377,6 +381,10 @@ Function CheckRemoveSecondActorWeapon(float waitSecs = 0.07)
 		if (weapItem != None)
 			SecondActor.UnequipItem(weapItem, false, true)
 			
+		endIf
+		weapItem = SecondActor.GetEquippedWeapon(1)							; v2.71 in case of visible weapons mod
+		if (weapItem != None)
+			SecondActor.UnequipItem(weapItem, false, true)
 		endIf
 	endIf
 	if (ThirdActor != None)

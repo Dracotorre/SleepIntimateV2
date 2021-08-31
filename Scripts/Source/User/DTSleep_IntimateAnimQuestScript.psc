@@ -1789,12 +1789,16 @@ Function FinalizeAndSendFinish(bool seqStartedOK = true, int errCount = 0)
 	endIf
 	
 	if (SceneData.Interrupted < 0)
-		if (DTSleep_SettingTestMode.GetValue() > 0.0 && DTSleep_DebugMode.GetValue() >= 2.0)
+		SceneData.Interrupted -= 1
+		if (DTSleep_SettingTestMode.GetValue() > 0.0 && DTSleep_DebugMode.GetValue() >= 1.0)
 			Debug.Trace(myScriptName + " scene never started -- wait")
 		endIf
-		StartTimer(24.0, SeqEndTimerID)
 		
-		return
+		if (SceneData.Interrupted > -4)						; v2.71 -- avoid forever loop, but should not happen since DTSleep_PlayAAFSceneScript detects and sends stop
+			StartTimer(24.0, SeqEndTimerID)
+		
+			return
+		endIf
 	endIf
 	
 	SceneIsPlaying = false
@@ -2658,7 +2662,9 @@ int Function PickIntimateSceneID(bool mainActorIsMaleRole, bool standOnly, int[]
 	ObjectReference[] nearCouchArr = new ObjectReference[0]
 	
 	if (SleepBedRef == None || !IsObjBed(SleepBedRef))
-		sceneIDToPlay = LastSceneOtherID
+		if (MySleepBedFurnType != FurnTypeIsTablePool && MySleepBedFurnType != FurnTypeIsTablePicnic)		; v2.71 fix repeats
+			sceneIDToPlay = LastSceneOtherID
+		endIf
 	endIf
 
 	
@@ -5503,16 +5509,18 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 				elseIf (packID == 6 || packID == 1)
 					if (MySleepBedFurnType == FurnTypeIsTablePool || MySleepBedFurnType == FurnTypeIsTablePicnic)
 						
-						sidArray.Add(5)
-						if (!SceneData.FemaleRaceHasTail)
-							sidArray.Add(53)
-							if (mainActorIsMaleRole)
-								sidArray.Add(3)					; v2.51 - replaced 9 since works poorly for FF
+						if (!playerPick)		; v2.71  - player may only pick oral at table
+							sidArray.Add(5)
+							if (!SceneData.FemaleRaceHasTail)
+								sidArray.Add(53)
+								if (mainActorIsMaleRole)
+									sidArray.Add(3)					; v2.51 - replaced 9 since works poorly for FF
+								endIf
+							endIf
+							if (!SceneData.SameGender)
+								sidArray.Add(9)
 							endIf
 						endIf
-						if (!SceneData.SameGender)
-							sidArray.Add(9)
-						endIf 
 					endIf
 				endIf
 			endIf
@@ -6335,7 +6343,8 @@ bool Function SceneIDIsSolo(int id)
 	if (id == 741)
 		; pole dance
 		return true
-		
+	elseIf (id >= 798 && id <= 799)
+		return true
 	elseIf (id == 540 || id == 250 || id == 680 || id == 180)
 		return true
 	elseIf (id == 940)
