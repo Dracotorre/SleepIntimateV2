@@ -4260,7 +4260,7 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 			else
 				; v2.14 - double-check armors usually due to custom armors with re-equip scripts like Neiro re-fit outfits
 				if (includeClothing && !skipUpperOuterArmorSlots)
-					StartTimer(timerSecs - 0.3333, UndressCheckCompanionFinalOuterArmorTimerID)
+					StartTimer(timerSecs - 0.250, UndressCheckCompanionFinalOuterArmorTimerID)
 				endIf
 				StartTimer(timerSecs + 2.3, UndressGetCompanionEquipDataTimerID) ; wait for monitor to finish storing
 			endIf
@@ -5042,7 +5042,7 @@ Function UndressActorFinalCheckArmors(Actor actorRef, bool skipUpperOuterArmorSl
 		endIf
 			
 	elseIf (actorRef == CompanionRef)
-	
+		
 		if (!skipUpperOuterArmorSlots)
 			if (DressData.CompanionEquippedArmorTorsoItem != None)
 				
@@ -5075,6 +5075,11 @@ Function UndressActorFinalCheckArmors(Actor actorRef, bool skipUpperOuterArmorSl
 		if (DressData.CompanionEquippedBackpackItem != None)
 			DTDebug("companion backpack removed during UndressActorFinalCheckArmors removal", 1)
 			actorRef.UnequipItem(DressData.CompanionEquippedBackpackItem, false, true)
+		elseIf (DressData.CompanionLastEquippedBackpackItem != None)
+			if (actorRef.IsEquipped(DressData.CompanionLastEquippedBackpackItem))
+				DTDebug("companion " + actorRef + " LastBackpack removed during UndressActorFinalCheckArmors removal", 1)
+				actorRef.UnequipItem(DressData.CompanionLastEquippedBackpackItem, false, true)
+			endIf
 		endIf
 	endIf
 

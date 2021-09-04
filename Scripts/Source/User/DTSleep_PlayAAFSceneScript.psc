@@ -295,12 +295,26 @@ bool Function StartupScenePublic(Actor aMainActor, Actor aSecondaryActor, Object
 	if (aMainActor && aSecondaryActor != PlayerRef)
 		SecondActor = aSecondaryActor
 		MainActor = aMainActor
+		
+		; remove weapons since may be using visble/holstered weapons mod - v2.71.1
+		Weapon mainW = MainActor.GetEquippedWeapon()
+		if (mainW != None)
+			MainActor.UnequipItem(mainW, false, true)
+			Utility.Wait(0.1)
+		endIf
+		Weapon secW = MainActor.GetEquippedWeapon(1)							; in case of visible weapons mod
+		if (secW != None)
+			MainActor.UnequipItem(secW, false, true)
+		endIf
+		
+		CheckRemoveSecondActorWeapon()
 	else
 		MainActor = aMainActor
 		if (DTSleep_SettingTestMode.GetValue() > 0.0 && DTSleep_DebugMode.GetValue() >= 1.0)
 			Debug.Trace("[DTSleep_PlayAAF] caster only play ")
 		endIf
 	endIf
+	
 	
 	if (MainActor != None && DTSConditionals.IsF4SE && (Debug.GetPlatformName() as bool))
 		DTSleepPlaySceneInputLayer = InputEnableLayer.Create()
@@ -344,6 +358,40 @@ Function ChangeSettingsDefaultEnabled(bool defaultOn)
 		endIf
 	endIf
 endFunction
+
+Function CheckRemoveSecondActorWeapon(float waitSecs = 0.07)
+	if (SecondActor != None)
+		Weapon weapItem = SecondActor.GetEquippedWeapon()
+		
+		SecondActor.SetRestrained()
+		if (weapItem != None)
+			SecondActor.UnequipItem(weapItem, false, true)
+			
+		endIf
+		weapItem = SecondActor.GetEquippedWeapon(1)							; v2.71 in case of visible weapons mod
+		if (weapItem != None)
+			SecondActor.UnequipItem(weapItem, false, true)
+		endIf
+	endIf
+	Actor thirdActor = None
+	if (SceneData.SecondMaleRole != None)
+		thirdActor = SceneData.SecondMaleRole
+	elseIf (SceneData.SecondFemaleRole != None)
+		thirdActor = SceneData.SecondFemaleRole
+	endIf
+	
+	if (thirdActor != None)
+		Weapon weapItem = thirdActor.GetEquippedWeapon()
+		
+		thirdActor.SetRestrained()
+		if (weapItem != None)
+			thirdActor.UnequipItem(weapItem, false, true)
+		endIf
+	endif
+	if (waitSecs > 0.0)
+		Utility.Wait(waitSecs)
+	endIf
+EndFunction
 
 bool Function CheckEquipActorArmGun(Actor maleActor, Armor armGun)
 	int maleActorGender = -1

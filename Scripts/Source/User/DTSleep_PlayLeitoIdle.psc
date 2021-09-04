@@ -152,11 +152,11 @@ Event OnEffectStart(Actor akfActor, Actor akmActor)
 	if (MainActor != None && (Debug.GetPlatformName() as bool))
 		DTSleepPlayLeitoInputLayer = InputEnableLayer.Create()
 		
-		; Weapon mainW = MainActor.GetEquippedWeapon()
-		; if (mainW != None)
-			; MainActor.UnequipItem(mainW, false, true)
-			; Utility.Wait(0.1)
-		; endIf
+		 Weapon mainW = MainActor.GetEquippedWeapon()					; v2.71.1
+		 if (mainW != None)
+			 MainActor.UnequipItem(mainW, false, true)
+			 Utility.Wait(0.1)
+		 endIf
 		
 		; https://www.creationkit.com/fallout4/index.php?title=DisablePlayerControls_-_InputEnableLayer
 		; movement, fighting, camSwitch, Looking, sneaking, menus, activate, journal, VATS, Favs, running

@@ -85,8 +85,12 @@ Event OnEffectStart(Actor akfActor, Actor akmActor)
 		SecondActor = akfActor
 		MainActor = akmActor
 		Weapon weapItem = SecondActor.GetEquippedWeapon()
-		if (weapItem)
+		if (weapItem != None)
 			SecondActor.UnequipItem(weapItem, false, true)
+		endIf
+		weapItem = MainActor.GetEquippedWeapon()					; v2.71.1
+		if (weapItem != None)
+			MainActor.UnequipItem(weapItem, false, true)
 		endIf
 		SecondActor.AllowPCDialogue(false)
 		SecondActor.SetRestrained()
