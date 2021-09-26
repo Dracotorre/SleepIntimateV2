@@ -287,7 +287,7 @@ EndFunction
 ;BEGIN FRAGMENT Fragment_Terminal_33
 Function Fragment_Terminal_33(ObjectReference akTerminalRef)
 ;BEGIN CODE
-if (pDTSleep_AdultContentOn.GetValue() >= 2.0 && pDTSleep_ActivChairs.GetValue() >= 2.0)
+if (pDTSleep_AdultContentOn.GetValue() >= 2.0 && pDTSleep_ActivChairs.GetValue() >= 1.60)
    pDTSleep_SettingChairsEnabled.SetValue(2.0)
 else
    pDTSleep_SettingChairsEnabled.SetValue(0.0)
@@ -548,6 +548,24 @@ EndFunction
 Function Fragment_Terminal_65(ObjectReference akTerminalRef)
 ;BEGIN CODE
 pDTSleep_SettingCollision.SetValue(1.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_66
+Function Fragment_Terminal_66(ObjectReference akTerminalRef)
+;BEGIN CODE
+Utility.WaitMenumode(0.25)
+(pDTSleep_MainQuest as DTSleep_MainQuestScript).ShowSceneIgnorePreferencePicker()
+Utility.WaitMenumode(0.3)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_68
+Function Fragment_Terminal_68(ObjectReference akTerminalRef)
+;BEGIN CODE
+(pDTSleep_MainQuest as DTSleep_MainQuestScript).ShowSceneClearIgnoreList()
 ;END CODE
 EndFunction
 ;END FRAGMENT

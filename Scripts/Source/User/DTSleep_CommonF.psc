@@ -60,6 +60,20 @@ Form[] Function CopyFormArray(Form[] formArray) global
 
 endFunction
 
+int[] Function CopyIntArray(int[] intArray) global
+	int[] resultArray = new int[0]
+	
+	int index = 0
+	
+	while (index < intArray.Length)
+		resultArray.Add(intArray[index])
+	
+		index += 1
+	endWhile
+	
+	return resultArray
+endFunction
+
 ; after spawning item use this to remove it
 ; based on Chesko's Campfire object placement removal - shared on GitHub under MIT license
 bool Function DisableAndDeleteObjectRef(ObjectReference objRef, bool fadeOut, bool fast = false) global
@@ -716,7 +730,7 @@ bool Function IsActorOnBed(Actor actorRef, ObjectReference bedRef, bool wideChec
 EndFunction
 
 bool Function IsIntegerInArray(int anInt, int[] anArray) global
-	bool result = false
+	
 	if (anArray != None)		; in Papyrus, array never None so check array None same as Length zero
 		
 		if (anArray.Find(anInt) >= 0)
@@ -724,16 +738,17 @@ bool Function IsIntegerInArray(int anInt, int[] anArray) global
 		endIf
 	endIf
 	
-	return result
+	return false
 EndFunction
 
-Function MoveActorFacingDistance(Actor actorRef, float distance) global
+; does not work correctly
+Function MoveActorFacingDistance(Actor actorRef, float distance, float zOffset = 0.0001) global
 
 	if (actorRef != None)
 		Point3DOrient ptActor = PointOfObject(actorRef)
 		Point3DOrient ptBack = GetPointDistOnHeading(ptActor, distance)
 		
-		actorRef.TranslateTo(ptBack.X + 0.001, ptBack.Y + 0.0001, ptBack.Z, 0.0, 0.0, 0.05, 100.0, 0.000000001)
+		actorRef.TranslateTo(ptActor.X + ptBack.X + 0.001, ptActor.Y + ptBack.Y + 0.0001, ptActor.Z + zOffset, 0.0, 0.0, 0.05, 300.0, 0.000000001)
 	endIf
 endFunction
 

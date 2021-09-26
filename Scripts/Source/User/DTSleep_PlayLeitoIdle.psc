@@ -121,7 +121,7 @@ EndEvent
 Event OnEffectStart(Actor akfActor, Actor akmActor)
 
 	;Debug.Trace("[DTSleep_PlayLeitoIdle] OnEffectStart")
-	
+	PosYAdj = 0.0
 	SequenceID = DTSleep_IntimateIdleID.GetValueInt()
 	
 	if (SequenceID >= 600)

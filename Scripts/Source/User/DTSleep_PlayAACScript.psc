@@ -437,6 +437,9 @@ Armor Function GetArmorNudeGun(int kind)
 	if (SceneData.IsCreatureType == 1)
 		evbVal = 2
 		bt2Val = -1
+	;elseIf (SceneData.AnimationSet == 6 && evbVal > 0)				; v2.73 no more prefer EVB
+		; prefer EVB if enabled -- 
+	;	bt2Val = -1
 	elseIf (SceneData.AnimationSet == 8)
 		bt2Val = -1
 		evbVal = 2
@@ -448,7 +451,7 @@ Armor Function GetArmorNudeGun(int kind)
 		bt2Val = -1
 	endIf
 	
-	if (kind > 0 && evbVal == 1)
+	if (kind > 0 && evbVal == 1 && bt2Val <= 0)
 		kind = 0
 	elseIf (kind > 0 && bt2Val > 0)
 		if (SceneData.AnimationSet == 5)
@@ -710,6 +713,7 @@ Function InitSceneAndPlay()
 			mainZOff = seqStagesArray[0].MPosZOffset
 		endIf
 	else
+		mainYOff = 0.0 - yOffM
 		mainAngleOff = angleOffset + angleF
 		if (SequenceID < 500)
 			mainZOff = -2.2					; v2.60 - reduce embrace shaking
@@ -719,8 +723,8 @@ Function InitSceneAndPlay()
 	endIf
 	
 	if (SecondActor != None)
-		; first move second actor close, but out of talk-too-much range
-		SecondActor.MoveTo(MainActor, 0.0, -70.0, 0.0, true)
+		; first move second actor close, but out of bump range
+		SecondActor.MoveTo(MainActor, 0.0, -50.0, 0.0, true)
 		if (SecondActor == SceneData.MaleRole)
 			secondAngleOff = angleOffset + angleM
 			secondYOff = yOffM
@@ -971,42 +975,55 @@ Function PlayAnimAtStage(DTAACSceneStageStruct stage, Actor mActor, Actor fActor
 		
 		if (a1 != None)
 		
-			if (stage.ArmorNudeAGun != LastGunAIndex)
-				
-				if (MaleBodyMorphEnabled)
-					;Debug.Trace("[DTSleep_PlayAAC] setting morph " + stage.ArmorNudeAGun + " on actor " + mActor)
-					SetMorphForActor(mActor, LastGunAIndex, stage.ArmorNudeAGun)
-					
-				else
-					Armor armS1 = GetArmorNudeGun(stage.ArmorNudeAGun)
-					;Debug.Trace("[DTSleep_PlayAAC] got armor-nude index " + stage.ArmorNudeAGun + " armor " + armS1)
-					if (MaleRoleSex < 0 && mActor != None)
-						MaleRoleSex = (mActor.GetLeveledActorBase() as ActorBase).GetSex()
-					endIf
-					if (armS1 != None && mActor != None && MaleRoleSex == 0)
-						mActor.EquipItem(armS1, true, true)
-						
-					endIf
-				endIf
-				LastGunAIndex = stage.ArmorNudeAGun
+			int ngValA = stage.ArmorNudeAGun
+			if (ngValA != 0 && stage.MorphAngleA > 0.0 && stage.MorphAngleA < 0.27)
+				; use forward if minor morph   v2.73
+				ngValA = 0
 			endIf
-			if (oActor != None && stage.ArmorNudeBGun >= 0 && LastGunBIndex != stage.ArmorNudeBGun)
+				
+			if (MaleBodyMorphEnabled)
+				;Debug.Trace("[DTSleep_PlayAAC] setting morph " + stage.ArmorNudeAGun + " angle " + stage.MorphAngleA + " on actor " + mActor)
+				SetMorphForActor(mActor, LastGunAIndex, stage.ArmorNudeAGun, stage.MorphAngleA)				; updated for value v2.73
+				
+			elseIf (ngValA != LastGunAIndex)
+				
+				Armor armS1 = GetArmorNudeGun(ngValA)
+				;Debug.Trace("[DTSleep_PlayAAC] got armor-nude index " + ngValA + " armor " + armS1)
+				if (MaleRoleSex < 0 && mActor != None)
+					MaleRoleSex = (mActor.GetLeveledActorBase() as ActorBase).GetSex()
+				endIf
+				if (armS1 != None && mActor != None && MaleRoleSex == 0)
+					mActor.EquipItem(armS1, true, true)
+					
+				endIf
+			endIf
+			LastGunAIndex = ngValA
+
+			if (oActor != None && stage.ArmorNudeBGun >= 0)
 				; v2.25 - check secondActor gender
 				if (SecondRoleSex < 0)
 					SecondRoleSex = (oActor.GetLeveledActorBase() as ActorBase).GetSex()
 				endIf
 				if (SecondRoleSex == 0)
 					
-					if (MaleBodyMorphEnabled)
-						SetMorphForActor(oActor, LastGunBIndex, stage.ArmorNudeBGun)
+					int ngValB = stage.ArmorNudeBGun
+					if (ngValB == 2 && stage.MorphAngleB > 0.0 && stage.MorphAngleB < 0.27)
+						; use forward if minor down morph   v2.73
+						ngValB = 0
+					endIf
 						
-					else
-						Armor armB1 = GetArmorNudeGun(stage.ArmorNudeBGun)
+					if (MaleBodyMorphEnabled)
+						SetMorphForActor(oActor, LastGunBIndex, stage.ArmorNudeBGun, stage.MorphAngleB)
+						
+					elseIf (LastGunBIndex != ngValB)				
+						
+						
+						Armor armB1 = GetArmorNudeGun(ngValB)
 						if (armB1 != None)
 							oActor.EquipItem(armB1, true, true)
 						endIf
 					endIf
-					LastGunBIndex = stage.ArmorNudeBGun
+					LastGunBIndex = ngValB
 				endIf
 			endIf
 			
@@ -1125,7 +1142,7 @@ Function RemoveMorphs(Actor aActor)
 endFunction
 
 
-Function SetMorphForActor(Actor aActor, int lastKind, int toKind)
+Function SetMorphForActor(Actor aActor, int lastKind, int toKind, float toMorphVal)				; updated to include morphVal v2.73
 
 	if (lastKind < 0)
 		BodyGen.SetMorph(aActor, false, GetArmorNudeMorphString(0), DTSleep_MorphKeyword, 1.0)
@@ -1137,8 +1154,11 @@ Function SetMorphForActor(Actor aActor, int lastKind, int toKind)
 		float morphVal = 1.0
 		if (SceneData.IsCreatureType == 5)
 			morphVal = 0.88
-		elseIf (SceneData.AnimationSet == 7 && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
+		elseIf (SceneData.IsCreatureType <= 0 && SceneData.AnimationSet == 7 && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
+			; super mutant needs morphs -- fix limit creature turn off humans v2.73
 			morphVal = -1.0
+		elseIf (toMorphVal > 0.0)
+			morphVal = toMorphVal
 		endIf
 		if (morphVal > 0.0)
 			BodyGen.SetMorph(aActor, false, GetArmorNudeMorphString(toKind), DTSleep_MorphKeyword, morphVal)

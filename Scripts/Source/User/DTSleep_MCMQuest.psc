@@ -268,7 +268,7 @@ Function ToggleChairScenes(float val)
 		chairVal == 1
 	endIf
 	
-	if (DTSleep_ActivChairs.GetValue() < 2.0)
+	if (DTSleep_ActivChairs.GetValue() < 1.6)					; v2.72 - Leito-only is 1.6, 2.0 for normal
 		
 		if (chairVal > 1)
 			chairVal = 0
@@ -421,7 +421,7 @@ Function UpdateAdultValues()
 		MCMAAFDisabled = 1
 	endIf
 	
-	if (adultOn && DTSleep_ActivChairs.GetValueInt() >= 2)
+	if (adultOn && DTSleep_ActivChairs.GetValue() >= 1.60)					; v2.72 - Leito-only is 1.6
 		MCMAdultSexSeatsOn = 1
 		MCMAdultSexSeatsOff = 0
 	else

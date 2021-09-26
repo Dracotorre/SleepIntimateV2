@@ -83,6 +83,7 @@ bool Property IsProvisionerBackPackActive = false auto conditional hidden
 bool Property IsVioStrapOnActive = false auto conditional hidden
 bool property IsLeitoActive = false auto conditional hidden
 bool property IsLeitoAAFActive = false auto conditional hidden
+float property LeitoAnimVers = 0.0 auto conditional hidden
 bool property IsCrazyAnimGunActive = false auto conditional hidden
 bool property IsCrazyAnimRugsActive = false auto conditional hidden
 bool property IsCampsiteActive = false auto conditional hidden

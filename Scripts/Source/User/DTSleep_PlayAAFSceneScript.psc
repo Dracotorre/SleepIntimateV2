@@ -226,7 +226,7 @@ Event AAF:AAF_API.OnAnimationStart(AAF:AAF_API akSender, Var[] akArgs)
 		endIf
 	endIf
 	
-	if (goodToGo == 1)
+	if (goodToGo == 1 && SceneData.Interrupted <= 0)				; check interrupted in case Anim canceled  -- v2.73
 		UnregisterForCustomEvent(AAF_API, "OnAnimationStart")
 		SceneData.Interrupted = 0
 		MySceneStatus = 1
@@ -235,15 +235,15 @@ Event AAF:AAF_API.OnAnimationStart(AAF:AAF_API akSender, Var[] akArgs)
 			Game.FadeOutGame(false, true, 0.0, 1.1)
 		endIf
 		
-		if (SequenceID >= 600 && SequenceID < 660)
-			PlayLeitoPairContinuedSequence(SceneData.WaitSecs)
-		elseIf (SequenceID >= 660 && SequenceID < 700)
-			PlayLeitoStrongContinuedSequence()
-		else
+		;if (SequenceID >= 600 && SequenceID < 660)
+		;	PlayLeitoPairContinuedSequence(SceneData.WaitSecs)
+		;elseIf (SequenceID >= 660 && SequenceID < 680)					; Leito uses AAC now - v2.73
+		;	PlayLeitoStrongContinuedSequence()
+		;else
 			PlayAAContinuedSequence(SceneData.WaitSecs)
-		endIf
+		;endIf
 		
-	elseIf (goodToGo <= -1)
+	elseIf (goodToGo <= -1 || SceneData.Interrupted >= 1)				; may have been interrupted -- v2.73
 	
 		if (DTSleep_SettingTestMode.GetValue() > 0.0 && DTSleep_DebugMode.GetValue() >= 1.0)
 			Debug.Trace("[DTSleep_PlayAAF] OnAnimationStart issues found  - goodToGo: " + goodToGo)
@@ -363,7 +363,7 @@ Function CheckRemoveSecondActorWeapon(float waitSecs = 0.07)
 	if (SecondActor != None)
 		Weapon weapItem = SecondActor.GetEquippedWeapon()
 		
-		SecondActor.SetRestrained()
+		;SecondActor.SetRestrained()										; allow walk v2.73
 		if (weapItem != None)
 			SecondActor.UnequipItem(weapItem, false, true)
 			
@@ -383,7 +383,7 @@ Function CheckRemoveSecondActorWeapon(float waitSecs = 0.07)
 	if (thirdActor != None)
 		Weapon weapItem = thirdActor.GetEquippedWeapon()
 		
-		thirdActor.SetRestrained()
+		;thirdActor.SetRestrained()											; allow walk v2.73
 		if (weapItem != None)
 			thirdActor.UnequipItem(weapItem, false, true)
 		endIf
@@ -678,10 +678,10 @@ bool Function PlaySequence()
 				else
 					PlayAtomicScene()
 				endIf
-			elseIf (SequenceID >= 600 && SequenceID < 660)
-				PlaySequenceLeitoStages()
-			elseIf (SequenceID < 670)
-				PlaySequenceLeitoStrongStages()
+			;elseIf (SequenceID >= 600 && SequenceID < 660)					; v2.73 Leito using AAC now
+			;	PlaySequenceLeitoStages()
+			;elseIf (SequenceID < 670)
+			;	PlaySequenceLeitoStrongStages()
 			else
 				MySeqStagesArray = DTSleep_AACcatScript.GetSeqCatArrayForSequenceID(SequenceID, longScene, genders, otherActor, forceEVB)
 				
@@ -699,12 +699,18 @@ bool Function PlaySequence()
 					
 					if (MaleBodyMorphEnabled)
 						;Debug.Trace("[DTSleep_PlayAAF] setting morph " + MySeqStagesArray[0].ArmorNudeAGun + " on actor " + SceneData.MaleRole)
-						SetMorphForActor(SceneData.MaleRole, -1, MySeqStagesArray[0].ArmorNudeAGun)
+						; updated to include morph angle value - v2.73
+						SetMorphForActor(SceneData.MaleRole, -1, MySeqStagesArray[0].ArmorNudeAGun, MySeqStagesArray[0].MorphAngleA)
 						if (SceneData.SecondMaleRole != None && MySeqStagesArray[0].ArmorNudeBGun >= 0)
-							SetMorphForActor(SceneData.SecondMaleRole, -1, MySeqStagesArray[0].ArmorNudeBGun)
+							SetMorphForActor(SceneData.SecondMaleRole, -1, MySeqStagesArray[0].ArmorNudeBGun, MySeqStagesArray[0].MorphAngleB)
 						endIf
 					else 
-						armGunA = GetArmorNudeGun(MySeqStagesArray[0].ArmorNudeAGun)
+						int ngValA = MySeqStagesArray[0].ArmorNudeAGun
+						if (ngValA != 0 && MySeqStagesArray[0].MorphAngleA > 0.0 && MySeqStagesArray[0].MorphAngleA < 0.27)
+							; use forward if minor morph   v2.73
+							ngValA = 0
+						endIf
+						armGunA = GetArmorNudeGun(ngValA)
 						if (SceneData.SecondMaleRole != None && MySeqStagesArray[0].ArmorNudeBGun >= 0)
 							armGunB = GetArmorNudeGun(MySeqStagesArray[0].ArmorNudeBGun)
 						endIf
@@ -962,7 +968,7 @@ Function PlayAtomicScene()
 	endIf
 	
 	if (MaleBodyMorphEnabled && armGunKind >= 0)
-		SetMorphForActor(SceneData.MaleRole, -1, armGunKind)
+		SetMorphForActor(SceneData.MaleRole, -1, armGunKind, 1.0)
 	elseIf (armGunKind >= 0)
 		armGun = GetArmorNudeGun(armGunKind)
 	endIf
@@ -1083,8 +1089,8 @@ Armor Function GetArmorNudeGun(int kind)
 		
 	elseIf (DTSConditionals.IsUniquePlayerMaleActive && evbVal > 0 && SceneData.MaleRole == PlayerRef)
 		bt2Val = -1
-	elseIf (SceneData.AnimationSet == 6 && evbVal > 0)
-		bt2Val = -1
+	;elseIf (SceneData.AnimationSet == 6 && evbVal > 0)					; no longer prefer evb --- v2.73
+	;	bt2Val = -1
 	endIf
 	
 	if (evbVal <= 0 && bt2Val <= 0)
@@ -1182,10 +1188,15 @@ Function PlayAASequenceLists(Actor mActor, Actor fActor, Actor oActor)
 	
 		if (MaleBodyMorphEnabled)
 			;Debug.Trace("[DTSleep_PlayAAF] setting morph " + MySeqStagesArray[0].ArmorNudeAGun + " on actor " + mActor)
-			SetMorphForActor(mActor, -1, MySeqStagesArray[0].ArmorNudeAGun)
+			SetMorphForActor(mActor, -1, MySeqStagesArray[0].ArmorNudeAGun, MySeqStagesArray[0].MorphAngleA)				; updated with angle v2.73
 			
 		else
-			Armor armS1 = GetArmorNudeGun(MySeqStagesArray[0].ArmorNudeAGun)
+			int ngValA = MySeqStagesArray[0].ArmorNudeAGun
+			if (ngValA != 0 && MySeqStagesArray[0].MorphAngleA > 0.0 && MySeqStagesArray[0].MorphAngleA < 0.27)
+				; use forward if minor morph   v2.73
+				ngValA = 0
+			endIf
+			Armor armS1 = GetArmorNudeGun(ngValA)
 			
 			if (mActor != None && armS1 != None)
 				; can only equip on player before start scene
@@ -1208,9 +1219,15 @@ Function PlayAASequenceLists(Actor mActor, Actor fActor, Actor oActor)
 			if (oActor != None && oActor == SceneData.SecondMaleRole && MySeqStagesArray[0].ArmorNudeBGun >= 0)
 				if (MaleBodyMorphEnabled)
 					;Debug.Trace("[DTSleep_PlayAAF] setting morph " + stage.ArmorNudeAGun + " on actor " + oActor)
-					SetMorphForActor(oActor, -1, MySeqStagesArray[0].ArmorNudeBGun)
+					SetMorphForActor(oActor, -1, MySeqStagesArray[0].ArmorNudeBGun, MySeqStagesArray[0].MorphAngleB)			; updated with angle v2.73
 				else
-					CheckEquipActorArmGun(SceneData.SecondMaleRole, GetArmorNudeGun(MySeqStagesArray[0].ArmorNudeBGun))
+					int ngValB = MySeqStagesArray[0].ArmorNudeAGun
+					if (ngValB != 0 && MySeqStagesArray[0].MorphAngleB > 0.0 && MySeqStagesArray[0].MorphAngleB < 0.27)
+						; use forward if minor morph   v2.73
+						ngValB = 0
+					endIf
+					Armor armS1 = GetArmorNudeGun(ngValB)
+					CheckEquipActorArmGun(SceneData.SecondMaleRole, armS1)
 				endIf
 			endIf
 		endIf
@@ -1246,6 +1263,11 @@ Function PlayAASequenceLists(Actor mActor, Actor fActor, Actor oActor)
 		endIf
 		if (MySeqStagesArray[0].StageTime > 0.0)
 			aafSettings.duration = MySeqStagesArray[0].StageTime
+		endIf
+		
+		if (SequenceID >= 682 && SequenceID < 700 && aafSettings.locationObject != None)
+			; these Leito chair scenes play backward in AAF  (??)
+			aafSettings.locationObject.SetAngle(0.0, 0.0, 180.0 + aafSettings.locationObject.GetAngleZ())
 		endIf
 		
 		if (DTSleep_SettingTestMode.GetValue() > 0.0 && DTSleep_DebugMode.GetValue() >= 1.0)
@@ -1298,16 +1320,23 @@ Function PlayAAContinuedSequence(float waitSecs)
 		; armor?
 		if (seqCount >= 1 && seqCount < seqLen - 1)
 			
+			int ngValA = MySeqStagesArray[0].ArmorNudeAGun
+			
 			if (MaleBodyMorphEnabled)
 				
-				SetMorphForActor(SceneData.MaleRole, armGunLastIndex, MySeqStagesArray[seqCount].ArmorNudeAGun)
+				SetMorphForActor(SceneData.MaleRole, armGunLastIndex, MySeqStagesArray[seqCount].ArmorNudeAGun, MySeqStagesArray[seqCount].MorphAngleA)
 				if (SceneData.SecondMaleRole != None)
-					SetMorphForActor(SceneData.SecondMaleRole, armGunM2LastIndex, MySeqStagesArray[seqCount].ArmorNudeBGun)
+					SetMorphForActor(SceneData.SecondMaleRole, armGunM2LastIndex, MySeqStagesArray[seqCount].ArmorNudeBGun, MySeqStagesArray[seqCount].MorphAngleB)
 				endIf
 			else
 				
-				if (MySeqStagesArray[seqCount].ArmorNudeAGun != armGunLastIndex)
-					Armor armGun = GetArmorNudeGun(MySeqStagesArray[seqCount].ArmorNudeAGun)
+				if (ngValA != 0 && MySeqStagesArray[seqCount].MorphAngleA > 0.0 && MySeqStagesArray[seqCount].MorphAngleA < 0.27)
+					; use forward if minor morph   v2.73
+					ngValA = 0
+				endIf
+
+				if (ngValA != armGunLastIndex)
+					Armor armGun = GetArmorNudeGun(ngValA)
 					if (SceneData.MaleRole != PlayerRef && SceneData.MaleRoleGender == 0)
 					
 						CheckEquipActorArmGun(SceneData.MaleRole, armGun)
@@ -1319,7 +1348,7 @@ Function PlayAAContinuedSequence(float waitSecs)
 				endIf
 			endIf
 			
-			armGunLastIndex = MySeqStagesArray[seqCount].ArmorNudeAGun
+			armGunLastIndex = ngValA
 			armGunM2LastIndex = MySeqStagesArray[seqCount].ArmorNudeBGun
 		endIf
 		
@@ -1364,6 +1393,7 @@ Function PlayPosition(string posStr, float duration)
 	AAF_API.ChangePosition(MainActor, posSettings)
 endFunction
 
+; no longer used --- v2.73
 Function PlaySequenceLeitoStages()
 	;Debug.Trace("[DTSleep_PlayAAF_Seq] playSequence " + SequenceID)
 	
@@ -1458,7 +1488,7 @@ Function PlaySequenceLeitoStages()
 
 endFunction
 
-; mActor is considered dominate
+; ---- no longer used ---- v2.73--- mActor is considered dominate
 Function PlayLeitoPairSequenceLists(Actor mActor, Actor fActor, Actor oActor, AStageItem[] positionIDArr, bool useBedLocation = false)
 	
 	if (mActor != None && fActor != None && positionIDArr != None && positionIDArr.Length > 0)
@@ -1469,7 +1499,7 @@ Function PlayLeitoPairSequenceLists(Actor mActor, Actor fActor, Actor oActor, AS
 		
 		if (MaleBodyMorphEnabled)
 			int kind = GetArmorNudeKindForGun(armS1)
-			SetMorphForActor(mActor, -1, kind)
+			SetMorphForActor(mActor, -1, kind, 1.0)
 		else
 			; can only equip on player before scene start
 			;
@@ -1543,7 +1573,7 @@ Function PlayLeitoPairSequenceLists(Actor mActor, Actor fActor, Actor oActor, AS
 	
 endFunction
 
-
+; no longer used --- v2.73
 Function PlayLeitoPairContinuedSequence(float waitSecs)
 
 	int seqCount = 1
@@ -1578,7 +1608,7 @@ Function PlayLeitoPairContinuedSequence(float waitSecs)
 			
 			if (MaleBodyMorphEnabled)
 				int kind = GetArmorNudeKindForGun(armGun)
-				SetMorphForActor(SceneData.MaleRole, GetArmorNudeKindForGun(armGunLast), kind)
+				SetMorphForActor(SceneData.MaleRole, GetArmorNudeKindForGun(armGunLast), kind, 1.0)
 			
 			elseIf (armGun != None && armGun != armGunLast)
 				if (SceneData.MaleRole != PlayerRef && SceneData.MaleRoleGender == 0)
@@ -1630,6 +1660,7 @@ Function PlayLeitoPairContinuedSequence(float waitSecs)
 	StopAnimationSequence()
 endFunction
 
+; - no longer used ---- v2.73
 Function PlaySequenceLeitoStrongStages()
 	
 	string position = CreateSeqPositionStr(SequenceID, 1)
@@ -1882,7 +1913,7 @@ Function RemoveMorphs(Actor aActor)
 	BodyGen.UpdateMorphs(aActor)
 endFunction
 
-Function SetMorphForActor(Actor aActor, int lastKind, int toKind)
+Function SetMorphForActor(Actor aActor, int lastKind, int toKind, float toMorphVal)			; updated for value v2.73
 
 	if (lastKind < 0)
 		BodyGen.SetMorph(aActor, false, GetArmorNudeMorphString(0), DTSleep_MorphKeyword, 1.0)
@@ -1896,6 +1927,8 @@ Function SetMorphForActor(Actor aActor, int lastKind, int toKind)
 			morphVal = 0.88
 		elseIf (SceneData.AnimationSet == 7 && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
 			morphVal = -1.0
+		elseIf (toMorphVal > 0.0)
+			morphVal = toMorphVal
 		endIf
 		if (morphVal > 0.0)
 			BodyGen.SetMorph(aActor, false, GetArmorNudeMorphString(toKind), DTSleep_MorphKeyword, morphVal)

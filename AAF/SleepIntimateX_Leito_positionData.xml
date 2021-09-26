@@ -1,4 +1,4 @@
-<meta title="SleepIntimateX_Leito_positionData.xml" version="2.1" dataSet="position"/>
+<meta title="SleepIntimateX_Leito_positionData.xml" version="2.72" dataSet="position"/>
 <defaults walkOffset="0,0,0"/> <!-- offset="0,50,180"/>-->
 
 <animationOffset actor="1" offset="0,0,0,180"/>
@@ -104,6 +104,43 @@
 <position id="DTSIX_653_S4" animation="SIX_Leito_StandingDoggy_2_S3" isHidden="true"/>
 <position id="DTSIX_653_S5" animation="SIX_Leito_StandingDoggy_2_S4" isHidden="true"/>
 
+<!-- added from Leito's 2.1 for Sleep Intimate v2.72 -->
+
+<position id="DTSIX_682_S1" animation="SIX_Leito_Chair_Missionary_1_S1" isHidden="true"/>
+<position id="DTSIX_682_S2" animation="SIX_Leito_Chair_Missionary_1_S2" isHidden="true"/>
+<position id="DTSIX_682_S3" animation="SIX_Leito_Chair_Missionary_1_S3" isHidden="true"/>
+<position id="DTSIX_682_S4" animation="SIX_Leito_Chair_Missionary_1_S4" isHidden="true"/>
+
+<position id="DTSIX_683_S1" animation="SIX_Leito_Chair_Doggy_1_S1" isHidden="true"/>
+<position id="DTSIX_683_S2" animation="SIX_Leito_Chair_Doggy_1_S2" isHidden="true"/>
+<position id="DTSIX_683_S3" animation="SIX_Leito_Chair_Doggy_1_S3" isHidden="true"/>
+<position id="DTSIX_683_S4" animation="SIX_Leito_Chair_Doggy_1_S4" isHidden="true"/>
+
+<position id="DTSIX_684_S1" animation="SIX_Leito_Chair_Cowgirl_1_S1" isHidden="true"/>
+<position id="DTSIX_684_S2" animation="SIX_Leito_Chair_Cowgirl_1_S2" isHidden="true"/>
+<position id="DTSIX_684_S3" animation="SIX_Leito_Chair_Cowgirl_1_S3" isHidden="true"/>
+<position id="DTSIX_684_S4" animation="SIX_Leito_Chair_Cowgirl_1_S4" isHidden="true"/>
+
+<position id="DTSIX_685_S1" animation="SIX_Leito_Chair_ReverseCowgirl_1_S1" isHidden="true"/>
+<position id="DTSIX_685_S2" animation="SIX_Leito_Chair_ReverseCowgirl_1_S2" isHidden="true"/>
+<position id="DTSIX_685_S3" animation="SIX_Leito_Chair_ReverseCowgirl_1_S3" isHidden="true"/>
+<position id="DTSIX_685_S4" animation="SIX_Leito_Chair_ReverseCowgirl_1_S4" isHidden="true"/>
+
+<position id="DTSIX_686_S1" animation="SIX_Leito_Chair_Cowgirl_2_S1" isHidden="true"/>
+<position id="DTSIX_686_S2" animation="SIX_Leito_Chair_Cowgirl_2_S2" isHidden="true"/>
+<position id="DTSIX_686_S3" animation="SIX_Leito_Chair_Cowgirl_2_S3" isHidden="true"/>
+<position id="DTSIX_686_S4" animation="SIX_Leito_Chair_Cowgirl_2_S4" isHidden="true"/>
+
+<position id="DTSIX_687_S1" animation="SIX_Leito_Chair_ReverseCowgirl_2_S1" isHidden="true"/>
+<position id="DTSIX_687_S2" animation="SIX_Leito_Chair_ReverseCowgirl_2_S2" isHidden="true"/>
+<position id="DTSIX_687_S3" animation="SIX_Leito_Chair_ReverseCowgirl_2_S3" isHidden="true"/>
+<position id="DTSIX_687_S4" animation="SIX_Leito_Chair_ReverseCowgirl_2_S4" isHidden="true"/>
+
+<position id="DTSIX_688_S1" animation="SIX_Leito_Chair_ReverseCowgirl_3_S1" isHidden="true"/>
+<position id="DTSIX_688_S2" animation="SIX_Leito_Chair_ReverseCowgirl_3_S2" isHidden="true"/>
+<position id="DTSIX_688_S3" animation="SIX_Leito_Chair_ReverseCowgirl_3_S3" isHidden="true"/>
+<position id="DTSIX_688_S4" animation="SIX_Leito_Chair_ReverseCowgirl_3_S4" isHidden="true"/>
+
 
 
 <!-- **************** Supermutant!! ************************ -->
@@ -112,3 +149,17 @@
 <position id="DTSIXSM_661_S1" animation="SIX_Leito_SuperMutant_StandingDoggy" isHidden="true"/>
 <position id="DTSIXSM_662_S1" animation="SIX_Leito_SuperMutant_StandingSideways" isHidden="true"/>
 <position id="DTSIXSM_663_S1" animation="SIX_Leito_SuperMutant_ReverseCarry" isHidden="true"/>
+
+<!-- added from Leito's 2.1 for Sleep Intimate v2.72 -->
+
+<position id="DTSIXSM_696_S1" animation="SIX_Leito_SuperMutant_Chair_Cowgirl_1_S1" isHidden="true"/>
+<position id="DTSIXSM_696_S2" animation="SIX_Leito_SuperMutant_Chair_Cowgirl_1_S2" isHidden="true"/>
+<position id="DTSIXSM_696_S3" animation="SIX_Leito_SuperMutant_Chair_Cowgirl_1_S3" isHidden="true"/>
+<position id="DTSIXSM_696_S4" animation="SIX_Leito_SuperMutant_Chair_Cowgirl_1_S4" isHidden="true"/>
+
+<position id="DTSIXSM_697_S1" animation="SIX_Leito_SuperMutant_Chair_ReverseCowgirl_1_S1" isHidden="true"/>
+<position id="DTSIXSM_697_S2" animation="SIX_Leito_SuperMutant_Chair_ReverseCowgirl_1_S2" isHidden="true"/>
+<position id="DTSIXSM_697_S3" animation="SIX_Leito_SuperMutant_Chair_ReverseCowgirl_1_S3" isHidden="true"/>
+<position id="DTSIXSM_697_S4" animation="SIX_Leito_SuperMutant_Chair_ReverseCowgirl_1_S4" isHidden="true"/>
+<position id="DTSIXSM_697_S5" animation="SIX_Leito_SuperMutant_Chair_ReverseCowgirl_1_S5" isHidden="true"/>
+<position id="DTSIXSM_697_S6" animation="SIX_Leito_SuperMutant_Chair_ReverseCowgirl_1_S6" isHidden="true"/>

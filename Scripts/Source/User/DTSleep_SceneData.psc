@@ -42,6 +42,7 @@ bool property FemaleRaceHasTail = false auto conditional hidden
 float property WaitSecs = 11.2 auto conditional hidden
 bool property PreferStandOnly = false auto conditional hidden
 bool property CompanionInPowerArmor = false auto conditional hidden
+{ reserved for Danse in Power Armor }
 int property PlayerRoleTranslated = 0 auto conditional hidden
 int property MaleBodySwapEnabled = 1 auto conditional hidden
 int property RaceRestricted = 0 auto conditional hidden						; v2.60 embrace only

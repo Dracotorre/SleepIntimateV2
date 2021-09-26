@@ -90,6 +90,7 @@ FormList property DTSleep_PilloryList auto const
 FormList property DTSleep_TortureDList auto const
 FormList property DTSleep_IntimateBenchList auto const
 FormList property DTSleep_IntimateBenchAdjList auto const
+{ bench with short backrest }
 FormList property DTSleep_IntimateKitchenSeatList auto const
 FormList property DTSleep_IntimateCouchList auto const
 FormList property DTSleep_IntimateCouchFedList auto const
@@ -2108,29 +2109,6 @@ Function CheckCompatibility()
 					DTSleep_ActivPAStation.SetValue(-1.0)
 				endIf
 				
-				; check sex chair-mod active - only 1 to check (TODO: Atomic Lust has a single scene -- consider for future if add more)
-				if ((DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive)
-					if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.26)
-						DTSleep_ActivFlagpole.SetValue(2.0)
-						DTSleep_ActivChairs.SetValue(4.0)
-					elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
-						DTSleep_ActivFlagpole.SetValue(2.0)
-						DTSleep_ActivChairs.SetValue(3.0)
-					elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.10)
-						DTSleep_ActivFlagpole.SetValue(2.0)
-						DTSleep_ActivChairs.SetValue(2.0)
-					else
-						DTSleep_ActivFlagpole.SetValue(-1.0)
-						DTSleep_ActivChairs.SetValue(2.0)
-					endIf
-				else
-					DTSleep_ActivChairs.SetValue(-1.0)
-					DTSleep_ActivFlagpole.SetValue(-1.0)
-					if (SleepQuestScript.DTSleep_SettingChairsEnabled.GetValueInt() >= 2)
-						SleepQuestScript.DTSleep_SettingChairsEnabled.SetValue(1.0)
-					endIf
-				endIf
-				
 				; Mutated Lust
 				if (Game.IsPluginInstalled("Mutated Lust.esp"))
 					(DTSConditionals as DTSleep_Conditionals).IsMutatedLustActive = true
@@ -2178,6 +2156,7 @@ Function CheckCompatibility()
 						RevertLeitoLists()
 						(DTSConditionals as DTSleep_Conditionals).IsLeitoActive = false	; reset
 						DTSleep_IsLeitoActive.SetValue((0.0 - patchVal))
+						(DTSConditionals as DTSleep_Conditionals).LeitoAnimVers = -1.0
 						patchVal = -3.0
 					endIf
 				elseIf (patchVal <= -3.0)
@@ -2191,6 +2170,7 @@ Function CheckCompatibility()
 					if (leitoForm == None)
 						Debug.Trace(myScriptName + " FO4 animations by Leito v2 plugin has been removed ")
 						(DTSConditionals as DTSleep_Conditionals).IsLeitoAAFActive = false
+						(DTSConditionals as DTSleep_Conditionals).LeitoAnimVers = -2.0
 						if (patchVal < 3 && sixVal < 4)
 							RevertLeitoLists()				;v2.16 - force revert and set patchVal
 							patchVal = -1.0
@@ -2222,6 +2202,16 @@ Function CheckCompatibility()
 						RevertLeitoLists()
 						LoadLeitoAnimForms(fo4LeitoPluginName)
 						LoadLeitoCreatureAnimForms(fo4LeitoPluginName)
+					endIf
+					
+					if (patchVal != 2.1)
+						; check for chair animatinos -- v2.73
+						leitoForm = Game.GetFormFromFile(0x0800CEE4, fo4LeitoPluginName)
+						if (leitoForm != None)
+							Debug.Trace(myScriptName + " found Leito's FO4 Animations v2.1")
+							DTSleep_IsLeitoActive.SetValue(2.1)
+							(DTSConditionals as DTSleep_Conditionals).LeitoAnimVers = 2.10
+						endIf
 					endIf
 				endIf
 				
@@ -2262,7 +2252,7 @@ Function CheckCompatibility()
 				
 					elseIf (leitoForm != None)
 						(DTSConditionals as DTSleep_Conditionals).IsLeitoActive = true
-						
+						(DTSConditionals as DTSleep_Conditionals).LeitoAnimVers = -1.0
 						DTSleep_IsLeitoActive.SetValue(2.0)  ; best-fit and dog -- v1.44
 						
 						RevertLeitoLists()
@@ -2270,6 +2260,7 @@ Function CheckCompatibility()
 						LoadLeitoCreatureAnimForms(fo4LeitoPluginName)
 					else
 						(DTSConditionals as DTSleep_Conditionals).IsLeitoActive = false
+						(DTSConditionals as DTSleep_Conditionals).LeitoAnimVers = -1.0
 					endIf
 				endIf
 				
@@ -2348,6 +2339,36 @@ Function CheckCompatibility()
 					endIf
 					
 				endIf
+				
+				; ------------------------chair animations check ------------------------------------------------
+				;
+				; v2.73 moved this block down to here after we checked all animation packs
+				; check sex chair-mod active (Atomic Lust just 1 animation--only include with other packs)
+				if ((DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive)
+					if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.26)
+						DTSleep_ActivFlagpole.SetValue(2.0)
+						DTSleep_ActivChairs.SetValue(4.0)
+					elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
+						DTSleep_ActivFlagpole.SetValue(2.0)
+						DTSleep_ActivChairs.SetValue(3.0)
+					elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.10)
+						DTSleep_ActivFlagpole.SetValue(2.0)
+						DTSleep_ActivChairs.SetValue(2.0)
+					else
+						DTSleep_ActivFlagpole.SetValue(-1.0)
+						DTSleep_ActivChairs.SetValue(2.0)
+					endIf
+				elseIf ((DTSConditionals as DTSleep_Conditionals).LeitoAnimVers >= 2.1)				; v2.73 allow only having Leito chairs
+					DTSleep_ActivFlagpole.SetValue(-1.0)
+					DTSleep_ActivChairs.SetValue(1.60)		; set to more restrictive list of seats for perk to mark as Relax+
+				else
+					DTSleep_ActivChairs.SetValue(-1.0)
+					DTSleep_ActivFlagpole.SetValue(-1.0)
+					if (SleepQuestScript.DTSleep_SettingChairsEnabled.GetValueInt() >= 2)
+						SleepQuestScript.DTSleep_SettingChairsEnabled.SetValue(1.0)
+					endIf
+				endIf
+				; ---------------------------------------------------------------------
 				
 				ValidateLeitoSettings()
 				

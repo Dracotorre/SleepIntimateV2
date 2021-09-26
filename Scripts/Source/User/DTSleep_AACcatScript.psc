@@ -37,6 +37,8 @@ Struct DTAACSceneStageStruct
 	int StageNum = 0					; number of stage in sequence (1+)
 	string PositionID = ""				; AAF position ID for XML
 	string PositionOrigID = ""			; AAF original position ID for pack
+	float MorphAngleA = 0.0				; how much to morph in ArmorNudeAGun direction
+	float MorphAngleB = 0.0
 EndStruct
 
 ; ***************** Functions ************************** ;
@@ -74,7 +76,10 @@ int Function GetStageCountForSequenceID(int seqID, int longScene = 0, int other 
 		elseIf (seqID >= 546 && seqID <= 547)
 			result = 6
 		endIf
-		
+	elseIf (seqID >= 682 && seqID < 700)
+		if (seqID == 697)
+			result = 6
+		endIf
 	elseIf (seqID >= 849 && seqID < 900)
 		if (seqID >= 851 && longScene > 0)
 			return 9
@@ -2287,12 +2292,13 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 				elseIf (sNum == 4)
 					ssStruct.FAnimFormID = 0x05014942
 					ssStruct.MAnimFormID = 0x05014943
+					ssStruct.ArmorNudeAGun = 0
 					ssStruct.PositionID = "DTSIXSM_763_S4"
 					ssStruct.PositionOrigID = "FSM-Floor01-05Wheelbarrow"
 				elseIf (sNum == 5)
 					ssStruct.FAnimFormID = 0x05014944
 					ssStruct.MAnimFormID = 0x05014945
-					ssStruct.ArmorNudeAGun = 0
+					ssStruct.ArmorNudeAGun = 2
 					ssStruct.PositionID = "DTSIXSM_763_S5"
 					ssStruct.PositionOrigID = "FSM-Floor01-06Wheelbarrow"
 				elseIf (sNum == 6)										;1.2.2
@@ -2491,28 +2497,32 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 						ssStruct.FAnimFormID = 0x0502F5DE
 						ssStruct.MAnimFormID = 0x0502F5DF
 						ssStruct.ArmorNudeAGun = 1
+						ssStruct.MorphAngleA = 1.3
 						ssStruct.PositionID = "DTSIXSM_768_S1"
 						ssStruct.PositionOrigID = "SC-FM-SuperMutant-SMBed02-01Tease"
 					elseIf (sNum == 2)
-						ssStruct.FAnimFormID = 0x0500C7A2
+						ssStruct.FAnimFormID = 0x0500C7A2			; bends over during animation?
 						ssStruct.MAnimFormID = 0x0500C7A3
 						ssStruct.ArmorNudeAGun = 1
+						ssStruct.MorphAngleA = 0.9
 						ssStruct.PositionID = "DTSIXSM_768_S2"
 						ssStruct.PositionOrigID = "FSM-SMBed02-03Doggy"
 					elseIf (sNum == 3)
 						ssStruct.FAnimFormID = 0x050139F9
 						ssStruct.MAnimFormID = 0x050139FA
+						ssStruct.ArmorNudeAGun = 0						
 						ssStruct.PositionID = "DTSIXSM_768_S3"
 						ssStruct.PositionOrigID = "FSM-SMBed02-04Doggy"
 					elseIf (sNum == 4)
 						ssStruct.FAnimFormID = 0x050139FB
 						ssStruct.MAnimFormID = 0x050139FC
+						ssStruct.ArmorNudeAGun = 0						
 						ssStruct.PositionID = "DTSIXSM_768_S4"
 						ssStruct.PositionOrigID = "FSM-SMBed02-05Doggy"
 					elseIf (sNum >= 5)
 						ssStruct.FAnimFormID = 0x050139FD
 						ssStruct.MAnimFormID = 0x050139FE
-						ssStruct.ArmorNudeAGun = 2
+						ssStruct.ArmorNudeAGun = 0					; was down?? v2.73
 						ssStruct.PositionID = "DTSIXSM_768_S5"
 						ssStruct.PositionOrigID = "FSM-SMBed02-06Doggy"
 					endIf
@@ -2548,6 +2558,7 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 			elseIf (seqID == 769)
 				ssStruct.FAnimFormID = 0x0502A158
 				ssStruct.MAnimFormID = 0x0502A159
+				ssStruct.ArmorNudeAGun = 1						; added v2.73
 				ssStruct.StageTime = 24.0
 				ssStruct.PositionID = "DTSIXSM_769_S1"
 				ssStruct.PositionOrigID = "SC-FM-SuperMutant-Standing04-01Tease"
@@ -3107,6 +3118,793 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 			ssStruct.PositionOrigID = "DTSIXM_799_S1"
 		endIf
 		
+	; Leito's v2.1  -- v2.73
+	elseIf (seqID >= 600 && seqID < 700)		
+		ssStruct.PluginName = "FO4_AnimationsByLeito.esp"
+		ssStruct.ArmorNudeAGun = 0
+		
+		if (seqID == 600)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x01004C8D			; A1 is female						
+				ssStruct.MAnimFormID = 0x01004C8E			; A2 is male
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 0.7
+				ssStruct.PositionID = "DTSIX_601_S1"
+				ssStruct.PositionOrigID = "LeitoMissionary_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x01002682								
+				ssStruct.MAnimFormID = 0x01002685			
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 0.7
+				ssStruct.PositionID = "DTSIX_601_S2"
+				ssStruct.PositionOrigID = "LeitoMissionary_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x01002683								
+				ssStruct.MAnimFormID = 0x01002686			
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 0.7
+				ssStruct.PositionID = "DTSIX_601_S3"
+				ssStruct.PositionOrigID = "LeitoMissionary_S3"
+			else
+				ssStruct.FAnimFormID = 0x01002684								
+				ssStruct.MAnimFormID = 0x01002687			
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 0.7
+				ssStruct.PositionID = "DTSIX_601_S4"
+				ssStruct.PositionOrigID = "LeitoMissionary_S4"
+			endIf
+		elseIf (seqID == 601)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x01002E2D									
+				ssStruct.MAnimFormID = 0x01002E31			
+				ssStruct.PositionID = "DTSIX_601_S1"
+				ssStruct.PositionOrigID = "LeitoMissionary_2_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x01002682								
+				ssStruct.MAnimFormID = 0x01002685			
+				ssStruct.PositionID = "DTSIX_601_S2"
+				ssStruct.PositionOrigID = "LeitoMissionary_2_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x01002683								
+				ssStruct.MAnimFormID = 0x01002686			
+				ssStruct.PositionID = "DTSIX_601_S3"
+				ssStruct.PositionOrigID = "LeitoMissionary_2_S3"
+			else
+				ssStruct.FAnimFormID = 0x01002684								
+				ssStruct.MAnimFormID = 0x01002687			
+				ssStruct.PositionID = "DTSIX_601_S4"
+				ssStruct.PositionOrigID = "LeitoMissionary_2_S4"
+			endIf
+		elseIf (seqID == 602)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x01001739									
+				ssStruct.MAnimFormID = 0x01001738			
+				ssStruct.PositionID = "DTSIX_602_S1"
+				ssStruct.PositionOrigID = "Leito_Doggy_1_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x01001EDE								
+				ssStruct.MAnimFormID = 0x01001EE1			
+				ssStruct.PositionID = "DTSIX_602_S2"
+				ssStruct.PositionOrigID = "Leito_Doggy_1_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x01001EDF								
+				ssStruct.MAnimFormID = 0x01001EE2			
+				ssStruct.PositionID = "DTSIX_602_S3"
+				ssStruct.PositionOrigID = "Leito_Doggy_1_S3"
+			else
+				ssStruct.FAnimFormID = 0x01001EE0								
+				ssStruct.MAnimFormID = 0x01001EE3			
+				ssStruct.PositionID = "DTSIX_602_S4"
+				ssStruct.PositionOrigID = "Leito_Doggy_1_S4"
+			endIf
+		elseIf (seqID == 603)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x01002E35									
+				ssStruct.MAnimFormID = 0x01002E39			
+				ssStruct.PositionID = "DTSIX_603_S1"
+				ssStruct.PositionOrigID = "Leito_Doggy_2_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x01002E36								
+				ssStruct.MAnimFormID = 0x01002E3A			
+				ssStruct.PositionID = "DTSIX_603_S2"
+				ssStruct.PositionOrigID = "Leito_Doggy_2_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x01002E37								
+				ssStruct.MAnimFormID = 0x01002E3B			
+				ssStruct.PositionID = "DTSIX_603_S3"
+				ssStruct.PositionOrigID = "Leito_Doggy_2_S3"
+			else
+				ssStruct.FAnimFormID = 0x01002E38								
+				ssStruct.MAnimFormID = 0x01002E3C			
+				ssStruct.PositionID = "DTSIX_603_S4"
+				ssStruct.PositionOrigID = "Leito_Doggy_2_S4"
+			endIf
+		elseIf (seqID == 604)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x0100173F									
+				ssStruct.MAnimFormID = 0x01001740			
+				ssStruct.PositionID = "DTSIX_604_S1"
+				ssStruct.PositionOrigID = "LeitoCowgirl_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x01002E27								
+				ssStruct.MAnimFormID = 0x01002E2A
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 0.6				
+				ssStruct.PositionID = "DTSIX_604_S2"
+				ssStruct.PositionOrigID = "LeitoCowgirl_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x01002E28								
+				ssStruct.MAnimFormID = 0x01002E2B
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 1.5				; increased to avoid sticking through backside when female leans down v2.73
+				ssStruct.PositionID = "DTSIX_604_S3"
+				ssStruct.PositionOrigID = "LeitoCowgirl_S3"
+			else
+				ssStruct.FAnimFormID = 0x01002E29								
+				ssStruct.MAnimFormID = 0x01002E2C
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 1.0
+				ssStruct.PositionID = "DTSIX_604_S4"
+				ssStruct.PositionOrigID = "LeitoCowgirl_S4"
+			endIf
+		elseIf (seqID == 605)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x01005C34									
+				ssStruct.MAnimFormID = 0x01005C38
+				ssStruct.ArmorNudeAGun = 2							; down a bit v2.73
+				ssStruct.MorphAngleA = 0.12				
+				ssStruct.PositionID = "DTSIX_605_S1"
+				ssStruct.PositionOrigID = "Leito_Cowgirl_2_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x01005C35								
+				ssStruct.MAnimFormID = 0x01005C39				
+				ssStruct.PositionID = "DTSIX_605_S2"
+				ssStruct.PositionOrigID = "Leito_Cowgirl_2_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x01005C36								
+				ssStruct.MAnimFormID = 0x01005C3A
+				ssStruct.PositionID = "DTSIX_605_S3"
+				ssStruct.PositionOrigID = "Leito_Cowgirl_2_S3"
+			else
+				ssStruct.FAnimFormID = 0x01005C37								
+				ssStruct.MAnimFormID = 0x01005C3B
+				ssStruct.PositionID = "DTSIX_605_S4"
+				ssStruct.PositionOrigID = "Leito_Cowgirl_2_S4"
+			endIf
+		elseIf (seqID == 606)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x010063DF									
+				ssStruct.MAnimFormID = 0x010063E3
+				ssStruct.ArmorNudeAGun = 2
+				ssStruct.MorphAngleA = 1.0
+				ssStruct.PositionID = "DTSIX_606_S1"
+				ssStruct.PositionOrigID = "Leito_Cowgirl_3_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x010063E0								
+				ssStruct.MAnimFormID = 0x010063E4
+				ssStruct.ArmorNudeAGun = 2
+				ssStruct.MorphAngleA = 1.3							; increased v2.73
+				ssStruct.PositionID = "DTSIX_606_S2"
+				ssStruct.PositionOrigID = "Leito_Cowgirl_3_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x010063E1								
+				ssStruct.MAnimFormID = 0x010063E5
+				ssStruct.ArmorNudeAGun = 2
+				ssStruct.MorphAngleA = 1.0
+				ssStruct.PositionID = "DTSIX_606_S3"
+				ssStruct.PositionOrigID = "Leito_Cowgirl_3_S3"
+			else
+				ssStruct.FAnimFormID = 0x010063E2								
+				ssStruct.MAnimFormID = 0x010063E6
+				ssStruct.ArmorNudeAGun = 2
+				ssStruct.MorphAngleA = 1.4							; increased v2.73
+				ssStruct.PositionID = "DTSIX_606_S4"
+				ssStruct.PositionOrigID = "Leito_Cowgirl_3_S4"
+			endIf
+		elseIf (seqID == 607)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x0100A899									
+				ssStruct.MAnimFormID = 0x0100A89D
+				ssStruct.PositionID = "DTSIX_607_S1"
+				ssStruct.PositionOrigID = "Leito_Cowgirl_4_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x0100A89A								
+				ssStruct.MAnimFormID = 0x0100A89E
+				ssStruct.PositionID = "DTSIX_607_S2"
+				ssStruct.PositionOrigID = "Leito_Cowgirl_4_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x0100A89B								
+				ssStruct.MAnimFormID = 0x0100A89F
+				ssStruct.PositionID = "DTSIX_607_S3"
+				ssStruct.PositionOrigID = "Leito_Cowgirl_4_S3"
+			else
+				ssStruct.FAnimFormID = 0x0100A89C								
+				ssStruct.MAnimFormID = 0x0100A8A0
+				ssStruct.PositionID = "DTSIX_607_S4"
+				ssStruct.PositionOrigID = "Leito_Cowgirl_4_S4"
+			endIf
+		elseIf (seqID == 608)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x01006B82									
+				ssStruct.MAnimFormID = 0x01006B86
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 1.30									; increased v2.73
+				ssStruct.PositionID = "DTSIX_608_S1"
+				ssStruct.PositionOrigID = "Leito_ReverseCowgirl_1_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x01006B83								
+				ssStruct.MAnimFormID = 0x01006B87
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 1.25									; increased v2.73
+				ssStruct.PositionID = "DTSIX_608_S2"
+				ssStruct.PositionOrigID = "Leito_ReverseCowgirl_1_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x01006B84								
+				ssStruct.MAnimFormID = 0x01006B88
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 1.25									; increased v2.73
+				ssStruct.PositionID = "DTSIX_608_S3"
+				ssStruct.PositionOrigID = "Leito_ReverseCowgirl_1_S3"
+			else
+				ssStruct.FAnimFormID = 0x01006B85								
+				ssStruct.MAnimFormID = 0x01006B89
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 1.25									; increased v2.73
+				ssStruct.PositionID = "DTSIX_608_S4"
+				ssStruct.PositionOrigID = "Leito_ReverseCowgirl_1_S4"
+			endIf
+		elseIf (seqID == 609)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x0100732E									
+				ssStruct.MAnimFormID = 0x01007332
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 1.4
+				ssStruct.PositionID = "DTSIX_609_S1"
+				ssStruct.PositionOrigID = "Leito_ReverseCowgirl_2_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x0100732F								
+				ssStruct.MAnimFormID = 0x01007333
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 1.4
+				ssStruct.PositionID = "DTSIX_609_S2"
+				ssStruct.PositionOrigID = "Leito_ReverseCowgirl_2_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x01007330								
+				ssStruct.MAnimFormID = 0x01007334
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 2.0								; originally 1.4---needs to go above maximum value
+				ssStruct.PositionID = "DTSIX_609_S3"
+				ssStruct.PositionOrigID = "Leito_ReverseCowgirl_2_S3"
+			else
+				ssStruct.FAnimFormID = 0x01007331								
+				ssStruct.MAnimFormID = 0x01007335
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 2.0
+				ssStruct.PositionID = "DTSIX_609_S4"
+				ssStruct.PositionOrigID = "Leito_ReverseCowgirl_2_S4"
+			endIf
+		elseIf (seqID == 610)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x01004CEB									
+				ssStruct.MAnimFormID = 0x01004CEF
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 2.2
+				ssStruct.PositionID = "DTSIX_610_S1"
+				ssStruct.PositionOrigID = "Leito_Spoon_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x01004CEC								
+				ssStruct.MAnimFormID = 0x01004CF0
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 2.2
+				ssStruct.PositionID = "DTSIX_610_S2"
+				ssStruct.PositionOrigID = "Leito_Spoon_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x01004CED								
+				ssStruct.MAnimFormID = 0x01004CF1
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 1.8
+				ssStruct.PositionID = "DTSIX_610_S3"
+				ssStruct.PositionOrigID = "Leito_Spoon_S3"
+			else
+				ssStruct.FAnimFormID = 0x01004CEE								
+				ssStruct.MAnimFormID = 0x01004CF2
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 1.8
+				ssStruct.PositionID = "DTSIX_610_S4"
+				ssStruct.PositionOrigID = "Leito_Spoon_S4"
+			endIf
+		elseIf (seqID == 650)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x01004CB2									
+				ssStruct.MAnimFormID = 0x01004CB6
+				ssStruct.ArmorNudeAGun = 2					;  on no-morph setting, PlayAAC will switch to 0 for minor MorphAngleA
+				ssStruct.MorphAngleA = 0.2
+				ssStruct.PositionID = "DTSIX_650_S1"
+				ssStruct.PositionOrigID = "Leito_Blowjob_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x01004CB3								
+				ssStruct.MAnimFormID = 0x01004CB7
+				ssStruct.ArmorNudeAGun = 2
+				ssStruct.MorphAngleA = 0.2
+				ssStruct.PositionID = "DTSIX_650_S2"
+				ssStruct.PositionOrigID = "Leito_Blowjob_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x01004CB4								
+				ssStruct.MAnimFormID = 0x01004CB8
+				ssStruct.ArmorNudeAGun = 2
+				ssStruct.MorphAngleA = 0.2
+				ssStruct.PositionID = "DTSIX_650_S3"
+				ssStruct.PositionOrigID = "Leito_Blowjob_S3"
+			else
+				ssStruct.FAnimFormID = 0x01004CB5								
+				ssStruct.MAnimFormID = 0x01004CB9
+				ssStruct.ArmorNudeAGun = 2
+				ssStruct.MorphAngleA = 0.2
+				ssStruct.PositionID = "DTSIX_650_S4"
+				ssStruct.PositionOrigID = "Leito_Blowjob_S4"
+			endIf
+		elseIf (seqID == 651 || (seqID == 653 && stageNumber == 1))
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x01007AD1									
+				ssStruct.MAnimFormID = 0x01007AD5
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 2.0
+				ssStruct.PositionID = "DTSIX_651_S1"
+				ssStruct.PositionOrigID = "Leito_StandingDoggy_1_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x01007AD2								
+				ssStruct.MAnimFormID = 0x01007AD6
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 2.0
+				ssStruct.PositionID = "DTSIX_651_S2"
+				ssStruct.PositionOrigID = "Leito_StandingDoggy_1_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x01007AD3								
+				ssStruct.MAnimFormID = 0x01007AD7
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 1.5
+				ssStruct.PositionID = "DTSIX_651_S3"
+				ssStruct.PositionOrigID = "Leito_StandingDoggy_1_S3"
+			else
+				ssStruct.FAnimFormID = 0x01007AD4								
+				ssStruct.MAnimFormID = 0x01007AD8
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 1.5
+				ssStruct.PositionID = "DTSIX_651_S4"
+				ssStruct.PositionOrigID = "Leito_StandingDoggy_1_S4"
+			endIf
+		elseIf (seqID >= 652 && seqID <= 653)
+			int sNum = stageNumber
+			
+			if (sNum == 1)
+				ssStruct.FAnimFormID = 0x01007AD9									
+				ssStruct.MAnimFormID = 0x01007ADD		
+				ssStruct.PositionID = "DTSIX_652_S1"
+				ssStruct.PositionOrigID = "Leito_StandingDoggy_2_S1"
+			elseIf (sNum == 2)
+				ssStruct.FAnimFormID = 0x01007ADA								
+				ssStruct.MAnimFormID = 0x01007ADE
+				ssStruct.PositionID = "DTSIX_652_S2"
+				ssStruct.PositionOrigID = "Leito_StandingDoggy_2_S2"
+			elseIf (sNum == 3)
+				ssStruct.FAnimFormID = 0x01007ADB								
+				ssStruct.MAnimFormID = 0x01007ADF
+				ssStruct.PositionID = "DTSIX_652_S3"
+				ssStruct.PositionOrigID = "Leito_StandingDoggy_2_S3"
+			else
+				ssStruct.FAnimFormID = 0x01007ADC								
+				ssStruct.MAnimFormID = 0x01007AE0
+				ssStruct.PositionID = "DTSIX_652_S4"
+				ssStruct.PositionOrigID = "Leito_StandingDoggy_2_S4"
+			endIf
+		elseIf (seqID == 654)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x01004503									
+				ssStruct.MAnimFormID = 0x01004507
+				ssStruct.ArmorNudeAGun = 1			
+				ssStruct.MorphAngleA = 0.7
+				ssStruct.PositionID = "DTSIX_654_S1"
+				ssStruct.PositionOrigID = "Leito_Carry_1_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x01004504								
+				ssStruct.MAnimFormID = 0x01004508
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 0.7
+				ssStruct.PositionID = "DTSIX_654_S2"
+				ssStruct.PositionOrigID = "Leito_Carry_1_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x01004505								
+				ssStruct.MAnimFormID = 0x01004509
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 0.7
+				ssStruct.PositionID = "DTSIX_654_S3"
+				ssStruct.PositionOrigID = "Leito_Carry_1_S3"
+			else
+				ssStruct.FAnimFormID = 0x01004506								
+				ssStruct.MAnimFormID = 0x0100450A
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 0.7
+				ssStruct.PositionID = "DTSIX_654_S4"
+				ssStruct.PositionOrigID = "Leito_Carry_1_S4"
+			endIf
+		elseIf (seqID == 655)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x0100A891									
+				ssStruct.MAnimFormID = 0x0100A895
+				ssStruct.ArmorNudeAGun = 1			
+				ssStruct.MorphAngleA = 0.7
+				ssStruct.PositionID = "DTSIX_655_S1"
+				ssStruct.PositionOrigID = "Leito_Carry_2_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x0100A892								
+				ssStruct.MAnimFormID = 0x0100A896
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 0.7
+				ssStruct.PositionID = "DTSIX_655_S2"
+				ssStruct.PositionOrigID = "Leito_Carry_2_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x0100A893								
+				ssStruct.MAnimFormID = 0x0100A897
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 0.7
+				ssStruct.PositionID = "DTSIX_655_S3"
+				ssStruct.PositionOrigID = "Leito_Carry_2_S3"
+			else
+				ssStruct.FAnimFormID = 0x0100A894								
+				ssStruct.MAnimFormID = 0x0100A898
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 0.7
+				ssStruct.PositionID = "DTSIX_655_S4"
+				ssStruct.PositionOrigID = "Leito_Carry_2_S4"
+			endIf
+		elseIf (seqID >= 660 && seqID < 670)								; super mutant mixes original single-stage scenes
+			int sNum = stageNumber
+			if (seqID == 660)
+				if (stageNumber == 2)
+					sNum = 4
+				elseIf (stageNumber == 3)
+					sNum = 2
+				endIf
+			elseIf (seqID == 661)
+				if (stageNumber == 1 || stageNumber == 3)
+					sNum = 3
+				else
+					sNum = 4
+				endIf
+			elseIf (seqID == 662)
+				if (stageNumber == 1 || stageNumber == 3)
+					sNum = 4
+				else
+					sNum = 3
+				endIf
+			elseIf (seqID >= 663)
+				if (stageNumber <= 2)
+					sNum = 2
+				endIf
+			endIf
+			
+			if (sNum == 1)
+				ssStruct.FAnimFormID = 0x01001EDC								
+				ssStruct.MAnimFormID = 0x01001EDD
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 1.0
+				ssStruct.PositionID = "DTSIXSM_660_S1"
+				ssStruct.PositionOrigID = "Leito_SuperMutant_Carry"
+			elseIf (sNum == 2)
+				ssStruct.FAnimFormID = 0x01004C8F								
+				ssStruct.MAnimFormID = 0x01004C8C
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 0.9
+				ssStruct.PositionID = "DTSIXSM_663_S1"
+				ssStruct.PositionOrigID = "Leito_SuperMutant_ReverseCarry"
+			elseIf (sNum == 3)
+				ssStruct.FAnimFormID = 0x0100542B								
+				ssStruct.MAnimFormID = 0x0100542E
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 0.12
+				ssStruct.PositionID = "DTSIXSM_661_S1"
+				ssStruct.PositionOrigID = "Leito_SuperMutant_StandingDoggy"
+			else
+				ssStruct.FAnimFormID = 0x0100542C								
+				ssStruct.MAnimFormID = 0x0100542F
+				ssStruct.ArmorNudeAGun = 2
+				ssStruct.MorphAngleA = 0.16
+				ssStruct.PositionID = "DTSIXSM_662_S1"
+				ssStruct.PositionOrigID = "Leito_SuperMutant_StandingSideways"
+			endIf
+		; new Leito 2.1 chair scenes
+		elseIf (seqID == 682)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x060035F4			; A1 is female						
+				ssStruct.MAnimFormID = 0x050035F8			; A2 is male
+				ssStruct.PositionID = "DTSIX_682_S1"
+				ssStruct.PositionOrigID = "Leito_Chair_Missionary_1_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x060035F5								
+				ssStruct.MAnimFormID = 0x050035F9
+				;ssStruct.ArmorNudeAGun = 2					; from XML at 0.2, but 0 works well, too
+				ssStruct.PositionID = "DTSIX_682_S2"
+				ssStruct.PositionOrigID = "Leito_Chair_Missionary_1_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x060035F6								
+				ssStruct.MAnimFormID = 0x050035FA
+				ssStruct.ArmorNudeAGun = 0				
+				ssStruct.PositionID = "DTSIX_682_S3"
+				ssStruct.PositionOrigID = "Leito_Chair_Missionary_1_S3"
+			else
+				ssStruct.FAnimFormID = 0x060035F7								
+				ssStruct.MAnimFormID = 0x050035FB
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 0.2
+				ssStruct.PositionID = "DTSIX_682_S4"
+				ssStruct.PositionOrigID = "Leito_Chair_Missionary_1_S4"
+			endIf
+		elseIf (seqID == 683)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x06003D9D								
+				ssStruct.MAnimFormID = 0x05003DA1			
+				ssStruct.PositionID = "DTSIX_683_S1"
+				ssStruct.PositionOrigID = "Leito_Chair_Doggy_1_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x06003D9E								
+				ssStruct.MAnimFormID = 0x05003DA2
+				;ssStruct.ArmorNudeAGun = 1						; from XML at 0.3, but forward works, too
+				ssStruct.PositionID = "DTSIX_683_S2"
+				ssStruct.PositionOrigID = "Leito_Chair_Doggy_1_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x06003D9F								
+				ssStruct.MAnimFormID = 0x05003DA3			
+				ssStruct.PositionID = "DTSIX_683_S3"
+				ssStruct.PositionOrigID = "Leito_Chair_Doggy_1_S3"
+			else
+				ssStruct.FAnimFormID = 0x06003DA0								
+				ssStruct.MAnimFormID = 0x05003DA4			
+				ssStruct.PositionID = "DTSIX_683_S4"
+				ssStruct.PositionOrigID = "Leito_Chair_Doggy_1_S4"
+			endIf
+		elseIf (seqID == 684)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x0600B042								
+				ssStruct.MAnimFormID = 0x0500B043			
+				ssStruct.PositionID = "DTSIX_684_S1"
+				ssStruct.PositionOrigID = "Leito_Chair_Cowgirl_1_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x0600B7F0								
+				ssStruct.MAnimFormID = 0x0500B7F3			
+				ssStruct.PositionID = "DTSIX_684_S2"
+				ssStruct.PositionOrigID = "Leito_Chair_Cowgirl_1_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x0600B7F1								
+				ssStruct.MAnimFormID = 0x0500B7F4
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 2.0
+				ssStruct.PositionID = "DTSIX_684_S3"
+				ssStruct.PositionOrigID = "Leito_Chair_Cowgirl_1_S3"
+			else
+				ssStruct.FAnimFormID = 0x0600B7F2								
+				ssStruct.MAnimFormID = 0x0500B7F5
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 2.0
+				ssStruct.PositionID = "DTSIX_684_S4"
+				ssStruct.PositionOrigID = "Leito_Chair_Cowgirl_1_S4"
+			endIf
+		elseIf (seqID == 685)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x0600BF92							
+				ssStruct.MAnimFormID = 0x0500BF96
+				ssStruct.ArmorNudeAGun = 1					
+				ssStruct.MorphAngleA = 0.5
+				ssStruct.PositionID = "DTSIX_685_S1"
+				ssStruct.PositionOrigID = "Leito_Chair_ReverseCowgirl_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x0600BF93						
+				ssStruct.MAnimFormID = 0x0500BF97
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 0.1
+				ssStruct.PositionID = "DTSIX_685_S2"
+				ssStruct.PositionOrigID = "Leito_Chair_ReverseCowgirl_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x0600BF94						
+				ssStruct.MAnimFormID = 0x0500BF98
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 0.1
+				ssStruct.PositionID = "DTSIX_685_S3"
+				ssStruct.PositionOrigID = "Leito_Chair_ReverseCowgirl_S3"
+			else
+				ssStruct.FAnimFormID = 0x0600BF95						
+				ssStruct.MAnimFormID = 0x0500BF99
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 0.1
+				ssStruct.PositionID = "DTSIX_685_S4"
+				ssStruct.PositionOrigID = "Leito_Chair_ReverseCowgirl_S4"
+			endIf
+		elseIf (seqID == 686)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x0600C733							
+				ssStruct.MAnimFormID = 0x0500C737
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 2.0
+				ssStruct.PositionID = "DTSIX_686_S1"
+				ssStruct.PositionOrigID = "Leito_Chair_Cowgirl_2_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x0600C734							
+				ssStruct.MAnimFormID = 0x0500C738
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 2.0
+				ssStruct.PositionID = "DTSIX_686_S2"
+				ssStruct.PositionOrigID = "Leito_Chair_Cowgirl_2_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x0600C735							
+				ssStruct.MAnimFormID = 0x0500C739
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 2.0
+				ssStruct.PositionID = "DTSIX_686_S3"
+				ssStruct.PositionOrigID = "Leito_Chair_Cowgirl_2_S3"
+			else
+				ssStruct.FAnimFormID = 0x0600C736							
+				ssStruct.MAnimFormID = 0x0500C73A
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 2.0
+				ssStruct.PositionID = "DTSIX_686_S4"
+				ssStruct.PositionOrigID = "Leito_Chair_Cowgirl_2_S4"
+			endIf
+		elseIf (seqID == 687)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x0600CED5							
+				ssStruct.MAnimFormID = 0x0500CED9
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 0.5
+				ssStruct.PositionID = "DTSIX_687_S1"
+				ssStruct.PositionOrigID = "Leito_Chair_ReverseCowgirl_2_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x0600CED6							
+				ssStruct.MAnimFormID = 0x0500CEDA
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 0.2
+				ssStruct.PositionID = "DTSIX_687_S2"
+				ssStruct.PositionOrigID = "Leito_Chair_ReverseCowgirl_2_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x0600CED7							
+				ssStruct.MAnimFormID = 0x0500CEDB
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 0.2
+				ssStruct.PositionID = "DTSIX_687_S3"
+				ssStruct.PositionOrigID = "Leito_Chair_ReverseCowgirl_2_S3"
+			else
+				ssStruct.FAnimFormID = 0x0600CED8							
+				ssStruct.MAnimFormID = 0x0500CEDC
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 0.2
+				ssStruct.PositionID = "DTSIX_687_S4"
+				ssStruct.PositionOrigID = "Leito_Chair_ReverseCowgirl_2_S4"
+			endIf
+		elseIf (seqID == 688)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x0600CEDD							
+				ssStruct.MAnimFormID = 0x0500CEE1
+				ssStruct.ArmorNudeAGun = 0
+				ssStruct.PositionID = "DTSIX_688_S1"
+				ssStruct.PositionOrigID = "Leito_Chair_ReverseCowgirl_3_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x0600CEDE							
+				ssStruct.MAnimFormID = 0x0500CEE2
+				ssStruct.ArmorNudeAGun = 0
+				ssStruct.PositionID = "DTSIX_688_S2"
+				ssStruct.PositionOrigID = "Leito_Chair_ReverseCowgirl_3_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x0600CEDF				
+				ssStruct.MAnimFormID = 0x0500CEE3
+				ssStruct.ArmorNudeAGun = 2
+				ssStruct.MorphAngleA = 0.25						; decrease from forward until limit of non-morph
+				ssStruct.PositionID = "DTSIX_688_S3"
+				ssStruct.PositionOrigID = "Leito_Chair_ReverseCowgirl_3_S3"
+			else
+				ssStruct.FAnimFormID = 0x0600CEE0				
+				ssStruct.MAnimFormID = 0x0500CEE4
+				ssStruct.ArmorNudeAGun = 2
+				ssStruct.MorphAngleA = 0.5
+				ssStruct.PositionID = "DTSIX_688_S4"
+				ssStruct.PositionOrigID = "Leito_Chair_ReverseCowgirl_3_S4"
+			endIf
+		elseIf (seqID == 695)									; Do not use!!  idle animations missing
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x0600640C							
+				ssStruct.MAnimFormID = 0x05006410
+				ssStruct.ArmorNudeAGun = 0
+				ssStruct.PositionID = "DTSIXSM_695_S1"
+				ssStruct.PositionOrigID = "Leito_SuperMutant_BJ_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x0600640D							
+				ssStruct.MAnimFormID = 0x05006411
+				ssStruct.ArmorNudeAGun = 0
+				ssStruct.PositionID = "DTSIXSM_695_S2"
+				ssStruct.PositionOrigID = "Leito_SuperMutant_BJ_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x0600640E				
+				ssStruct.MAnimFormID = 0x05006412
+				ssStruct.ArmorNudeAGun = 0
+				ssStruct.PositionID = "DTSIXSM_695_S3"
+				ssStruct.PositionOrigID = "Leito_SuperMutant_BJ_S3"
+			else
+				ssStruct.FAnimFormID = 0x0600640F				
+				ssStruct.MAnimFormID = 0x05006413
+				ssStruct.ArmorNudeAGun = 0
+				ssStruct.PositionID = "DTSIXSM_695_S4"
+				ssStruct.PositionOrigID = "Leito_SuperMutant_BJ_S4"
+			endIf
+		elseIf (seqID == 696)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x06002E55							
+				ssStruct.MAnimFormID = 0x05002E51
+				ssStruct.ArmorNudeAGun = 0
+				ssStruct.PositionID = "DTSIXSM_696_S1"
+				ssStruct.PositionOrigID = "Leito_SuperMutant_Chair_Cowgirl_1_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x06002E56							
+				ssStruct.MAnimFormID = 0x05002E52
+				ssStruct.ArmorNudeAGun = 0
+				ssStruct.PositionID = "DTSIXSM_696_S2"
+				ssStruct.PositionOrigID = "Leito_SuperMutant_Chair_Cowgirl_1_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x06002E57				
+				ssStruct.MAnimFormID = 0x05002E53
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 2.0
+				ssStruct.PositionID = "DTSIXSM_696_S3"
+				ssStruct.PositionOrigID = "Leito_SuperMutant_Chair_Cowgirl_1_S3"
+			else
+				ssStruct.FAnimFormID = 0x06002E58				
+				ssStruct.MAnimFormID = 0x05002E54
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 2.0
+				ssStruct.PositionID = "DTSIXSM_696_S4"
+				ssStruct.PositionOrigID = "Leito_SuperMutant_Chair_Cowgirl_1_S4"
+			endIf
+		elseIf (seqID == 697)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x0600DE2C							
+				ssStruct.MAnimFormID = 0x0500DE30
+				ssStruct.ArmorNudeAGun = 0
+				ssStruct.PositionID = "DTSIXSM_697_S1"
+				ssStruct.PositionOrigID = "Leito_SuperMutant_Chair_ReverseCowgirl_1_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x0600DE2D							
+				ssStruct.MAnimFormID = 0x0500DE31
+				ssStruct.ArmorNudeAGun = 1						
+				ssStruct.MorphAngleA = 0.35
+				ssStruct.PositionID = "DTSIXSM_697_S2"
+				ssStruct.PositionOrigID = "Leito_SuperMutant_Chair_ReverseCowgirl_1_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x0600DE2E				
+				ssStruct.MAnimFormID = 0x0500DE32
+				ssStruct.ArmorNudeAGun = 1						
+				ssStruct.MorphAngleA = 0.32
+				ssStruct.PositionID = "DTSIXSM_697_S3"
+				ssStruct.PositionOrigID = "Leito_SuperMutant_Chair_ReverseCowgirl_1_S3"
+			elseIf (stageNumber == 4)
+				ssStruct.FAnimFormID = 0x0600DE2F				
+				ssStruct.MAnimFormID = 0x0500DE33
+				ssStruct.ArmorNudeAGun = 1						
+				ssStruct.MorphAngleA = 0.3
+				ssStruct.PositionID = "DTSIXSM_697_S4"
+				ssStruct.PositionOrigID = "Leito_SuperMutant_Chair_ReverseCowgirl_1_S4"
+			elseIf (stageNumber == 5)
+				ssStruct.FAnimFormID = 0x06007B16				
+				ssStruct.MAnimFormID = 0x05007B14
+				ssStruct.ArmorNudeAGun = 1						
+				ssStruct.MorphAngleA = 0.25
+				ssStruct.PositionID = "DTSIXSM_697_S5"
+				ssStruct.PositionOrigID = "Leito_SuperMutant_Chair_ReverseCowgirl_1_S5"
+			elseIf (stageNumber == 6)
+				ssStruct.FAnimFormID = 0x06007B17				
+				ssStruct.MAnimFormID = 0x05007B15
+				ssStruct.ArmorNudeAGun = 1
+				ssStruct.MorphAngleA = 0.24
+				ssStruct.PositionID = "DTSIXSM_697_S6"
+				ssStruct.PositionOrigID = "Leito_SuperMutant_Chair_ReverseCowgirl_1_S6"
+			endIf
+		endIf
+		
 	; Atomic Lust
 	elseIf (seqID >= 500 && seqID < 560)
 		ssStruct.PluginName = "Atomic Lust.esp"
@@ -3321,12 +4119,15 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 		elseIf (seqID == 562)
 			ssStruct.FAnimFormID = 0x01000F9B
 			ssStruct.MAnimFormID = 0x01000F9C
+			ssStruct.ArmorNudeAGun = 2
+			ssStruct.MorphAngleA = 0.06								; down slightly from forward v2.73
 			ssStruct.PositionOrigID = "Supermutant Blowjob"
 			ssStruct.PositionID = "DTSIXSM_562_S1"
 		elseIf (seqID == 563)	
 			ssStruct.FAnimFormID = 0x01004C70
 			ssStruct.MAnimFormID = 0x01004C71
 			ssStruct.ArmorNudeAGun = 1
+			ssStruct.MorphAngleA = 0.96								; down slightly from up v2.73
 			ssStruct.PositionOrigID = "Supermutant Penis Lick"
 			ssStruct.PositionID = "DTSIXSM_563_S1"
 		endIf

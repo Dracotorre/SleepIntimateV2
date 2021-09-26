@@ -5315,7 +5315,6 @@ Function UndressActorWeapon(Actor actorRef)
 		
 		if (weapItem != None)
 			actorRef.UnequipItem(weapItem, false, true)
-			
 		endIf
 		weapItem = actorRef.GetEquippedWeapon(1)				; v2.71 secondary weapon
 		if (weapItem != None)
