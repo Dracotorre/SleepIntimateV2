@@ -145,6 +145,14 @@ pDTSleep_SettingAACV.SetValue(3.0)
 EndFunction
 ;END FRAGMENT
 
+;BEGIN FRAGMENT Fragment_Terminal_19
+Function Fragment_Terminal_19(ObjectReference akTerminalRef)
+;BEGIN CODE
+(pDTSleep_MainQuest as DTSleep_MainQuestScript).GoTestNearbyCompanionPowerArmorGlitched()
+;END CODE
+EndFunction
+;END FRAGMENT
+
 ;END FRAGMENT CODE - Do not edit anything between this and the begin comment
 
 Quest Property pDTSleep_MainQuest Auto Const Mandatory

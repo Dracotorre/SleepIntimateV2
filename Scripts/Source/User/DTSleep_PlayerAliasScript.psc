@@ -233,6 +233,7 @@ endEvent
 Event OnPlayerLoadGame()
 	
 	(DTSConditionals as DTSleep_Conditionals).HasReloaded = true
+	SleepQuestScript.DTSleep_SIDIgnoreOK.SetValueInt(-3)					; v2.74 reset on load
 	
 	; v2.70 - check player collision
 	if (DTSleep_PlayerCollisionEnabled.GetValueInt() <= 0)

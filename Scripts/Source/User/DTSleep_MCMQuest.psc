@@ -166,6 +166,10 @@ Function GoCompanionRedress(float val)
 	(pDTSleep_MainQuest as DTSleep_MainQuestScript).GoCompanionRedressMCM()
 EndFunction
 
+Function GoIsCompanionPowerArmorGlitched(float val)
+	(pDTSleep_MainQuest as DTSleep_MainQuestScript).IsCompanionPowerArmorGlitchedDisplayNearby()				; v2.74
+EndFunction
+
 Function GoPlayerNaked(float val)
 	(pDTSleep_MainQuest as DTSleep_MainQuestScript).GoPlayerNakedMCM()
 EndFunction

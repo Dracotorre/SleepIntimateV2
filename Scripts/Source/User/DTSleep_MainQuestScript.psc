@@ -484,6 +484,7 @@ Message property DTSleep_PersuadeBusyWarnSitMsg auto const
 Message property DTSleep_PersuadeBusyWarnNoToyMsg auto const
 Message property DTSleep_PersuadeBusyWarnPAMsg auto const
 Message property DTSleep_PersuadeBusyWarnPAFlagMsg auto const
+Message property DTSleep_NoPAFlagMessage auto const
 Message property DTSleep_CountMessage auto const
 Message property DTSleep_PickPositionMsg auto const
 Message property DTSleep_PickPositionViewMsg auto const
@@ -787,6 +788,7 @@ int CompanionUndressID = 202 const
 int CompanionRedressID = 203 const
 int DanceID = 204 const
 int PlayerUndressSleepID = 205 const
+int CompanionGlitchTestID = 206 const
 int CreatureTypeDog = 2 const
 int CreatureTypeStrong = 1 const
 int CreatureTypeSynth = 3 const
@@ -833,6 +835,7 @@ int IntimacyDogCount
 int IntimacyDayCount
 ;float PfTime = 0.10
 int MyNextSceneOnSameFurnitureIsFreeSID = -1
+bool MyMenuCheckBusy
 
 
 
@@ -853,6 +856,7 @@ Event OnQuestInit()
 	IntimacyDayCount = 0
 	TotalBusyDayCount = 0
 	TotalExhibitionCount = 0
+	MyMenuCheckBusy = false
 	
 	SetModDefaultSettingsForGame()
 	
@@ -1432,8 +1436,10 @@ Event DTSleep_IntimateAnimQuestScript.IntimateSequenceDoneEvent(DTSleep_Intimate
 					endIf
 				
 					; v2.70.1 - added !inBed just in case
-					if (!inBed && SceneData.AnimationSet >= 5 && SceneData.AnimationSet < 10 && (IsAAFReady() || hasAAFBeenDisabled))
+					; v2.74 -- include PlayAAFEnabled condition
+					if (!inBed && SceneData.AnimationSet >= 5 && SceneData.AnimationSet < 10 && (IsAAFReady() || hasAAFBeenDisabled) && (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlayAAFEnabled)
 						; AAF scene end - do not go directly to bed! - use prompt if set
+						DTDebug(" redress on end AAF scene...", 1)
 						redressSlowly = true
 						doFadeIn = true
 						Utility.Wait(1.50)
@@ -1463,7 +1469,7 @@ Event DTSleep_IntimateAnimQuestScript.IntimateSequenceDoneEvent(DTSleep_Intimate
 						; do not fade-in until bed unless...
 						; make sure okay to switch to bed--even if not in bed--so we know ready to move if not there yet
 						if ((DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).SetStopOnBedExit() == false)
-							;Debug.Trace(myScriptName + " set undress SetStopOnBedExit failed... stopping undress")
+							DTDebug(" set undress SetStopOnBedExit failed... stopping undress", 1)
 							; fails if undress quest didn't have a bed - so get dressed now
 							
 							SetUndressStop(redressSlowly)
@@ -1867,6 +1873,10 @@ Event OnMenuOpenCloseEvent(string asMenuName, bool abOpening)
 		elseIf (PipboyMenuCloseType == CompanionRedressID)
 		
 			RedressCompanion()
+		
+		elseIf (PipboyMenuCloseType == CompanionGlitchTestID)
+		
+			IsCompanionPowerArmorGlitchedDisplayNearby()
 			
 		elseIf (PipboyMenuCloseType == DanceID)
 		
@@ -2498,7 +2508,11 @@ Function GoCompanionRedress()
 endFunction
 
 Function GoCompanionRedressMCM()
-	RedressCompanion()
+	if (!MyMenuCheckBusy)
+		MyMenuCheckBusy = true
+		RedressCompanion()
+		MyMenuCheckBusy = false
+	endIf
 endFunction
 
 Function GoNearbyCompanionInLoveNaked()
@@ -2520,14 +2534,25 @@ Function GoNearbyCompanionInLoveUndressForBedMCM()
 endFunction
 
 Function GoSetUndressCompanionForSleep()
-	Utility.Wait(0.2)
-	IntimateCompanionSet companionSet = GetCompanionNearbyHighestRelationRank(false)
+	if (!MyMenuCheckBusy)
+		MyMenuCheckBusy = true
+		Utility.Wait(0.2)					
+		IntimateCompanionSet companionSet = GetCompanionNearbyHighestRelationRank(false)
 
-	if (companionSet.CompanionActor != None)
-		SetUndressForCompanionSleepwear(companionSet.CompanionActor, companionSet.RequiresNudeSuit)
-	else
-		DTSleep_CompanionNotFoundMsg.Show()
+		if (companionSet.CompanionActor != None)
+			SetUndressForCompanionSleepwear(companionSet.CompanionActor, companionSet.RequiresNudeSuit)
+		else
+			DTSleep_CompanionNotFoundMsg.Show()
+		endIf
+		
+		MyMenuCheckBusy = false
 	endIf
+endFunction
+
+Function GoTestNearbyCompanionPowerArmorGlitched()						; v2.74
+
+	PipboyMenuCloseType = CompanionGlitchTestID
+	RegisterForMenuOpenCloseEvent("PipboyMenu")
 endFunction
 
 Function GoPlayerNaked()
@@ -2542,12 +2567,16 @@ Function GoPlayerNaked()
 endFunction
 
 Function GoPlayerNakedMCM()
-	if (PlayerRef.WornHasKeyword(ArmorTypePower))
-		
-		pPowerArmorNoActivate.Show()
-		return 
+	if (!MyMenuCheckBusy)
+		MyMenuCheckBusy = true
+		if (PlayerRef.WornHasKeyword(ArmorTypePower))
+			
+			pPowerArmorNoActivate.Show()
+			return 
+		endIf
+		GoSetUndressPlayerNaked()
+		MyMenuCheckBusy = false
 	endIf
-	GoSetUndressPlayerNaked()
 endFunction
 
 Function GoDance()
@@ -5132,13 +5161,16 @@ IntimateCompanionSet Function GetCompanionCustomInLoveOfActor(Actor anActor)
 			if (!heatherActor.WornHasKeyword(ArmorTypePower) && heatherLove >= 1)
 				result.CompanionActor = heatherActor
 				result.RelationRank = 4
+				result.RequiresNudeSuit = true
+				
 				if (heatherLove >= 2)
 					result.RelationRank = 5
 				endIf
 				result.Gender = 1
 				if (heatherActor.IsInPowerArmor())
-					result.PowerArmorFlag = true
-					result.RequiresNudeSuit = true
+					if (DTSleep_SettingAAF.GetValueInt() < 3)			; v2.74 consider ignore setting 3
+						result.PowerArmorFlag = true
+					endIf
 				endIf
 				
 				return result
@@ -5155,7 +5187,9 @@ IntimateCompanionSet Function GetCompanionCustomInLoveOfActor(Actor anActor)
 				result.RelationRank = 4
 				result.Gender = 1
 				if (barbActor.IsInPowerArmor())
-					result.PowerArmorFlag = true
+					if (DTSleep_SettingAAF.GetValueInt() < 3)			; v2.74 consider ignore setting 3
+						result.PowerArmorFlag = true
+					endIf
 				endIf
 				
 				return result
@@ -5187,7 +5221,9 @@ IntimateCompanionSet[] Function GetCompanionNearbyLoversArray(int minRank = 3, A
 					ics.HasLoverRing = true
 					ics.RelationRank = GetRelationRankActor(loverActor, true)
 					if (loverActor.IsInPowerArmor())
-						ics.PowerArmorFlag = true
+						if (DTSleep_SettingAAF.GetValueInt() < 3)			; v2.74 consider ignore setting 3
+							ics.PowerArmorFlag = true
+						endIf
 					endIf
 					resultArray.Add(ics)
 				endIf
@@ -5223,7 +5259,9 @@ IntimateCompanionSet[] Function GetCompanionNearbyLoversArray(int minRank = 3, A
 						ics.RelationRank = 2
 					endIf
 					if (companionRef.IsInPowerArmor())
-						ics.PowerArmorFlag = true
+						if (DTSleep_SettingAAF.GetValueInt() < 3)			; v2.74 consider ignore setting 3
+							ics.PowerArmorFlag = true
+						endIf
 					endIf
 					resultArray.Add(ics)
 				endIf
@@ -5267,7 +5305,9 @@ IntimateCompanionSet[] Function GetCompanionNearbyLoversArray(int minRank = 3, A
 								
 								if (prefGender == 2 || prefGender == ics.Gender)
 									if (aCompanion.IsInPowerArmor())
-										ics.PowerArmorFlag = true
+										if (DTSleep_SettingAAF.GetValueInt() < 3)			; v2.74 consider ignore setting 3
+											ics.PowerArmorFlag = true
+										endIf
 									endIf
 									if (aCompanion.IsRomantic())
 										ics.RelationRank = 4
@@ -5360,7 +5400,9 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 				if (loverActor.WornHasKeyword(ArmorTypePower))
 					mainCompanionPA = true
 				elseIf (loverActor.IsInPowerArmor())
-					result.PowerArmorFlag = true
+					if (DTSleep_SettingAAF.GetValueInt() < 3)			; v2.74 consider ignore setting 3
+						result.PowerArmorFlag = true
+					endIf
 				endIf
 				;result.Gender = (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).GetGenderForActor(loverActor)
 			else
@@ -5397,7 +5439,9 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 						if (aCompanion.WornHasKeyword(ArmorTypePower))
 							mainCompanionPA = true
 						elseIf (aCompanion.IsInPowerArmor())
-							result.PowerArmorFlag = true
+							if (DTSleep_SettingAAF.GetValueInt() < 3)			; v2.74 consider ignore setting 3
+								result.PowerArmorFlag = true
+							endIf
 						endIf
 						if (aCompanion.GetSitState() <= 1 && aCompanion.GetSleepState() <= 2)
 							topRelBusy = false
@@ -5429,7 +5473,9 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 						if (aCompanion.WornHasKeyword(ArmorTypePower))
 							mainCompanionPA = true
 						elseIf (aCompanion.IsInPowerArmor())
-							result.PowerArmorFlag = true
+							if (DTSleep_SettingAAF.GetValueInt() < 3)			; v2.74 consider ignore setting 3
+								result.PowerArmorFlag = true
+							endIf
 						endIf
 						
 						if (aCompanion.GetSleepState() <= 2)
@@ -5455,7 +5501,9 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 					if (aCompanion.WornHasKeyword(ArmorTypePower))
 						mainCompanionPA = true
 					elseIf (aCompanion.IsInPowerArmor())
-						result.PowerArmorFlag = true
+						if (DTSleep_SettingAAF.GetValueInt() < 3)			; v2.74 consider ignore setting 3
+							result.PowerArmorFlag = true
+						endIf
 					endIf
 					if (aCompanion.GetSleepState() > 2)
 						topRelBusy = true
@@ -5539,7 +5587,9 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 							if (distance < 900.0 && !aCompanion.WornHasKeyword(ArmorTypePower))
 								if (aCompanion.IsInPowerArmor())
 									DTDebug("power armor bug for extra NPC " + aCompanion, 1)
-									result.PowerArmorFlag = true
+									if (DTSleep_SettingAAF.GetValueInt() < 3)			; v2.74 consider ignore setting 3
+										result.PowerArmorFlag = true
+									endIf
 								endIf
 								result.CompanionActor = aCompanion as Actor
 								if (aCompanion.IsRomantic())
@@ -5631,7 +5681,9 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 								; power armor is a race change - AAF will try and fail to exit power armor
 								
 								;DTDebug(" InPowerArmor Race, but not Worn TypePower for ", 3)
-								result.PowerArmorFlag = true
+								if (DTSleep_SettingAAF.GetValueInt() < 3)			; v2.74 consider ignore setting 3
+									result.PowerArmorFlag = true
+								endIf
 								result.RequiresNudeSuit = true
 							endIf
 							
@@ -5667,7 +5719,9 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 								if (aCompanion.WornHasKeyword(ArmorTypePower))
 									mainCompanionPA = true
 								elseIf (aCompanion.IsInPowerArmor())
-									result.PowerArmorFlag = true
+									if (DTSleep_SettingAAF.GetValueInt() < 3)			; v2.74 consider ignore setting 3
+										result.PowerArmorFlag = true
+									endIf
 								endIf
 								if (aCompanion.GetSleepState() > 2)
 									topRelBusy = true
@@ -5792,7 +5846,7 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 				if (barbActor.GetDistance(PlayerRef) < 1500.0)
 		
 					bool paBug = false
-					if (IsCompanionPowerArmorGlitched(barbActor))
+					if (IsCompanionPowerArmorGlitched(barbActor, true))
 					
 						result.RequiresNudeSuit = true
 						paBug = true
@@ -6343,6 +6397,8 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 	;		bedCompatible = false
 	;	endIf
 	;endIf
+	
+	DTSleep_SIDIgnoreOK.SetValueInt(-1)					; reset on Rest v2.74
 
 	; check FarHarbor quest to clear for napping
 	if ((DTSConditionals as DTSleep_Conditionals).IsCoastDLCActive && sleepNapPrefVal > 0)
@@ -7289,7 +7345,7 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 				; ----------
 				; sets up the scene player, companion preferences, clears 2nd lovers if not needed, and also undress if ready
 				;
-				sequenceID = SetUndressAndFadeForIntimateScene(IntimateCompanionRef, targetRef, undressLevel, playerPositioned, playSlowMo, dogmeatScene, useLowSceneCam, animPacks, isNaked, twinBedRef, pickStyle)
+				sequenceID = SetUndressAndFadeForIntimateScene(IntimateCompanionRef, targetRef, undressLevel, playerPositioned, playSlowMo, dogmeatScene, useLowSceneCam, animPacks, isNaked, twinBedRef, pickStyle, nearCompanion.PowerArmorFlag)
 				; ---------------
 				
 				bool playerNakedOrPJ = isNaked
@@ -7310,7 +7366,7 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 				endIf
 				
 				if (sleepTime && playerNakedOrPJ && sleepNapPrefVal > 0 && DTSleep_SettingFadeEndScene.GetValue() >= 1.0)
-					if (SceneData.AnimationSet < 5 || SceneData.AnimationSet == 10 || !IsAAFReady() || !(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsSCeneAAFSafe(sequenceID))
+					if (SceneData.AnimationSet < 5 || SceneData.AnimationSet == 10 || !IsAAFReady() || !(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsSceneAAFSafe(sequenceID))
 						; only move directly to bed for non-AAF, sleepy time
 						if (sleepSafe)
 							(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlaceInBedOnFinish = true
@@ -7342,13 +7398,7 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 			; start scene - adult pack or regular 
 			
 			if (doScene && SceneData.AnimationSet > 0 && sequenceID >= 100 && (DTSConditionals as DTSleep_Conditionals).ImaPCMod && TestVersion == -2)
-				
-				if (nearCompanion.PowerArmorFlag)
-					(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlayAAFEnabled = false
-				else
-					(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlayAAFEnabled = true
-				endIf
-				
+								
 				if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlayActionIntimateSeq(sequenceID))
 					noPreBedAnim = false
 					RegisterForRemoteEvent(targetRef, "OnActivate")			; watch for NPC activate
@@ -7670,6 +7720,8 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 	int[] animPacks = new int[1]
 	SceneData.CompanionBribeType = 0
 	
+	DTSleep_SIDIgnoreOK.SetValueInt(-1)					; reset on Relax v2.74
+	
 	if (specialFurn == 1)
 		isPillory = true
 	elseIf (specialFurn == 101)
@@ -7789,7 +7841,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 							nearCompanion.Gender = acGender
 							nearCompanion.HasLoverRing = true   ; not really, but let's pretend -- allows sit and grants bonus to chance
 							nearCompanion.RelationRank = GetRelationRankActor(actorInBed, false)
-							if (actorInBed.WornHasKeyword(ArmorTypePower) == false && actorInBed.IsInPowerArmor())
+							if (IsCompanionPowerArmorGlitched(actorInBed, true))
 								nearCompanion.PowerArmorFlag = true
 							endIf
 						endIf
@@ -8975,7 +9027,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 					bool seatIsDinerBooth = false
 					
 				
-					sequenceID = SetUndressAndFadeForIntimateScene(IntimateCompanionRef, furnToPlayObj, undressLevel, pickSpot, false, false, false, animPacks, false, None, playerPickedStyle)
+					sequenceID = SetUndressAndFadeForIntimateScene(IntimateCompanionRef, furnToPlayObj, undressLevel, pickSpot, false, false, false, animPacks, false, None, playerPickedStyle, nearCompanion.PowerArmorFlag)
 		
 					(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlaceInBedOnFinish = false
 					
@@ -10371,17 +10423,51 @@ endFunction
 ;	return true
 ;endFunction
 
-bool Function IsCompanionPowerArmorGlitched(Actor companionActor)
+bool Function IsCompanionPowerArmorGlitched(Actor companionActor, bool includeSettingCheck)
 	
-	if (companionActor != None)
-		if (companionActor.WornHasKeyword(ArmorTypePower) == false)
-			if (companionActor.IsInPowerArmor())
-				return true
+	if (!includeSettingCheck || DTSleep_SettingAAF.GetValueInt() < 3)
+		if (companionActor != None)
+			if (companionActor.WornHasKeyword(ArmorTypePower) == false)
+				if (companionActor.IsInPowerArmor())
+					DTDebug("companion " + companionActor + " has power-armor glitch ", 1)
+					return true
+				endIf
 			endIf
 		endIf
 	endIf
 	
 	return false
+endFunction
+
+Function IsCompanionPowerArmorGlitchedDisplayNearby()
+	if (!MyMenuCheckBusy)
+		MyMenuCheckBusy = true
+		Utility.Wait(0.2)			
+		IntimateCompanionSet companionSet = GetCompanionNearbyHighestRelationRank(false)
+
+		if (companionSet.CompanionActor != None)
+			IntimateCompanionRef = companionSet.CompanionActor
+			DTSleep_CompIntimateQuest.Start()
+			Utility.Wait(0.1)
+			DTSleep_CompIntimateAlias.ForceRefTo(companionSet.CompanionActor)
+			
+			if (companionSet.CompanionActor.WornHasKeyword(ArmorTypePower))
+				DTSleep_PersuadeBusyWarnPAMsg.Show()
+			elseIf (IsCompanionPowerArmorGlitched(companionSet.CompanionActor, false))
+				DTSleep_PersuadeBusyWarnPAFlagMsg.Show()
+			else
+				DTSleep_NoPAFlagMessage.Show()
+			endIf
+			Utility.WaitMenuMode(1.6)
+			DTSleep_CompIntimateQuest.Stop()
+			DTSleep_CompIntimateAlias.Clear()
+			IntimateCompanionRef = None
+		else
+			DTSleep_CompanionNotFoundMsg.Show()
+		endIf
+		
+		MyMenuCheckBusy = false
+	endIf
 endFunction
 
 bool Function IsCompanion2RaceCompatible(Actor companionActor)					; v2.64
@@ -12711,6 +12797,7 @@ Function ResetAll()
 	IsUndressReady = false
 	DTSleep_PlayerUsingBed.SetValue(0.0)
 	SleepBedIsPillowBed = false
+	MyMenuCheckBusy = false
 	
 	UnregisterForPlayerSleep()
 	
@@ -12929,6 +13016,7 @@ Function ResetSceneOnLoad()
 	
 	DTDebug(" ResetSceneOnLoad..", 2)
 	MainQSceneScriptP.GoSceneViewStart()
+	MyMenuCheckBusy = false
 endFunction
 
 bool Function SetDogmeatFollow()
@@ -13199,6 +13287,7 @@ int Function RestoreSettingsDefault()
 	(DTSConditionals as DTSleep_Conditionals).PlayerRace = None
 	; v2.73 - clear scene ignore-list even if not active
 	(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetSceneIDToIgnoreClearAll()
+	MyMenuCheckBusy = false
 	
 	; commented out settings not reset
 	if (DTSleep_SettingModActive.GetValue() >= 2.0)
@@ -14488,12 +14577,13 @@ endFunction
 
 ; fadeUndressLevel -1 for nothing-no-fade, 0 for hats, 1 for bed, 2 for clothing/naked
 ;
-int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReference bedRef, int fadeUndressLevel, bool mainActorIsPositioned, bool playSlowMo = false, bool isDogmeatScene = false, bool lowCam = true, int[] animPacks = None, bool isNaked = false, ObjectReference twinBedRef = None, int playerScenePick = -1)
+int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReference bedRef, int fadeUndressLevel, bool mainActorIsPositioned, bool playSlowMo = false, bool isDogmeatScene = false, bool lowCam = true, int[] animPacks = None, bool isNaked = false, ObjectReference twinBedRef = None, int playerScenePick = -1, bool companionPowerArmorFlag = false)
 	
 	int seqID = -1
 	int evbBestFitVal = (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).DTSleep_SettingUseLeitoGun.GetValueInt()
 	int bt2Val = (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).DTSleep_SettingUseBT2Gun.GetValueInt()
 	bool animationZeX = (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).AnimationSetSupportsZeX(SceneData.AnimationSet)
+	int aafPlaySetting = DTSleep_SettingAAF.GetValueInt()
 	
 	; function follows these steps -- order important
 	; 1. limit scene choices
@@ -14662,17 +14752,51 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 	
 	if (SceneData.AnimationSet >= 5 && SceneData.AnimationSet < 10)
 		if (aafIsReady)
-			if (DTSleep_SettingAAF.GetValueInt() >= 2)
-				; cancel fade
-				fadePlay = false
+			; v2.74 also check glitch
+			if (companionPowerArmorFlag == false && aafPlaySetting < 3)
+				; double-check because flag may have been cleared during search or not set for same companion
+				if (IsCompanionPowerArmorGlitched(companionRef, true))
+					companionPowerArmorFlag = true
+				endIf
 			endIf
-			camLevel = -1  ; disable custom
-			lowCam = false
+			
+			if (aafPlaySetting < 3 && companionPowerArmorFlag)
+				; 3 is ignore glitch, so force fade for AAC-play
+				fadePlay = true
+				companionPowerArmorFlag = true
+				fadeUndressLevel = 2
+				if (SceneData.AnimationSet == 9)
+					lowCam = true
+				endIf
+				
+				DTDebug("power armor flag notice for companion " + companionRef, 1)
+				EnablePlayerControlsSleep()
+				DisablePlayerControlsSleep(0)
+				Utility.Wait(0.1)
+				DTSleep_PersuadeBusyWarnPAFlagMsg.Show()
+				Utility.Wait(1.2)
+				EnablePlayerControlsSleep()
+				DisablePlayerControlsSleep(2)
+			else
+				camLevel = -1  ; disable custom
+				lowCam = false
+				if (aafPlaySetting == 2)
+					; cancel fade (expected	already set to false)
+					fadePlay = false
+				endIf
+			endIf
 		elseIf (SceneData.AnimationSet == 9)
 			lowCam = true
 		endIf
 	elseIf (SceneData.AnimationSet == 0 || seqID < 100)
 		camLevel = -1
+	endIf
+				
+	; v2.74 moved here since already establishing check above		
+	if (companionPowerArmorFlag && aafPlaySetting < 3)
+		(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlayAAFEnabled = false
+	else
+		(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlayAAFEnabled = true
 	endIf
 	
 	(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).FadeEnable = fadePlay
@@ -15792,8 +15916,6 @@ Function TestModeOutput()
 	
 	if (DTSleep_SettingTestMode.GetValue() > 0.0 && DTSleep_DebugMode.GetValue() >= 1.0)
 	
-		bool powerArmorGlitch = IsCompanionPowerArmorGlitched(IntimateCompanionRef)
-	
 		Debug.Trace(myScriptName + " =====================================================================")
 		Debug.Trace(myScriptName + "       version: " + DTSleep_Version.GetValue() + " ---- TEST MODE ---- ")
 		Debug.Trace(myScriptName + "  UndressQuest: " + DTSleep_IntimateUndressQuestP.IsRunning())
@@ -15812,7 +15934,6 @@ Function TestModeOutput()
 		Debug.Trace(myScriptName + "      SleepBed: " + SleepBedInUseRef)
 		Debug.Trace(myScriptName + "     Using Bed: " + DTSleep_PlayerUsingBed.GetValue())
 		Debug.Trace(myScriptName + "     Undressed: " + DTSleep_PlayerUndressed.GetValue())
-		Debug.Trace(myScriptName + "  IntCompanion: " + IntimateCompanionRef + " (PA glitch? " + powerArmorGlitch + ")")
 		Debug.Trace(myScriptName + "      IntFails: " + IntimateCheckFailCount)
 		Debug.Trace(myScriptName + "      LastFail: " + IntimateCheckLastFailTime)
 		Debug.Trace(myScriptName + "      LastSucc: " + DTSleep_IntimateTime.GetValue() + " / " + IntimateLastTime)

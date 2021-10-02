@@ -1,0 +1,38 @@
+<meta title="SleepIntimateX_RufGts_animationData.xml" version="2.74" dataSet="animation"/>
+<defaults source="Rufgt's Animations.esp"/>
+
+<animation id="SIX_RufGt_Rocket69" frames="300">
+	<actor gender="F">
+		<idle form="01001732" id="69Bottom"/>
+	</actor>
+	<actor gender="F">
+		<idle form="01001ECC" id="69Top"/>
+	</actor>
+</animation>
+
+<animation id="SIX_RufGt_TheScissor" frames="300">
+	<actor gender="F">
+		<idle form="01003D35" id="ScissorA"/>
+	</actor>
+	<actor gender="F">
+		<idle form="01003D36"id="ScissorB"/>
+	</actor>
+</animation>
+
+<animation id="SIX_RufGt_Cunnilingus" frames="300">
+	<actor gender="F">
+		<idle form="01007A0D"/>
+	</actor>
+	<actor gender="F">
+		<idle form="01007A0E"/>
+	</actor>
+</animation>
+
+<animation id="SIX_RufGt_Spooning" frames="300">
+	<actor gender="F">
+		<idle form="01008943"/>
+	</actor>
+	<actor gender="M">
+		<idle form="01008942"/>
+	</actor>
+</animation>

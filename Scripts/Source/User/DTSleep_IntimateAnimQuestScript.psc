@@ -569,7 +569,7 @@ Function StopAll(bool fadeIn = false)
 	;SleepBedRef = None					v2.70 keep so we can check last bed
 	SleepBedIsPillowBed = false
 	SleepBedAltRef = None
-	PlayAAFEnabled = true
+	;PlayAAFEnabled = true				; v2.74 no reset, Main handles true/false before each start
 	
 	UnregisterForMenuOpenCloseEvent("PipboyMenu")
 	UnregisterForMenuOpenCloseEvent("WorkshopMenu")
@@ -1930,7 +1930,7 @@ Function FinalizeAndSendFinish(bool seqStartedOK = true, int errCount = 0)
 	; v1.80 - playLeito and playAAC do fade-out so wait for finish first
 	int count = 0
 	int lim = 30
-	if (!FadeEnable && SceneData.AnimationSet >= 5 && DTSleep_SettingAAF.GetValueInt() >= 2)
+	if (!FadeEnable && SceneData.AnimationSet >= 5 && DTSleep_SettingAAF.GetValueInt() == 2)
 		; more time to allow for walk
 		lim = 80
 	endIf
@@ -1948,13 +1948,13 @@ Function FinalizeAndSendFinish(bool seqStartedOK = true, int errCount = 0)
 	endIf
 	
 	; wait for clean-up
-	while (count < 60 && IsSequenceRunning() && !IsAAFEnabled())
+	while (count < 60 && IsSequenceRunning()) ; && !IsAAFEnabled())				v2.74--wait anyway
 		Utility.Wait(0.25)
 		count += 1
 	endWhile
 	
 	if (IsSequenceRunning())
-		SceneData.Interrupted = 4
+		SceneData.Interrupted = 3				; v2.74 changed to 3 since 4 is for OnHit 
 		if (SceneData.AnimationSet >= 5 && DTSleep_PlayAAFSceneQuest.IsRunning())
 			(DTSleep_PlayAAFSceneQuest as DTSleep_PlayAAFSceneScript).StopAnimationSequence(false)
 		endIf
@@ -2296,12 +2296,12 @@ float Function GetTimeForPlayID(int id)
 			endurance = (MainActorRef.GetValue(EnduranceAV) as int) ; no clothing bonus since naked
 		endIf
 			
-		if (endurance >= 9 && id != 547 && id != 546 && id != 791)
+		if (endurance >= 7 && id != 547 && id != 546 && id != 791)						; v2.74 - reduced endurance limite by 2
 			;int enduRand = Utility.RandomInt(5, endurance)
 			int enduRand = (DT_RandomQuestP as DT_RandomQuestScript).GetNextInRangePublic(5, endurance)
 			
 			
-			if ((id < 200 || id >= 600) && id < 700 && endurance >= 13 && enduRand > 10)
+			if ((id < 200 || id >= 600) && id < 700 && endurance >= 12 && enduRand > 10) ; Leito only
 				DTSleep_IntimateSceneLen.SetValueInt(4)
 				baseSec += (waitSecX4 + waitSecX2)
 				
@@ -2309,7 +2309,7 @@ float Function GetTimeForPlayID(int id)
 				int endCount = 1 + DTSleep_IntimateSceneMaxLenCount.GetValueInt()
 				DTSleep_IntimateSceneMaxLenCount.SetValueInt(endCount)
 				
-			elseIf (enduRand > 8)
+			elseIf (enduRand >= 8)														; v2.74 reduced enduRand-endurance by 1
 				DTSleep_IntimateSceneLen.SetValueInt(3)
 				baseSec += waitSecX4
 			else
@@ -2317,11 +2317,11 @@ float Function GetTimeForPlayID(int id)
 				baseSec += waitSecX2
 			endIf
 			
-		elseIf (endurance > 6 && id != 547 && id != 546 && id != 791)
+		elseIf (endurance >= 6 && id != 547 && id != 546 && id != 791)					; v2.74 reduced endurance limit by 1
 			DTSleep_IntimateSceneLen.SetValueInt(2)
 			baseSec += waitSecX2
 			
-		elseIf (id < 700 && baseSec > 40.0 && endurance >=3 && endurance <= 5 && Utility.RandomInt(-2, endurance) <= 0)		; v2.60 id limit
+		elseIf (id < 700 && baseSec > 40.0 && endurance >= 3 && endurance <= 4 && Utility.RandomInt(-2, endurance) <= 0)		; v2.60 id limit
 			DTSleep_IntimateSceneLen.SetValueInt(0)
 			baseSec -= waitSecX2
 			
@@ -3094,7 +3094,7 @@ bool Function PlayIntimateAAFSceneWithEndTimer(float timerSecs)
 	;	i += 1
 	;endWhile
 	
-	if (!FadeEnable && DTSleep_SettingAAF.GetValueInt() >= 2)
+	if (!FadeEnable && DTSleep_SettingAAF.GetValueInt() == 2)
 		; more time to allow for walk
 		timerSecs += 9.0
 	endIf
@@ -6060,7 +6060,8 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 					if (SceneData.SameGender && SceneData.MaleRoleGender == 1)
 						; female-female
 						okayAdd = true
-						if (SceneData.HasToyEquipped && !playerPick)
+						if (SceneData.HasToyAvailable && !playerPick && Utility.RandomInt(1,7) > 4)					
+							; v2.74 - change to HasToyAvailable and added random
 							; give preference for toy scenes
 							if ((DTSConditionals as DTSleep_Conditionals).IsGrayAnimsActive)
 								okayAdd = false
@@ -6445,9 +6446,7 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 								sidArray.Add(0)
 							endIf
 							if (!SceneData.SameGender)	; v2.20 - bad fit for some devices
-								if (packID == 1 || IsMaleErectAngleRestrictedForPack(0, packID))
-									sidArray.Add(1)
-								endIf
+								sidArray.Add(1)
 							endIf
 						endIf
 						
@@ -6456,19 +6455,12 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 							okayAdd = false
 						endIf
 						if (okayAdd)
-							if (packID == 1 || packID == 2 || IsMaleErectAngleRestrictedForPack(0, packID))
-								if (!SceneData.FemaleRaceHasTail)
-									if (mainActorIsMaleRole)
-										sidArray.Add(2)
-										sidArray.Add(3)
-									elseIf (playerPick || Utility.RandomInt(1, 9) > 5)
-										sidArray.Add(2)
-										sidArray.Add(3)
-									endIf
-								endIf
+							if (!SceneData.FemaleRaceHasTail)
+								sidArray.Add(2)
+								sidArray.Add(3)
 							endIf
 						endIf
-						if (!noLeitoGun && !bedIsSMBed)
+						if (!bedIsSMBed)
 							okayAdd = true
 							if (playerPick && !DoesMainActorPrefID(5))
 								okayAdd = false
@@ -6478,8 +6470,9 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 							endIf
 							if (packID != 2)
 								if (okayAdd)
+									
 									sidArray.Add(5)
-									if (packID == 1)
+									if (!SceneData.SameGender)				; v2.74 - changed restriction to no-same-gender from pack==1
 										sidArray.Add(6)
 									endIf
 									sidArray.Add(7)
@@ -6535,25 +6528,25 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 						if (bedIsFloorBed && !bedIsCoffin)
 							standToAdd = 2			; floor bed increased chance of stand scenes
 						endIf
-						if (packID == 1 || packID == 2 || IsMaleErectAngleRestrictedForPack(0, packID))
-							; standing blow job
-							if (!SceneData.SameGender)
-								if (playerPick && DoesMainActorPrefID(50))					; only add if picked v2.70
-									if (SceneData.FemaleRole == MainActorRef)
-										if (playerPick || DoesSecondActorPrefID(50) && Utility.RandomInt(11, 20) > 14)
-											sidArray.Add(50, standToAdd)
-										elseIf (Utility.RandomInt(11, 20) > 17)
-											sidArray.Add(50)
-										endIf
-									elseIf (playerPick || DoesSecondActorHateID(50) == false)
+
+						; standing blow job
+						if (!SceneData.SameGender)
+							if (playerPick && DoesMainActorPrefID(50))					; only add if picked v2.70
+								if (SceneData.FemaleRole == MainActorRef)
+									if (playerPick || DoesSecondActorPrefID(50) && Utility.RandomInt(11, 20) > 14)
 										sidArray.Add(50, standToAdd)
+									elseIf (Utility.RandomInt(11, 20) > 17)
+										sidArray.Add(50)
 									endIf
+								elseIf (playerPick || DoesSecondActorHateID(50) == false)
+									sidArray.Add(50, standToAdd)
 								endIf
-							elseIf (SceneData.MaleRoleGender == 0)
-								; 2 males
-								sidArray.Add(50)
-							endif
-						endIf
+							endIf
+						elseIf (SceneData.MaleRoleGender == 0)
+							; 2 males
+							sidArray.Add(50)
+						endif
+
 						if (!SceneData.FemaleRaceHasTail)
 							; stand doggy
 							okayAdd = true
@@ -6577,7 +6570,7 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 							endIf
 
 						endIf
-						if (packID == 1 && !SceneData.SameGender && SceneData.MaleRoleGender == 0)
+						if (!SceneData.SameGender && SceneData.MaleRoleGender == 0)
 							okayAdd = true
 							if (playerPick && !DoesMainActorPrefID(54))
 								okayAdd = false
@@ -6742,8 +6735,7 @@ bool Function IsSceneAAFSafe(int sid)
 	endIf
 	if (sid == 540)
 		return false
-	;elseIf (sid >= 682 && sid < 700)			; new Leito chairs not included v2.73
-	;	return false
+	
 	elseIf (sid == 771)
 		return false						; Handy robot in Test Mode
 	elseIf (sid >= 740 && sid <= 741)
@@ -6765,7 +6757,7 @@ bool Function IsSceneAAFSafe(int sid)
 		return false
 
 	elseIf (sid >= 590 && sid <= 599)
-		return false
+		return true							; v2.74 now with XMLs
 	endIf
 	
 	if (sid == 761 && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.1)

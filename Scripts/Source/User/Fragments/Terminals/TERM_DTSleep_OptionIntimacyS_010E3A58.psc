@@ -171,7 +171,7 @@ EndFunction
 ;BEGIN FRAGMENT Fragment_Terminal_18
 Function Fragment_Terminal_18(ObjectReference akTerminalRef)
 ;BEGIN CODE
-pDTSleep_SettingAAF.SetValue(0.0)
+pDTSleep_SettingAAF.SetValue(3.0)
 ;END CODE
 EndFunction
 ;END FRAGMENT
@@ -566,6 +566,14 @@ EndFunction
 Function Fragment_Terminal_68(ObjectReference akTerminalRef)
 ;BEGIN CODE
 (pDTSleep_MainQuest as DTSleep_MainQuestScript).ShowSceneClearIgnoreList()
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_69
+Function Fragment_Terminal_69(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingAAF.SetValue(0.0)
 ;END CODE
 EndFunction
 ;END FRAGMENT

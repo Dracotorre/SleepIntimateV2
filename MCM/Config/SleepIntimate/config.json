@@ -805,7 +805,7 @@
 			"help": "play Advanced Animation Framework (AAF) API instead of standard player - requires extra files",
 			"groupCondition": {"AND": [10, 13]},
 			"valueOptions": {
-				"options": ["Disabled / Standard", "Enabled", "No-fade scene"],
+				"options": ["Disabled / Standard", "Enabled", "No-fade scene", "ignore PA-glitch"],
 				"sourceType": "GlobalValue",
 				"sourceForm": "SleepIntimate.esp|C0043",
 				"propertyName": "DTSleep_SettingAAF"
@@ -1878,7 +1878,7 @@
       "pageDisplayName": "Test Features",
       "content": [
         {
-		  "text": "Alternate settings and features that may help find an issue. Some buttons require Test Mode enabled (General).",
+		  "text": "Alternate settings and features that may help find an issue. Some buttons require Test Mode enabled (General). Click once and return to game.",
 		  "type": "text",
 		  "align": "left"
 		},
@@ -2030,6 +2030,22 @@
 			"form": "SleepIntimate.esp|A56A2",
 			"scriptName": "DTSleep_MCMQuest",   
 			"function": "GoCompanionRedress",
+			"params": [1.0]
+		  }
+		},
+		{
+		  "type": "spacer"
+		},
+		{
+		  "text": "(~Is Romanced Companion power-armor glitched?~)",
+		  "type": "button",
+		  "help": "no AAF-play if power-armor glitched; try command companion to sit",
+		  "groupCondition": {"AND": [1, 3]},
+		  "action": {
+			"type": "CallFunction",
+			"form": "SleepIntimate.esp|A56A2",
+			"scriptName": "DTSleep_MCMQuest",   
+			"function": "GoIsCompanionPowerArmorGlitched",
 			"params": [1.0]
 		  }
 		}
