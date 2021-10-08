@@ -1343,7 +1343,7 @@ Function CheckNudeSuitsRemoved()
 	endIf
 	if (UndressedForType == 0)
 		; only check if not undressed in case undressing again
-		DTDebug(" CheckNudeSuitsRemoved ...", 2)
+		DTDebug(" CheckNudeSuitsRemoved for " + CompanionRef + "...", 2)
 		
 		if (CompanionRef != None)
 			if (CompanionRef == CompanionValentineRef)
@@ -1390,6 +1390,7 @@ Function CheckRemoveLeitoGuns(Actor aActor)
 			if (gun != None)
 				int count = aActor.GetItemCount(gun)
 				if (count > 0)
+					DTDebug("Found and removing Leito nude-suit type index = " + idx, 1)
 					aActor.UnequipItem(gun as Form, true, true)
 					aActor.RemoveItem(gun as Form, count, true, None)
 				endIf
@@ -1408,6 +1409,7 @@ Function CheckRemoveBT2Guns(Actor aActor)
 		if (gun != None)
 			int count = aActor.GetItemCount(gun)
 			if (count > 0)
+				DTDebug("Found and removing BT2 nude-suit type index = " + idx, 1)
 				aActor.UnequipItem(gun as Form, true, true)
 				aActor.RemoveItem(gun as Form, count, true, None)
 			endIf

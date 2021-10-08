@@ -483,7 +483,8 @@ Armor Function GetArmorNudeGun(int kind)
 				elseIf (DTSleep_LeitoGunSynthList != None && DTSleep_LeitoGunSynthList.GetSize() > kind)
 					gun = DTSleep_LeitoGunSynthList.GetAt(kind) as Armor
 				endIf
-			elseIf (bt2Val <= 0 && DTSleep_LeitoGunList != None && DTSleep_LeitoGunlist.GetSize() > kind)
+			elseIf (bt2Val <= 0 && evbVal > 0 && DTSleep_LeitoGunList != None && DTSleep_LeitoGunlist.GetSize() > kind)
+				; v2.74.1 fix added condtion, evbVal > 0, to ensure something enabled
 				gun = DTSleep_LeitoGunList.GetAt(kind) as Armor
 			elseIf (bt2Val > 0 && DTSleep_BT2GunList != None && DTSleep_BT2GunList.GetSize() > kind)
 				; Atomic Lust animates the skeleton for BodyTalk so limit to kind = 0

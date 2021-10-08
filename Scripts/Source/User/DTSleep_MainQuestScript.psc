@@ -523,6 +523,7 @@ Message property DTSleep_PrefSceneCloneOnAddMsg auto const			; v2.70
 Message property DTSleep_SceneCancelReplayMsg auto const			; v2.70
 Message property DTSleep_SceneCancelReplayPAMsg auto const			; v2.70
 Message property DTSleep_PrefSceneIgnoreMsg auto const				; v2.73  player may add scene to ignore list
+Message property DTSleep_PersuadePAFlagHelpMsg auto const			; v2.75 ask player to adjust AAF setting
 EndGroup
 
 Group E_PromptsHuman
@@ -836,6 +837,8 @@ int IntimacyDayCount
 ;float PfTime = 0.10
 int MyNextSceneOnSameFurnitureIsFreeSID = -1
 bool MyMenuCheckBusy
+int MyPAGlitchMessageCount								; v2.75 limit messages
+int MyPAGlitchTipCount									; and limit tip
 
 
 
@@ -857,6 +860,8 @@ Event OnQuestInit()
 	TotalBusyDayCount = 0
 	TotalExhibitionCount = 0
 	MyMenuCheckBusy = false
+	MyPAGlitchMessageCount = 0
+	MyPAGlitchTipCount = 0
 	
 	SetModDefaultSettingsForGame()
 	
@@ -1406,16 +1411,21 @@ Event DTSleep_IntimateAnimQuestScript.IntimateSequenceDoneEvent(DTSleep_Intimate
 				endIf
 			endIf
 			
+			
+			bool doFadeIn = false
+			bool inBed = (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlaceInBedOnFinish
+			
+			
+			
+			;; ******************************** clear IntimateCompanionRef and quest *****************
 			WakeStopIntimQuest(true)
+			; ---------------------------------------------
 			
 			if (DTSleep_SettingDogRestrain.GetValue() >= 0.0 && DogmeatCompanionAlias != None)
 				
 				SetDogmeatFollow()
 			endIf
 
-			bool doFadeIn = false
-			bool inBed = (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlaceInBedOnFinish
-				
 			if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).FadeEnable)
 			
 				; stop now if using sleep menu or no bed
@@ -1529,6 +1539,7 @@ Event DTSleep_IntimateAnimQuestScript.IntimateSequenceDoneEvent(DTSleep_Intimate
 					
 					MainQSceneScriptP.GoSceneViewDone(true)
 					Utility.Wait(0.4)
+					
 				endIf
 				
 				
@@ -1615,14 +1626,6 @@ Event DTSleep_IntimateAnimQuestScript.IntimateSequenceDoneEvent(DTSleep_Intimate
 						bedActivated = true
 						
 						DTDebug(" scene-done - ActivatePlayerSleep moveToBed?: " + !inBed, 2)
-						
-						; v2.73 make sure companion weapon removed after scene
-						int remWeapon = (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).DTSleep_SettingUndressWeapon.GetValueInt()		
-						if (remWeapon == 1 || remWeapon == 3)
-							if (IntimateCompanionRef != None)					
-								(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).UndressActorWeapon(IntimateCompanionRef)
-							endIf
-						endIf
 						
 						ActivatePlayerSleepForBed(bedRef, SleepBedUsesSpecialAnims, !undressStopped, fadedOut, !inBed, true)
 						
@@ -1714,7 +1717,7 @@ Event DTSleep_IntimateAnimQuestScript.IntimateSequenceDoneEvent(DTSleep_Intimate
 					StartTimer(5.5, LoverBonusAddTimerID)
 				endIf
 				
-				if (self.MessageOnRestID > 0)
+				if (self.MessageOnRestID > 0 || MyPAGlitchTipCount == 1)				; v2.75 include glitchTip
 					CheckMessageOnRest()
 				elseIf (self.MessageOnWakeID > 0)
 					CheckMessages((SleepPlayerAlias as DTSleep_PlayerAliasScript).CurrentLocation)
@@ -2426,6 +2429,10 @@ int Function CheckMessageOnRest()
 			endIf
 		endIf
 		wakeCompanion = true
+		
+	elseIf (MyPAGlitchTipCount == 1)
+		; tip activated   - v2.75
+		DisplayTipPAGlitch()
 	endIf
 	
 	if (wakeCompanion)
@@ -4796,6 +4803,24 @@ Function DisplayTipRestNoShow()
 	if (DTSleep_PlayerUsingBed.GetValue() <= 0.0 && DTSleep_RestCount.GetValueInt() <= 0)
 		DTSleep_TipNoRestShowMessage.ShowAsHelpMessage("Rest", 9.0, 30.0, 1)
 	endIf
+endFunction
+
+Function DisplayTipPAGlitch()
+	
+	; make sure marked to show
+	if (MyPAGlitchTipCount == 1 && DTSleep_SettingNotifications.GetValueInt() > 0)
+	
+		int aafSetVal = DTSleep_SettingAAF.GetValueInt()
+		
+		if (aafSetVal >= 1 && aafSetVal < 3)
+			MyPAGlitchTipCount = 3				; mark shown
+			DTSleep_PersuadePAFlagHelpMsg.ShowAsHelpMessage("Rest", 8.0, 30.0, 1)
+		elseIf (aafSetVal >= 3)
+			MyPAGlitchTipCount = 2   ; no need to show 
+		else
+			MyPAGlitchTipCount = 0   ; reset for not ready to show
+		endIf
+	endIf	
 endFunction
 
 Function DisplayTipSleepMode()
@@ -7321,7 +7346,7 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 						doFade = false
 					endIf
 					
-				elseIf (animPacks.Length > 0 && (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).GetTimeForPlayID(6001) != 272.56)
+				elseIf (animPacks.Length > 0 && (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).GetTimeForPlayID(6001) != 275.92)
 					Debug.Trace(myScriptName + " bad anim controller found")
 					useLowSceneCam = false
 					SceneData.AnimationSet = 0
@@ -7366,7 +7391,7 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 				endIf
 				
 				if (sleepTime && playerNakedOrPJ && sleepNapPrefVal > 0 && DTSleep_SettingFadeEndScene.GetValue() >= 1.0)
-					if (SceneData.AnimationSet < 5 || SceneData.AnimationSet == 10 || !IsAAFReady() || !(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsSceneAAFSafe(sequenceID))
+					if (SceneData.AnimationSet < 5 || SceneData.AnimationSet == 10 || !IsAAFReady() || !(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsSceneAAFSafe(sequenceID, false))
 						; only move directly to bed for non-AAF, sleepy time
 						if (sleepSafe)
 							(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlaceInBedOnFinish = true
@@ -7482,7 +7507,7 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 			EnablePlayerControlsSleep()		;v1.25 - moved here from before scene setup to prevent movement during setup
 			Utility.Wait(0.08)
 			bool aafPlay = IsAAFReady()
-			if (aafPlay && !(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsSCeneAAFSafe(sequenceID))			; v2.73
+			if (aafPlay && !(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsSCeneAAFSafe(sequenceID, false))			; v2.73
 				aafPlay = false
 			endIf
 			if (SceneData.AnimationSet >= 5 && SceneData.AnimationSet < 10 && aafPlay && DTSleep_SettingTestMode.GetValue() >= 1.0)
@@ -7749,7 +7774,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 	elseIf (specialFurn >= 1 && !CanPlayerPerformRest(None, false))			; don't check height of furniture, v2.41 skip rad-damage check
 		return
 		
-	elseIf ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).GetTimeForPlayID(6001) != 272.56)
+	elseIf ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).GetTimeForPlayID(6001) != 275.92)
 		Debug.Trace(myScriptName + " bad anim controller found")
 		return
 	
@@ -9087,7 +9112,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 			
 			if (!cancledScene)
 					bool aafPlay = IsAAFReady()
-					if (aafPlay && !(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsSCeneAAFSafe(sequenceID))		; v2.73
+					if (aafPlay && !(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsSCeneAAFSafe(sequenceID, false))		; v2.73
 						aafPlay = false
 					endIf
 				if (SceneData.AnimationSet >= 5 && SceneData.AnimationSet < 10 && aafPlay && DTSleep_SettingTestMode.GetValue() >= 1.0)
@@ -10883,6 +10908,9 @@ int Function IsCompanionActorReadyForScene(IntimateCompanionSet intimateActor, b
 			endIf
 		else
 			ResetSceneData()
+			if (MyPAGlitchMessageCount > 1)								; reset glitch count v2.75
+				MyPAGlitchMessageCount = 0
+			endIf
 		endIf
 		
 		SceneData.CompanionInPowerArmor = inPowerArmor
@@ -12798,6 +12826,7 @@ Function ResetAll()
 	DTSleep_PlayerUsingBed.SetValue(0.0)
 	SleepBedIsPillowBed = false
 	MyMenuCheckBusy = false
+	MyPAGlitchMessageCount = 0
 	
 	UnregisterForPlayerSleep()
 	
@@ -12867,6 +12896,7 @@ Function ResetHelpTips()
 	PersuadeTutorialXFFShown = 0
 	PersuadeTutorialSuccessShown = 0
 	TipSleepModePromptVal = 1
+	MyPAGlitchTipCount = 0						; added v2.75
 	
 	StartTimer(64.0, CustomCameraTipTimerID)
 	StartTimer(200.0, IntroRestNotShowTipTimerID)
@@ -13734,6 +13764,16 @@ Function SetPlayerAndCompanionBedTime(ObjectReference akBed, ObjectReference akC
 		endIf
 		
 		undressOK = SetUndressForBed(akBed, IntimateCompanionRef, akCompanionBed, observeWinter, companionReqNudeSuit, playerNaked)
+		
+	elseIf (IntimateCompanionRef != None)
+		; since already undressed, check remove weapon   - v2.75
+		int remWeaponVal = (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).DTSleep_SettingUndressWeapon.GetValueInt()
+		if (remWeaponVal >= 2)
+			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).UndressActorWeapon(PlayerRef)
+		endIf
+		if (remWeaponVal == 1 || remWeaponVal == 3)
+			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).UndressActorWeapon(IntimateCompanionRef)
+		endIf
 	endIf
 	
 	bool findTwinBed = true
@@ -14744,8 +14784,8 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 	endIf
 	
 	if (aafIsReady)
-		; check if will actually play using AAF   - v2.73
-		if (!(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsSCeneAAFSafe(seqID))
+		; check if will actually play using AAF   - v2.73  ---- v2.75 - need to also set strictlyID true
+		if (!(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsSCeneAAFSafe(seqID, true))
 			aafIsReady = false
 		endIf
 	endIf
@@ -14761,28 +14801,38 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 			endIf
 			
 			if (aafPlaySetting < 3 && companionPowerArmorFlag)
-				; 3 is ignore glitch, so force fade for AAC-play
+				; force fade for AAC-play
 				fadePlay = true
-				companionPowerArmorFlag = true
 				fadeUndressLevel = 2
 				if (SceneData.AnimationSet == 9)
 					lowCam = true
 				endIf
-				
-				DTDebug("power armor flag notice for companion " + companionRef, 1)
-				EnablePlayerControlsSleep()
-				DisablePlayerControlsSleep(0)
-				Utility.Wait(0.1)
-				DTSleep_PersuadeBusyWarnPAFlagMsg.Show()
-				Utility.Wait(1.2)
-				EnablePlayerControlsSleep()
-				DisablePlayerControlsSleep(2)
+			
+				if (DTSleep_SettingNotifications.GetValue() > 0.0 && MyPAGlitchMessageCount < 4)	; v2.75 limit number of times warning displays
+					EnablePlayerControlsSleep()
+					DisablePlayerControlsSleep(0)
+					Utility.Wait(0.1)
+					
+					if (MyPAGlitchMessageCount >= 1 && MyPAGlitchTipCount < 1)
+						DTDebug("set MyPAGlitchTipCount to 1 so it will display", 2)
+						MyPAGlitchTipCount = 1				; warned once before now mark to show tip   v2.75
+					endIf
+					; show warning
+					DTSleep_PersuadeBusyWarnPAFlagMsg.Show()
+					MyPAGlitchMessageCount += 1
+					Utility.Wait(1.1)
+					EnablePlayerControlsSleep()
+					DisablePlayerControlsSleep(2)
+				endIf
 			else
 				camLevel = -1  ; disable custom
 				lowCam = false
 				if (aafPlaySetting == 2)
 					; cancel fade (expected	already set to false)
 					fadePlay = false
+				elseIf (aafPlaySetting >= 3)
+					; disable tip since using setting
+					MyPAGlitchTipCount = 2
 				endIf
 			endIf
 		elseIf (SceneData.AnimationSet == 9)

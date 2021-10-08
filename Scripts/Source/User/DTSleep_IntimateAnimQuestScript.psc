@@ -569,7 +569,7 @@ Function StopAll(bool fadeIn = false)
 	;SleepBedRef = None					v2.70 keep so we can check last bed
 	SleepBedIsPillowBed = false
 	SleepBedAltRef = None
-	;PlayAAFEnabled = true				; v2.74 no reset, Main handles true/false before each start
+	PlayAAFEnabled = true
 	
 	UnregisterForMenuOpenCloseEvent("PipboyMenu")
 	UnregisterForMenuOpenCloseEvent("WorkshopMenu")
@@ -1687,7 +1687,7 @@ Function FadeAndPlay(int id, bool mainActorIsMaleRole = true)
 	endIf
 	
 	; check clone and AAF setting
-	if (id >= 500 && id < 1000 && IsAAFEnabled() && IsSCeneAAFSafe(id))
+	if (id >= 500 && id < 1000 && IsAAFEnabled() && IsSCeneAAFSafe(id, false))
 		; packs 10+ and old rufgt no support for AAF 
 		playAAF = true
 		SceneData.IntimateSceneViewType = 10
@@ -2112,7 +2112,7 @@ float Function GetTimeForPlayID(int id)
 	float waitSecX4 = waitSecX2 + waitSecX2
 	
 	if (id == 6001)
-		return 272.56
+		return 275.92
 	endIf
 
 	if (id <= 10)
@@ -4559,7 +4559,7 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 							; v2.70 --- check if orbit-view
 							;
 							if (DTSleep_SettingAACV.GetValueInt() <= 1 && !MainActorPositionByCaller)
-								if (!IsAAFEnabled() || !IsSCeneAAFSafe(id))								; added aaf-safe check v2.73
+								if (!IsAAFEnabled() || !IsSCeneAAFSafe(id, false))								; added aaf-safe check v2.73
 									if (MainActorCloneRef == None)
 										; no clone, must be orbit
 										if (MainActorOriginMarkRef == None)
@@ -6079,8 +6079,8 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 							endIf
 						endIf
 					elseIf (!SceneData.SameGender)
-						if (!playerPick || cuddlesOnly)
-							sidArray.Add(99)
+						if (!playerPick || cuddlesOnly || DoesMainActorPrefID(10))
+							sidArray.Add(99)			; spoon
 						endIf
 					endIf
 				endIf
@@ -6465,17 +6465,19 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 							if (playerPick && !DoesMainActorPrefID(5))
 								okayAdd = false
 							endIf
-							if (okayAdd)
+							if (okayAdd && !SceneData.SameGender)
 								sidArray.Add(4)
 							endIf
 							if (packID != 2)
 								if (okayAdd)
 									
-									sidArray.Add(5)
-									if (!SceneData.SameGender)				; v2.74 - changed restriction to no-same-gender from pack==1
-										sidArray.Add(6)
+									if (playerPick || !SceneData.SameGender)	; v2.75 limit same-gender only if picked cowgirl
+										sidArray.Add(5)
+										if (!SceneData.SameGender)				; v2.74 - changed restriction to no-same-gender.. was if pack==1
+											sidArray.Add(6)
+										endIf
+										sidArray.Add(7)
 									endIf
-									sidArray.Add(7)
 								endIf
 								
 								okayAdd = true
@@ -6729,8 +6731,11 @@ bool Function IsMaleErectAngleRestrictedForPack(int angle, int packID)
 	return true
 endFunction
 
-bool Function IsSceneAAFSafe(int sid)
-	if (!PlayAAFEnabled)
+bool Function IsSceneAAFSafe(int sid, bool strictlyID)					; v2.75 added strictlyID to ignore enabled-variable
+	if (!strictlyID && !PlayAAFEnabled)
+		return false
+	endIf
+	if (sid < 500)
 		return false
 	endIf
 	if (sid == 540)

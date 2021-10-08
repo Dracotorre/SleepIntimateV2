@@ -773,7 +773,7 @@ Function StopAnimationSequence(bool canceledScene = false, bool startedOK = true
 		if (DTSleep_SettingTestMode.GetValue() > 0.0 && DTSleep_DebugMode.GetValue() >= 2.0) ;TODO remove
 			Debug.Trace("[DTSleep_PlayAAF] call API stop scene for " + MainActor)
 		endIf
-		AAF_API.StopScene(MainActor)
+		AAF_API.StopScene(MainActor, -1)								; v2.74.1 added levels default -1
 		if (!canceledScene && SceneData.Interrupted <= 0)
 			Utility.Wait(0.5)
 		endIf
@@ -960,7 +960,7 @@ Function PlayAtomicScene()
 	elseIf (SequenceID >= 550 && SequenceID <= 552)
 		armGunKind = 0
 	elseIf (SequenceID >= 560)
-		if (SequenceID == 563)
+		if (SequenceID == 563 || SequenceID == 599)					; v2.74.1 also 599
 			armGunKind = 1
 		else
 			armGunKind = 0
@@ -1126,9 +1126,11 @@ Armor Function GetArmorNudeGun(int kind)
 				elseIf (DTSleep_LeitoGunSynthList != None && DTSleep_LeitoGunSynthList.GetSize() > kind)
 					gun = DTSleep_LeitoGunSynthList.GetAt(kind) as Armor
 				endIf
-			elseIf (bt2Val < 0 && DTSleep_LeitoGunList != None && DTSleep_LeitoGunlist.GetSize() > kind)
+			elseIf (bt2Val <= 0 && evbVal > 0 && DTSleep_LeitoGunList != None && DTSleep_LeitoGunlist.GetSize() > kind)
+				; v2.74.1 fix changed conditional <= 0 since zero means off and added condtion, evbVal > 0, to ensure something is on
 				gun = DTSleep_LeitoGunList.GetAt(kind) as Armor
-			elseIf (bt2Val >= 0 && DTSleep_BT2GunList != None && DTSleep_BT2GunList.GetSize() > kind)
+			elseIf (bt2Val > 0 && DTSleep_BT2GunList != None && DTSleep_BT2GunList.GetSize() > kind)
+				; v2.74.1 fix bt2Val cannot be zero
 				; Atomic Lust animates the skeleton for BodyTalk so limit to kind = 0
 				if (kind == 0 || SceneData.AnimationSet != 5)
 					gun = DTSleep_BT2GunList.GetAt(kind) as Armor
@@ -1862,7 +1864,9 @@ Function RemoveLeitoGuns(Actor aActor)
 	endIf
 	
 	if (DTSleep_LeitoGunList != None)
-	
+		if (DTSleep_DebugMode.GetValueInt() >= 2)
+			Debug.Trace("[DTSleep_PlayAAF] remove LeitoGuns for actor " + aActor)
+		endIf
 		int len = DTSleep_LeitoGunList.GetSize()
 		int idx = 0
 		while (idx < len)
@@ -1897,7 +1901,9 @@ Function RemoveBT2Guns(Actor aActor)
 			if (gun != None)
 				int count = aActor.GetItemCount(gun)
 				if (count > 0)
-					;Debug.Trace("[DTSleep_PlayAAC] removing nude gun: " + gun)
+					if (DTSleep_SettingTestMode.GetValue() > 0.0 && DTSleep_DebugMode.GetValue() >= 2.0)
+						Debug.Trace("[DTSleep_PlayAAC] removing nude gun: " + gun)
+					endIf
 					aActor.UnequipItem(gun as Form, false, true)
 					aActor.RemoveItem(gun as Form, count, true, None)
 				endIf
