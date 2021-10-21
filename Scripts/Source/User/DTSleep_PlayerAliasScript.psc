@@ -1329,23 +1329,39 @@ Function CheckCompatibility()
 		(DTSConditionals as DTSleep_Conditionals).DepravityHotelRexLoc = None
 	endIf
 	
-	; Vulpine
+	; Vulpine - Lupine - Amelia   -- updated v2.75.1
+	; these may be installed together for companions with only 1 player plug-in
+	; for simplicity we only allow one master at a time--other combinations handled as unknown race for hug-and-kiss only
+	string tailRaceMaster = "VulpineRace.esm"
+	int tailRaceFormID = 0x09000F99
+	if (!Game.IsPluginInstalled(tailRaceMaster))
+		tailRaceMaster = "LupineRace.esm"
+	endIf
+	if (!Game.IsPluginInstalled(tailRaceMaster))
+		tailRaceMaster = "AmeliaRace.esp"
+		tailRaceFormID = 0x09000804
+	endIf
 	if ((DTSConditionals as DTSleep_Conditionals).IsVulpineRace == None)
-		Race modRace = IsPluginActive(0x01000F99, "VulpineRace.esm") as Race
+		Race modRace = IsPluginActive(tailRaceFormID, tailRaceMaster) as Race
 		if (modRace != None)
 			(DTSConditionals as DTSleep_Conditionals).IsVulpineRace = modRace
-			if (Game.IsPluginInstalled("VulpinePlayer.esp"))
+			; consider any player-plugin
+			if (Game.IsPluginInstalled("VulpinePlayer.esp") || Game.IsPluginInstalled("LupinePlayer.esp") || Game.IsPluginInstalled("AmeliaPlayer.esp"))
 				(DTSConditionals as DTSleep_Conditionals).IsVulpineRacePlayerActive = true
 			else
 				(DTSConditionals as DTSleep_Conditionals).IsVulpineRacePlayerActive = false
 			endIf
 		endIf
-	elseIf (!Game.IsPluginInstalled("VulpineRace.esm"))
+	elseIf (!Game.IsPluginInstalled(tailRaceMaster))
+		; has been removed
 		(DTSConditionals as DTSleep_Conditionals).IsVulpineRace = None
 		(DTSConditionals as DTSleep_Conditionals).IsVulpineRacePlayerActive = false
-	else 
-		(DTSConditionals as DTSleep_Conditionals).IsVulpineRacePlayerActive = Game.IsPluginInstalled("VulpinePlayer.esp")
+	elseIf (Game.IsPluginInstalled("VulpinePlayer.esp") || Game.IsPluginInstalled("LupinePlayer.esp") || Game.IsPluginInstalled("AmeliaPlayer.esp"))
+		(DTSConditionals as DTSleep_Conditionals).IsVulpineRacePlayerActive = true
+	else
+		(DTSConditionals as DTSleep_Conditionals).IsVulpineRacePlayerActive = false
 	endIf
+	
 	
 	; v2.60 - AnimeRace_Nanako
 	if ((DTSConditionals as DTSleep_Conditionals).NanaRace == None)
