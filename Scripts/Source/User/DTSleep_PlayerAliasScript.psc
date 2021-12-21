@@ -1329,7 +1329,7 @@ Function CheckCompatibility()
 		(DTSConditionals as DTSleep_Conditionals).DepravityHotelRexLoc = None
 	endIf
 	
-	; Vulpine - Lupine - Amelia   -- updated v2.75.1
+	; Vulpine - Lupine - Amelia   -- updated v2.75.1, v2.76
 	; these may be installed together for companions with only 1 player plug-in
 	; for simplicity we only allow one master at a time--other combinations handled as unknown race for hug-and-kiss only
 	string tailRaceMaster = "VulpineRace.esm"
@@ -3595,6 +3595,18 @@ int Function CheckCustomArmorsAndBackpacks()
 	if (extraArmor != None && !DTSleep_QuestItemModList.HasForm(jagsBeltForm))
 		modCount += 1
 		DTSleep_QuestItemModList.AddForm(jagsBeltForm)
+	endIf
+	
+	; DX Red Ribbon   - v2.76
+	;   - Stardust using slot 54, not normally removed and can be left on naked body
+	;   - Fireworks using slot 57, normally removed
+	string redRibbonStr = "DX_RedRibbon.esp"
+	extraArmor = IsPluginActive(0x11024709, redRibbonStr) as Armor
+	if (extraArmor != None && !DTSleep_ArmorChokerList.HasForm(extraArmor as Form))
+		modCount += 1
+		DTSleep_ArmorChokerList.AddForm(extraArmor as Form)
+		DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x11023F6D, redRibbonStr))	; candy cane on back
+		DTSleep_SexyClothesFList.AddForm(Game.GetFormFromFile(0x11031620, redRibbonStr))	; outfitOpen / unstrapped
 	endIf
 	
 	; ---------------- Adult only -------------
