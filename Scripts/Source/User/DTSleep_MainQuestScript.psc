@@ -1055,6 +1055,10 @@ Event Perk.OnEntryRun(Perk DTSleep_PlayerSleepBedPerk, int Fragment_Entry_01, Ob
 		Debug.Trace(myScriptName + " -- Perk OnEntry -- not player!!")
 		
 		return
+	elseIf (Fragment_Entry_01 == 19)
+		; locker door
+		HandlePlayerActivateFurniture(akTarget, 106)
+		
 	elseIf (Fragment_Entry_01 == 16)
 		; workbenches - armor or weapon  --- v2.70
 		HandlePlayerActivateFurniture(akTarget, 5)
@@ -1100,7 +1104,8 @@ Event Perk.OnEntryRun(Perk DTSleep_PlayerSleepBedPerk, int Fragment_Entry_01, Ob
 		; v2.41 removed rad-dam check
 		HandlePlayerActivateFurniture(akTarget, 1)
 		
-	elseIf (Fragment_Entry_01 == 7 || Fragment_Entry_01 == 17)			; 17 for Leito-only limited chairs v2.73
+	elseIf (Fragment_Entry_01 == 7 || Fragment_Entry_01 == 17 || Fragment_Entry_01 == 18)	; 17,18 for Leito-only limited chairs v2.73
+		; v2.77 fix to include 18 for naked
 		; chairs Relax+
 		; v2.41 removed rad-dam check
 		HandlePlayerActivateFurniture(akTarget, 2)
@@ -7700,7 +7705,7 @@ EndFunction
 bool HandlePlayerFurnitureBusy = false
 
 ; specialFurn: <0 = any chair, 1 = pillory, 2 = chair supporting sex, 3 = desk, 4 = PA Repair station, 5 = workbench
-;  101 = dance pole, 102 = sedan/motorcycle, 103 = pool table, 104 = picnic table, 105 = jail door
+;  101 = dance pole, 102 = sedan/motorcycle, 103 = pool table, 104 = picnic table, 105 = jail door, 106 = locker door
 ;
 Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialFurn, bool isNaked = false)
 
@@ -7983,6 +7988,11 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 	elseIf (specialFurn == 105 && (DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
 		animPacks[0] = 7
 		DTSleep_SexStyleLevel.SetValue(9.0)		; oral choice
+	
+	elseIf (specialFurn == 106 && (DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.27)
+		; v2.77 - locker
+		animPacks[0] = 7
+		DTSleep_SexStyleLevel.SetValue(0.0)		; no choices
 		
 	elseIf (specialFurn > 0 && specialFurn != 103 && specialFurn != 104 && IsAdultAnimationChairAvailable())
 		; may be mutliple packs with chair support --- v2.73

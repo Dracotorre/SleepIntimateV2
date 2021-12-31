@@ -114,6 +114,8 @@ FormList property DTSleep_BedPrivateList auto const					; added v2.53
 FormList property DTSleep_IntimateChairOttomanList auto const		; added v2.60
 FormList property DTSleep_NotHumanList auto const					; added 2.62
 FormList property DTSleep_IntimateRailingList auto const			; added v2.70
+FormList property DTSleep_IntimateLockerList auto const				; added v2.77
+FormList property DTSleep_IntimateLockerAdjList auto const			; 
 Message property DTSleep_VersionMsg auto const
 Message property DTSleep_VersionDowngradeMsg auto const				; v2.60
 Message property DTSleep_VersionExplicitMsg auto const
@@ -731,6 +733,11 @@ Function CheckCompatibility()
 			; v2.70 - ottoman
 			DTSleep_IntimateChairOttomanList.AddForm(Game.GetFormFromFile(0x050005341, "DLCWorkshop03.esm"))
 			DTSleep_IntimateChairOttomanList.AddForm(Game.GetFormFromFile(0x05000534B, "DLCWorkshop03.esm"))
+			
+			; v2.77 - vault locker
+			Form lockerForm = Game.GetFormFromFile(0x05004988, "DLCWorkshop03.esm")
+			DTSleep_IntimateLockerList.AddForm(lockerForm)
+			DTSleep_IntimateLockerAdjList.AddForm(lockerForm)
 		endIf
 	endIf
 	
@@ -1947,16 +1954,21 @@ Function CheckCompatibility()
 			(DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive = true					;v2.50 moved below dance idle
 			
 			Form idleForm = None
-			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.260)				; v2.70 changed to add SC 1.2.6
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.270)				; v2.77 updated for latest SC
 		
-				idleForm = Game.GetFormFromFile(0x08030D9C, "SavageCabbage_Animations.esp")
+				idleForm = Game.GetFormFromFile(0x0803257D, "SavageCabbage_Animations.esp")
 				if (idleForm != None)
-					(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.260
-					
-				else 
-					idleForm = Game.GetFormFromFile(0x08030575, "SavageCabbage_Animations.esp")
+					(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.270
+				else
+					idleForm = Game.GetFormFromFile(0x08030D9C, "SavageCabbage_Animations.esp")
 					if (idleForm != None)
-						(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.250
+						(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.260
+						
+					else 
+						idleForm = Game.GetFormFromFile(0x08030575, "SavageCabbage_Animations.esp")
+						if (idleForm != None)
+							(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.250
+						endIf
 					endIf
 				endIf
 				
@@ -2362,7 +2374,10 @@ Function CheckCompatibility()
 				; v2.73 moved this block down to here after we checked all animation packs
 				; check sex chair-mod active (Atomic Lust just 1 animation--only include with other packs)
 				if ((DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive)
-					if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.26)
+					if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.27)			; v2.77
+						DTSleep_ActivFlagpole.SetValue(2.0)
+						DTSleep_ActivChairs.SetValue(5.0)
+					elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.26)
 						DTSleep_ActivFlagpole.SetValue(2.0)
 						DTSleep_ActivChairs.SetValue(4.0)
 					elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
@@ -5176,6 +5191,14 @@ Function UpgradeToVersion()
 				(DTSConditionals as DTSleep_Conditionals).DLCCoastDaltonRailingBackward03 = Game.GetFormFromFile(0x0300472C, "DLCCoast.esm") as ObjectReference
 				(DTSConditionals as DTSleep_Conditionals).DLCCoastDaltonRailingBackward04 = Game.GetFormFromFile(0x03004730, "DLCCoast.esm") as ObjectReference
 				(DTSConditionals as DTSleep_Conditionals).DLCCoastDaltonRailingBackward05 = Game.GetFormFromFile(0x03004731, "DLCCoast.esm") as ObjectReference
+			endIf
+		endIf
+		
+		if (lastVers < 2.770)
+			if ((DTSConditionals as DTSleep_Conditionals).IsWorkShop03DLCActive)
+				Form lockerForm = Game.GetFormFromFile(0x05004988, "DLCWorkshop03.esm")
+				DTSleep_IntimateLockerList.AddForm(lockerForm)
+				DTSleep_IntimateLockerAdjList.AddForm(lockerForm)
 			endIf
 		endIf
 		

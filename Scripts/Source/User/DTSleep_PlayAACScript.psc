@@ -608,7 +608,9 @@ Function InitSceneAndPlay()
 				longScene = 1
 			endIf
 		elseIf (SequenceID == 758)
-			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.250)
+			if (otherActor > 0 && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.270)
+				longScene = 2
+			elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.250)
 				longScene = 1
 			endIf	
 		elseIf (SequenceID == 759)
@@ -658,7 +660,9 @@ Function InitSceneAndPlay()
 				longScene = 1
 			endIf
 		elseIf (SequenceID == 796)
-			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.250)
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.270)				; v2.77
+				longScene = 2
+			elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.250)
 				longScene = 1
 			endIf
 		elseIf (SequenceID == 785)

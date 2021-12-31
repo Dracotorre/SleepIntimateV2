@@ -1,4 +1,4 @@
-<meta title="SleepIntimateX_SavageCabbage_animationData.xml" version="2.70" dataSet="animation"/>
+<meta title="SleepIntimateX_SavageCabbage_animationData.xml" version="2.77" dataSet="animation"/>
 <defaults source="SavageCabbage_Animations.esp"/>
 
 <animation id="SIX_SC_FM-Bed01-01Handjob" frames="390">
@@ -1622,6 +1622,18 @@
 	</actor>
 </animation>
 
+<animation id="SIX_SC_FMM-Standing01-05DoubleTeam" frames="500">		<!-- v2.77 -->
+	<actor gender="F">
+		<idle form="3254D"/>
+	</actor>
+	<actor gender="M">
+		<idle form="3254F"/>
+	</actor>
+	<actor gender="M">
+		<idle form="3254E"/>
+	</actor>
+</animation>
+
 <animation id="SIX_SC_FMM-Couch02-03Handjob" frames="500">
 	<actor gender="F">
 		<idle form="2763"/>
@@ -2717,6 +2729,16 @@
 		<idle form="2B0BC"/>
 	</actor>
 </animation>
+
+<animation id="SIX_SC-FM-Human-JailCellSmall01-07ClimaxLoop" frames="500">		<!-- v2.77 -->
+	<actor gender="F">
+		<idle form="32531"/>
+	</actor>
+	<actor gender="M">
+		<idle form="32532"/>
+	</actor>
+</animation>
+
 <animation id="SIX_SC-FM-Human-JailCellTinyWithDoor01-01Tease" frames="500">
 	<actor gender="F">
 		<idle form="2D6FD"/>
@@ -3207,6 +3229,7 @@
 	</actor>
 </animation>
 
+
 <!-- -----------------v2.70 SC 1.2.6 supermutant -------------------- -->
 <animation id="SIX_SC_FSM-Couch_PlayerHouse01-01Tease" frames="360">
 	<actor gender="F">
@@ -3280,3 +3303,112 @@
 	</actor>
 </animation>
 
+<!-- SC 1.2.7 -- v2.77 --->
+
+<animation id="SIX_SC-FM-Human-Mattress01-01Tease" frames="400">
+	<actor gender="F">
+		<idle form="32543"/>
+	</actor>
+	<actor gender="M">
+		<idle form="32544" />
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-Mattress01-03Missionary" frames="400">
+	<actor gender="F">
+		<idle form="32545"/>
+	</actor>
+	<actor gender="M">
+		<idle form="32546" />
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-SleepingBag01-01Tease" frames="400">
+	<actor gender="F">
+		<idle form="32549"/>
+	</actor>
+	<actor gender="M">
+		<idle form="3254A" />
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-SleepingBag01-03Doggy" frames="400">
+	<actor gender="F">
+		<idle form="3254B"/>
+	</actor>
+	<actor gender="M">
+		<idle form="3254C" />
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-Lockers01-01Tease" frames="400">
+	<actor gender="F">
+		<idle form="32533"/>
+	</actor>
+	<actor gender="M">
+		<idle form="32534" />
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-Lockers01-02Start" frames="400">
+	<actor gender="F">
+		<idle form="32535"/>
+	</actor>
+	<actor gender="M">
+		<idle form="32536" />
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-Lockers01-03Standing" frames="400">
+	<actor gender="F">
+		<idle form="32537"/>
+	</actor>
+	<actor gender="M">
+		<idle form="32538" />
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-Lockers01-04Standing" frames="400">
+	<actor gender="F">
+		<idle form="32539"/>
+	</actor>
+	<actor gender="M">
+		<idle form="3253A" />
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-Lockers01-05Standing" frames="400">
+	<actor gender="F">
+		<idle form="3253B"/>
+	</actor>
+	<actor gender="M">
+		<idle form="3253C" />
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-Lockers01-06Carry" frames="400">
+	<actor gender="F">
+		<idle form="3253D"/>
+	</actor>
+	<actor gender="M">
+		<idle form="3253E" />
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-Lockers01-07ClimaxLoop" frames="400">
+	<actor gender="F">
+		<idle form="3253F"/>
+	</actor>
+	<actor gender="M">
+		<idle form="32540" />
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-Lockers01-08Finish" frames="400">
+	<actor gender="F">
+		<idle form="32541"/>
+	</actor>
+	<actor gender="M">
+		<idle form="32542" />
+	</actor>
+</animation>
