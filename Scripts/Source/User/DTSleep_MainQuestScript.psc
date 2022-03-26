@@ -13381,7 +13381,12 @@ int Function RestoreSettingsDefault()
 			else
 				DTSleep_SettingShowIntimateCheck.SetValue(1.0)
 			endIf
-			;DTSleep_SettingSortHolotape
+			float sortTape = DTSleep_SettingSortHolotape.GetValue()
+			if (sortTape > 0.0 && sortTape < 1.0)
+				; v2.78 error correction
+				DTDebug("corrrecting holotape sort value of " + sortTape + " to 0.0", 1)
+				DTSleep_SettingSortHolotape.SetValue(0.0)
+			endIf
 			DTSleep_SettingSynthHuman.SetValue(0.0)
 			DTSleep_SettingTestMode.SetValue(0.0)
 			DTSleep_SettingTourEnabled.SetValue(1.0)

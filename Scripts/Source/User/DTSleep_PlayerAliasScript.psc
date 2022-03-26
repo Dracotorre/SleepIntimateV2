@@ -3188,6 +3188,41 @@ int Function CheckCustomArmorsAndBackpacks()
 		endIf
 	endIf
 	
+	; DX FetishFashion   - v2.78
+	jewelry = IsPluginActive(0x11039F0B, "DX_FetishFashion_Part1.esp") as Armor			; heart patches
+	if (jewelry != None)
+		if (!DTSleep_ArmorJewelry58List.HasForm(jewelry))
+			modCount += 1
+			DTSleep_ArmorJewelry58List.AddForm(jewelry as Form)
+			DTSleep_ArmorSlot58List.AddForm(jewelry as Form)
+			Form jewelForm = Game.GetFormFromFile(0x11039F0E, "DX_FetishFashion_Part1.esp")  ; ball piercings
+			DTSleep_ArmorJewelry58List.AddForm(jewelForm)
+			DTSleep_ArmorSlot58List.AddForm(jewelForm)
+			jewelForm = Game.GetFormFromFile(0x11039F11, "DX_FetishFashion_Part1.esp")  ; ring piercings
+			DTSleep_ArmorJewelry58List.AddForm(jewelForm)
+			DTSleep_ArmorSlot58List.AddForm(jewelForm)
+			jewelForm = Game.GetFormFromFile(0x11039F08, "DX_FetishFashion_Part1.esp")  ; X patches
+			DTSleep_ArmorJewelry58List.AddForm(jewelForm)
+			DTSleep_ArmorSlot58List.AddForm(jewelForm)
+			jewelForm = Game.GetFormFromFile(0x1103C514, "DX_FetishFashion_Part1.esp")  ; choker
+			DTSleep_ArmorNecklaceSlot50List.AddForm(jewelForm)
+			DTSleep_ArmorChokerList.AddForm(jewelForm)
+			
+			; bottom straps stretch and clip during animations -- comment out to undress by default
+			;DTSleep_ArmorSlot55List.AddForm(Game.GetFormFromFile(0x11039EFF, "DX_FetishFashion_Part1.esp")) ; bottom straps
+			; set female-only in case marked as intimate outfit
+			DTSleep_IntimateAttireFemaleOnlyList.AddForm(Game.GetFormFromFile(0x11039EFF, "DX_FetishFashion_Part1.esp"))
+			
+			; extra sex appeal outfits
+			DTSleep_SexyClothesFList.AddForm(Game.GetFormFromFile(0x1103C517, "DX_FetishFashion_Part1.esp"))
+			DTSleep_SexyClothesFList.AddForm(Game.GetFormFromFile(0x1103882B, "DX_FetishFashion_Part1.esp"))
+			DTSleep_SexyClothesFList.AddForm(Game.GetFormFromFile(0x11035A87, "DX_FetishFashion_Part1.esp"))
+			DTSleep_SexyClothesFList.AddForm(Game.GetFormFromFile(0x11037159, "DX_FetishFashion_Part1.esp"))
+			DTSleep_SexyClothesFList.AddForm(Game.GetFormFromFile(0x110378F6, "DX_FetishFashion_Part1.esp"))
+			DTSleep_SexyClothesFList.AddForm(Game.GetFormFromFile(0x11039EFC, "DX_FetishFashion_Part1.esp"))
+		endIf
+	endIf
+	
 	
 	; DX Overboss
 	Armor extraArmor = IsPluginActive(0x03000936, "DX_Overboss_Outfit.esp") as Armor
