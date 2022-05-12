@@ -11265,7 +11265,14 @@ int Function IsHeatherInLove()
 	if ((DTSConditionals as DTSleep_Conditionals).IsHeatherCompInLove)
 		return 2
 	else
-		Quest heatherCoreQuest = Game.GetFormFromFile(0x0300C9BA, "llamaCompanionHeather.esp") as Quest
+		; v2.78 update for HeatherV2
+		string heatherPluginName = "llamaCompanionHeatherv2.esp"
+		if ((DTSConditionals as DTSleep_Conditionals).HeatherCampanionVers < 1.5)
+			heatherPluginName = "llamaCompanionHeather.esp"
+		endIf
+		
+		Quest heatherCoreQuest = Game.GetFormFromFile(0x0300C9BA, heatherPluginName) as Quest
+		
 		if (heatherCoreQuest != None)
 			if (heatherCoreQuest.GetStageDone(1002))
 				(DTSConditionals as DTSleep_Conditionals).IsHeatherCompInLove = false
@@ -11276,6 +11283,7 @@ int Function IsHeatherInLove()
 				(DTSConditionals as DTSleep_Conditionals).IsHeatherCompInLove = true
 				
 				return 2
+				
 			elseIf (heatherCoreQuest.GetStageDone(751))
 				; idolize and heather flirts
 				; v2.14 - do not mark flag in case player chooses to end relationship
@@ -16072,6 +16080,7 @@ Function TestModeOutput()
 		Debug.Trace(myScriptName + "         AWKCR: " + (DTSConditionals as DTSleep_Conditionals).IsAWKCRActive)
 		Debug.Trace(myScriptName + "      Conquest: " + (DTSConditionals as DTSleep_Conditionals).IsConquestActive)
 		Debug.Trace(myScriptName + "  llamaHeather: " + (DTSConditionals as DTSleep_Conditionals).IsHeatherCompanionActive)
+		Debug.Trace(myScriptName + "  Heather Vers: " + (DTSConditionals as DTSleep_Conditionals).HeatherCampanionVers)
 		Debug.Trace(myScriptName + "       nwsBarb: " + (DTSConditionals as DTSleep_Conditionals).IsNWSBarbActive)
 		Debug.Trace(myScriptName + "SmokableCigars: " + (DTSConditionals as DTSleep_Conditionals).IsSmokableCigarsActive)
 		Debug.Trace(myScriptName + "   DX AtomGirl: " + (DTSConditionals as DTSleep_Conditionals).IsDXAtomGirlActive)

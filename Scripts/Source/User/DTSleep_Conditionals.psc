@@ -67,6 +67,7 @@ bool property IsConquestActive = false auto conditional hidden
 Keyword property ConquestWorkshopKW = None auto conditional hidden
 bool property IsCrossBosUniActive = false auto conditional hidden
 bool Property IsHeatherCompanionActive = false auto conditional hidden
+float property HeatherCampanionVers = 0.0 auto conditional hidden
 bool property IsHeatherCompInLove = false auto conditional hidden
 bool property IsNWSBarbActive = false auto conditional hidden
 Perk property ModCompNWSBarbRewardPerk = None auto conditional hidden

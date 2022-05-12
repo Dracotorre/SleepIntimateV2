@@ -1182,43 +1182,63 @@ Function CheckCompatibility()
 	endIf
 	
 	; Heather Casdin
+	string heatherPluginName = "llamaCompanionHeatherv2.esp"				; start with V2 - v2.78
+	float heatherVers = 2.0
+	
+	; LlamaRC recommends starting a new game for V2 so no upgrade path here
+	;  though player could remove original plugin, start game and exit, then activate v2 plugin
+	
 	if ((DTSConditionals as DTSleep_Conditionals).IsHeatherCompanionActive == false)
-		Form heatherForm = IsPluginActive(0x0300AB33, "llamaCompanionHeather.esp")
+		Form heatherForm = IsPluginActive(0x0300AB33, heatherPluginName)
+		
+		if (heatherForm == None)
+			; check for original Heather
+			heatherVers = 1.0
+			heatherPluginName =  "llamaCompanionHeather.esp"
+		endIf
+		
 		; 0x0300AB33 is NPC preset
 		if (heatherForm != None)
 		
 			(DTSConditionals as DTSleep_Conditionals).IsHeatherCompanionActive = true
+			(DTSConditionals as DTSleep_Conditionals).HeatherCampanionVers = heatherVers
 			
-			Armor heatherBag = Game.GetFormFromFile(0x02245C47, "llamaCompanionHeather.esp") as Armor
+			Armor heatherBag = Game.GetFormFromFile(0x02245C47, heatherPluginName) as Armor
 			if (heatherBag != None)
 				if (!DTSleep_ArmorBackPacksList.HasForm(heatherBag))
 					Debug.Trace(myScriptName + " adding heather bag to backpacks")
 					DTSleep_ArmorBackPacksList.AddForm(heatherBag)
 				endIf
 			endIf
-			Location bunker = Game.GetFormFromFile(0x0202D693, "llamaCompanionHeather.esp") as Location
+			Location bunker = Game.GetFormFromFile(0x0202D693, heatherPluginName) as Location
 			if (bunker && !DTSleep_UndressLocationList.HasForm(bunker))
 				Debug.Trace(myScriptName + " adding heather bunker to locations list")
 				DTSleep_UndressLocationList.AddForm(bunker)
 				DTSleep_PrivateLocationList.AddForm(bunker)
-				Form bed = Game.GetFormFromFile(0x0211E893, "llamaCompanionHeather.esp")
+				; the bed in v2 has a new FormID
+				Form bed = None
+				if (heatherVers < 1.5)
+					Game.GetFormFromFile(0x0211E893, heatherPluginName)
+				else
+					Game.GetFormFromFile(0x04CA8A1E, heatherPluginName)
+				endIf
 				if (bed != None)
 					DTSleep_BedList.AddForm(bed)
 					DTSleep_BedsBigList.AddForm(bed)
 					DTSleep_BedsBigDoubleList.AddForm(bed)
 				endIf
 			endIf
-			DTSleep_ArmorHatHelmList.AddForm(Game.GetFormFromFile(0x031CB6B3, "llamaCompanionHeather.esp"))
-			DTSleep_ArmorHatHelmList.AddForm(Game.GetFormFromFile(0x0325F709, "llamaCompanionHeather.esp"))
+			DTSleep_ArmorHatHelmList.AddForm(Game.GetFormFromFile(0x031CB6B3, heatherPluginName))
+			DTSleep_ArmorHatHelmList.AddForm(Game.GetFormFromFile(0x0325F709, heatherPluginName))
 			
-			Armor bodyNakedArmor = Game.GetFormFromFile(0x0200BA6D, "llamaCompanionHeather.esp") as Armor
+			Armor bodyNakedArmor = Game.GetFormFromFile(0x0200BA6D, heatherPluginName) as Armor
 			if (bodyNakedArmor && !DTSleep_ModCompanionBodiesLst.HasForm(bodyNakedArmor))
 				DTSleep_ModCompanionBodiesLst.AddForm(bodyNakedArmor)
 				
 				(DTSConditionals as DTSleep_Conditionals).ModCompanionBodyHeatherIndex = DTSleep_ModCompanionBodiesLst.GetSize() - 1
 			endIf
 			
-			Actor heatherActor = Game.GetFormFromFile(0x0300D157, "llamaCompanionHeather.esp") as Actor
+			Actor heatherActor = Game.GetFormFromFile(0x0300D157, heatherPluginName) as Actor
 			
 			if (heatherActor && !DTSleep_ModCompanionActorList.HasForm(heatherActor))
 				DTSleep_ModCompanionActorList.AddForm(heatherActor)
@@ -1229,14 +1249,16 @@ Function CheckCompatibility()
 			endIf
 		endIf
 	elseIf (!Game.IsPluginInstalled("llamaCompanionHeather.esp"))
-		Debug.Trace(myScriptName + " llamaCompanionHeather has been removed")
-		
-		(DTSConditionals as DTSleep_Conditionals).IsHeatherCompanionActive = false
-		
-		UpdateCompanionSupportRemoval()
-		
-		(DTSConditionals as DTSleep_Conditionals).ModCompanionActorHeatherIndex = -2
-		(DTSConditionals as DTSleep_Conditionals).ModCompanionBodyHeatherIndex = -2
+		if (!Game.IsPluginInstalled("llamaCompanionHeatherv2.esp"))
+			Debug.Trace(myScriptName + " llamaCompanionHeather has been removed")
+			
+			(DTSConditionals as DTSleep_Conditionals).IsHeatherCompanionActive = false
+			
+			UpdateCompanionSupportRemoval()
+			
+			(DTSConditionals as DTSleep_Conditionals).ModCompanionActorHeatherIndex = -2
+			(DTSConditionals as DTSleep_Conditionals).ModCompanionBodyHeatherIndex = -2
+		endIf
 	endIf
 	
 	; Nora Spouse companion
@@ -4943,7 +4965,11 @@ Function UpgradeToVersion()
 			endIf
 			
 			if ((DTSConditionals as DTSleep_Conditionals).IsHeatherCompanionActive)
-				Form heatherActor = Game.GetFormFromFile(0x0300D157, "llamaCompanionHeather.esp")
+				string heatherPluginName = "llamaCompanionHeather.esp"
+				if ((DTSConditionals as DTSleep_Conditionals).HeatherCampanionVers >= 2.0)
+					heatherPluginName = "llamaCompanionHeatherv2.esp"
+				endIf
+				Form heatherActor = Game.GetFormFromFile(0x0300D157, heatherPluginName)
 				if (heatherActor != None)
 					DTSleep_CompanionIntimateAllList.AddForm(heatherActor)
 				endIf
@@ -5160,7 +5186,13 @@ Function UpgradeToVersion()
 			
 			if ((DTSConditionals as DTSleep_Conditionals).IsHeatherCompanionActive)
 				; add to double-bed list
-				Form bed = Game.GetFormFromFile(0x0211E893, "llamaCompanionHeather.esp")
+				
+				Form bed = None
+				if ((DTSConditionals as DTSleep_Conditionals).HeatherCampanionVers < 1.5)
+					bed = Game.GetFormFromFile(0x0211E893, "llamaCompanionHeather.esp")
+				else
+					bed = Game.GetFormFromFile(0x04CA8A1E, "llamaCompanionHeatherv2.esp")
+				endIf
 				if (bed != None)
 					DTSleep_BedsBigDoubleList.AddForm(bed)
 				endIf
@@ -5304,14 +5336,18 @@ Function UpdateCompanionSupportRemoval()
 	endIf
 	
 	if ((DTSConditionals as DTSleep_Conditionals).IsHeatherCompanionActive)
-		Form bodyNakedArmor = Game.GetFormFromFile(0x0200BA6D, "llamaCompanionHeather.esp")
+		string heatherPluginName = "llamaCompanionHeather.esp"
+		if ((DTSConditionals as DTSleep_Conditionals).HeatherCampanionVers >= 2.0)
+			heatherPluginName = "llamaCompanionHeatherv2.esp"
+		endIf
+		Form bodyNakedArmor = Game.GetFormFromFile(0x0200BA6D, heatherPluginName)
 		if (bodyNakedArmor != None)
 			DTSleep_ModCompanionBodiesLst.AddForm(bodyNakedArmor)
 			
 			(DTSConditionals as DTSleep_Conditionals).ModCompanionBodyHeatherIndex = DTSleep_ModCompanionBodiesLst.GetSize() - 1
 		endIf
 		
-		Form heatherActor = Game.GetFormFromFile(0x0300D157, "llamaCompanionHeather.esp")
+		Form heatherActor = Game.GetFormFromFile(0x0300D157, heatherPluginName)
 		
 		if (heatherActor != None)
 			DTSleep_ModCompanionActorList.AddForm(heatherActor)
