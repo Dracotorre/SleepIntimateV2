@@ -1,4 +1,4 @@
-<meta title="SleepIntimateX_SavageCabbage_positionData.xml" version="2.77" dataSet="position"/>
+<meta title="SleepIntimateX_SavageCabbage_positionData.xml" version="2.79" dataSet="position"/>
 <!-- for use with SavageCabbage v1.2.7 -->
 
 
@@ -139,7 +139,14 @@
 <position id="DTSIX_753_S3" animation="SIX_SC_FM-Stool01-05Doggy" isHidden="true"/>
 <position id="DTSIX_753_S4" animation="SIX_SC_FM-Stool01-03Doggy" isHidden="true"/>
 
-<position id="DTSIX_754_S1" animation="SIX_SC_FM-ChairHigh01-02Doggy" isHidden="true"/>
+<position id="DTSIX_754_S1" animation="SIX_SC_FM-ChairHigh01-01Tease" isHidden="true"/>
+<position id="DTSIX_754_S2" animation="SIX_SC_FM-ChairHigh01-02Start" isHidden="true"/>
+<position id="DTSIX_754_S3" animation="SIX_SC_FM-ChairHigh01-03Doggy" isHidden="true"/>
+<position id="DTSIX_754_S4" animation="SIX_SC_FM-ChairHigh01-04Doggy" isHidden="true"/>
+<position id="DTSIX_754_S5" animation="SIX_SC_FM-ChairHigh01-05Doggy" isHidden="true"/>
+<position id="DTSIX_754_S6" animation="SIX_SC_FM-ChairHigh01-06Doggy" isHidden="true"/>
+
+
 <position id="DTSIX_755_S1" animation="SIX_SC_FM-ChairLow01-02Doggy" isHidden="true"/>
 
 <position id="DTSIX_756_S1" animation="SIX_SC_FM-PoolTable01-01Tease" isHidden="true"/>
@@ -271,9 +278,16 @@
 
 <position id="DTSIX_782_S1" animation="SIX_SC-FM-Human-Mattress01-01Tease" isHidden="true"/>
 <position id="DTSIX_782_S2" animation="SIX_SC-FM-Human-Mattress01-03Missionary" isHidden="true"/>
+<position id="DTSIX_782_S3" animation="SIX_SC-FM-Human-Mattress01-04Missionary" isHidden="true"/>
+<position id="DTSIX_782_S4" animation="SIX_SC-FM-Human-Mattress01-05Missionary" isHidden="true"/>
+<position id="DTSIX_782_S5" animation="SIX_SC-FM-Human-Mattress01-06Missionary" isHidden="true"/>
 
 <position id="DTSIX_783_S1" animation="SIX_SC-FM-Human-SleepingBag01-01Tease" isHidden="true"/>
-<position id="DTSIX_783_S2" animation="SIX_SC-FM-Human-SleepingBag01-03Doggy" isHidden="true"/>
+<position id="DTSIX_783_S2" animation="SIX_SC-FM-Human-SleepingBag01-02Start" isHidden="true"/>
+<position id="DTSIX_783_S3" animation="SIX_SC-FM-Human-SleepingBag01-03Doggy" isHidden="true"/>
+<position id="DTSIX_783_S4" animation="SIX_SC-FM-Human-SleepingBag01-04Doggy" isHidden="true"/>
+<position id="DTSIX_783_S5" animation="SIX_SC-FM-Human-SleepingBag01-05Doggy" isHidden="true"/>
+<position id="DTSIX_783_S6" animation="SIX_SC-FM-Human-SleepingBag01-06Doggy" isHidden="true"/>
 
 <position id="DTSIX_784_S1" animation="SIX_SC_FM-Human-Floor01-01Tease" isHidden="true"/>
 <position id="DTSIX_784_S2" animation="SIX_SC_FM-Human-Floor01-02Start" isHidden="true"/>

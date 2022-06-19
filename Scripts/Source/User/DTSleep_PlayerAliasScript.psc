@@ -1976,20 +1976,26 @@ Function CheckCompatibility()
 			(DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive = true					;v2.50 moved below dance idle
 			
 			Form idleForm = None
-			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.270)				; v2.77 updated for latest SC
-		
-				idleForm = Game.GetFormFromFile(0x0803257D, "SavageCabbage_Animations.esp")
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.280)				; v2.79 updated for latest SC
+				
+				idleForm = Game.GetFormFromFile(0x08032D6E, "SavageCabbage_Animations.esp")
+				
 				if (idleForm != None)
-					(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.270
+					(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.280
 				else
-					idleForm = Game.GetFormFromFile(0x08030D9C, "SavageCabbage_Animations.esp")
+					idleForm = Game.GetFormFromFile(0x0803257D, "SavageCabbage_Animations.esp")
 					if (idleForm != None)
-						(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.260
-						
-					else 
-						idleForm = Game.GetFormFromFile(0x08030575, "SavageCabbage_Animations.esp")
+						(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.270
+					else
+						idleForm = Game.GetFormFromFile(0x08030D9C, "SavageCabbage_Animations.esp")
 						if (idleForm != None)
-							(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.250
+							(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.260
+							
+						else 
+							idleForm = Game.GetFormFromFile(0x08030575, "SavageCabbage_Animations.esp")
+							if (idleForm != None)
+								(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.250
+							endIf
 						endIf
 					endIf
 				endIf

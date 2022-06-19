@@ -2254,7 +2254,14 @@ float Function GetTimeForPlayID(int id)
 				DTSleep_IntimateSceneLen.SetValueInt(0)
 				return 32.0
 				
-			elseIf (id >= 754 && id <= 755)
+			elseIf (id == 754)
+				; v2.79 - fall through for 1.28
+				if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.28)
+					DTSleep_IntimateSceneLen.SetValueInt(0)
+					return 32.0
+				endIf
+				
+			elseIf (id == 755)
 				DTSleep_IntimateSceneLen.SetValueInt(0)
 				
 				return 32.0
@@ -2279,9 +2286,12 @@ float Function GetTimeForPlayID(int id)
 				
 				return 30.7
 			elseIf (id >= 782 && id <= 783)
-				DTSleep_IntimateSceneLen.SetValueInt(0)
+				; v2.79 - fall through for 1.28
+				if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.28)
+					DTSleep_IntimateSceneLen.SetValueInt(0)
 				
-				return 33.7
+					return 33.7
+				endIf
 			elseIf (id == 785 && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.21)
 				DTSleep_IntimateSceneLen.SetValueInt(0)
 				return 45.0
@@ -6337,6 +6347,8 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 					
 					; ----------------------- standing or floorbed
 					okayAdd = true
+					int addedFloorBedCount = 0						; v2.79 - so not to add other beds if not needed
+					
 					if (playerPick && !DoesMainActorPrefID(3) && !DoesMainActorPrefID(52))
 						okayAdd = false
 					endIf
@@ -6349,18 +6361,23 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 					elseIf (bedIsFloorBed && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.27)		; v2.77
 						if (playerPick && DoesMainActorPrefID(50))
 							sidArray.Add(84)			; floor oral
+							addedFloorBedCount += 1
 						elseIf (MySleepBedFurnType == FurnTypeIsSleepingBag && !SceneData.FemaleRaceHasTail)
 							if (!playerPick || DoesMainActorPrefID(3))
 								sidArray.Add(83)
+								addedFloorBedCount += 1
 							endIf
 						elseif (!playerPick ||DoesMainActorPrefID(1))
 							sidArray.Add(82)
+							addedFloorBedCount += 1
 						endIf
 					elseIf (bedIsFloorBed || standOnly || MainActorPositionByCaller)
 						if (playerPick && DoesMainActorPrefID(50) && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.26)
-							sidArray.Add(84)			; floor oral -- v2.70 
+							sidArray.Add(84)			; floor oral -- v2.70
+							addedFloorBedCount += 1
 						elseIf (okayAdd && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.10)
 							sidArray.Add(51, numToAdd)	; stand doggy
+							addedFloorBedCount += 1
 						endIf
 					endIf
 					; ---------------------
@@ -6420,7 +6437,10 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 								okayAdd = false
 							endIf
 							if (okayAdd)
-								sidArray.Add(4)
+								if (addedFloorBedCount <= 0 ||  MySleepBedFurnType != FurnTypeIsFloorBed)
+									; v2.79 - orbit cam has problems with lowering to floor bed
+									sidArray.Add(4)
+								endIf
 								if (!MySleepBedFurnType == FurnTypeIsDoubleBed && MySleepBedFurnType != FurnTypeIsBunkBed && !SleepBedRef.HasKeyword(AnimFurnFloorBedAnimKY) && !IsSleepingBag(SleepBedRef))
 									if (baseBedForm == None)
 										baseBedForm = SleepBedRef.GetBaseObject() as Form
@@ -7135,6 +7155,9 @@ bool Function SceneOkayToClonePlayer(int sid)
 				endIf
 			endIf
 		elseIf (MySleepBedFurnType == FurnTypeIsSleepingBag)
+			if (sid == 704)
+				return true				; v2.79 -- orbit has issues on this lowered animation
+			endIf
 			; probably okay to orbit
 			return false
 			

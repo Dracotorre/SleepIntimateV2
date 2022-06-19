@@ -122,8 +122,11 @@ int Function GetStageCountForSequenceID(int seqID, int longScene = 0, int other 
 				return 2
 			endIf
 			return 4
-		elseIf (seqID >= 782 && seqID <= 783)				; v2.77
-			return 2
+		elseIf (seqID >= 782 && seqID <= 783)				; v2.77; updated v2.79
+			if (longScene <= 0)
+				return 2
+			endIf
+			return 6
 		elseIf (seqID == 773)
 			return 8
 		elseIf (seqID == 771)
@@ -161,8 +164,14 @@ int Function GetStageCountForSequenceID(int seqID, int longScene = 0, int other 
 			result = 6
 		elseIf (seqID == 759)
 			result = 6
-		elseIf (seqID >= 754 && seqID <= 755)
+		elseIf (seqID == 755)
 			result = 1
+		elseIf (seqID == 754)
+			if (longScene <= 0)
+				result = 1
+			else
+				result = 6
+			endIf
 		elseIf (seqID == 752)
 			if (longScene > 0)
 				result = 6
@@ -1979,14 +1988,51 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 					ssStruct.PositionOrigID = "FM-Stool01-03Doggy"
 				endIf
 			elseIf (seqID == 754)	
-				ssStruct.FAnimFormID = 0x05001000	
-				ssStruct.MAnimFormID = 0x05001001
-				ssStruct.StageTime = 32.0
+				
 				if (scEVB)
 					ssStruct.ArmorNudeAGun = 1
 				endIf
-				ssStruct.PositionID = "DTSIX_754_S1"
-				ssStruct.PositionOrigID = "FM-ChairHigh01-03Doggy"
+				if (longScene <= 0)
+					ssStruct.StageTime = 32.0
+					ssStruct.FAnimFormID = 0x05001000	
+					ssStruct.MAnimFormID = 0x05001001
+					ssStruct.PositionID = "DTSIX_754_S3"				
+					ssStruct.PositionOrigID = "FM-ChairHigh01-03Doggy"
+				else
+					; additional stages SC 1.2.8 - v2.79
+					if (stageNumber == 1)	
+						ssStruct.FAnimFormID = 0x05032D42
+						ssStruct.MAnimFormID = 0x05032D43
+						ssStruct.PositionID = "DTSIX_754_S1"
+						ssStruct.PositionOrigID = "SC-FM-Human-ChairHigh01-01Tease"
+					elseIf (stageNumber == 2)
+						ssStruct.FAnimFormID = 0x05032D44
+						ssStruct.MAnimFormID = 0x05032D45
+						ssStruct.PositionID = "DTSIX_754_S2"
+						ssStruct.PositionOrigID = "SC-FM-Human-ChairHigh01-02Start"
+					elseIf (stageNumber == 3)
+						ssStruct.FAnimFormID = 0x05001000	
+						ssStruct.MAnimFormID = 0x05001001
+						ssStruct.PositionID = "DTSIX_754_S3"
+						ssStruct.PositionOrigID = "SC-FM-Human-ChairHigh01-03Doggy"
+					elseIf (stageNumber == 4)
+						ssStruct.FAnimFormID = 0x05032D46
+						ssStruct.MAnimFormID = 0x05032D47
+						ssStruct.PositionID = "DTSIX_754_S4"
+						ssStruct.PositionOrigID = "SC-FM-Human-ChairHigh01-04Doggy"
+					elseIf (stageNumber == 5)
+						ssStruct.FAnimFormID = 0x05032D48
+						ssStruct.MAnimFormID = 0x05032D49
+						ssStruct.PositionID = "DTSIX_754_S5"
+						ssStruct.PositionOrigID = "SC-FM-Human-ChairHigh01-05Doggy"
+					else
+						ssStruct.FAnimFormID = 0x05032D4A
+						ssStruct.MAnimFormID = 0x05032D4B
+						ssStruct.PositionID = "DTSIX_754_S6"
+						ssStruct.PositionOrigID = "SC-FM-Human-ChairHigh01-06Doggy"
+					endIf
+				endIf
+				
 			elseIf (seqID == 755)	
 				ssStruct.FAnimFormID = 0x05001002	
 				ssStruct.MAnimFormID = 0x05001003
@@ -2822,33 +2868,76 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 					ssStruct.PositionOrigID = "SC-FM-Human-Couch_PlayerHouse01-04Facefuck"
 				endIf
 			elseIf (seqID == 782)
-				if (stageNumber == 1)							; v1.2.7 - v2.77
+				if (stageNumber == 1)							; SC 1.2.7 - v2.77
 					ssStruct.FAnimFormID = 0x05032543
 					ssStruct.MAnimFormID = 0x05032544
 					ssStruct.StageTime = 9.0
 					ssStruct.PositionID = "DTSIX_782_S1"
 					ssStruct.PositionOrigID = "SC-FM-Human-Mattress01-01Tease"
-				else 
+				elseIf (stageNumber == 2)				
 					ssStruct.FAnimFormID = 0x05032545
 					ssStruct.MAnimFormID = 0x05032546
-					ssStruct.StageTime = 24.0
+					if (longScene <= 0)
+						ssStruct.StageTime = 24.0
+					endIf
 					ssStruct.PositionID = "DTSIX_782_S2"
 					ssStruct.PositionOrigID = "SC-FM-Human-Mattress01-03Missionary"
+				elseIf (stageNumber == 3)							; added SC 1.2.8 - v2.79
+					ssStruct.FAnimFormID = 0x05032D56
+					ssStruct.MAnimFormID = 0x05032D57
+					ssStruct.PositionID = "DTSIX_782_S3"
+					ssStruct.ArmorNudeAGun = 2
+					ssStruct.PositionOrigID = "SC-FM-Human-Mattress01-04Missionary"
+				elseIf (stageNumber == 4)
+					ssStruct.FAnimFormID = 0x05032D58
+					ssStruct.MAnimFormID = 0x05032D59
+					ssStruct.ArmorNudeAGun = 2
+					ssStruct.PositionID = "DTSIX_782_S4"
+					ssStruct.PositionOrigID = "SC-FM-Human-Mattress01-05Missionary"	
+				elseIf (stageNumber >= 5)
+					ssStruct.FAnimFormID = 0x05032D5A
+					ssStruct.MAnimFormID = 0x05032D5B
+					ssStruct.ArmorNudeAGun = 2
+					ssStruct.PositionID = "DTSIX_782_S5"
+					ssStruct.PositionOrigID = "SC-FM-Human-Mattress01-06Missionary"
 				endIf
 			elseIf (seqID == 783)
-				if (stageNumber == 1)							; v1.2.7 - v2.77
+				if (stageNumber == 1)							; SC 1.2.7 - v2.77
 					ssStruct.FAnimFormID = 0x05032549
 					ssStruct.MAnimFormID = 0x0503254A
 					ssStruct.StageTime = 9.0
 					ssStruct.PositionID = "DTSIX_783_S1"
 					ssStruct.PositionOrigID = "SC-FM-Human-SleepingBag01-01Tease"
-				else 
-					ssStruct.FAnimFormID = 0x0503254B
-					ssStruct.MAnimFormID = 0x0503254C
-					ssStruct.StageTime = 24.0
+				elseIf (stageNumber == 2 && longScene >= 1)		; SC 1.2.8 - v2.79
+					ssStruct.FAnimFormID = 0x05032D5C
+					ssStruct.MAnimFormID = 0x05032D5D
 					ssStruct.PositionID = "DTSIX_783_S2"
+					ssStruct.PositionOrigID = "SC-FM-Human-SleepingBag01-02Start"
+				elseIf (stageNumber == 3 || longScene <= 0)
+					ssStruct.FAnimFormID = 0x0503254B			; SC 1.2.7 - v2.77
+					ssStruct.MAnimFormID = 0x0503254C
+					if (longScene <= 0)
+						ssStruct.StageTime = 24.0
+					endIf
+					ssStruct.PositionID = "DTSIX_783_S3"	
 					ssStruct.PositionOrigID = "SC-FM-Human-SleepingBag01-03Doggy"
+				elseIf (stageNumber == 4)						; SC 1.2.8 - v2.79
+					ssStruct.FAnimFormID = 0x05032D5E
+					ssStruct.MAnimFormID = 0x05032D5F
+					ssStruct.PositionID = "DTSIX_783_S4"
+					ssStruct.PositionOrigID = "SC-FM-Human-SleepingBag01-04Doggy"
+				elseIf (stageNumber == 5)
+					ssStruct.FAnimFormID = 0x05032D6C
+					ssStruct.MAnimFormID = 0x05032D6D
+					ssStruct.PositionID = "DTSIX_783_S5"
+					ssStruct.PositionOrigID = "SC-FM-Human-SleepingBag01-05Doggy"
+				elseIf (stageNumber == 6)
+					ssStruct.FAnimFormID = 0x05032D6E
+					ssStruct.MAnimFormID = 0x05032D6F
+					ssStruct.PositionID = "DTSIX_783_S6"
+					ssStruct.PositionOrigID = "SC-FM-Human-SleepingBag01-06Doggy"
 				endIf
+				
 			elseIf (seqID == 784)									; stand/floor oral v2.70, SC 1.2.6
 				if (stageNumber == 1)
 					ssStruct.FAnimFormID = 0x05030DAF					
