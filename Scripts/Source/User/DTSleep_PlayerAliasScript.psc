@@ -3251,6 +3251,19 @@ int Function CheckCustomArmorsAndBackpacks()
 		endIf
 	endIf
 	
+	; DX Pornstar Fashion - v2.79
+	jewelry = IsPluginActive(0x11023F6D, "DX_Pornstar_Fashion.esp") as Armor			; earrings
+	if (jewelry != None)
+		if (!DTSleep_ArmorSlot55List.HasForm(jewelry))
+			modCount += 1
+			DTSleep_ArmorSlot55List.AddForm(jewelry as Form)
+			Form jewelForm = Game.GetFormFromFile(0x11024709, "DX_Pornstar_Fashion.esp")  ; collar
+			DTSleep_ArmorNecklaceSlot50List.AddForm(jewelForm)
+			DTSleep_ArmorChokerList.AddForm(jewelForm)
+			; purse like backpack
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x11024EA5, "DX_Pornstar_Fashion.esp"))
+		endIf
+	endIf
 	
 	; DX Overboss
 	Armor extraArmor = IsPluginActive(0x03000936, "DX_Overboss_Outfit.esp") as Armor

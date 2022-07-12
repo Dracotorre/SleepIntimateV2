@@ -476,9 +476,11 @@ int Function SetAnimationPacksAndGetSceneID(int[] animSetsArray, bool hugsOnly =
 	
 	SceneData.IntimateSceneIsDanceHug = 0
 	
+	; if pillow bed has a frame, use the frame and unmark pillow
+	;
 	if (SleepBedIsPillowBed && SleepBedRef != None)
 		ObjectReference bedFrameRef = DTSleep_CommonF.FindNearestAnyBedFromObject(SleepBedRef, DTSleep_BedPillowFrameDBList, None, 86.0)
-		if (bedFrameRef != None)	
+		if (bedFrameRef != None)
 			SleepBedIsPillowBed = false
 			SleepBedAltRef = bedFrameRef
 		else
@@ -4982,7 +4984,8 @@ Point3DOrient Function PositionMarkerOnBed(ObjectReference markerRef, ObjectRefe
 		isCoffin = true
 	elseIf (bedRef.HasKeyword(AnimFurnPicnickTableKY))
 		isTable = true
-	elseIf (!bedRef.HasKeyword(IsSleepFurnitureKY) && !SleepBedIsPillowBed)
+	elseIf (!bedRef.HasKeyword(IsSleepFurnitureKY) && !SleepBedIsPillowBed && SleepBedAltRef == None)
+		; v2.79 - included SleepBedAltRef since we may have set isPillowBed false and repalced with BedAltRef
 		isLowBed = true
 	endIf
 	
@@ -5480,6 +5483,8 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 		endIf
 	endIf
 	
+	; isPillowBed may be false if frame already found 
+	;  -- IsPillowBed considered floor bed, but may be placed on a bed
 	if (SleepBedIsPillowBed && !bedIsFloorBed)
 		pillowBedHasFrame = true
 	endIf
@@ -7143,8 +7148,10 @@ bool Function SceneOkayToClonePlayer(int sid)
 				; designed for bed
 				return false
 			endIf
-		elseIf (MySleepBedFurnType == FurnTypeIsBedSingle || MySleepBedFurnType == FurnTypePillowBedHasFrame || MySleepBedFurnType == FurnTypeIsLimitedSpaceBed)
+		elseIf (MySleepBedFurnType == FurnTypeIsBedSingle || SleepBedIsPillowBed || MySleepBedFurnType == FurnTypePillowBedHasFrame || MySleepBedFurnType == FurnTypeIsLimitedSpaceBed)
 			; do not include height-adjusted scenes (all 600s, most 500s, all 900s)
+			; v2.79 - included SleepBedIsPillowBed 
+			
 			if (sid >= 700 && sid < 800)
 				if (promptForSleep <= 0)
 					return false
