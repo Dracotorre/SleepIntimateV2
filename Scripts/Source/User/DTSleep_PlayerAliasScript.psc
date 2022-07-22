@@ -3497,7 +3497,7 @@ int Function CheckCustomArmorsAndBackpacks()
 		endIf
 	endIf
 	
-	; MyMinuteMen
+	; MyMinuteMen OR WATMinutemen
 	string myminutemenPlugin = "My_Minutemen.esp"
 	if (!Game.IsPluginInstalled(myminutemenPlugin))
 		myminutemenPlugin = "W.A.T.Minutemen.esp"
@@ -3511,6 +3511,13 @@ int Function CheckCustomArmorsAndBackpacks()
 			DTSleep_ArmorArmRightList.AddForm(Game.GetFormFromFile(0x11000804, myminutemenPlugin))
 			DTSleep_ArmorArmLeftList.AddForm(Game.GetFormFromFile(0x11000805, myminutemenPlugin))
 			DTSleep_ArmorLegLeftList.AddForm(Game.GetFormFromFile(0x1100082E, myminutemenPlugin))
+		endIf
+		
+		; v2.79 - check backpacks
+		Form extraForm = Game.GetFormFromFile(0x11000881, myminutemenPlugin)
+		if (extraForm != None && !DTSleep_ArmorBackPacksList.HasForm(extraForm))
+			DTSleep_ArmorBackPacksList.AddForm(extraForm)
+			DTSleep_ArmorBackPacksList.AddForm(Game.GetFormFromFile(0x110008FB, myminutemenPlugin))
 		endIf
 	endIf
 	

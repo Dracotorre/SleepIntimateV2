@@ -72,13 +72,9 @@ ReferenceAlias property DTSleep_UndressPAlias auto
 Spell property DTSleep_UndressCarryWeight auto const
 GlobalVariable property DTSleep_UndressCarryBonus auto const
 GlobalVariable property DTSleep_CompanionUndressed auto const
-GlobalVariable property DTSleep_SettingTestMode auto const
-GlobalVariable property DTSleep_SettingPackOnGround auto const
 GlobalVariable property DTSleep_DebugMode auto const
 GlobalVariable property DTSleep_IUndressStat auto
-GlobalVariable property DTSleep_SettingAltFemBody auto	; added v2.12 for alternate female body
-GlobalVariable property DTSleep_SettingIncludeExtSlots auto
-GlobalVariable property DTSleep_SettingUndressWeapon auto
+
 EndGroup
 
 Group B_Lists
@@ -155,6 +151,12 @@ GlobalVariable property DTSleep_AdultContentOn auto const
 GlobalVariable property DTSleep_SettingUndressGlasses auto const
 GlobalVariable property DTSleep_SettingUndressPipboy auto const		; only for backup to check disabled status - caller decides for regular use
 GlobalVariable property DTSleep_SettingSynthHuman auto const
+GlobalVariable property DTSleep_SettingTestMode auto const
+GlobalVariable property DTSleep_SettingPackOnGround auto const
+GlobalVariable property DTSleep_SettingAltFemBody auto	; added v2.12 for alternate female body
+GlobalVariable property DTSleep_SettingIncludeExtSlots auto
+GlobalVariable property DTSleep_SettingUndressWeapon auto
+GlobalVariable property DTSleep_SettingPackUseGO auto const			; added 2.79 let player use ground object for placement
 EndGroup
 
 ; -------
@@ -5148,7 +5150,8 @@ int Function UndressPlaceExtraArmorAtFeet(Actor actorRef, Armor armorItem, bool 
 	int count = 0
 	if (actorRef != None && armorItem != None)
 		
-		if (useGenericBag && DTSGenericBagItem != None)
+		; v2.79 added setting to override using ground object
+		if (useGenericBag && DTSleep_SettingPackUseGO.GetValueInt() <= 0.0 && DTSGenericBagItem != None)
 			if (PlaceFormNearFeet(DTSGenericBagItem, actorRef))
 				count += 1
 			endIf
@@ -5163,7 +5166,9 @@ endFunction
 int Function UndressPlaceExtraArmorForBed(ObjectReference bedRef, Actor actorRef, Armor armorItem, int cornerVal = 0, bool useGenericBag = false)
 	int count = 0
 	if (actorRef != None && bedRef != None && armorItem != None)
-		if (useGenericBag && DTSGenericBagItem != None)
+	
+		; v2.79 added setting to override using ground object
+		if (useGenericBag && DTSleep_SettingPackUseGO.GetValueInt() <= 0.0 && DTSGenericBagItem != None)
 			if (PlaceFormItemAtBed(DTSGenericBagItem, bedRef, actorRef, cornerVal))
 				count += 1
 			endIf

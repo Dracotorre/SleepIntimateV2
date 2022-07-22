@@ -131,6 +131,7 @@ int HoldToBlackClearTimerID = 107 const		; v2.35 for fade-to-black
 
 bool MyHealthRecoverBusy = false
 bool FastTimeISMOn = false
+float LastGameTimeNapRec = 0.0				; v2.79 for calculate fractional recover rate
 
 ; *************************************************************
 ; events
@@ -150,6 +151,7 @@ Event OnQuestInit()
 	PoorSleepHourLimit = 4
 	SleepInterrupted = false
 	SleepWaitTimeCount = 0
+	LastGameTimeNapRec = LastGameTimeHourUpdate
 	
 	StartTimer(55.0, SleepNapTimeScaleTimerID)			; check after minute --player committed to sleep
 	StartTimerGameTime(0.356, SleepNapRecGameTimerID)
@@ -161,7 +163,7 @@ Event OnTimer(int aiTimerID)
 		CheckPrepareSleep()
 		CheckTimeScale()
 	elseIf (aiTimerID == SleepNapRecRealTimerID)
-		PlayerNapRecover()
+		PlayerNapRecover(CalcFractionalHealthRecoverRate())		; v2.79
 		
 	elseIf (aiTimerID == HoldToBlackClearTimerID)			; v2.35
 		HoldAtBlackImod.Remove()
@@ -172,7 +174,7 @@ EndEvent
 Event OnTimerGameTime(int aiTimerID)
 
 	if (aiTimerID == SleepNapRecGameTimerID)
-		PlayerNapRecover()
+		PlayerNapRecover(CalcFractionalHealthRecoverRate())		; v2.79
 		
 	elseIf (aiTimerID == SleepNapFatGameTimerID)
 		PlayerNapRecoverFatigue()
@@ -391,6 +393,23 @@ float[] Function AdvanceTime(float hourToNext = 0.33330)
 	result[1] = timeSkip
 	
 	return result
+endFunction
+
+;
+; v2.79 - improve fractional health recover for varied sleep-rate 
+;
+float Function CalcFractionalHealthRecoverRate()
+	; may have skipped time, so check to adjust recover-fraction-value - v2.79
+	float fractionVal = 0.03333
+	float currentGameTime = Utility.GetCurrentGameTime()
+	float hourDiff = GetHoursDifference(currentGameTime, LastGameTimeNapRec)
+	
+	if (hourDiff > 0.40 && hourDiff <= 7.0)
+		fractionVal = 0.1 * hourDiff
+		;Debug.Trace("[DTSleep_HealthRec] update fraction health recover to " + fractionVal + " based on hours " + hourDiff + " at gameTime " + currentGameTime)
+	endIf
+	
+	return fractionVal
 endFunction
 
 ; player might have skipped time! check to make sure and adjust as needed
@@ -776,6 +795,7 @@ endFunction
 Function PlayerNapRecover(float fractionVal = 0.03333, float nextTimerHours = 0.33330)
 	
 	MyHealthRecoverBusy = true
+	LastGameTimeNapRec = Utility.GetCurrentGameTime()			; v2.79 - keep track
 	
 	if (PlayerRef.IsOverEncumbered())
 			GoodSleep = false

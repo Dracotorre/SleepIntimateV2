@@ -1052,6 +1052,21 @@
 				"sourceForm": "SleepIntimate.esp|12901C",
 				"propertyName": "DTSleep_SettingPackOnGround"
 			}
+		},
+        {
+          "type": "spacer"
+        },
+		{
+			"id": "MCM_SettingPackUseGO:Backpack",
+			"text": "Placed Custom use model",
+			"type": "dropdown",
+			"help": "if your custom marked pack includes a ground object, set to itself",
+			"valueOptions": {
+				"options": ["Green bag", "itself"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|1C8A40",
+				"propertyName": "DTSleep_SettingPackUseGO"
+			}
 		}
 	  ]
 	},

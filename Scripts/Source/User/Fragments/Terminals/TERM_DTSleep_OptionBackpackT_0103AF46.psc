@@ -81,6 +81,22 @@ pDTSleep_SettingPackOnGround.SetValue(2.0)
 EndFunction
 ;END FRAGMENT
 
+;BEGIN FRAGMENT Fragment_Terminal_14
+Function Fragment_Terminal_14(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingPackUseGO.SetValue(1.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_15
+Function Fragment_Terminal_15(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingPackUseGO.SetValue(0.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
 ;END FRAGMENT CODE - Do not edit anything between this and the begin comment
 
 Quest Property pDTSleep_MainQuest Auto Const Mandatory
@@ -88,3 +104,5 @@ Quest Property pDTSleep_MainQuest Auto Const Mandatory
 GlobalVariable Property pDTSleep_UndressCarryBonus Auto Const Mandatory
 
 GlobalVariable Property pDTSleep_SettingPackOnGround Auto Const Mandatory
+
+GlobalVariable Property pDTSleep_SettingPackUseGO Auto Const Mandatory
