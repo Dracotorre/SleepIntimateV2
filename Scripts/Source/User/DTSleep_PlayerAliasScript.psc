@@ -116,6 +116,8 @@ FormList property DTSleep_NotHumanList auto const					; added 2.62
 FormList property DTSleep_IntimateRailingList auto const			; added v2.70
 FormList property DTSleep_IntimateLockerList auto const				; added v2.77
 FormList property DTSleep_IntimateLockerAdjList auto const			; 
+FormList property DTSleep_ArmorStockingsList auto const				; v2.80
+FormList property DTSleep_ArmorShoesList auto const 				; v2.80
 Message property DTSleep_VersionMsg auto const
 Message property DTSleep_VersionDowngradeMsg auto const				; v2.60
 Message property DTSleep_VersionExplicitMsg auto const
@@ -367,6 +369,13 @@ int Function AddStrapOnToLists(Armor strapOn, FormList list2)
 		endIf
 	endIf
 	return 0
+endFunction
+
+Function AddToSocksList(Form sockForm)
+	if (!DTSleep_ArmorSlotULegList.HasForm(sockForm))
+		DTSleep_ArmorSlotULegList.AddForm(sockForm)
+	endIf
+	DTSleep_ArmorStockingsList.AddForm(sockForm)
 endFunction
 
 Function AddSleepTogetherSeats()
@@ -3600,49 +3609,79 @@ int Function CheckCustomArmorsAndBackpacks()
 	if (!Game.IsPluginInstalled(sockName))
 		sockName = "ComfySocks.esp"
 	endIf
+	
 	extraArmor = IsPluginActive(0x11000804, sockName) as Armor
 	if (extraArmor != None)
 		if (DTSleep_ExtraArmorsEnabled.GetValue() < 1.0)
 			DTSleep_ExtraArmorsEnabled.SetValue(1.0)
 		endIf
-		if (!DTSleep_ArmorSlotULegList.HasForm(extraArmor as Form))
+		if (!DTSleep_ArmorSlotULegList.HasForm(extraArmor as Form) || !DTSleep_ArmorStockingsList.HasForm(extraArmor as Form))
 			modCount += 1
-			DTSleep_ArmorSlotULegList.AddForm(extraArmor)
-			DTSleep_ArmorSlotULegList.AddForm(Game.GetFormFromFile(0x01100824, sockName))
-			DTSleep_ArmorSlotULegList.AddForm(Game.GetFormFromFile(0x01100825, sockName))
-			DTSleep_ArmorSlotULegList.AddForm(Game.GetFormFromFile(0x01100826, sockName))
-			DTSleep_ArmorSlotULegList.AddForm(Game.GetFormFromFile(0x01100827, sockName))
-			DTSleep_ArmorSlotULegList.AddForm(Game.GetFormFromFile(0x01100828, sockName))
-			DTSleep_ArmorSlotULegList.AddForm(Game.GetFormFromFile(0x01100829, sockName))
-			DTSleep_ArmorSlotULegList.AddForm(Game.GetFormFromFile(0x0110082A, sockName))
-			DTSleep_ArmorSlotULegList.AddForm(Game.GetFormFromFile(0x0110082B, sockName))
-			DTSleep_ArmorSlotULegList.AddForm(Game.GetFormFromFile(0x0110082C, sockName))
-			DTSleep_ArmorSlotULegList.AddForm(Game.GetFormFromFile(0x01100831, sockName))
-			DTSleep_ArmorSlotULegList.AddForm(Game.GetFormFromFile(0x01100832, sockName))
-			DTSleep_ArmorSlotULegList.AddForm(Game.GetFormFromFile(0x01100834, sockName))
-			DTSleep_ArmorSlotULegList.AddForm(Game.GetFormFromFile(0x01100835, sockName))
-			DTSleep_ArmorSlotULegList.AddForm(Game.GetFormFromFile(0x01100836, sockName))
-			DTSleep_ArmorSlotULegList.AddForm(Game.GetFormFromFile(0x01100839, sockName))
-			DTSleep_ArmorSlotULegList.AddForm(Game.GetFormFromFile(0x01100856, sockName))
-			DTSleep_ArmorSlotULegList.AddForm(Game.GetFormFromFile(0x01100857, sockName))
-			DTSleep_ArmorSlotULegList.AddForm(Game.GetFormFromFile(0x0110085E, sockName))
-			DTSleep_ArmorSlotULegList.AddForm(Game.GetFormFromFile(0x01100866, sockName))
-			DTSleep_ArmorSlotULegList.AddForm(Game.GetFormFromFile(0x01100867, sockName))
-			DTSleep_ArmorSlotULegList.AddForm(Game.GetFormFromFile(0x01100868, sockName))
-			DTSleep_ArmorSlotULegList.AddForm(Game.GetFormFromFile(0x0110086E, sockName))
-			DTSleep_ArmorSlotULegList.AddForm(Game.GetFormFromFile(0x01100874, sockName))
-			DTSleep_ArmorSlotULegList.AddForm(Game.GetFormFromFile(0x01100875, sockName))
-			DTSleep_ArmorSlotULegList.AddForm(Game.GetFormFromFile(0x0110087A, sockName))
+			AddToSocksList(extraArmor as Form)
+			
+			AddToSocksList(Game.GetFormFromFile(0x01100824, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x01100825, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x01100826, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x01100827, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x01100828, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x01100829, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x0110082A, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x0110082B, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x0110082C, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x01100831, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x01100832, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x01100834, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x01100835, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x01100836, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x01100839, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x01100856, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x01100857, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x0110085E, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x01100866, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x01100867, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x01100868, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x0110086E, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x01100874, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x01100875, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x0110087A, sockName))
 		endIf
 		extraArmor = Game.GetFormFromFile(0x0110087E, sockName) as Armor
-		if (extraArmor != None && !DTSleep_ArmorSlotULegList.HasForm(extraArmor as Form))
-			DTSleep_ArmorSlotULegList.AddForm(extraArmor)
-			DTSleep_ArmorSlotULegList.AddForm(Game.GetFormFromFile(0x01100885, sockName))
-			DTSleep_ArmorSlotULegList.AddForm(Game.GetFormFromFile(0x01100886, sockName))
-			DTSleep_ArmorSlotULegList.AddForm(Game.GetFormFromFile(0x01100887, sockName))
-			DTSleep_ArmorSlotULegList.AddForm(Game.GetFormFromFile(0x0110088D, sockName))
-			DTSleep_ArmorSlotULegList.AddForm(Game.GetFormFromFile(0x01100891, sockName))
-			DTSleep_ArmorSlotULegList.AddForm(Game.GetFormFromFile(0x01100893, sockName))
+		if (extraArmor != None && !DTSleep_ArmorStockingsList.HasForm(extraArmor as Form))
+			AddToSocksList(extraArmor as Form)
+			AddToSocksList(Game.GetFormFromFile(0x01100885, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x01100886, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x01100887, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x0110088D, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x01100891, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x01100893, sockName))
+		endIf
+	endIf
+	
+	; K-Girl
+	extraArmor = Game.GetFormFromFile(0x11000801, "K-Girl Shoes.esl") as Armor
+	if (extraArmor != None)
+		if (DTSleep_ExtraArmorsEnabled.GetValue() < 1.0)
+			DTSleep_ExtraArmorsEnabled.SetValue(1.0)
+		endIf
+		if (!DTSleep_ArmorShoesList.HasForm(extraArmor as Form))
+			modCount += 1
+			DTSleep_ArmorShoesList.AddForm(extraArmor)
+			DTSleep_ArmorShoesList.AddForm(Game.GetFormFromFile(0x11000804, "K-Girl Shoes.esl"))
+			DTSleep_ArmorShoesList.AddForm(Game.GetFormFromFile(0x11000805, "K-Girl Shoes.esl"))
+			DTSleep_ArmorShoesList.AddForm(Game.GetFormFromFile(0x11000807, "K-Girl Shoes.esl"))
+			DTSleep_ArmorShoesList.AddForm(Game.GetFormFromFile(0x1100080A, "K-Girl Shoes.esl"))
+			DTSleep_ArmorShoesList.AddForm(Game.GetFormFromFile(0x1100080D, "K-Girl Shoes.esl"))
+			DTSleep_ArmorShoesList.AddForm(Game.GetFormFromFile(0x1100080E, "K-Girl Shoes.esl"))
+			DTSleep_ArmorShoesList.AddForm(Game.GetFormFromFile(0x11000811, "K-Girl Shoes.esl"))
+			DTSleep_ArmorShoesList.AddForm(Game.GetFormFromFile(0x11000812, "K-Girl Shoes.esl"))
+			DTSleep_ArmorShoesList.AddForm(Game.GetFormFromFile(0x11000813, "K-Girl Shoes.esl"))
+			DTSleep_ArmorShoesList.AddForm(Game.GetFormFromFile(0x11000815, "K-Girl Shoes.esl"))
+			DTSleep_ArmorShoesList.AddForm(Game.GetFormFromFile(0x11000816, "K-Girl Shoes.esl"))
+			DTSleep_ArmorShoesList.AddForm(Game.GetFormFromFile(0x11000817, "K-Girl Shoes.esl"))
+			DTSleep_ArmorShoesList.AddForm(Game.GetFormFromFile(0x11000818, "K-Girl Shoes.esl"))
+			DTSleep_ArmorShoesList.AddForm(Game.GetFormFromFile(0x11000819, "K-Girl Shoes.esl"))
+			DTSleep_ArmorShoesList.AddForm(Game.GetFormFromFile(0x1100081A, "K-Girl Shoes.esl"))
+			DTSleep_ArmorShoesList.AddForm(Game.GetFormFromFile(0x1100081B, "K-Girl Shoes.esl"))
 		endIf
 	endIf
 	

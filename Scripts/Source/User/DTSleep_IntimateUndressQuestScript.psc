@@ -119,6 +119,8 @@ FormList property DTSleep_IntimateAttireOKUnderList auto const
 { must remove under armor on these intimate outfits -- usually slot-33 only with shoes -- will also remove for sleep }
 FormList property DTSleep_SleepAttireHandsList auto const
 { sleep outfit that includes hand slots }
+FormList property DTSleep_ArmorShoeList auto const			; v2.80
+FormList property DTSleep_ArmorStockingsList auto const		; v2.80
 EndGroup
 
 Group C_Armors
@@ -185,15 +187,19 @@ bool property PlacedSleepwearAtFeetPlayer = false auto hidden
 bool property BodySwapPlayerEnabled = true auto hidden			; v2.60 - set false to prevent nude-suit except for init knock-off suit
 bool property BodySwapCompanionEnabled = true auto hidden		; v2.60 - set false to prevent nude-suit unless mod companion
 bool property PlayerRedressEnabled = true auto hidden			; v2.60 - set false to prevent redress
+bool property KeepShoesEquipped = true auto hidden				; v2.80
+bool property KeepStockingsEquipped = true auto hidden			; v2.80
 
 ; ********************************************
 ; ******           variables     ***********
 ;
-Form[] PlayerEquippedArmorFormArray     	; list to re-equip after
-Form[] PlayerSleepEquippedFormArray			; list of sleep gear for sleeping
-Form[] CompanionEquippedArmorFormArray		; list to re-equip after
-Form[] CompanionSleepEquippedFormArray     	; list of equipped sleep items
-ObjectReference[] PlacedArmorObjRefArray   	; list to clean-up after bed
+Form[] PlayerEquippedArmorFormArray     		; list to re-equip after
+Form[] PlayerSleepEquippedFormArray				; list of sleep gear for sleeping
+Form[] CompanionEquippedArmorFormArray			; list to re-equip after
+Form[] CompanionSleepEquippedFormArray     		; list of equipped sleep items
+ObjectReference[] PlacedArmorObjRefArray   		; list to clean-up after bed
+Armor[] PlayerReEquipArmorArray				; list to re-equip at end of undress - 2.80
+Armor[] CompanionReEquipArmorArray
 bool PlayerEquippedArrayUpdated = false
 bool CompanionEquippedArrayUpdated = false
 
@@ -1444,7 +1450,7 @@ bool Function CheckRemoveAllNudeSuits(Actor actorRef, bool checkCustom = true)
 
 			RedressActorRemoveNudeSuits(actorRef, DTSleep_SkinSynthGen2DirtyNude, " synthGen2 nude-armor")
 			
-		elseif (DTSleep_SettingAltFemBody.GetValue() >= 1.0 && AltFemBodyEnabled && DTSleep_AdultContentOn.GetValue() >= 2.0 && GetGenderForActor(actorRef) == 1)
+		elseIf (DTSleep_SettingAltFemBody.GetValue() >= 1.0 && AltFemBodyEnabled && DTSleep_AdultContentOn.GetValue() >= 2.0 && GetGenderForActor(actorRef) == 1)
 			RedressActorRemoveNudeSuits(actorRef, DTSleep_AltFemNudeBody, " altFemNudeBody ")
 		endIf
 		
@@ -2153,7 +2159,7 @@ bool Function IsActorWearingArmorAllException(Actor actorRef, bool searchList)
 				DressData.CompanionDressArmorAllValid = true
 				if (item != None)
 					DressData.CompanionOutfitBody = item
-					DressData.CompanionHasArmorAllEquipped
+					DressData.CompanionHasArmorAllEquipped = true					; v2.80 fixed set to true
 					return true
 				endIf
 			elseIf (item != None)
@@ -3106,6 +3112,14 @@ Function ResetPlayerDressData()
 					DTDebug("removing Pip-boy " + pipForm + " from StrapOn list", 1)
 					DTSleep_StrapOnList.RemoveAddedForm(pipForm)
 				endIf
+				if (DTSleep_ArmorShoeList.HasForm(pipForm))
+					DTDebug("removing Pip-boy " + pipForm + " from shoes list", 1)
+					DTSleep_ArmorShoeList.RemoveAddedForm(pipForm)
+				endIf
+				if (DTSleep_ArmorStockingsList.HasForm(pipForm))
+					DTDebug("removing Pip-boy " + pipForm + " from stockings list", 1)
+					DTSleep_ArmorStockingsList.RemoveAddedForm(pipForm)
+				endIf
 			endIf
 			
 			i += 1
@@ -3640,7 +3654,9 @@ Function UndressActorRespect(Actor actorRef, bool isIndoors, bool remHatsOutside
 		endIf
 	endIf
 	
-	if (!IsActorWearingArmorAllException(actorRef, false))			; v2.25 - moved for all year
+	; v2.25 - moved for all year
+	; v2.80 changed false to respectOnly to force search
+	if (!IsActorWearingArmorAllException(actorRef, respectOnly))	
 		bool skipUpper = true
 		if (jacketRemoved || !hasJacket)
 			skipUpper = false
@@ -3834,6 +3850,8 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 	
 	UndressActorArmorHat(actorRef)
 	Utility.WaitMenuMode(0.1)
+	
+	UndressActorArmorFootwear(actorRef)							; v2.80
 	
 	bool removeJacket = false
 	bool wearingJacket = IsActorWearingJacket(actorRef)
@@ -4098,7 +4116,7 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 		
 		CheckAndEquipMainSleepOutfit(actorRef)	
 	endIf
-
+	
 	
 	float timerSecs = DTSleep_SettingUndressTimer.GetValue() + 0.25
 	
@@ -4160,8 +4178,27 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 			PlayerIsAroused = false
 		endIf
 		
+		; --------------------- v2.80 - do we have any items to re-equip?
+		int equipCount = 0
+		if (PlayerReEquipArmorArray.Length > 0)
+			equipCount = UndressActorArmorRequip(PlayerRef, PlayerReEquipArmorArray)
+			; delay necessary for events to process and our lists get updated
+			timerSecs += 1.2
+			DTSleep_SettingUndressTimer.SetValue(timerSecs)  ; update
+			float waitTmp = timerSecs * 0.333
+			if (waitTmp < 1.3)
+				waitTmp = 1.3
+			endIf
+			Utility.WaitMenuMode(waitTmp)
+			PlayerReEquipArmorArray.Clear()
+		endIf
+		DTDebug("player re-equip total " + equipCount + " items", 1)   	; TODO: remove
+		; -----------------
+		
 		if (!SuspendEquipStore || UndressedForType >= 5)
 			if (timerSecs < 2.0 || UndressedForType >= 5)
+				
+				;float waitSec = 2.4
 				
 				Utility.WaitMenuMode(2.4)
 				
@@ -4170,7 +4207,7 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 					UndressActorFinalCheckArmors(actorRef, false)
 					Utility.WaitMenuMode(0.333)
 				endIf
-
+				
 				HandleGetUndressPlayerData()
 				
 				;
@@ -4249,6 +4286,15 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 			DTDebug("backpack removed during double-check removal", 1)
 			actorRef.UnequipItem(DressData.CompanionEquippedBackpackItem, false, true)
 		endIf
+		
+		; v2.80 check re-equip
+		int equipCount = 0
+		if (CompanionReEquipArmorArray.Length > 0)
+			equipCount += UndressActorArmorRequip(CompanionRef, CompanionReEquipArmorArray)
+			
+			CompanionReEquipArmorArray.Clear()
+		endIf
+		DTDebug("companion re-equip total " + equipCount + " items", 1)  ; TODO: remove
 		
 		; 2nd companion goes second so may need to wait
 		if (!SuspendEquipStore && CompanionSecondRef == None)
@@ -4363,12 +4409,14 @@ Function UndressActorArmorInnerSlots(Actor actorRef, bool includeExceptions, boo
 			actorRef.UnequipItemSlot(8) 	; 38 - u-R arm
 			actorRef.UnequipItemSlot(9) 	; 39 - u-L leg  CROSS-Bos boots, AWK-*OnHip, Comfy Socks
 			actorRef.UnequipItemSlot(10)
-		elseIf (includeExceptions && !IsActorWearingSlotULegExepction(actorRef))
+		elseIf (includeExceptions)
 			actorRef.UnequipItemSlot(6) 	; 36 - u-torso !!!(AWK-Bracelet)!!
 			actorRef.UnequipItemSlot(7) 	; 37 - u-L arm  AWK-Jacket, Cross overcoats
 			actorRef.UnequipItemSlot(8) 	; u-R arm
-			actorRef.UnequipItemSlot(9) 	; 39 - u-L leg  CROSS-Bos boots, AWK-*OnHip, Comfy Socks
-			actorRef.UnequipItemSlot(10)
+			if (!IsActorWearingSlotULegExepction(actorRef))				; v2.80 - moved from elseif above
+				actorRef.UnequipItemSlot(9) 	; 39 - u-L leg  CROSS-Bos boots, AWK-*OnHip, Comfy Socks
+				actorRef.UnequipItemSlot(10)
+			endIf
 		endIf
 	endIf
 	
@@ -4594,6 +4642,95 @@ Function UndressActorArmorExtendedSlots(Actor actorRef, bool forBed, bool includ
 	return
 endFunction
 
+;
+; records Armor of footwear found equipped and may place footwear on ground  v2.80
+;
+Function UndressActorArmorFootwear(Actor actorRef)
+	
+	if (DTSleep_EquipMonInit.GetValueInt() > 0)
+	
+		bool okayToKeepEquipped = true
+		Armor shoeArmor = None
+		Armor stockingArmor = None
+		
+		DTDebug("undress footwear for " + actorRef + ", keepShoesEquip = " + KeepShoesEquipped + "; keepStockings = " + KeepStockingsEquipped, 1) ; TODO: remove
+		
+		if (actorRef == PlayerRef)
+		
+			if (DressData.PlayerEquippedShoeItem != None && DressData.PlayerEquippedShoeItem != DressData.PlayerEquippedIntimateAttireItem)
+				shoeArmor = DressData.PlayerEquippedShoeItem
+				actorRef.UnequipItem(DressData.PlayerEquippedShoeItem, false, true)
+				
+			; no else; no slot and we should have it stored
+			endIf 
+			if (DressData.PlayerEquippedStockingsItem != None && DressData.PlayerEquippedStockingsItem != DressData.PlayerEquippedIntimateAttireItem)
+				stockingArmor = DressData.PlayerEquippedStockingsItem
+				actorRef.UnequipItem(DressData.PlayerEquippedStockingsItem, false, true)
+				
+			; no else; no slot and we should have it stored
+			endIf
+		elseIf (actorRef == CompanionRef)
+			if (DressData.CompanionEquippedShoeItem != None && DressData.CompanionEquippedShoeItem != DressData.CompanionEquippedIntimateAttireItem)
+				shoeArmor = DressData.CompanionEquippedShoeItem
+				actorRef.UnequipItem(DressData.CompanionEquippedShoeItem, false, true)
+				
+			; no else; no slot and we should have it stored
+			endIf 
+			if (DressData.CompanionEquippedStockingsItem != None && DressData.CompanionEquippedStockingsItem != DressData.CompanionEquippedIntimateAttireItem)
+				stockingArmor = DressData.CompanionEquippedStockingsItem
+				actorRef.UnequipItem(DressData.CompanionEquippedStockingsItem, false, true)
+				
+			; no else; no slot and we should have it stored
+			endIf
+		endIf
+		
+		if (KeepStockingsEquipped && DTSleep_SettingAltFemBody.GetValue() >= 1.0 && AltFemBodyEnabled && DTSleep_AdultContentOn.GetValue() >= 2.0 && GetGenderForActor(actorRef) == 1)
+			if (stockingArmor != None)
+				DTDebug("....stockings found and using AltFemBody... cancel keepEquip", 1)  ; TODO: remove
+				okayToKeepEquipped = false
+			endIf
+		endIf
+		
+		PlayerReEquipArmorArray = new Armor[0]
+		CompanionReEquipArmorArray = new Armor[0]
+		
+		if (KeepShoesEquipped && okayToKeepEquipped)
+			
+			if (shoeArmor != None)
+			
+				KeepStockingsEquipped = true			; must be
+				
+				if (actorRef == PlayerRef)
+					
+					PlayerReEquipArmorArray.Add(shoeArmor)
+					
+				elseIf (CompanionRef != None && actorRef == CompanionRef)
+					CompanionReEquipArmorArray.Add(shoeArmor)
+				endIf
+			endIf
+			
+		elseIf (DropSleepClothes)
+			if (shoeArmor != None)
+				PlaceFormItemAtActorFeet(shoeArmor as Form, actorRef)
+				if (actorRef == PlayerRef)
+					PlacedSleepwearAtFeetPlayer = true
+				endIf
+			endIf
+		endIf
+		
+		if (okayToKeepEquipped && KeepStockingsEquipped && stockingArmor != None)
+
+			if (actorRef == PlayerRef)
+				PlayerReEquipArmorArray.Add(stockingArmor)
+				
+			elseIf (CompanionRef != None && actorRef == CompanionRef)
+				CompanionReEquipArmorArray.Add(stockingArmor)
+			endIf
+
+		endIf
+	endIf
+EndFunction
+
 Function UndressActorArmorGlasses(Actor actorRef)
 	
 	if (DTSleep_EquipMonInit.GetValueInt() > 0)
@@ -4708,6 +4845,26 @@ Function UndressActorArmorMask(Actor actorRef)
 		UndressActorExtraArmorList(actorRef, DTSleep_ArmorMaskList)
 	endIf
 	
+endFunction
+
+; re-equip items during undress -- v2.80
+int Function UndressActorArmorRequip(Actor actorRef, Armor[] armorArray)
+	if (actorRef == None)
+		return -1
+	endIf
+	int count = 0
+
+	int index = 0
+	while (index < armorArray.Length)
+		Armor armorItem = armorArray[index] as Armor
+		if (armorItem != None)
+			actorRef.EquipItem(armorItem, false, true)
+			count += 1
+		endIf
+		index += 1
+	endWhile
+
+	return count
 endFunction
 
 ; if sleepWear then only undress if placing
@@ -5224,6 +5381,30 @@ Armor Function UndressPlayerMask(bool silent = false)
 	endIf
 	
 	return mask
+endFunction
+
+; v2.80
+Armor Function UndressPlayerShoes(bool silent = false)
+	Armor shoes = None
+	
+	if (DressData.PlayerEquippedShoeItem != None)
+		shoes = DressData.PlayerEquippedShoeItem
+		PlayerRef.UnequipItem(shoes, false, silent)
+	endIf
+	
+	return shoes
+endFunction
+
+; v2.80
+Armor Function UndressPlayerStockings(bool silent = false)
+	Armor stockings = None
+	
+	if (DressData.PlayerEquippedStockingsItem != None)
+		stockings = DressData.PlayerEquippedStockingsItem
+		PlayerRef.UnequipItem(stockings, false, silent)
+	endIf
+	
+	return stockings
 endFunction
 
 ; no placement - just remove - external may use

@@ -14,6 +14,8 @@ GlobalVariable property DTSleep_PlayerEquipJacketCount auto const
 GlobalVariable property DTSleep_PlayerEquipNecklaceChokerCount auto const
 GlobalVariable property DTSleep_PlayerEquipMaskCount auto const
 GlobalVariable property DTSleep_PlayerEquipExtraPartsCount auto const
+GlobalVariable property DTSleep_PlayerEquipFootWearCount auto const					; v2.80
+{ 1 = shoes, 10 = stockigns, 11 = both }
 GlobalVariable property DTSleep_CaptureExtraPartsEnabled auto const
 GlobalVariable property DTSleep_PlayerUndressed auto const
 GlobalVariable property DTSleep_CompanionUndressed auto const
@@ -83,6 +85,10 @@ int property MCMUndressEnabled = 0 auto hidden
 int property MCMUndressDisabled = 0 auto hidden
 int property MCMSoSActiveOn = 0 auto hidden
 int property MCMSoSActiveOff = 0 auto hidden
+int property MCMShoesEquipped = 0 auto hidden
+int property MCMShoesNotFound = 0 auto hidden
+int property MCMStockingsEquipped = 0 auto hidden
+int property MCMStockingsNotFound = 0 auto hidden
 
 ; ***************************** Events ********************************
 
@@ -214,6 +220,25 @@ Function MarkMask(float val)
 		(pDTSleep_MainQuest as DTSleep_MainQuestScript).CaptureMaskEquipToMark()
 	endIf
 EndFunction
+
+; ------v2.80 ----
+Function MarkShoesUnmark(float val)
+		(pDTSleep_MainQuest as DTSleep_MainQuestScript).CaptureShoeUnmarkCurrent()
+EndFunction
+
+Function MarkShoesMark(float val)
+		(pDTSleep_MainQuest as DTSleep_MainQuestScript).CaptureShoesEquipToMark()
+EndFunction
+
+Function MarkStockingsUnmark(float val)
+		(pDTSleep_MainQuest as DTSleep_MainQuestScript).CaptureStockingsUnmarkCurrent()
+EndFunction
+
+Function MarkStockingsMark(float val)
+		(pDTSleep_MainQuest as DTSleep_MainQuestScript).CaptureStockingsEquipToMark()
+EndFunction
+
+; ----------------
 
 Function MarkSleepOutfit(float val)
 	if (DTSleep_PlayerEquipSleepwearCount.GetValueInt() > 0)
@@ -394,6 +419,19 @@ Function Update(bool doRefresh)
 		MCMCompanionDressed = 0
 		MCMCompanionUndressed = 1
 	endIf
+	
+	int footWearVal = DTSleep_PlayerEquipFootWearCount.GetValueInt()
+	if (footWearVal == 1)
+		MCMShoesEquipped = 1
+		MCMStockingsEquipped = 0
+	elseIf (footWearVal == 10)
+		MCMShoesEquipped = 0
+		MCMStockingsEquipped = 1
+	elseIf (footWearVal == 11)
+		MCMShoesEquipped = 1
+		MCMStockingsEquipped = 1
+	endIf
+	
 	UpdateSoS()
 	
 	if (doRefresh)

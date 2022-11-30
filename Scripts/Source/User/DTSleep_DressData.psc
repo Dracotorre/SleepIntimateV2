@@ -79,6 +79,9 @@ Armor property PlayerEquippedArmorArmRightItem = None auto conditional hidden
 Armor property PlayerEquippedArmorLegLeftItem = None auto conditional hidden
 Armor property PlayerEquippedArmorLegRightItem = None auto conditional hidden
 
+Armor property PlayerEquippedShoeItem auto conditional hidden					; v2.80 - could be in any slot
+Armor property PlayerEquippedStockingsItem auto conditional hidden				; v2.80
+
 ; --- last 
 
 Armor property PlayerLastEquippedBackpackItem auto conditional hidden
@@ -101,6 +104,9 @@ Armor property PlayerLastEquippedStrapOnItem auto conditional hidden
 { last strap-on takes priority over slots }
 Armor property PlayerLastEquippedIntimateAttireItem = None auto conditional hidden
 Armor property PlayerLastEquippedGlassesItem = None auto conditional hidden
+
+Armor property PlayerLastEquippedShoeItem auto conditional hidden				; v2.80
+Armor property PlayerLastEquippedStockingsItem auto conditional hidden			; v2.80
 
 ; --------------------------- companion -------------
 
@@ -176,4 +182,9 @@ Armor property CompanionLastEquippedGlassesItem auto conditional hidden
 
 bool property CompanionHasArmorAllEquipped = false auto conditional hidden
 { if main body also includes outer armor slots }
+
+Armor property CompanionEquippedShoeItem auto conditional hidden				; v2.80
+Armor property CompanionLastEquippedShoeItem auto conditional hidden			; v2.80
+Armor property CompanionEquippedStockingsItem auto conditional hidden			; v2.80
+Armor property CompanionLastEquippedStockingsItem auto conditional hidden		; v2.80
 

@@ -5243,6 +5243,7 @@ bool Function ProcessMainActorClone()
 							endIf
 							
 							if (okayToCopy && MainActorRef.IsEquipped(item))
+								
 								if (ProcessCopyEquipItemActors(item, MainActorRef, MainActorCloneRef, true))
 									
 									MainActorOutfitArray.Add(gearList[i])

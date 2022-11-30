@@ -1728,6 +1728,216 @@
 	  ]
 	},
 	{
+      "pageDisplayName": "Footwear",
+      "content": [
+        {
+		  "text": "If desired keep recognized stockings equipped for bed, or keep shoes equipped for intimate scenes away from bed",
+		  "type": "text",
+		  "align": "left"
+		},
+        {
+          "type": "spacer"
+        },
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher for mod on",
+		  "groupControl": 3,
+		  "valueOptions": 
+		  {
+			"sourceType": "GlobalValue",
+			"sourceForm": "SleepIntimate.esp|1673D7",
+			"propertyName": "DTSleep_SettingModMCMCtl"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher undress system ready",
+		  "groupControl": 2,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMUndressReady"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher undress system not ready",
+		  "groupControl": 1,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMUndressNeedInit"
+		  }
+		},
+        {
+          "text": "Not ready - Rest in bed or use quick-dress container to initialize",
+          "type": "section",
+		  "groupCondition": 1
+        },
+        {
+          "text": "Review recognized footwear",
+          "type": "section",
+		  "groupCondition": 2
+        },
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher for shoes equipped",
+		  "groupControl": 4,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMShoesEquipped"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher for no-shoes",
+		  "groupControl": 5,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMShoesNotFound"
+		  }
+		},
+		{
+		  "text": "Shoes equipped.",
+		  "type": "text",
+		  "align": "left",
+          "groupCondition": {"AND": [2, 4]}
+		},
+		{
+		  "text": "No shoes equipped.",
+		  "type": "text",
+		  "align": "left",
+          "groupCondition": {"AND": [2, 5]}
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher for stockings",
+		  "groupControl": 6,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMStockingsEquipped"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher for no-stockings",
+		  "groupControl": 7,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMStockingsNotFound"
+		  }
+		},
+		{
+		  "text": "Stockings equipped.",
+		  "type": "text",
+		  "align": "left",
+          "groupCondition": {"AND": [2, 6]}
+		},
+		{
+		  "text": "No stockings equipped.",
+		  "type": "text",
+		  "align": "left",
+          "groupCondition": {"AND": [2, 7]}
+		},
+        {
+          "type": "spacer"
+        },
+		{
+          "text": "Setup Shoes and Stockings",
+          "type": "section"
+        },
+		{
+		  "text": "(~Mark Shoes~)",
+		  "type": "button",
+		  "help": "select this, return to game and equip your shoes.",
+		  "groupCondition": {"AND": [2, 3, 5]},
+		  "action": {
+			"type": "CallFunction",
+			"form": "SleepIntimate.esp|A56A2",
+			"scriptName": "DTSleep_MCMQuest",   
+			"function": "MarkShoesMark",
+			"params": [1.0]
+		  }
+		},
+		{
+		  "text": "(~Un-Mark Shoes~)",
+		  "type": "button",
+		  "help": "select this, exit MCM to un-mark equipped shoes.",
+		  "groupCondition": {"AND": [2, 3, 4]},
+		  "action": {
+			"type": "CallFunction",
+			"form": "SleepIntimate.esp|A56A2",
+			"scriptName": "DTSleep_MCMQuest",   
+			"function": "MarkShoesUnmark",
+			"params": [1.0]
+		  }
+		},
+		{
+		  "text": "(~Mark Stockings~)",
+		  "type": "button",
+		  "help": "select this, return to game and equip your stockings.",
+		  "groupCondition": {"AND": [2, 3, 7]},
+		  "action": {
+			"type": "CallFunction",
+			"form": "SleepIntimate.esp|A56A2",
+			"scriptName": "DTSleep_MCMQuest",   
+			"function": "MarkStockingsMark",
+			"params": [1.0]
+		  }
+		},
+		{
+		  "text": "(~Un-Mark Stockings~)",
+		  "type": "button",
+		  "help": "select this, exit MCM to un-mark equipped stockings.",
+		  "groupCondition": {"AND": [2, 3, 6]},
+		  "action": {
+			"type": "CallFunction",
+			"form": "SleepIntimate.esp|A56A2",
+			"scriptName": "DTSleep_MCMQuest",   
+			"function": "MarkStockingsUnmark",
+			"params": [1.0]
+		  }
+		},
+        {
+          "type": "spacer"
+        },
+		{
+			"id": "MCM_SettingUndressShoes:Intimate",
+			"text": "Shoes undress",
+			"type": "dropdown",
+			"help": "Always undress (default) or keep equipped for some scenes",
+			"valueOptions": {
+				"options": ["Always remove", "remove for bed", "keep equipped"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|1C91DA",
+				"propertyName": "DTSleep_SettingUndressShoes"
+			}
+		},
+		{
+			"id": "MCM_SettingUndressStockings:Intimate",
+			"text": "Stockings undress",
+			"type": "dropdown",
+			"help": "Always remove stockings or keep equipped; depends on shoes",
+			"valueOptions": {
+				"options": ["Always remove", "remove for bed", "keep equipped"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|1C91DB",
+				"propertyName": "DTSleep_SettingUndressShoes"
+			}
+		}
+	  ]
+	},
+	{
       "pageDisplayName": "Undress Check",
       "content": [
         {

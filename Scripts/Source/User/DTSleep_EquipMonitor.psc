@@ -27,6 +27,8 @@ GlobalVariable property DTSleep_PlayerNecklaceChokerCount auto
 { 10 = choker, 1 = necklace, 11 = both }
 GlobalVariable property DTSleep_PlayerEquipExtraPartsCount auto
 { extra parts and clothing }
+GlobalVariable property DTSleep_PlayerEquipFootWearCount auto		; v2.80
+{ 10 = stockings, 1 = shoes, 11 = both }
 GlobalVariable property DTSleep_CaptureSleepwearEnable auto
 GlobalVariable property DTSleep_CaptureBackpackEnable auto
 GlobalVariable property DTSleep_CaptureIntimateApparelEnable auto
@@ -34,6 +36,8 @@ GlobalVariable property DTSleep_CaptureStrapOnEnable auto
 GlobalVariable property DTSleep_CaptureJacketEnable auto
 GlobalVariable property DTSleep_CaptureMaskEnable auto
 GlobalVariable property DTSleep_CaptureExtraPartsEnable auto
+GlobalVariable property DTSleep_CaptureShoeEnable auto				; v2.80
+GlobalVariable property DTSleep_CaptureStockingEnable auto
 GlobalVariable property DTSleep_ExtraArmorsEnabled auto
 { only works when storing equipment }
 GlobalVariable property DTSleep_SettingMultiJacketOn auto const
@@ -54,6 +58,10 @@ Message property DTSleep_StrapOnRemMsg auto const
 Message property DTSleep_JacketAddMsg auto const
 Message property DTSleep_JacketRemMsg auto const
 Message property DTSleep_FailedToAddCustomArmorMsg auto const
+Message property DTSleep_ShoeAddMsg auto const					; v2.80
+Message property DTSleep_ShoeRemMsg auto const					; v2.80
+Message property DTSleep_StockingsAddMsg auto const				; v2.80
+Message property DTSleep_StockingsRemMsg auto const				; v2.80
 Armor property DTSleep_NudeRing auto const
 Armor property DTSleep_NudeRingNoHands auto const
 Armor property DTSleep_NudeSuit auto const
@@ -118,6 +126,8 @@ FormList property DTSleep_ArmorJewelry58List auto const			; added v2.27
 FormList property DTSleep_SleepAttireHandsList auto const 		; added v2.48 to keep track of intimate outfit with gloves
 FormList property DTSleep_ArmorJewelry57List auto const				; added v2.71
 FormList property DTSleep_ArmorJewelry56List auto const				; added v2.71
+FormList property DTSleep_ArmorShoeList auto const				; v2.80
+FormList property DTSleep_ArmorStockingsList auto const			; v2.80
 EndGroup
 
 ; -------------------  hidden
@@ -302,6 +312,24 @@ Event OnItemEquipped(Form akBaseObject, ObjectReference akReference)
 					endIf
 					
 					DTSleep_CaptureJacketEnable.SetValueInt(0)
+					
+				elseIf (DTSleep_CaptureShoeEnable.GetValue() > 0.0 && DTSleep_EquipMonInit.GetValue() > 0.0)		; v2.80
+					if (ProcessShoeItem(akBaseObject))
+						DressData.PlayerEquippedShoeItem = akBaseObject as Armor
+					else
+						SetArmorItem(akBaseObject as Armor)
+					endIf
+					
+					DTSleep_CaptureShoeEnable.SetValueInt(0)
+					
+				elseIf (DTSleep_CaptureStockingEnable.GetValue() > 0.0 && DTSleep_EquipMonInit.GetValue() > 0.0)		; v2.80
+					if (ProcessStockingsItem(akBaseObject))
+						DressData.PlayerEquippedStockingsItem = akBaseObject as Armor
+					else
+						SetArmorItem(akBaseObject as Armor)
+					endIf
+					
+					DTSleep_CaptureStockingEnable.SetValueInt(0)
 				else
 				
 					SetArmorItem(akBaseObject as Armor)
@@ -653,6 +681,24 @@ Function ClearDressDataIntimateApparel(Armor tItem)
 	endIf
 endFunction
 
+; v2.80
+Function ClearDressDataFootwear(Armor tItem)					
+	if (tItem != None)
+		if (tItem == DressData.PlayerEquippedShoeItem)
+			DressData.PlayerEquippedShoeItem = None
+		endIf
+		if (tItem == DressData.PlayerLastEquippedShoeItem)
+			DressData.PlayerLastEquippedShoeItem = None
+		endIf
+		if (tItem == DressData.CompanionEquippedShoeItem)
+			DressData.CompanionEquippedShoeItem = None
+		endIf
+		if (tItem == DressData.CompanionLastEquippedShoeItem)
+			DressData.CompanionLastEquippedShoeItem = None
+		endIf
+	endIf
+endFunction
+
 Function ClearDressDataJackets(Armor item)
 	if (item != None)
 		if (item == DressData.PlayerEquippedJacketItem)
@@ -725,6 +771,10 @@ bool Function IsOnStandardArmorLists(Form item)
 		return true
 	elseIf (DTSleep_ArmorJacketsClothingList.HasForm(item))
 		return true
+	elseIf (DTSleep_ArmorShoeList.HasForm(item))			; v2.80
+		return true
+	elseIf (DTSleep_ArmorStockingsList.HasForm(item))
+		return true 
 	elseIf (DTSleep_StrapOnList.HasForm(item))
 		return true
 	endIf
@@ -1205,6 +1255,88 @@ bool Function ProcessStrapOnItem(Form item)
 	return false
 endFunction
 
+; v2.80
+bool Function ProcessShoeItem(Form item)
+
+	float captureTime = DTSleep_CaptureShoeEnable.GetValue()
+	float curTime = Utility.GetCurrentGameTime()
+	float minDiff = GetGameTimeHoursDifference(curTime, captureTime) * 60.0
+	int initialCount = DTSleep_ArmorShoeList.GetSize()
+
+	
+	;Debug.Trace("EquipMon -- process Strap-On: " + item + " minutes: " + minDiff)
+	
+	if (item != None && minDiff < 24.0)
+	
+		if (DTSleep_ArmorPipBoyList.HasForm(item))
+			return false
+		endIf
+		
+		if (initialCount > 0 && DTSleep_ArmorShoeList.HasForm(item))
+			
+			; clear DressData
+			DTSleep_ArmorShoeList.RemoveAddedForm(item)
+			ClearDressDataFootwear(item as Armor)
+			
+			DTSleep_ShoeRemMsg.Show()
+		else
+			DTSleep_ArmorShoeList.AddForm(item)
+			
+			if (initialCount < DTSleep_ArmorShoeList.GetSize())
+				
+				DTSleep_ShoeAddMsg.Show()
+				
+				return true
+			else
+				DTSleep_FailedToAddCustomArmorMsg.Show()
+			endIf
+		endIf
+	endIf
+
+	return false
+endFunction
+
+; v2.80
+bool Function ProcessStockingsItem(Form item)
+
+	float captureTime = DTSleep_CaptureStockingEnable.GetValue()
+	float curTime = Utility.GetCurrentGameTime()
+	float minDiff = GetGameTimeHoursDifference(curTime, captureTime) * 60.0
+	int initialCount = DTSleep_ArmorStockingsList.GetSize()
+
+	
+	;Debug.Trace("EquipMon -- process Strap-On: " + item + " minutes: " + minDiff)
+	
+	if (item != None && minDiff < 24.0)
+	
+		if (DTSleep_ArmorPipBoyList.HasForm(item))
+			return false
+		endIf
+		
+		if (initialCount > 0 && DTSleep_ArmorStockingsList.HasForm(item))
+			
+			; clear DressData
+			DTSleep_ArmorStockingsList.RemoveAddedForm(item)
+			ClearDressDataFootwear(item as Armor)
+			
+			DTSleep_StockingsRemMsg.Show()
+		else
+			DTSleep_ArmorStockingsList.AddForm(item)
+			
+			if (initialCount < DTSleep_ArmorStockingsList.GetSize())
+				
+				DTSleep_StockingsAddMsg.Show()
+				
+				return true
+			else
+				DTSleep_FailedToAddCustomArmorMsg.Show()
+			endIf
+		endIf
+	endIf
+
+	return false
+endFunction
+
 Function CheckSwapClearSecondJacket()
 	if (DTSleep_SettingMultiJacketOn.GetValueInt() < 2)
 		if (DressData.PlayerLastEquippedJacketItem != None)
@@ -1534,6 +1666,11 @@ Function SetCompanionDataMatchArmorToArmor(Armor matchItem, Armor toItem)
 			endIf
 		elseIf (DressData.CompanionLastEquippedULegItem == matchItem)
 			DressData.CompanionEquippedULegItem = toItem
+			; stocking may also be ULeg								; v2.80
+			if (DTSleep_ArmorStockingsList != None && DTSleep_ArmorStockingsList.HasForm(matchItem as Form))
+				DressData.CompanionLastEquippedStockingsItem = DressData.CompanionEquippedStockingsItem
+				DressData.CompanionEquippedStockingsItem = toItem
+			endIf
 
 		elseIf (DTSleep_ArmorExtraClothingList && DTSleep_ArmorExtraClothingList.HasForm(matchItem))
 			if (toItem == None)
@@ -1659,6 +1796,19 @@ Function SetCompanionDressDataMatchingFormToArmor(Form matchForm, Armor toItem)
 			; check before slot55 to give priority
 			DressData.CompanionLastEquippedStrapOnItem = DressData.CompanionEquippedStrapOnItem
 			DressData.CompanionEquippedStrapOnItem = toItem 
+		elseIf (DTSleep_ArmorShoeList != None && DTSleep_ArmorShoeList.HasForm(matchForm))
+			; v2.80 check before slots below
+			DressData.CompanionLastEquippedShoeItem = DressData.CompanionEquippedShoeItem
+			DressData.CompanionEquippedShoeItem = toItem
+		elseIf (DTSleep_ArmorStockingsList != None && DTSleep_ArmorStockingsList.HasForm(matchForm))
+			DressData.CompanionLastEquippedStockingsItem = DressData.CompanionEquippedStockingsItem
+			DressData.CompanionEquippedStockingsItem = toItem
+			; stocking may also be ULeg
+			if (DTSleep_ArmorSlotULegList != None && DTSleep_ArmorSlotULegList.HasForm(matchForm))
+				DressData.CompanionLastEquippedULegItem = DressData.CompanionEquippedULegItem
+				DressData.CompanionEquippedULegItem = toItem
+			endIf
+			
 	; slots
 		elseIf (DTSleep_ArmorSlot41List != None && DTSleep_ArmorSlot41List.HasForm(matchForm))
 			DressData.CompanionLastEquippedSlot41Item = DressData.CompanionEquippedSlot41Item
@@ -1719,7 +1869,11 @@ Function SetCompanionDressDataMatchingFormToArmor(Form matchForm, Armor toItem)
 		elseIf (DTSleep_ArmorSlotULegList != None && DTSleep_ArmorSlotULegList.HasForm(matchForm))
 			DressData.CompanionLastEquippedULegItem = DressData.CompanionEquippedULegItem
 			DressData.CompanionEquippedULegItem = toItem
-			
+			; may also be stocking
+			if (DTSleep_ArmorSlotULegList != None && DTSleep_ArmorSlotULegList.HasForm(matchForm))
+				DressData.CompanionLastEquippedULegItem = DressData.CompanionEquippedULegItem
+				DressData.CompanionEquippedULegItem = toItem
+			endIf
 		else
 			; includes sleepwear
 			SetCompanionDressDataBasicMatchFormToArmor(matchForm, toItem)
@@ -1876,6 +2030,16 @@ Function SetDressDataMatchArmorToArmor(Armor matchItem, Armor toItem)
 			if (toItem != None)
 				DressData.PlayerEquippedStrapOnItem = toItem
 			endIf
+		
+		; footwear v2.80
+		
+		elseIf (DressData.PlayerEquippedShoeItem == matchItem)
+			DressData.PlayerLastEquippedShoeItem = DressData.PlayerEquippedShoeItem
+			DressData.PlayerEquippedShoeItem = toItem
+		elseIf (DressData.PlayerLastEquippedShoeItem == matchItem)
+			if (toItem != None)
+				DressData.PlayerEquippedShoeItem = toItem
+			endIf
 			
 	; slots			
 		elseIf (DressData.PlayerEquippedSlot41Item == matchItem)
@@ -1960,8 +2124,14 @@ Function SetDressDataMatchArmorToArmor(Armor matchItem, Armor toItem)
 			else
 				DressData.PlayerEquippedSlotFXIsSleepwear = false
 			endIf
-		elseIf (DressData.PlayerLastEquippedULegItem == matchitem)
+		elseIf (DressData.PlayerLastEquippedULegItem == matchItem)
+			DressData.PlayerLastEquippedULegItem = DressData.PlayerEquippedULegItem				; v2.80 fix--was missing
 			DressData.PlayerEquippedULegItem = toItem
+			; stocking may also be ULeg								; v2.80
+			if (DTSleep_ArmorStockingsList != None && DTSleep_ArmorStockingsList.HasForm(matchItem as Form))
+				DressData.PlayerLastEquippedStockingsItem = DressData.PlayerEquippedStockingsItem
+				DressData.PlayerEquippedStockingsItem = toItem
+			endIf
 			
 		elseIf (DTSleep_ArmorExtraClothingList && DTSleep_ArmorExtraClothingList.HasForm(matchItem))
 			if (toItem == None)
@@ -2110,10 +2280,22 @@ Function SetDressDataMatchingFormToArmor(Form matchForm, Armor toItem)
 				DressData.PlayerEquippedJacketItem = toItem
 			endIf
 			
-		elseIf (DTSleep_StrapOnList && DTSleep_StrapOnList.HasForm(matchForm))
+		elseIf (DTSleep_StrapOnList != None && DTSleep_StrapOnList.HasForm(matchForm))
 			; check before slot55 to give priority
 			DressData.PlayerLastEquippedStrapOnItem = DressData.PlayerEquippedStrapOnItem
 			DressData.PlayerEquippedStrapOnItem = toItem 
+		elseIf (DTSleep_ArmorShoeList != None && DTSleep_ArmorShoeList.HasForm(matchForm))
+			; v2.80 may be any slot so check before slots below
+			DressData.PlayerLastEquippedShoeItem = DressData.PlayerEquippedShoeItem
+			DressData.PlayerEquippedShoeItem = toItem
+		elseIf (DTSleep_ArmorStockingsList != None && DTSleep_ArmorStockingsList.HasForm(matchForm))
+			DressData.PlayerLastEquippedStockingsItem = DressData.PlayerEquippedStockingsItem
+			DressData.PlayerEquippedStockingsItem = toItem
+			; stocking may also be ULeg 
+			if (DTSleep_ArmorSlotULegList != None && DTSleep_ArmorSlotULegList.HasForm(matchForm))
+				DressData.PlayerLastEquippedULegItem = DressData.PlayerEquippedULegItem
+				DressData.PLayerEquippedULegItem = toItem
+			endIf
 	; slots
 		elseIf (DTSleep_ArmorSlot41List && DTSleep_ArmorSlot41List.HasForm(matchForm))
 			DressData.PlayerLastEquippedSlot41Item = DressData.PlayerEquippedSlot41Item
@@ -2174,7 +2356,6 @@ Function SetDressDataMatchingFormToArmor(Form matchForm, Armor toItem)
 		elseIf (DTSleep_ArmorSlotULegList != None && DTSleep_ArmorSlotULegList.HasForm(matchForm))
 			DressData.PlayerLastEquippedULegItem = DressData.PlayerEquippedULegItem
 			DressData.PLayerEquippedULegItem = toItem
-			
 		else
 			; includes sleepwear
 			SetDressDataBasicMatchFormToArmor(matchForm, toItem)
@@ -2500,6 +2681,19 @@ Function UpdateClothingCounts()
 	endIf
 	
 	DTSleep_PlayerEquipStrapOnCount.SetValueInt(count)
+	
+	;---- v2.80 count footwear; shoe is 1, stockings is 10; so both is 11
+	count = 0
+	
+	if (DressData.PlayerEquippedShoeItem != None)
+		count = 1
+	endIf
+	if (DressData.PlayerEquippedStockingsItem != None)
+		count += 10
+	endIf
+	
+	DTSleep_PlayerEquipFootWearCount.SetValueInt(count)
+	; ------------------
 	
 	count = 0
 	

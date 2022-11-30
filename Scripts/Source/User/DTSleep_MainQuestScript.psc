@@ -231,6 +231,12 @@ GlobalVariable property DTSleep_AdultOutfitOn auto
 GlobalVariable property DTSleep_PlayerEquipSleepGloveCount auto			; added v2.48
 GlobalVariable property DTSleep_SceneViewPrefCount auto					; added v2.70
 GlobalVariable property DTSleep_SIDIgnoreOK auto						; added v2.73
+GlobalVariable property DTSleep_SettingUndressShoes auto const			; v2.80
+{ 0=always, 1 = bed-only, 2=never }
+GlobalVariable property DTSleep_SettingUndressStockings auto const		; v2.80	
+{ 0=always, 1 = bed-only, 2=never }
+GlobalVariable property DTSleep_CaptureShoeEnable auto					; v2.80
+GlobalVariable property DTSleep_CaptureStockingsEnable auto				; v2.80
 EndGroup
 
 Group BC_Globals_Settings
@@ -1471,7 +1477,7 @@ Event DTSleep_IntimateAnimQuestScript.IntimateSequenceDoneEvent(DTSleep_Intimate
 						
 						doFadeIn = true	; fade-in to get bed view and sleep menu
 					else
-						DTDebug(" nap only, undress SetStopOnExit", 2)
+						DTDebug(" nap only OR in bed -- undress SetStopOnExit", 2)
 						Utility.Wait(0.24) ; ensure done with character
 						
 						if (intimatePrompt > 0 && !inBed && !placeInBedRequested)
@@ -2123,6 +2129,36 @@ Function CaptureMaskUnmarkCurrent()
 		PlayerRef.EquipItem(bpItem, false, true)
 	endIf
 endFunction
+
+; v2.80 ---------------------------------
+Function CaptureShoesEquipToMark()
+
+	DTSleep_CaptureShoeEnable.SetValue(Utility.GetCurrentGameTime())
+endFunction
+
+Function CaptureShoeUnmarkCurrent()
+	Armor bpItem = (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).UndressPlayerShoes(true)
+	if (bpItem != None)
+		DTSleep_CaptureShoeEnable.SetValue(Utility.GetCurrentGameTime())
+		Utility.WaitMenuMode(0.3)
+		PlayerRef.EquipItem(bpItem, false, true)
+	endIf
+endFunction
+
+Function CaptureStockingsEquipToMark()
+	DTSleep_CaptureStockingsEnable.SetValue(Utility.GetCurrentGameTime())
+endFunction
+
+Function CaptureStockingsUnmarkCurrent()
+	Armor bpItem = (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).UndressPlayerStockings(true)
+	if (bpItem != None)
+		DTSleep_CapturestockingsEnable.SetValue(Utility.GetCurrentGameTime())
+		Utility.WaitMenuMode(0.3)
+		PlayerRef.EquipItem(bpItem, false, true)
+	endIf
+endFunction
+
+; ----------------------------
 
 Function CaptureStrapOnItemEquipToMark()
 	
@@ -9689,6 +9725,8 @@ Function HandlePlayerSleepStop(ObjectReference akBed, bool observeWinter = false
 						endIf
 						
 						; no bed, no undress
+						; note: if undressed afterIntimacy will stay undressed and walk around --- will equip weapon
+						;
 						if (IntimateCompanionRef.IsInFaction(DTSleep_IntimateFaction))
 							IntimateCompanionRef.RemoveFromFaction(DTSleep_IntimateFaction)
 						endIf
@@ -14317,6 +14355,48 @@ int Function SetToggleXOXOMode()
 	
 	return DTSleep_SettingIntimate.GetValueInt()
 endFunction
+
+; -------------------
+; forBed: 0 = no, 1=yes, 2=dance-only
+; v2.80
+Function SetUndressFootwearVals(int forBed)
+	; settingVals: 0 for always remove, 1 remove bed only, 2 keep equipped always
+	;
+	int shoeVal = DTSleep_SettingUndressShoes.GetValueInt()
+	int stockingVal = DTSleep_SettingUndressStockings.GetValueInt()
+	
+	DTDebug("SetUndressFootwearVals forBed = " + forBed + "; shoePref = " + shoeVal + "; sockPref = " + stockingVal, 1)  ; TODO: remove
+	
+	if (forBed == 1)
+		; for bed so decrease value to remove
+		if (shoeVal == 1)
+			shoeVal = 0
+		endIf
+		if (stockingVal == 1)
+			stockingVal = 0
+		endIf
+	endIf
+	if (shoeVal >= 1)
+		(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).KeepShoesEquipped = true
+	else
+		(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).KeepShoesEquipped = false
+	endIf
+	if (stockingVal >= 1)
+		(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).KeepStockingsEquipped = true
+	else
+		(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).KeepStockingsEquipped = false
+	endIf
+	
+	if (forBed == 2 && stockingVal >= 1)
+		; do we need to override AltFemBody ??
+		if ((DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).AltFemBodyEnabled)
+			if (DressData.PlayerEquippedStockingsItem != None)
+				DTDebug("override AltFemBodyEnabled due to stockings worn", 1)
+				(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).AltFemBodyEnabled = false
+			endIf
+		endIf
+	endIf
+endFunction
 	
 
 ;	start Intimate Undress Quest for using bed - best in 3rd-person view
@@ -14330,6 +14410,7 @@ bool Function SetUndressForBed(ObjectReference playerBed, Actor companionActor, 
 	(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).SuspendEquipStore = false
 	(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).PlayerIsAroused = false
 	(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).AltFemBodyEnabled = false
+	SetUndressFootwearVals(1)			; undress shoes and socks?   v2.80
 	int undressLevel = DTSleep_SettingUndress.GetValueInt()
 	(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).PlayerRedressEnabled = true
 	if (undressLevel >= 3)
@@ -14368,6 +14449,7 @@ bool Function SetUndressForCheck(bool includeClothing, Actor companionActor, boo
 	(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).SuspendEquipStore = true
 	(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).PlayerIsAroused = false
 	(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).AltFemBodyEnabled = false
+	SetUndressFootwearVals(1)			; undress shoes and socks?   v2.80
 	int undressLevel = DTSleep_SettingUndress.GetValueInt()
 	(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).PlayerRedressEnabled = true
 	;if (undressLevel >= 3)
@@ -14401,6 +14483,8 @@ bool Function SetUndressForRespectSit(ObjectReference akFurniture, Actor compani
 				(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).PlayerIsAroused = false
 				(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).AltFemBodyEnabled = false
 				(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).PlayerRedressEnabled = true
+				(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).KeepShoesEquipped = false   	; v2.80
+				(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).KeepStockingsEquipped = false
 				; always redress 
 				
 				SetUndressBodySwaps()
@@ -14491,8 +14575,9 @@ int Function SetUndressPlaySexyDance(ObjectReference furnToPlayObj)
 			SetUndressBodySwaps()
 			
 			if (furnIsPole)
-				; do not inclde companion
-				SetUndressForManualStop(true, None, false, false, None, includePipboy)
+				; do not include companion
+				SetUndressForManualStop(true, None, false, false, None, includePipboy, isDance = true)
+				
 				IntimateCompanionRef.SetRestrained(false)
 				if (IntimateCompanionRef.IsInFaction(DTSleep_IntimateFaction))
 					IntimateCompanionRef.RemoveFromFaction(DTSleep_IntimateFaction)
@@ -14503,6 +14588,7 @@ int Function SetUndressPlaySexyDance(ObjectReference furnToPlayObj)
 				(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).PlaceBackpackOkay = true
 				(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).EnableCarryBonus = true
 				(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).SuspendEquipStore = false
+				SetUndressFootwearVals(2)			; undress shoes and socks?   v2.80
 				;(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).PlayerIsAroused = false
 				int undressLevel = DTSleep_SettingUndress.GetValueInt()
 				(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).PlayerRedressEnabled = true
@@ -15002,9 +15088,7 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 			
 			IntimateWeatherScoreSet wScore = ChanceForIntimateSceneWeatherScore()
 			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).WeatherClass = wScore.wClass
-			
-			
-			
+					
 			; sleep clothes if have them and if for bed
 			if (fadeUndressLevel == 0)
 			
@@ -15032,12 +15116,13 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).PlaceBackpackOkay = doPlacePack
 			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).EnableCarryBonus = true
 			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).SuspendEquipStore = false
+			SetUndressFootwearVals(0)			; undress shoes and socks?   v2.80
 			int undressLevel = DTSleep_SettingUndress.GetValueInt()
 			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).PlayerRedressEnabled = true
 			if (undressLevel >= 3)
 				(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).PlayerRedressEnabled = false
 			endIf
-			
+		
 			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).StartForGirlSexy(companionRef, true, includePipBoy)
 		else
 			; normal undress for sex
@@ -15098,7 +15183,7 @@ EndFunction
 
 ; start Intimate Undress Quest - best in 3rd-person view
 ; 
-bool Function SetUndressForManualStop(bool undressAll, Actor companionActor, bool observeWinter, bool companionReqNudeSuit, ObjectReference optionalBedRef = None, bool includePipBoy = false, bool dropSleepGear = true, bool carryBonus = true, bool placeBackPack = true)
+bool Function SetUndressForManualStop(bool undressAll, Actor companionActor, bool observeWinter, bool companionReqNudeSuit, ObjectReference optionalBedRef = None, bool includePipBoy = false, bool dropSleepGear = true, bool carryBonus = true, bool placeBackPack = true, bool isDance = false)
 	
 	(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).DropSleepClothes = dropSleepGear
 	if (SleepBedIsPillowBed)
@@ -15116,6 +15201,17 @@ bool Function SetUndressForManualStop(bool undressAll, Actor companionActor, boo
 	if (undressLevel >= 3)
 		(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).PlayerRedressEnabled = false
 	endIf
+	
+	int footwearForBed = 1
+	if (isDance)
+		footwearForBed = 2
+	elseIf (optionalBedRef == None)
+		footwearForBed = 0
+	elseIf ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsObjBed(optionalBedRef) == false)
+		footwearForBed = 0
+	endIf
+
+	SetUndressFootwearVals(footwearForBed)			; undress shoes and socks?   v2.80
 	
 	return (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).StartForManualStop(undressAll, companionActor, observeWinter, companionReqNudeSuit, optionalBedRef, includePipBoy)
 	
@@ -15135,6 +15231,7 @@ bool Function SetUndressForNoStop(bool carryBonus = false)
 	if (undressLevel >= 3)
 		(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).PlayerRedressEnabled = false
 	endIf
+	SetUndressFootwearVals(0)			; undress shoes and socks?   v2.80
 	
 	return (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).StartForNeverRedress()
 	
