@@ -365,15 +365,23 @@ bool Function IsHeatherInLove()
 	if ((DTSConditionals as DTSleep_Conditionals).IsHeatherCompInLove)
 		return true
 	else
-		;Quest heatherCoreQuest = Game.GetFormFromFile(0x0300C9BA, "llamaCompanionHeather.esp") as Quest
-		;if (heatherCoreQuest != None)
-		;	if (heatherCoreQuest.GetStageDone(751) || heatherCoreQuest.GetStageDone(1001))
-		;	
-		;		(DTSConditionals as DTSleep_Conditionals).IsHeatherCompInLove = true
-		;		
-		;		return true
-		;	endIf
-		;endIf
+		string heatherPluginName = "llamaCompanionHeatherv2.esp"
+		if ((DTSConditionals as DTSleep_Conditionals).HeatherCampanionVers < 1.5)
+			heatherPluginName = "llamaCompanionHeather.esp"
+		endIf
+		Quest heatherCoreQuest = Game.GetFormFromFile(0x0300C9BA, heatherPluginName) as Quest
+		if (heatherCoreQuest != None)
+			if (heatherCoreQuest.GetStageDone(751))
+			
+				return true
+				
+			elseIf (heatherCoreQuest.GetStageDone(1001))
+				; only record if fully romanced
+				(DTSConditionals as DTSleep_Conditionals).IsHeatherCompInLove = true
+				
+				return true
+			endIf
+		endIf
 	endIf
 	
 	return false

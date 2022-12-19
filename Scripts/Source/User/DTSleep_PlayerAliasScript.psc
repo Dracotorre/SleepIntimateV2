@@ -1240,6 +1240,14 @@ Function CheckCompatibility()
 			DTSleep_ArmorHatHelmList.AddForm(Game.GetFormFromFile(0x031CB6B3, heatherPluginName))
 			DTSleep_ArmorHatHelmList.AddForm(Game.GetFormFromFile(0x0325F709, heatherPluginName))
 			
+			; --------- v2.82 ---- armor-all exception for V2 Heather's outfits
+			if (heatherVers >= 2.0)
+				DTSleep_ArmorAllExceptionList.AddForm(Game.GetFormFromFile(0x0318B2CC, heatherPluginName))  ; regular outfit
+				DTSleep_ArmorAllExceptionList.AddForm(Game.GetFormFromFile(0x04BA858B, heatherPluginName))	; trophy armor
+				DTSleep_ArmorAllExceptionList.AddForm(Game.GetFormFromFile(0x04F60C5B, heatherPluginName))  ; Casdin Caravan
+			endIf
+			; -------
+			
 			Armor bodyNakedArmor = Game.GetFormFromFile(0x0200BA6D, heatherPluginName) as Armor
 			if (bodyNakedArmor && !DTSleep_ModCompanionBodiesLst.HasForm(bodyNakedArmor))
 				DTSleep_ModCompanionBodiesLst.AddForm(bodyNakedArmor)
@@ -3615,8 +3623,11 @@ int Function CheckCustomArmorsAndBackpacks()
 		if (DTSleep_ExtraArmorsEnabled.GetValue() < 1.0)
 			DTSleep_ExtraArmorsEnabled.SetValue(1.0)
 		endIf
+		bool modCountIncremented = false
+		
 		if (!DTSleep_ArmorSlotULegList.HasForm(extraArmor as Form) || !DTSleep_ArmorStockingsList.HasForm(extraArmor as Form))
 			modCount += 1
+			modCountIncremented = true
 			AddToSocksList(extraArmor as Form)
 			
 			AddToSocksList(Game.GetFormFromFile(0x01100824, sockName))
@@ -3654,6 +3665,41 @@ int Function CheckCustomArmorsAndBackpacks()
 			AddToSocksList(Game.GetFormFromFile(0x0110088D, sockName))
 			AddToSocksList(Game.GetFormFromFile(0x01100891, sockName))
 			AddToSocksList(Game.GetFormFromFile(0x01100893, sockName))
+		endIf
+		
+		; ComfySocks 1.4 added SI v2.82
+		extraArmor = Game.GetFormFromFile(0x011008F2, sockName) as Armor
+		if (extraArmor != None && !DTSleep_ArmorStockingsList.HasForm(extraArmor as Form))
+			if (!modCountIncremented)
+				modCount += 1
+			endIf
+			AddToSocksList(extraArmor as Form)
+			AddToSocksList(Game.GetFormFromFile(0x011008A5, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x011008A6, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x011008A7, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x011008A8, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x011008A9, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x011008AA, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x011008AB, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x011008B5, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x011008B9, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x011008BE, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x011008C1, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x011008C9, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x011008CA, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x011008CB, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x011008D1, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x011008D5, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x011008D6, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x011008DA, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x011008DC, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x011008DF, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x011008E2, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x011008E6, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x011008E8, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x011008EC, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x011008EF, sockName))
+			AddToSocksList(Game.GetFormFromFile(0x011008F2, sockName))
 		endIf
 	endIf
 	
@@ -5331,6 +5377,20 @@ Function UpgradeToVersion()
 				Form lockerForm = Game.GetFormFromFile(0x05004988, "DLCWorkshop03.esm")
 				DTSleep_IntimateLockerList.AddForm(lockerForm)
 				DTSleep_IntimateLockerAdjList.AddForm(lockerForm)
+			endIf
+		endIf
+		
+		if (lastVers < 2.80)
+			if ((DTSConditionals as DTSleep_Conditionals).IsHeatherCompanionActive)
+				if ((DTSConditionals as DTSleep_Conditionals).HeatherCampanionVers >= 2.0)
+					; --------- v2.80 ---- armor-all exception for Heather's outfits
+					string heatherPluginName = "llamaCompanionHeatherv2.esp"
+					
+					DTSleep_ArmorAllExceptionList.AddForm(Game.GetFormFromFile(0x0318B2CC, heatherPluginName))
+					
+					DTSleep_ArmorAllExceptionList.AddForm(Game.GetFormFromFile(0x04BA858B, heatherPluginName))	; trophy armor
+					DTSleep_ArmorAllExceptionList.AddForm(Game.GetFormFromFile(0x04F60C5B, heatherPluginName))  ; Casdin Caravan
+				endIf
 			endIf
 		endIf
 		

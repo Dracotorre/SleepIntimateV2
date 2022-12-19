@@ -728,11 +728,16 @@ bool Function StartForCompanionSleepwear(Actor companionActorRef, bool companion
 	return HandleStartForCompanionSleepwear()
 endFunction
 
-bool Function StartForGirlSexy(Actor companionActorRef, bool includeClothing, bool includePipBoy, bool remJacket = false)
+; v2.82 update to include setting playerGender to override actual gender where playerGender==1 undresses player completely
+bool Function StartForGirlSexy(Actor companionActorRef, bool includeClothing, bool includePipBoy, bool remJacket = false, int playerGender = -1)
 
 	if (DTSleep_PlayerUndressed.GetValue() <= 0.0)
 		CancelTimer(RecheckNudeSuitsTimerID)
-		int playerGender = GetGenderForActor(PlayerRef)
+		if (playerGender < 0)
+			playerGender = GetGenderForActor(PlayerRef)
+		endIf
+		
+		;DTDebug("StartForGirlSexy - includeClothing = " + includeClothing + ", remJacket = " + remJacket, 1) 
 		
 		if (companionActorRef != None && !companionActorRef.WornHasKeyword(ArmorTypePower))
 			CompanionRef = companionActorRef
@@ -752,7 +757,7 @@ bool Function StartForGirlSexy(Actor companionActorRef, bool includeClothing, bo
 		
 		if (CompanionRef != None && DTSleep_EquipMonInit.GetValue() >= 5.0)
 			if (playerGender == 1)
-				UndressActorRespect(CompanionRef, true, true, false, remJacket)		; not respectOnly to force all
+				UndressActorRespect(CompanionRef, true, true, !includeClothing, remJacket)		; includClothing = not respectOnly to force all
 				Utility.WaitMenuMode(0.1)
 			elseIf (includeClothing)
 				UndressActor(CompanionRef, 0, includeClothing, includeClothing, false)
@@ -760,10 +765,10 @@ bool Function StartForGirlSexy(Actor companionActorRef, bool includeClothing, bo
 				UndressActorRespect(CompanionRef, true, true, false, remJacket)
 			endIf
 		endIf
-		if (playerGender == 1)
-			UndressActor(PlayerRef, 0, includeClothing, includeClothing, includePipBoy)
+		if (playerGender == 1 && includeClothing)
+			UndressActor(PlayerRef, 0, true, true, includePipBoy)
 		elseIf (DTSleep_EquipMonInit.GetValue() >= 5.0)
-			UndressActorRespect(PlayerRef, true, true, false)
+			UndressActorRespect(PlayerRef, true, true, false, remJacket)				; not respectOnly
 		endIf
 		
 		if (includeClothing)
@@ -4405,6 +4410,7 @@ Function UndressActorArmorInnerSlots(Actor actorRef, bool includeExceptions, boo
 	
 	if (!hasHandsException)
 		if (alwaysRemove || IsSummerSeason())
+			actorRef.UnequipItemSlot(6) 	; 36 - u-torso !!!(AWK-Bracelet)!!   ; v2.82 torso should be here, too
 			actorRef.UnequipItemSlot(7) 	; 37 - u-L arm  AWK-Jacket, Cross overcoats
 			actorRef.UnequipItemSlot(8) 	; 38 - u-R arm
 			actorRef.UnequipItemSlot(9) 	; 39 - u-L leg  CROSS-Bos boots, AWK-*OnHip, Comfy Socks
@@ -4657,6 +4663,8 @@ Function UndressActorArmorFootwear(Actor actorRef)
 		
 		if (actorRef == PlayerRef)
 		
+			PlayerReEquipArmorArray = new Armor[0]			; init
+		
 			if (DressData.PlayerEquippedShoeItem != None && DressData.PlayerEquippedShoeItem != DressData.PlayerEquippedIntimateAttireItem)
 				shoeArmor = DressData.PlayerEquippedShoeItem
 				actorRef.UnequipItem(DressData.PlayerEquippedShoeItem, false, true)
@@ -4670,6 +4678,9 @@ Function UndressActorArmorFootwear(Actor actorRef)
 			; no else; no slot and we should have it stored
 			endIf
 		elseIf (actorRef == CompanionRef)
+		
+			CompanionReEquipArmorArray = new Armor[0]		; init
+			
 			if (DressData.CompanionEquippedShoeItem != None && DressData.CompanionEquippedShoeItem != DressData.CompanionEquippedIntimateAttireItem)
 				shoeArmor = DressData.CompanionEquippedShoeItem
 				actorRef.UnequipItem(DressData.CompanionEquippedShoeItem, false, true)
@@ -4690,9 +4701,7 @@ Function UndressActorArmorFootwear(Actor actorRef)
 				okayToKeepEquipped = false
 			endIf
 		endIf
-		
-		PlayerReEquipArmorArray = new Armor[0]
-		CompanionReEquipArmorArray = new Armor[0]
+
 		
 		if (KeepShoesEquipped && okayToKeepEquipped)
 			

@@ -231,10 +231,6 @@ GlobalVariable property DTSleep_AdultOutfitOn auto
 GlobalVariable property DTSleep_PlayerEquipSleepGloveCount auto			; added v2.48
 GlobalVariable property DTSleep_SceneViewPrefCount auto					; added v2.70
 GlobalVariable property DTSleep_SIDIgnoreOK auto						; added v2.73
-GlobalVariable property DTSleep_SettingUndressShoes auto const			; v2.80
-{ 0=always, 1 = bed-only, 2=never }
-GlobalVariable property DTSleep_SettingUndressStockings auto const		; v2.80	
-{ 0=always, 1 = bed-only, 2=never }
 GlobalVariable property DTSleep_CaptureShoeEnable auto					; v2.80
 GlobalVariable property DTSleep_CaptureStockingsEnable auto				; v2.80
 EndGroup
@@ -279,6 +275,11 @@ GlobalVariable property DTSleep_SettingChemCraft auto
 GlobalVariable property DTSleep_SettingProps auto const					; v2.40
 GlobalVariable property DTSleep_SettingRadCheck auto const				; v2.48.1
 GlobalVariable property DTSleep_SettingScaleActorKiss auto const		; v2.64 - to reset to default
+GlobalVariable property DTSleep_SettingUndressShoes auto const			; v2.80
+{ 0=always, 1 = bed-only, 2=never }
+GlobalVariable property DTSleep_SettingUndressStockings auto const		; v2.80	
+{ 0=always, 1 = bed-only, 2=never }
+GlobalVariable property DTSleep_SettingSwapRoles auto const				; v2.82 - usually same gender swap positions
 EndGroup
 
 Group C_GameData
@@ -1110,7 +1111,7 @@ Event Perk.OnEntryRun(Perk DTSleep_PlayerSleepBedPerk, int Fragment_Entry_01, Ob
 		; v2.41 removed rad-dam check
 		HandlePlayerActivateFurniture(akTarget, 1)
 		
-	elseIf (Fragment_Entry_01 == 7 || Fragment_Entry_01 == 17 || Fragment_Entry_01 == 18)	; 17,18 for Leito-only limited chairs v2.73
+	elseIf (Fragment_Entry_01 == 7 || Fragment_Entry_01 == 17)	; 17,18 for Leito-only limited chairs v2.73
 		; v2.77 fix to include 18 for naked
 		; chairs Relax+
 		; v2.41 removed rad-dam check
@@ -4753,7 +4754,7 @@ Function ClearIntimateSecondSwapWithMain()
 			IntimateCompanionRef.AddToFaction(DTSleep_IntimateFaction)
 		endIf
 		DTSleep_CompIntimateAlias.ForceRefTo(IntimateCompanionRef)
-		ResetSceneData()
+		ResetSceneData(true)
 		SceneData.IsUsingCreature = true
 		SceneData.IsCreatureType = CreatureTypeBehemoth
 		SceneData.MaleRole = IntimateCompanionRef
@@ -5432,7 +5433,6 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 	
 	float intimateSetting = DTSleep_SettingIntimate.GetValue()			; v2.60 extra NPCs may be 2 or 4
 	
-	
 	; note: Ada from DLCRobot starts as IsInfatuated - so ensure is not a robot
 	
 	; v2.22 - also check alias together with count just in case
@@ -5688,13 +5688,14 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 					
 				endIf ; -------------------------- end extra NPCs
 				
-				; affinity over 1000 should be infatuated (if flirting), but check for game bug by including romance list
+				; affinity over 1000 should be infatuated, but check for game bug by including romance list
 				
 				if (aCompanion.IsInfatuated() || aCompanion.IsRomantic() || DTSleep_CompanionRomanceList.HasForm((aCompanion as Actor) as Form))
-				
+					
 					float distance = aCompanion.GetDistance(PlayerRef)
 					bool isCompRomantic = aCompanion.IsRomantic()
 					bool genderOkay = true
+					float compAffinity = aCompanion.GetValue(CA_AffinityAV)
 					
 					; v1.60 - remember: extra NPCs may show as infatuated and we've already considered these above
 					if (aCompanion == StrongCompanionRef)
@@ -5706,132 +5707,136 @@ IntimateCompanionSet Function GetCompanionNearbyHighestRelationRank(bool useNude
 					elseIf (!isCompRomantic && (DTSConditionals as DTSleep_Conditionals).IsRobotDLCActive && (DTSConditionals as DTSleep_Conditionals).RobotAdaRef != None && aCompanion == (DTSConditionals as DTSleep_Conditionals).RobotAdaRef)
 						;DTDebug("GetCompanion Alias Romance-able - skip check Extra-NPC " + aCompanion, 2)
 					
-					elseIf (distance < 1800.0 && !aCompanion.IsChild() && IsCompanionRaceCompatible((aCompanion as Actor), None, isCompRomantic))
+					elseIf (distance < 1800.0 && !aCompanion.IsChild() && compAffinity > 900.0)
+						; v2.82 include condition, Affinity, before check race-compatibility
 						
-						if (aCompanion.WornHasKeyword(ArmorTypePower))
-							mainCompanionPA = true
-							topRelBusy = false
-							;DTDebug("main companion in PA " + aCompanion, 2)
-						endIf
-							
-						genderOkay = true
-						if (prefGender >= 3 && SceneData.CurrentLoverScenCount >= 3)
-							; faithful
-							if (aCompanion != SceneData.MaleRole && aCompanion != SceneData.FemaleRole)
-								genderOkay = false
+						if (IsCompanionRaceCompatible((aCompanion as Actor), None, isCompRomantic))
+						
+							if (aCompanion.WornHasKeyword(ArmorTypePower))
+								mainCompanionPA = true
+								topRelBusy = false
+								;DTDebug("main companion in PA " + aCompanion, 2)
 							endIf
-						elseIf (prefGender < 2)
-							if (SceneData.IsCreatureType == CreatureTypeHandy)
-								if (prefGender != 0)
+								
+							genderOkay = true
+							if (prefGender >= 3 && SceneData.CurrentLoverScenCount >= 3)
+								; faithful
+								if (aCompanion != SceneData.MaleRole && aCompanion != SceneData.FemaleRole)
 									genderOkay = false
 								endIf
-							else
-								int compGender = (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).GetGenderForActor(aCompanion as Actor)
-								if (prefGender != compGender)
-									genderOkay = false
-								endIf
-							endIf
-						endIf
-						
-						if (genderOkay)
-							bool sleeping = false
-							bool sitting = false
-							if (aCompanion.GetSitState() >= 2)
-								sitting = true
-							endIf
-							if (aCompanion.GetSleepState() >= 3)
-								sleeping = true
-							endIf
-						
-							if (!mainCompanionPA && aCompanion.IsInPowerArmor())
-								; power armor is a race change - AAF will try and fail to exit power armor
-								
-								;DTDebug(" InPowerArmor Race, but not Worn TypePower for ", 3)
-								if (DTSleep_SettingAAF.GetValueInt() < 3)			; v2.74 consider ignore setting 3
-									result.PowerArmorFlag = true
-								endIf
-								result.RequiresNudeSuit = true
-							endIf
-							
-							if (isCompRomantic)
-								
-								; only return if not sitting or sleeping - mark companion
-								if (!mainCompanionPA)
-									result.CompanionActor = aCompanion as Actor
-									result.RelationRank = 4
-									topRelationRank = 4
-									
-									if (!sitting && !sleeping)
-										; ready now
-										;result.Gender = (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).GetGenderForActor(aCompanion)
-										result.RaceIntimateCompatible = 1
-										return result
-									elseIf (SceneData.CurrentLoverScenCount >= 5 && !sleeping)			; v2.51
-										; main companion same lover, don't mark busy
-										topRelBusy = false
-										if (SceneData.CurrentLoverScenCount >= 10)
-											result.RaceIntimateCompatible = 1
-											return result
-										endIf
-									else
-										topRelBusy = true
+							elseIf (prefGender < 2)
+								if (SceneData.IsCreatureType == CreatureTypeHandy)
+									if (prefGender != 0)
+										genderOkay = false
+									endIf
+								else
+									int compGender = (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).GetGenderForActor(aCompanion as Actor)
+									if (prefGender != compGender)
+										genderOkay = false
 									endIf
 								endIf
-								mainCompanionRank = 4
-							elseIf (IsFPFPMarriedActor(aCompanion as Actor))
-								; Family Planning Enhanced Redux married  - v2.71
-								result.CompanionActor = aCompanion as Actor
-								result.RelationRank = 4
-								if (aCompanion.WornHasKeyword(ArmorTypePower))
-									mainCompanionPA = true
-								elseIf (aCompanion.IsInPowerArmor())
+							endIf
+							
+							if (genderOkay)
+								bool sleeping = false
+								bool sitting = false
+								if (aCompanion.GetSitState() >= 2)
+									sitting = true
+								endIf
+								if (aCompanion.GetSleepState() >= 3)
+									sleeping = true
+								endIf
+							
+								if (!mainCompanionPA && aCompanion.IsInPowerArmor())
+									; power armor is a race change - AAF will try and fail to exit power armor
+									
+									;DTDebug(" InPowerArmor Race, but not Worn TypePower for ", 3)
 									if (DTSleep_SettingAAF.GetValueInt() < 3)			; v2.74 consider ignore setting 3
 										result.PowerArmorFlag = true
 									endIf
-								endIf
-								if (aCompanion.GetSleepState() > 2)
-									topRelBusy = true
-								else
-									return result
+									result.RequiresNudeSuit = true
 								endIf
 								
-							elseIf (aCompanion.IsInfatuated())
-								
-								if (!mainCompanionPA)
-									topRelationRank = 3
-									result.CompanionActor = aCompanion as Actor
-									result.RelationRank = 3
-									if (!sitting && !sleeping)
-										topRelBusy = false
-									elseIf (SceneData.CurrentLoverScenCount >= 5 && !sleeping)			; v2.51
-										; main companion same lover, don't mark busy
-										topRelBusy = false
-									else
-										topRelBusy = true
-									endIf
-								endIf
-								mainCompanionRank = 3
-								
-							elseIf (DTSleep_SettingShowIntimateCheck.GetValue() > 0.0 && aCompanion.GetValue(CA_AffinityAV) >= 1000.0)
-								; allow even without extra NPCs
-								DTDebug("not romanced/infatuated (or possible game romance bug) with " + aCompanion, 1)
-								if (!mainCompanionPA)
-									topRelationRank = 3
-									result.RelationRank = 3
-									result.CompanionActor = aCompanion as Actor
-									if (!sitting && !sleeping)
-										topRelBusy = false
-									elseIf (SceneData.CurrentLoverScenCount >= 5 && !sleeping)			; v2.51
-										; main companion same lover, don't mark busy
-										topRelBusy = false
+								if (isCompRomantic)
+									
+									; only return if not sitting or sleeping - mark companion
+									if (!mainCompanionPA)
+										result.CompanionActor = aCompanion as Actor
+										result.RelationRank = 4
+										topRelationRank = 4
 										
-									else
-										topRelBusy = true
+										if (!sitting && !sleeping)
+											; ready now
+											;result.Gender = (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).GetGenderForActor(aCompanion)
+											result.RaceIntimateCompatible = 1
+											return result
+										elseIf (SceneData.CurrentLoverScenCount >= 5 && !sleeping)			; v2.51
+											; main companion same lover, don't mark busy
+											topRelBusy = false
+											if (SceneData.CurrentLoverScenCount >= 10)
+												result.RaceIntimateCompatible = 1
+												return result
+											endIf
+										else
+											topRelBusy = true
+										endIf
 									endIf
+									mainCompanionRank = 4
+								elseIf (IsFPFPMarriedActor(aCompanion as Actor))
+									; Family Planning Enhanced Redux married  - v2.71
+									result.CompanionActor = aCompanion as Actor
+									result.RelationRank = 4
+									if (aCompanion.WornHasKeyword(ArmorTypePower))
+										mainCompanionPA = true
+									elseIf (aCompanion.IsInPowerArmor())
+										if (DTSleep_SettingAAF.GetValueInt() < 3)			; v2.74 consider ignore setting 3
+											result.PowerArmorFlag = true
+										endIf
+									endIf
+									if (aCompanion.GetSleepState() > 2)
+										topRelBusy = true
+									else
+										return result
+									endIf
+									
+								elseIf (aCompanion.IsInfatuated())
+									
+									if (!mainCompanionPA)
+										topRelationRank = 3
+										result.CompanionActor = aCompanion as Actor
+										result.RelationRank = 3
+										if (!sitting && !sleeping)
+											topRelBusy = false
+										elseIf (SceneData.CurrentLoverScenCount >= 5 && !sleeping)			; v2.51
+											; main companion same lover, don't mark busy
+											topRelBusy = false
+										else
+											topRelBusy = true
+										endIf
+									endIf
+									mainCompanionRank = 3
+									
+								elseIf (DTSleep_SettingShowIntimateCheck.GetValue() > 0.0 && compAffinity >= 1000.0)
+									; allow even without extra NPCs
+									DTDebug("not romanced/infatuated (or possible game romance bug) with " + aCompanion, 1)
+									if (!mainCompanionPA)
+										topRelationRank = 3
+										result.RelationRank = 3
+										result.CompanionActor = aCompanion as Actor
+										if (!sitting && !sleeping)
+											topRelBusy = false
+										elseIf (SceneData.CurrentLoverScenCount >= 5 && !sleeping)			; v2.51
+											; main companion same lover, don't mark busy
+											topRelBusy = false
+											
+										else
+											topRelBusy = true
+										endIf
+									endIf
+									mainCompanionRank = 3
 								endIf
-								mainCompanionRank = 3
-							endIf
-						endIf    ; end genderOkay
+							endIf    ; end genderOkay
+						endIf ; end race-compatibility
 					endIf
 				endIf
 			endIf
@@ -6522,6 +6527,13 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 	
 		nearCompanion.CompanionActor.AddToFaction(DTSleep_IntimateFaction)
 
+		bool hugOnly = false       ; to allow short-circuit checks   v2.82
+		
+		if (DTSleep_AdultContentOn.GetValueInt() < 2 || DTSleep_SettingIntimate.GetValueInt() >= 3)		; v2.82
+			; no adult or XOXO-mode enabled 
+			hugOnly = true
+			companionRaceOK = false			; just mark now
+		endIf
 	
 		if (nearCompanion.RelationRank >= 3)
 			IntimateCompanionRef = nearCompanion.CompanionActor		; mark now to save time for sleep check
@@ -6557,11 +6569,12 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 			if ((gameTime - IntimateCheckLastFailTime) < 0.047)
 				readyVal = -101			; too soon!
 			else
-				; no-hug check, v2.60 - bad race returns -1001 
-				readyVal = IsCompanionActorReadyForScene(nearCompanion, false, targetRef, true)				; Ready for Scene? also updates SceneData
+				; no-hug check, v2.60 - bad race returns -1001
+				; v2.82 -- added hugOnly for short-circuit checks	
+				readyVal = IsCompanionActorReadyForScene(nearCompanion, false, targetRef, true, hugOnly)				; Ready for Scene? also updates SceneData
 				if (readyVal == -1001)
 					companionRaceOK = false
-					readyVal = IsCompanionActorReadyForScene(nearCompanion, false, targetRef, false, true)	
+					readyVal = IsCompanionActorReadyForScene(nearCompanion, false, targetRef, false, true)		
 				endIf
 			endIf
 			
@@ -6787,7 +6800,7 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 			; ---------------- Check for scene compatibility and safety
 			
 			; check available animation sets
-			if (playerIntimateOK && companionRaceOK)									;v2.60 now check race for adult to allow embrace
+			if (playerIntimateOK && companionRaceOK && SceneData.RaceRestricted < 10)		;v2.60 now check race for adult to allow embrace--v2.82 added race-restricted check
 				adultScenesAvailable = IsAdultAnimationAvailable()
 			endIf
 			
@@ -6926,12 +6939,24 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 						
 						if (limitLevel > 3.0)
 							if (SceneData.SameGender)
-								if (SceneData.MaleRoleGender == 1 && !SceneData.HasToyAvailable)
+								bool toyScenesAvailable = false									; --- v2.82 be more specific to limit prompt
+								
+								if (SceneData.HasToyAvailable)
+									if ((DTSConditionals as DTSleep_Conditionals).IsLeitoActive || (DTSConditionals as DTSleep_Conditionals).IsLeitoAAFActive)
+										if (DTSleep_IsLeitoActive.GetValue() >= 1.0)
+											toyScenesAvailable = true
+										endIf
+									endIf
+								endIf
+								
+								if (SceneData.MaleRoleGender == 1 && !toyScenesAvailable)		; ---
 									if ((DTSConditionals as DTSleep_Conditionals).IsRufgtActive)
 										; oral/manual for females
 										limitLevel = 4.0
+									elseIf ((DTSConditionals as DTSleep_Conditionals).IsAtomicLustActive)
+										limitLevel = 2.0				; v2.82 added to include Atomic Lust
 									else
-										limitLevel = 3.0
+										limitLevel = 1.0				; v2.82 lowered to hug-only list
 									endIf
 								elseIf (SceneData.MaleRoleGender == 0)
 									limitLevel = 4.0
@@ -7380,11 +7405,19 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 					; disable fade by setting or by random for quick dance --- v1.88 -hugs not dance
 					useLowSceneCam = false
 					
-					if (SceneData.IsUsingCreature || SceneData.CompanionInPowerArmor)
+					; v2.82 -- split power-armor check and creature so we can fix Valentine skipping embrace animation
+					if (SceneData.CompanionInPowerArmor)
 						; animPack check failed to find packs matching situation
 						IntimateCompanionRef.FollowerFollow()
-						IntimateCompanionRef = None
+						;;;   IntimateCompanionRef = None     ; no need to remove -v2.82
 						doFade = false
+						
+					elseIf (SceneData.IsUsingCreature)
+						; v2.82 limit only creatures without hug animations; fix for Valentine Romance XOXO going to bed without animation
+						if (SceneData.IsCreatureType < 3 || SceneData.IsCreatureType > 4)
+							IntimateCompanionRef.FollowerFollow()
+							doFade = false
+						endIf
 					endIf
 					
 				elseIf (animPacks.Length > 0 && (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).GetTimeForPlayID(6001) != 275.92)
@@ -7477,7 +7510,8 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 						endIf
 					endIf
 					
-				elseIf (!SceneData.IsUsingCreature && !SceneData.CompanionInPowerArmor && (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlayActionXOXO())
+				elseIf ((!SceneData.IsUsingCreature || SceneData.IsCreatureType == CreatureTypeSynth || SceneData.IsCreatureType == CreatureTypeSynthNude) && !SceneData.CompanionInPowerArmor && (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlayActionXOXO())
+					; v2.82 some creatures are okay to hug
 					noPreBedAnim = false
 					RegisterForCustomEvent((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript), "IntimateSequenceDoneEvent")
 					
@@ -8250,14 +8284,18 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 			powerArmorOK = false
 			hugsOnly = true
 			doOtherProp = false
-			if (doSexyDance)
-				if ((DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).GetGenderForActor(PlayerRef) == 0)
-					doSexyDance = false
-					if (specialFurn == 101)
-						doDance = true
-					endIf
-				endIf
+			doSexyDance = false					; no gender check for sexydance-- old commented below v2.82
+			if (specialFurn == 101)				; 
+				doDance = true
 			endIf
+			;if (doSexyDance)
+			;	if ((DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).GetGenderForActor(PlayerRef) == 0)
+			;		doSexyDance = false
+			;		if (specialFurn == 101)
+			;			doDance = true
+			;		endIf
+			;	endIf
+			;endIf
 			; also updates scene-data  but **** hugOK skips same-gender toy check!! ****
 			readyVal = IsCompanionActorReadyForScene(nearCompanion, false, None, powerArmorOK, hugOK)			
 		endIf
@@ -8347,13 +8385,13 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 				companionReady = true
 			
 				if (SceneData.IsUsingCreature)
-					if (isPillory || specialFurn == 102)
-						companionReady = false
-						IntimateCompanionRef = None
-						
-					elseIf (SceneData.IsCreatureType == CreatureTypeSynth)
+					; v2.82 re-order for synth first
+					if (SceneData.IsCreatureType == CreatureTypeSynth)
 						hugsOnly = true
 						animPacks[0] = 0
+					elseIf (isPillory || specialFurn == 102)
+						companionReady = false
+						IntimateCompanionRef = None
 					endIf
 				
 				;
@@ -8395,6 +8433,13 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 						if (nearCompanion.Gender == 0)
 							hugsOnly = true
 							animPacks[0] = 0
+							
+						elseIf (DTSleep_SettingSwapRoles.GetValueInt() >= 1)				; check swap roles v2.82
+							SceneData.MaleRole = PlayerRef
+							SceneData.FemaleRole = nearCompanion.CompanionActor
+						else
+							SceneData.MaleRole = nearCompanion.CompanionActor
+							SceneData.FemaleRole = PlayerRef
 						endIf
 					elseIf (!doOtherProp)
 						if (specialFurn == 2 && IsSexyDanceCompatibleFurn(akFurniture, furnBaseForm, true))
@@ -8821,7 +8866,10 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 						doDance = true
 					elseIf (specialFurn >= 100 && DTSleep_SettingChairsEnabled.GetValue() <= 1.0)		; v2.48.1 fix - dance is 3rd on menu when embrace default
 						doDance = true
-					elseIf (specialFurn >= 100 && DTSleep_AdultContentOn.GetValue() <= 1.0)				; v2.48.1 fix - dance just in case
+					elseIf (specialFurn >= 100 && DTSleep_AdultContentOn.GetValue() <= 1.5)				; v2.48.1 fix - dance just in case
+						doDance = true
+					elseIf (SceneData.IsUsingCreature)
+						; v2.82 fix -- dance is 3rd on menu with Nick Valentine
 						doDance = true
 					endIf
 					doSexyDance = false
@@ -9002,7 +9050,9 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 			if (testPassEnabled && !doDance && !doSexyDance)
 				IntimacyTestCount += 1
 			elseIf (!doDance)
-				PlayerRef.SayCustom(PlayerLockResultSubtype, None, randomChance > 50) ; speak in head if rand > 50
+				if (!testPassEnabled)   ; v2.82 no speak for testing
+					PlayerRef.SayCustom(PlayerLockResultSubtype, None, randomChance > 50) ; speak in head if rand > 50
+				endIf
 				
 				if (hugsOnly)								; includes lap dance 
 					if (hoursSinceLastFail < 12.0)
@@ -9079,7 +9129,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 					endIf
 				elseIf (doSexyDance)
 					
-					if (SetUndressPlaySexyDance(furnToPlayObj) > 0)
+					if (SetUndressPlaySexyDance(furnToPlayObj, isNaked) > 0)
 						
 						noPreBedAnim = false
 					endIf
@@ -9226,18 +9276,18 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 		if (IntimateCompanionRef == None && (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).GetGenderForActor(PlayerRef) == 1)
 			Actor heatherActor = GetHeatherActor()
 			if (PlayerHasActiveCompanion.GetValueInt() > 0 && CompanionAlias != None)
-				ResetSceneData()
+				ResetSceneData(true)
 				SceneData.FemaleRole = PlayerRef
 				SceneData.MaleRole = CompanionAlias.GetActorReference()
 				IntimateCompanionRef = SceneData.MaleRole
 				
 			elseIf (heatherActor != None && PlayerRef.GetDistance(heatherActor) < 2000.0)
-				ResetSceneData()
+				ResetSceneData(true)
 				SceneData.FemaleRole = PlayerRef
 				SceneData.MaleRole = heatherActor
 				IntimateCompanionRef = heatherActor
 			elseIf (PlayerHasActiveDogmeatCompanion.GetValueInt() >= 1 && DogmeatCompanionAlias != None)
-				ResetSceneData()
+				ResetSceneData(true)
 				SceneData.FemaleRole = PlayerRef
 				SceneData.MaleRole = DogmeatCompanionAlias.GetActorReference()
 				SceneData.IsUsingCreature = true
@@ -9258,7 +9308,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 		endIf
 		
 		
-		SetUndressPlaySexyDance(furnToPlayObj)
+		SetUndressPlaySexyDance(furnToPlayObj, isNaked)
 		
 	elseIf (!furnObjReady)
 		EnablePlayerControlsSleep()
@@ -10544,7 +10594,7 @@ Function IsCompanionPowerArmorGlitchedDisplayNearby()
 endFunction
 
 bool Function IsCompanion2RaceCompatible(Actor companionActor)					; v2.64
-	
+	; Nick Valentine not considered for 2nd partner, so romantic is false 
 	return IsCompanionRaceCompatible(companionActor, None, false, false)
 endFunction
 
@@ -10648,15 +10698,19 @@ bool Function IsCompanionRaceCompatible(Actor companionActor, ActorBase compBase
 				return true
 					
 			elseIf (romantic)
-				SceneData.RaceRestricted = 0
+				SceneData.IsUsingCreature = true
 				; v1.08 - Xbox-only / non-adult scenes to support romanced Nick Valentine mod
 				; v1.60 - also XOXO
 				; v1.67 - any by included creature type to check
-				if (DTSleep_SettingSynthHuman.GetValue() <= 0.0 || DTSleep_AdultContentOn.GetValue() <= 1.5)
-					SceneData.IsUsingCreature = true
-					SceneData.IsCreatureType = CreatureTypeSynth
-				elseIf ((DTSConditionals as DTSleep_Conditionals).ImaPCMod)
+				
+				; v2.82 rewrite order for easier reading
+				if (DTSleep_SettingSynthHuman.GetValue() >= 1.0 && DTSleep_AdultContentOn.GetValue() >= 2.0 && (DTSConditionals as DTSleep_Conditionals).ImaPCMod)
+					SceneData.IsUsingCreature = false					; for normal human-like 
 					SceneData.IsCreatureType = CreatureTypeSynthNude	; v2.18 - to use synthGen2 nude armors
+					SceneData.RaceRestricted = 0
+				else
+					SceneData.IsCreatureType = CreatureTypeSynth
+					SceneData.RaceRestricted = 10			; embrace only			; v2.82 fix for R-X
 				endIf
 				
 				return true
@@ -10955,7 +11009,7 @@ int Function IsCompanionActorReadyForScene(IntimateCompanionSet intimateActor, b
 				companionGender = -2
 			endIf
 		else
-			ResetSceneData()
+			ResetSceneData(!hugOkay)									; keep race info unless hugs v2.82
 			if (MyPAGlitchMessageCount > 1)								; reset glitch count v2.75
 				MyPAGlitchMessageCount = 0
 			endIf
@@ -11010,10 +11064,11 @@ int Function IsCompanionActorReadyForScene(IntimateCompanionSet intimateActor, b
 				SceneData.IsUsingCreature = true
 				SceneData.IsCreatureType = CreatureTypeBehemoth
 				SceneData.RaceRestricted = 0										; v2.64 - in case multi-follower
-			;elseIf (compActor.HasKeyword(ActorTypeRobotKY))						; v2.64 - skip this to force race check
-			;	companionGender = 0
-			;	SceneData.IsUsingCreature = true
-			;	SceneData.IsCreatureType = CreatureTypeHandy
+			elseIf (hugOkay && compActor.HasKeyword(ActorTypeRobotKY))				; v2.82 if for hugs then record now else do race check
+				companionGender = 0
+				SceneData.IsUsingCreature = true
+				SceneData.IsCreatureType = CreatureTypeHandy
+				SceneData.RaceRestricted = 10
 				
 			; v2.60 this may backfire--hide for now
 			;elseIf (DressData.CompanionActor == compActor && DressData.CompanionGender >= 0)
@@ -11031,9 +11086,11 @@ int Function IsCompanionActorReadyForScene(IntimateCompanionSet intimateActor, b
 			else
 				ActorBase compBase = None
 				
-				if (!hugOkay && intimateActor.RaceIntimateCompatible == 0 && !IsCompanionRaceCompatible(compActor, compBase, true))  ; includes tail check and returns creature if synth -- assume romanced
+				; v2.82 removed condition intimateActor.RaceIntimateCompatible == 0
+				;   -- skip this short-circuit for now until review 
+				if (!hugOkay && !IsCompanionRaceCompatible(compActor, compBase, true))  ; includes tail check and returns creature if synth -- assume romanced
 					DTDebug("IsCompReadyForScene - companion " + compActor + " not race compatible (-1001)", 1)
-					ResetSceneData()
+					; v2.82 do not! ResetSceneData()
 					
 					return -1001
 					
@@ -11190,9 +11247,15 @@ int Function IsCompanionActorReadyForScene(IntimateCompanionSet intimateActor, b
 					endIf
 					
 					; v1.24 - no longer require toy
-					SceneData.MaleRole = PlayerRef
-					SceneData.FemaleRole = compActor
-					MainQSceneScriptP.IsMaleCamOffset = true
+					if (DTSleep_SettingSwapRoles.GetValueInt() <= 0)			; v2.82 swap setting
+						SceneData.FemaleRole = PlayerRef
+						SceneData.MaleRole = compActor
+						MainQSceneScriptP.IsMaleCamOffset = false
+					else
+						SceneData.FemaleRole = compActor
+						SceneData.MaleRole = PlayerRef
+						MainQSceneScriptP.IsMaleCamOffset = true
+					endIf
 					;MainQSceneScriptP.ReverseCamXOffset = true
 					SceneData.HasToyAvailable = false
 					SceneData.ToyArmor = None
@@ -11209,9 +11272,15 @@ int Function IsCompanionActorReadyForScene(IntimateCompanionSet intimateActor, b
 				else
 					; strap-on not required
 					
-					SceneData.FemaleRole = PlayerRef
-					SceneData.MaleRole = compActor
-					MainQSceneScriptP.IsMaleCamOffset = false
+					if (DTSleep_SettingSwapRoles.GetValueInt() <= 0)			; v2.82 swap setting
+						SceneData.FemaleRole = PlayerRef
+						SceneData.MaleRole = compActor
+						MainQSceneScriptP.IsMaleCamOffset = false
+					else
+						SceneData.FemaleRole = compActor
+						SceneData.MaleRole = PlayerRef
+						MainQSceneScriptP.IsMaleCamOffset = true
+					endIf
 					MainQSceneScriptP.ReverseCamXOffset = false
 					SceneData.HasToyAvailable = false
 					SceneData.HasToyEquipped = false
@@ -11225,9 +11294,15 @@ int Function IsCompanionActorReadyForScene(IntimateCompanionSet intimateActor, b
 				endIf
 			else
 				; both genders male
-				SceneData.MaleRole = PlayerRef
-				SceneData.FemaleRole = compActor
-				MainQSceneScriptP.IsMaleCamOffset = true
+				if (DTSleep_SettingSwapRoles.GetValueInt() <= 0)			; v2.82 swap setting
+					SceneData.MaleRole = PlayerRef
+					SceneData.FemaleRole = compActor
+					MainQSceneScriptP.IsMaleCamOffset = true
+				else
+					SceneData.MaleRole = compActor
+					SceneData.FemaleRole = PlayerRef
+					MainQSceneScriptP.IsMaleCamOffset = false
+				endIf
 				;MainQSceneScriptP.ReverseCamXOffset = true
 				SceneData.HasToyAvailable = false
 				SceneData.SameGender = true
@@ -12959,7 +13034,7 @@ Function ResetHelpTips()
 
 endFunction
 
-Function ResetSceneData()
+Function ResetSceneData(bool includeRace)				; may not alays want to remove race info  v2.82 
 	SceneData.BackupMaleRole = SceneData.MaleRole
 	SceneData.BackupFemaleRole = SceneData.FemaleRole
 	SceneData.BackupMaleRoleGender = SceneData.MaleRoleGender
@@ -12973,18 +13048,22 @@ Function ResetSceneData()
 	SceneData.HasToyEquipped = false
 	SceneData.ToyFromContainer = false
 	SceneData.SameGender = false
-	SceneData.IsUsingCreature = false
-	SceneData.IsCreatureType = 0
+	
+	if (includeRace)
+		SceneData.IsUsingCreature = false
+		SceneData.IsCreatureType = 0
+		SceneData.FemaleRaceHasTail = false
+		SceneData.CompanionInPowerArmor = false
+		SceneData.RaceRestricted = 0				; v2.60  - for companion only
+	endIf
 	SceneData.MaleRoleCompanionIndex = -1
 	SceneData.CurrentLoverScenCount = 0
 	SceneData.CompanionBribeType = 0
-	SceneData.FemaleRaceHasTail = false
-	SceneData.CompanionInPowerArmor = false
 	SceneData.SecondFemaleRole = None
 	SceneData.SecondMaleRole = None
 	; do not reset LkbwLevel
 	SceneData.MaleBodySwapEnabled = 1
-	SceneData.RaceRestricted = 0				; v2.60  - for companion only
+	
 	
 endFunction
 
@@ -13060,12 +13139,15 @@ Function RestoreSceneData()
 						endIf
 					elseIf (compRace == SynthGen2RaceValentine)
 					
-						if (DTSleep_SettingSynthHuman.GetValue() <= 0.0 || DTSleep_AdultContentOn.GetValue() <= 1.5)
-							SceneData.IsUsingCreature = true
-							SceneData.IsCreatureType = CreatureTypeSynth
-						elseIf ((DTSConditionals as DTSleep_Conditionals).ImaPCMod)
+						; v2.82 re-order for easier reading
+						SceneData.IsUsingCreature = true
+						if (DTSleep_AdultContentOn.GetValue() >= 2.0 && DTSleep_SettingSynthHuman.GetValue() >= 1.0 && (DTSConditionals as DTSleep_Conditionals).ImaPCMod)
 							SceneData.IsCreatureType = CreatureTypeSynthNude
+						else
+							SceneData.IsCreatureType = CreatureTypeSynth
+							SceneData.RaceRestricted = 10				; v2.82 for hugOnly
 						endIf
+						
 					elseIf (compRace == HumanRace || compRace == GhoulRace)
 						; all good
 						SceneData.RaceRestricted = 0
@@ -13094,7 +13176,7 @@ Function RestoreSceneData()
 		endIf
 	endIf
 	
-	DTDebug(" Restored backup SceneData for couple (" + SceneData.MaleRole + ", " + SceneData.FemaleRole + ") to lover-count: " + SceneData.CurrentLoverScenCount, 1)		;TODO remove
+	DTDebug(" Restored backup SceneData for couple (" + SceneData.MaleRole + ", " + SceneData.FemaleRole + ") to lover-count: " + SceneData.CurrentLoverScenCount, 1)
 endFunction
 
 Function ResetSceneOnLoad()
@@ -13405,6 +13487,9 @@ int Function RestoreSettingsDefault()
 			DTSleep_SettingNapComp.SetValue(1.0)
 			DTSleep_SettingNapExit.SetValue(1.0)
 			DTSleep_SettingNapRecover.SetValue(1.0)
+			DTSleep_SettingSwapRoles.SetValueInt(0)				; v2.82
+			DTSleep_SettingUndressShoes.SetValueInt(0)
+			DTSleep_SettingUndressStockings.SetValueInt(0)
 			
 
 			; SetModDef below may change this
@@ -14199,7 +14284,7 @@ IntimateCompanionSet Function SetSceneForDogmeat()
 		
 		if (!dogmeatRef.IsDead() && !dogmeatRef.IsUnconscious() && dogmeatRef.GetDistance(PlayerRef) < 900.0 && dogmeatRef.GetSitState() <= 1)
 
-			ResetSceneData()
+			ResetSceneData(true)
 			
 			nearCompanion.CompanionActor = dogmeatRef
 			nearCompanion.RelationRank = 1  
@@ -14333,6 +14418,19 @@ Function ShowToggleRedress(int cVal)
 	else
 		DTSleep_ToggleRedressOnMsg.Show()
 	endIf
+endFunction
+
+int Function SetToggleSwapRoles()								; v2.82
+	Utility.WaitMenuMode(0.2)
+	int val = DTSleep_SettingSwapRoles.GetValueInt()
+	if (val <= 0)
+		val = 1
+	else
+		val = 0
+	endIf
+	DTSleep_SettingSwapRoles.SetValueInt(val)
+	
+	return val
 endFunction
 
 ; v2.60 - to toggle force-XOXO or allow-adult
@@ -14506,7 +14604,7 @@ bool Function SetUndressForRespectSit(ObjectReference akFurniture, Actor compani
 	return false
 endFunction
 
-int Function SetUndressPlaySexyDance(ObjectReference furnToPlayObj)
+int Function SetUndressPlaySexyDance(ObjectReference furnToPlayObj, bool playerIsNaked)		; v2.82 added naked parameter
 
 	; v2.60 - fix allow cancel
 	if (DTSleep_SettingCancelScene.GetValue() > 0)
@@ -14537,13 +14635,33 @@ int Function SetUndressPlaySexyDance(ObjectReference furnToPlayObj)
 			includePipBoy = true
 		endIf
 		
-		; v2.60 --- female player always strips-and-dances for lap dance
+		; v2.82 --- female player strips-and-dances for lap dance by default,
+		;           may swap with female companion
 		if (furnIsPole || (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).GetGenderForActor(PlayerRef) == 1)
-			if (PlayerRef != SceneData.FemaleRole)
-				SceneData.MaleRole = IntimateCompanionRef
-				SceneData.FemaleRole = PlayerRef
+		
+			if (!furnIsPole && SceneData.SameGender && DTSleep_SettingSwapRoles.GetValueInt() >= 1)
+				; swap roles for pair dance, female-player should be male
+				if (PlayerRef == SceneData.FemaleRole)
+					SceneData.MaleRole = PlayerRef
+					SceneData.FemaleRole = IntimateCompanionRef
+				endIf
+			else
+				; default, make sure player in female role
+				if (PlayerRef != SceneData.FemaleRole)
+					SceneData.MaleRole = IntimateCompanionRef
+					SceneData.FemaleRole = PlayerRef
+				endIf
 			endIf
 		endIf
+		
+		; v2.60 --- female player always strips-and-dances for lap dance
+		;if (furnIsPole || (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).GetGenderForActor(PlayerRef) == 1)
+		;	if (PlayerRef != SceneData.FemaleRole)
+		;		SceneData.MaleRole = IntimateCompanionRef
+		;		SceneData.FemaleRole = PlayerRef
+		;	endIf
+		;endIf
+		
 		; v2.33
 		if ((DTSConditionals as DTSleep_Conditionals).IsPlayerCommentsActive)
 			ModPlayerCommentsDisable()
@@ -14598,7 +14716,18 @@ int Function SetUndressPlaySexyDance(ObjectReference furnToPlayObj)
 				IntimateWeatherScoreSet wScore = ChanceForIntimateSceneWeatherScore()
 				(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).WeatherClass = wScore.wClass
 				
-				(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).StartForGirlSexy(IntimateCompanionRef, true, includePipBoy, true)
+				; v2.82 - if naked keep clothes; set gender based on roles
+				int playerGender = -2
+				if (SceneData.FemaleRole == PlayerRef)
+					playerGender = 1
+				else
+					playerGender = 0
+				endIf
+				if (playerIsNaked)
+					(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).StartForGirlSexy(IntimateCompanionRef, false, includePipBoy, true, playerGender)
+				else
+					(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).StartForGirlSexy(IntimateCompanionRef, true, includePipBoy, true, playerGender)
+				endIf
 			endIf
 			
 			if (furnIsPole && (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlayActionDancePole())
@@ -14664,7 +14793,7 @@ int Function SetUndressPlaySoloScene(ObjectReference furnToPlayObj, int gender)
 			includePipBoy = true
 		endIf
 		
-		ResetSceneData()
+		ResetSceneData(true)
 		
 		if ((DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).GetGenderForActor(PlayerRef) == 1)
 			SceneData.MaleRole = None
@@ -15123,7 +15252,15 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 				(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).PlayerRedressEnabled = false
 			endIf
 		
-			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).StartForGirlSexy(companionRef, true, includePipBoy)
+			; v2.82 use gender for undress
+			int playerGender = -2
+			if (SceneData.FemaleRole == PlayerRef)
+				playerGender = 1
+			else
+				playerGender = 0
+			endIf
+		
+			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).StartForGirlSexy(companionRef, true, includePipBoy, true, playerGender)
 		else
 			; normal undress for sex
 			SetUndressForManualStop(includeClothing, companionRef, false, true, bedRef, includePipboy, true, doPlacePack)
@@ -15208,7 +15345,12 @@ bool Function SetUndressForManualStop(bool undressAll, Actor companionActor, boo
 	elseIf (optionalBedRef == None)
 		footwearForBed = 0
 	elseIf ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsObjBed(optionalBedRef) == false)
-		footwearForBed = 0
+		; v2.82 - no footwear for shower
+		if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsObjShower(optionalBedRef, None))
+			footwearForBed = -1
+		else
+			footwearForBed = 0
+		endIf
 	endIf
 
 	SetUndressFootwearVals(footwearForBed)			; undress shoes and socks?   v2.80

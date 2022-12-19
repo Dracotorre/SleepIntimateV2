@@ -715,6 +715,18 @@
 			}
 		},
 		{
+			"id": "MCM_SettingSwapRoles:Intimacy",
+			"text": "Role",
+			"type": "dropdown",
+			"help": "generally for same-gender scenes to swap roles",
+			"valueOptions": {
+				"options": ["Default", "Opposite"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|1CC715",
+				"propertyName": "DTSleep_SettingSwapRoles"
+			}
+		},
+		{
 			"id": "MCM_SettingShowIntimateCheck:Intimacy",
 			"text": "Prompt for Intimacy",
 			"type": "dropdown",
@@ -2300,6 +2312,12 @@
           "text": "Hotkey for Redress after Rest toggle (player-character)",
           "type": "hotkey",
           "help": "toggle Redress after Rest"
+        },
+		{
+          "id": "DTSI_SwapRolesToggle",
+          "text": "Hotkey to swap roles",
+          "type": "hotkey",
+          "help": "toggle role"
         }
       ]
     },

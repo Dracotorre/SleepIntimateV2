@@ -1286,7 +1286,7 @@ bool Function PlayActionXOXO()
 
 	if (MainActorRef == None || SceneData.CompanionInPowerArmor || SecondActorRef == None)	; v2.17 corrected for creature and synth
 		return false
-	elseIf (SceneData.IsUsingCreature && SceneData.IsCreatureType < 3)
+	elseIf (SceneData.IsUsingCreature && SceneData.IsCreatureType < 3 && SceneData.IsCreatureType > 0)
 		return false
 	endIf
 	int[] sidArray = new int[0]
@@ -1468,19 +1468,19 @@ bool Function CheckActorsIntimateCompatible(int seqID)
 	bool result = false
 	if (MainActorRef != None)
 	
-		if (seqID == 741 && SceneData.RaceRestricted < 9)
+		if (SecondActorRef == None)								; v2.82 re-order first
+			return false
+		elseIf (seqID == 741 && SceneData.RaceRestricted < 9)
 			result = true
 		elseIf (SceneData.CompanionInPowerArmor)
 			result = true
-		elseIf (SecondActorRef == None)
-			return false
 		endIf
 		
 		if (!result && !ActorsIntimateCompatible())
 			return false
 		endIf
 		
-		if (SceneData.IsUsingCreature)
+		if (SceneData.IsUsingCreature && SceneData.IsCreatureType != 3)		; v2.82 3-Synth not okay
 			result = true
 		endIf
 		
@@ -2394,6 +2394,8 @@ float Function GetTimeForPlayID(int id)
 endFunction
 
 ; if includes scenes for oral and other
+;   does not include jail, PA-station, or bed/floor
+;   all male-female
 bool Function HasFurnitureOralChoice(ObjectReference obj, Form baseBedForm)
 	if (obj != None)
 		if ((DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive)
@@ -5639,86 +5641,90 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 				elseIf (packID == 6 && (DTSConditionals as DTSleep_Conditionals).LeitoAnimVers >= 2.1)
 					; FO4 Animations by Leito v2.1 added chair animations  - v2.73
 					
-					if (playerPick && DoesMainActorPrefID(50) && !(DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive)
-						; picked oral/manual, but no SC oral available
-						sidArray.Add(50)
+					if (!SceneData.SameGender || (SceneData.HasToyAvailable))
+						; v2.82 fix limit same-gender to toy
 						
-					elseIf (!playerPick && SceneData.SecondFemaleRole == None && SceneData.SecondMaleRole == None)
-						; no oral choice or extra lovers
-						bool cowgirlOK = false
-						bool cowgirlRevOK = false
-						bool doggyOk = false
-						bool missionOK = false 			; 682 grabs backrest
-						
-						if (MySleepBedFurnType == FurnTypeIsSeatIntimateChair)
-							doggyOk = true
-							missionOK = true
-							cowgirlOK = true
-							cowgirlRevOK = true
-						elseIf (MySleepBedFurnType == FurnTypeIsSeatSofa)
-							Form benchForm = SleepBedRef.GetBaseObject()
-							if (DTSleep_IntimateCouchLimSpaceList.HasForm(benchForm))
-								doggyOk = true
-							else
-								; limit for female player with male companion if SC exist
-								if (!SceneData.SameGender && (DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive && !mainActorIsMaleRole && Utility.RandomInt(1,4) < 3)
-									if (!DTSleep_IntimateCouchFedList.HasForm(benchForm))
-										missionOK = true
-									else
-										cowgirlOK = true
-									endIf
-								else
-									doggyOk = true
-									cowgirlOK = true
-									cowgirlRevOK = true
-									if (!DTSleep_IntimateCouchFedList.HasForm(benchForm))
-										missionOK = true
-									endIf
-								endIf
-							endIf
-						elseIf (MySleepBedFurnType == FurnTypeIsSeatHigh)
-							; modern domestic lounge, Federalist dining chair, Memory Lounge, Mama Murphy's chair
-							; not enough room and backrest too high - restrict to doggy
-							doggyOk = true
+						if (playerPick && DoesMainActorPrefID(50) && !(DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive)
+							; picked oral/manual, but no SC oral available
+							sidArray.Add(50)
 							
-						elseIf (MySleepBedFurnType == FurnTypeIsSeatBench)
-							doggyOk = true
-							if (DTSleep_IntimateBenchAdjList.GetSize() > 0)
-								if (baseBedForm == None)
-									baseBedForm = SleepBedRef.GetBaseObject()
+						elseIf (!playerPick && SceneData.SecondFemaleRole == None && SceneData.SecondMaleRole == None)
+							; no oral choice or extra lovers
+							bool cowgirlOK = false
+							bool cowgirlRevOK = false
+							bool doggyOk = false
+							bool missionOK = false 			; 682 grabs backrest
+							
+							if (MySleepBedFurnType == FurnTypeIsSeatIntimateChair)
+								doggyOk = true
+								missionOK = true
+								cowgirlOK = true
+								cowgirlRevOK = true
+							elseIf (MySleepBedFurnType == FurnTypeIsSeatSofa)
+								Form benchForm = SleepBedRef.GetBaseObject()
+								if (DTSleep_IntimateCouchLimSpaceList.HasForm(benchForm))
+									doggyOk = true
+								else
+									; limit for female player with male companion if SC exist
+									if (!SceneData.SameGender && (DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive && !mainActorIsMaleRole && Utility.RandomInt(1,4) < 3)
+										if (!DTSleep_IntimateCouchFedList.HasForm(benchForm))
+											missionOK = true
+										else
+											cowgirlOK = true
+										endIf
+									else
+										doggyOk = true
+										cowgirlOK = true
+										cowgirlRevOK = true
+										if (!DTSleep_IntimateCouchFedList.HasForm(benchForm))
+											missionOK = true
+										endIf
+									endIf
 								endIf
-								if (DTSleep_IntimateBenchAdjList.HasForm(baseBedForm))
-									missionOK = true    ; benches with short backrest--not diner booth
+							elseIf (MySleepBedFurnType == FurnTypeIsSeatHigh)
+								; modern domestic lounge, Federalist dining chair, Memory Lounge, Mama Murphy's chair
+								; not enough room and backrest too high - restrict to doggy
+								doggyOk = true
+								
+							elseIf (MySleepBedFurnType == FurnTypeIsSeatBench)
+								doggyOk = true
+								if (DTSleep_IntimateBenchAdjList.GetSize() > 0)
+									if (baseBedForm == None)
+										baseBedForm = SleepBedRef.GetBaseObject()
+									endIf
+									if (DTSleep_IntimateBenchAdjList.HasForm(baseBedForm))
+										missionOK = true    ; benches with short backrest--not diner booth
+									endIf
 								endIf
+							elseIf (MySleepBedFurnType == FurnTypeIsSeatKitchen || MySleepBedFurnType == FurnTypeIsSeatLow)
+								; armless chair
+								cowgirlOK = true
+								doggyOk = true
 							endIf
-						elseIf (MySleepBedFurnType == FurnTypeIsSeatKitchen || MySleepBedFurnType == FurnTypeIsSeatLow)
-							; armless chair
-							cowgirlOK = true
-							doggyOk = true
-						endIf
-					
-						if (cowgirlOK)
-							if (IsMaleErectAngleRestrictedForPack(1, packID))
-								sidArray.Add(86)
-								sidArray.Add(84)
-							endIf
-						endIf
-						if (cowgirlRevOK)
-							if (!SceneData.FemaleRaceHasTail)
-								if (IsMaleErectAngleRestrictedForPack(2, packID))
-									sidArray.Add(88)
-								endIf
+						
+							if (cowgirlOK)
 								if (IsMaleErectAngleRestrictedForPack(1, packID))
-									sidArray.Add(85)
-									sidArray.Add(87)
+									sidArray.Add(86)
+									sidArray.Add(84)
 								endIf
 							endIf
-						endIf
-						if (doggyOk)
-							sidArray.Add(83)
-						endIf
-						if (missionOk)
-							sidArray.Add(82)
+							if (cowgirlRevOK)
+								if (!SceneData.FemaleRaceHasTail)
+									if (IsMaleErectAngleRestrictedForPack(2, packID))
+										sidArray.Add(88)
+									endIf
+									if (IsMaleErectAngleRestrictedForPack(1, packID))
+										sidArray.Add(85)
+										sidArray.Add(87)
+									endIf
+								endIf
+							endIf
+							if (doggyOk)
+								sidArray.Add(83)
+							endIf
+							if (missionOk)
+								sidArray.Add(82)
+							endIf
 						endIf
 					endIf
 			
@@ -6477,10 +6483,6 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 				
 				if (packID == 2)
 					sidArray.Add(50)	; solo
-				elseIf (!(DTSConditionals as DTSleep_Conditionals).IsAtomicLustActive)
-					if (!SceneData.SameGender && SceneData.MaleRoleGender == 0)
-						sidArray.Add(80)	; solo
-					endIf
 				endIf
 				
 			elseIf (!SceneData.IsUsingCreature && !cuddlesOnly && SceneData.SecondMaleRole == None && SceneData.SecondFemaleRole == None)
@@ -6763,6 +6765,12 @@ bool Function ActorsIntimateCompatible()
 	
 	if (SceneData.RaceRestricted >= 9)
 		Debug.Trace(MyScriptName + " companion race intimate restricted!")
+		return false
+	endIf
+	
+	; v2.82
+	if (SceneData.IsCreatureType == 3)
+		Debug.Trace(MyScriptName + " companion synth intimate restricted!")
 		return false
 	endIf
 	

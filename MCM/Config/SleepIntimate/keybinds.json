@@ -30,6 +30,16 @@
         "function": "ToggleRedress",
         "params": [1.0]
       }
+    },
+	{
+      "id": "DTSI_SwapRolesToggle",
+      "desc": "Sleep Intimate toggle choose role",
+      "action": {
+        "type": "CallFunction",
+        "form": "SleepIntimate.esp|A56A2",
+        "function": "ToggleSwapRoles",
+        "params": [1.0]
+      }
     }
   ]
 }

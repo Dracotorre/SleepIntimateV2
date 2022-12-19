@@ -314,6 +314,10 @@ Function ToggleRedress(float val)
 	(pDTSleep_MainQuest as DTSleep_MainQuestScript).SetToggleRedress()
 EndFunction
 
+Function ToggleSwapRoles(float val)
+	(pDTSleep_MainQuest as DTSleep_MainQuestScript).SetToggleSwapRoles()
+EndFunction
+
 Function WakePlayer(float val)
 	if (Game.IsActivateControlsEnabled())
 		(pDTSleep_MainQuest as DTSleep_MainQuestScript).PlayerSleepAwake(false)
