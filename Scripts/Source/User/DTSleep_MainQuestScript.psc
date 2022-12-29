@@ -1411,8 +1411,8 @@ Event DTSleep_IntimateAnimQuestScript.IntimateSequenceDoneEvent(DTSleep_Intimate
 			endIf
 			
 			if (bedRef == None)
-				if (sceneID < 100 || (sceneID >= 739 && sceneID <= 741))
-					; no bonus for hugs at chairs or sexy dance
+				if (sceneID < 100 || (sceneID >= 739 && sceneID <= 741) || sceneID == 780)
+					; no bonus for hugs at chairs or sexy dance -- v2.83 added 780 -- or diner-booth embrace
 					self.SleepLoverBonusOnSleepID = -2
 					if (sceneID == 741 || sceneID < 90)
 						; do we need to restore SceneData?
@@ -1491,7 +1491,7 @@ Event DTSleep_IntimateAnimQuestScript.IntimateSequenceDoneEvent(DTSleep_Intimate
 						; do not fade-in until bed unless...
 						; make sure okay to switch to bed--even if not in bed--so we know ready to move if not there yet
 						if ((DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).SetStopOnBedExit() == false)
-							DTDebug(" set undress SetStopOnBedExit failed... stopping undress", 1)
+							DTDebug(" set undress SetStopOnBedExit failed  (UndressQuest no bed)... stopping undress", 1)
 							; fails if undress quest didn't have a bed - so get dressed now
 							
 							SetUndressStop(redressSlowly)
@@ -9145,20 +9145,30 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 					if (animPacks[0] <= 0)
 						animPacks = None
 					endIf
-					bool seatIsDinerBooth = false
 					
-				
+					bool seatIsDinerbooth = false		
+					bool dinerBoothCustomReady = false 	; for custom animations (not embrace)  v2.83
+					
+					; v2.83 moved up before undress to pass along if dinerBooth
+					if (hugsOnly && DTSleep_AdultContentOn.GetValue() >= 2.0 && (DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive)
+						if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsObjDinerBoothTable(furnToPlayObj, furnBaseForm))
+						
+							seatIsDinerBooth = true
+							undressLevel = 3				; set to observe footwear preferences  - v2.83
+						endIf
+					endIf
+					
+					; **** undress and get scene ID if there is one 
+					;
 					sequenceID = SetUndressAndFadeForIntimateScene(IntimateCompanionRef, furnToPlayObj, undressLevel, pickSpot, false, false, false, animPacks, false, None, playerPickedStyle, nearCompanion.PowerArmorFlag)
-		
+					; ****
+					
 					(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlaceInBedOnFinish = false
 					
-					; v2.60 - allow diner booth flirt
+					; v2.60 - allow diner booth flirt --- get sequenceID first in case no other intimate available
 					if (hugsOnly || sequenceID < 0)
-						if (DTSleep_AdultContentOn.GetValue() >= 2.0 && (DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive)
-							if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsObjDinerBoothTable(furnToPlayObj, furnBaseForm))
-							
-								seatIsDinerBooth = true
-							endIf
+						if (seatIsDinerbooth)
+							dinerBoothCustomReady = true
 						endIf
 					endIf
 					
@@ -9190,6 +9200,11 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 						RegisterForCustomEvent((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript), "IntimateSequenceDoneEvent")
 						
 					elseIf ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlayActionXOXO())
+					
+						if (seatIsDinerBooth && DressData.PlayerGender == 1)
+							; change embrace to sexy for female  v2.83
+							self.MessageOnRestID = IntimateSexyPerkTimerID
+						endIf
 						noPreBedAnim = false
 						RegisterForCustomEvent((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript), "IntimateSequenceDoneEvent")
 
@@ -14853,7 +14868,7 @@ int Function SetUndressPlaySoloScene(ObjectReference furnToPlayObj, int gender)
 	return 0
 endFunction
 
-; fadeUndressLevel -1 for nothing-no-fade, 0 for hats, 1 for bed, 2 for clothing/naked
+; fadeUndressLevel -1 for nothing-no-fade, 0 for hats, 1 for bed, 2 for clothing/naked, 3 for footwear-only
 ;
 int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReference bedRef, int fadeUndressLevel, bool mainActorIsPositioned, bool playSlowMo = false, bool isDogmeatScene = false, bool lowCam = true, int[] animPacks = None, bool isNaked = false, ObjectReference twinBedRef = None, int playerScenePick = -1, bool companionPowerArmorFlag = false)
 	
@@ -15127,7 +15142,7 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 		bool includeClothing = true
 		if (seqID < 100)
 			includeClothing = false
-			if (fadeUndressLevel >= 2)
+			if (fadeUndressLevel >= 2 && fadeUndressLevel != 3)
 				; hug/dance: lower undress to sleep clothes / respect level
 				fadeUndressLevel = 1
 			endIf
@@ -15150,7 +15165,7 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 				; let's restrict undress so depending on outfit may remain dressed
 				includeClothing = false
 				arousalAngle = -1
-				if (fadeUndressLevel >= 2)
+				if (fadeUndressLevel >= 2 && fadeUndressLevel != 3)
 					fadeUndressLevel = 0
 				endIf
 				
@@ -15200,7 +15215,7 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 		endIf
 		
 		; first check respect
-		if (fadeUndressLevel >= 0 && fadeUndressLevel <= 1)
+		if (fadeUndressLevel >= 0 && fadeUndressLevel <= 3 && fadeUndressLevel != 2)
 			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).DropSleepClothes = false
 			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).EnableCarryBonus = true
 			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).SuspendEquipStore = false
@@ -15219,14 +15234,26 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).WeatherClass = wScore.wClass
 					
 			; sleep clothes if have them and if for bed
-			if (fadeUndressLevel == 0)
+			if (fadeUndressLevel == 0 || fadeUndressLevel == 3)
+				
+				; if at bed or special furniture, observe footwear preferences and remove jackets  v2.83
+				bool remJacketsOutside = false
+				
+				if (fadeUndressLevel == 3 || (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsObjBed(bedRef))
+					remJacketsOutside = true
+					SetUndressFootwearVals(1)
+				else
+					(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).KeepShoesEquipped = true
+					(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).KeepStockingsEquipped = true
+				endIf
 			
-				(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).StartForManualStopRespect(companionRef, true)
+				(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).StartForManualStopRespect(companionRef, true, remJacketsOutside)
 				
 			elseIf ((DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).StartForManualStopSleepwear(companionRef, bedRef, isNaked) == false)
 				
 				; ? could check undress pref for always
-				(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).StartForManualStopRespect(companionRef, true)
+				SetUndressFootwearVals(1)
+				(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).StartForManualStopRespect(companionRef, true, true)
 				
 			endIf
 			
@@ -15298,7 +15325,7 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 		endIf
 	elseIf (SceneData.AnimationSet == 5 && DTSleep_SettingUndress.GetValue() > 0.0)
 		; no undress - let's do hats
-		(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).StartForManualStopRespect(companionRef, true)
+		(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).StartForManualStopRespect(companionRef, true, false)
 	endIf
 	
 	;Utility.Wait(0.24)

@@ -795,7 +795,10 @@ bool Function StartForManualStopRespect(Actor companionActorRef, bool includeHat
 		return false
 	endIf
 	
+	
 	if (DTSleep_PlayerUndressed.GetValue() <= 0.0)
+	
+		DTDebug("StartForManualStopRespect  with companion " + companionActorRef + ", jackets = " + includeJacketOutside, 1)
 	
 		CancelTimer(RecheckNudeSuitsTimerID)
 		
@@ -2004,7 +2007,7 @@ Function HandleRedressActors(bool slowly = true)
 		
 		if (isStoredOutfitContainer)
 			; not replacing existing sleep outfit
-			if (PlayerSleepwearToRemoveSet.SleepwearItem != None && isStoredOutfitContainer)
+			if (PlayerSleepwearToRemoveSet.SleepwearItem != None)
 				Form[] sleepOutfitArray = new Form[1]
 				sleepOutfitArray[0] = PlayerSleepwearToRemoveSet.SleepwearItem
 				(PlayerBedRef as DTSleep_OutfitContainerScript).AddOutfit(sleepOutfitArray, PlayerRef, true)
@@ -3579,6 +3582,11 @@ Function UndressActorRespect(Actor actorRef, bool isIndoors, bool remHatsOutside
 	endIf
 	int remWeaponVal = DTSleep_SettingUndressWeapon.GetValueInt()						;v2.71 (1=companion, 2=player, 3=both)
 	
+	; for hats and jackets also observe footwear    v2.83
+	if (remHatsOutside && remJacket)
+		UndressActorArmorFootwear(actorRef)
+	endIf
+	
 	if (actorRef == PlayerRef)
 		PlayerEquippedArrayUpdated = false
 		DTSleep_PlayerUndressed.SetValue(-1.0)   ; flag started
@@ -3673,10 +3681,38 @@ Function UndressActorRespect(Actor actorRef, bool isIndoors, bool remHatsOutside
 		UndressActorArmorGlasses(actorRef)
 	endIf
 	
+	
 	if (actorRef == PlayerRef)
+		; check re-equip   v2.83
+		int equipCount = 0
+		
+		if (PlayerReEquipArmorArray.Length > 0)
+
+			Armor itemCheckArmor = PlayerReEquipArmorArray[0]
+			equipCount = UndressActorArmorRequip(PlayerRef, PlayerReEquipArmorArray)
+			; delay necessary for events to process and our lists get updated
+			
+			Utility.WaitMenuMode(0.3)
+			; check equipped to wait extra time 
+			int waitCnt = 5
+			while (waitCnt > 0 && itemCheckArmor != None && !actorRef.IsEquipped(itemCheckArmor))
+				Utility.WaitMenuMode(0.25)
+				waitCnt -= 1
+			endWhile
+			PlayerReEquipArmorArray.Clear()
+		endIf
 		
 		StartTimer(1.75, UndressGetPlayerEquipDataTimerID)  ; wait for monitor to finish storing
+		
 	elseIf (actorRef == CompanionRef)
+		; v2.83 check re-equip
+		int equipCount = 0
+		if (CompanionReEquipArmorArray.Length > 0)
+			equipCount += UndressActorArmorRequip(CompanionRef, CompanionReEquipArmorArray)
+			
+			CompanionReEquipArmorArray.Clear()
+		endIf
+
 		StartTimer(1.75, UndressGetCompanionEquipDataTimerID)
 	endIf
 	
@@ -4103,10 +4139,54 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 		endIf
 	endIf
 	
+	float timerSecs = DTSleep_SettingUndressTimer.GetValue() + 0.25
+	
+	; ---------------------------------------------------------
+	;   Re-Equip check   - v2.83 moved up before sleep clothes check in case footwear knocks off sleeep outfit
+	; ---------------
+	if (actorRef == PlayerRef)
+		; --------------------- v2.80 - do we have any items to re-equip?   
+		int equipCount = 0
+		if (PlayerReEquipArmorArray.Length > 0)
+
+			Armor itemCheckArmor = PlayerReEquipArmorArray[0]
+			equipCount = UndressActorArmorRequip(PlayerRef, PlayerReEquipArmorArray)
+			; delay necessary for events to process and our lists get updated
+			timerSecs += 1.25
+			DTSleep_SettingUndressTimer.SetValue(timerSecs)  ; update
+			float waitTmp = timerSecs * 0.333
+			if (waitTmp < 1.25)
+				waitTmp = 1.25
+			endIf
+			Utility.WaitMenuMode(waitTmp)
+			; check equipped to wait extra time  - v2.83
+			int waitCnt = 5
+			while (waitCnt > 0 && itemCheckArmor != None && !actorRef.IsEquipped(itemCheckArmor))
+				Utility.WaitMenuMode(0.25)
+				waitCnt -= 1
+			endWhile
+			PlayerReEquipArmorArray.Clear()
+		endIf
+
+	elseIf (actorRef == CompanionRef)
+		; v2.80 check re-equip
+		int equipCount = 0
+		if (CompanionReEquipArmorArray.Length > 0)
+			equipCount += UndressActorArmorRequip(CompanionRef, CompanionReEquipArmorArray)
+			
+			CompanionReEquipArmorArray.Clear()
+		endIf
+
+	endIf
+	; -----------------------------------------------------------------------------------
+	
 	; v2.14 - moved wait up above sleep-clothes check
 	;float timeElapse = Utility.GetCurrentRealTime() - timeStart
 	Utility.WaitMenuMode(0.333)   ; give monitor time to catch up
 	
+	;----------------------------------------------------------------------------------
+	; sleep outfit check
+	; ------------------
 	; double-check intimate and sleep outfit since may get bumped
 	; player can mark sleepwear outfits and may not be a main outfit
 	;
@@ -4121,9 +4201,8 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 		
 		CheckAndEquipMainSleepOutfit(actorRef)	
 	endIf
+	; -------------------------------------------------------------------------------------
 	
-	
-	float timerSecs = DTSleep_SettingUndressTimer.GetValue() + 0.25
 	
 	if (timerSecs > 6.5)
 		timerSecs = 6.5
@@ -4182,23 +4261,6 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 		else
 			PlayerIsAroused = false
 		endIf
-		
-		; --------------------- v2.80 - do we have any items to re-equip?
-		int equipCount = 0
-		if (PlayerReEquipArmorArray.Length > 0)
-			equipCount = UndressActorArmorRequip(PlayerRef, PlayerReEquipArmorArray)
-			; delay necessary for events to process and our lists get updated
-			timerSecs += 1.2
-			DTSleep_SettingUndressTimer.SetValue(timerSecs)  ; update
-			float waitTmp = timerSecs * 0.333
-			if (waitTmp < 1.3)
-				waitTmp = 1.3
-			endIf
-			Utility.WaitMenuMode(waitTmp)
-			PlayerReEquipArmorArray.Clear()
-		endIf
-		DTDebug("player re-equip total " + equipCount + " items", 1)   	; TODO: remove
-		; -----------------
 		
 		if (!SuspendEquipStore || UndressedForType >= 5)
 			if (timerSecs < 2.0 || UndressedForType >= 5)
@@ -4291,15 +4353,6 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 			DTDebug("backpack removed during double-check removal", 1)
 			actorRef.UnequipItem(DressData.CompanionEquippedBackpackItem, false, true)
 		endIf
-		
-		; v2.80 check re-equip
-		int equipCount = 0
-		if (CompanionReEquipArmorArray.Length > 0)
-			equipCount += UndressActorArmorRequip(CompanionRef, CompanionReEquipArmorArray)
-			
-			CompanionReEquipArmorArray.Clear()
-		endIf
-		DTDebug("companion re-equip total " + equipCount + " items", 1)  ; TODO: remove
 		
 		; 2nd companion goes second so may need to wait
 		if (!SuspendEquipStore && CompanionSecondRef == None)
@@ -4572,7 +4625,7 @@ Function UndressActorArmorExtendedSlots(Actor actorRef, bool forBed, bool includ
 	; 50 - neck; necklace, shock collar, scarf, Elegant Hardware necklace, AWK-necklace
 	; 51 - ring ; "Wearable Camo Backpacks" gives choice of 50,51,61
 	
-	; 54 - Atom Girl Rifle, Overboss/HarleyQ Jacket, AWK-Cloak, Ranger Harness, Backpack Of Comm, AnSBackpack, TNR Shoulder Lamp
+	; 54 - Atom Girl Rifle, Overboss/HarleyQ Jacket, AWK-Cloak, Ranger Harness, Backpack Of Comm, AnSBackpack, TNR Shoulder Lamp, DX Star Trek Tricorder
 	;    - TheKite_MilitiaWoman Pack; Defy Noncomformist Top
 	; 59 (shield)
 	; -----------------------------
@@ -4659,7 +4712,7 @@ Function UndressActorArmorFootwear(Actor actorRef)
 		Armor shoeArmor = None
 		Armor stockingArmor = None
 		
-		DTDebug("undress footwear for " + actorRef + ", keepShoesEquip = " + KeepShoesEquipped + "; keepStockings = " + KeepStockingsEquipped, 1) ; TODO: remove
+		DTDebug("undress footwear for " + actorRef + ", keepShoesEquip = " + KeepShoesEquipped + "; keepStockings = " + KeepStockingsEquipped, 2) ; TODO: remove
 		
 		if (actorRef == PlayerRef)
 		
@@ -4697,7 +4750,7 @@ Function UndressActorArmorFootwear(Actor actorRef)
 		
 		if (KeepStockingsEquipped && DTSleep_SettingAltFemBody.GetValue() >= 1.0 && AltFemBodyEnabled && DTSleep_AdultContentOn.GetValue() >= 2.0 && GetGenderForActor(actorRef) == 1)
 			if (stockingArmor != None)
-				DTDebug("....stockings found and using AltFemBody... cancel keepEquip", 1)  ; TODO: remove
+				
 				okayToKeepEquipped = false
 			endIf
 		endIf
@@ -4730,6 +4783,7 @@ Function UndressActorArmorFootwear(Actor actorRef)
 		if (okayToKeepEquipped && KeepStockingsEquipped && stockingArmor != None)
 
 			if (actorRef == PlayerRef)
+
 				PlayerReEquipArmorArray.Add(stockingArmor)
 				
 			elseIf (CompanionRef != None && actorRef == CompanionRef)

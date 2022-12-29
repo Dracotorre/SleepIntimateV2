@@ -1464,7 +1464,7 @@ Function CheckCompatibility()
 	else 
 		extraArmor = IsPluginActive(0x02000955, "DX_Atom_Girl_Outfit.esp") as Armor
 		
-		if (extraArmor)
+		if (extraArmor != None)
 			; Atom Girl added
 			; 0x02000955 is DX_Nukabear
 			(DTSConditionals as DTSleep_Conditionals).IsDXAtomGirlActive = true
@@ -1484,6 +1484,8 @@ Function CheckCompatibility()
 				DTSleep_FemBedItemFList.AddForm(extraArmor)
 				(DTSConditionals as DTSleep_Conditionals).DXAtomGirlNukaBearIndex = DTSleep_FemBedItemFList.GetSize() - 1
 			endIf
+			
+			DTSleep_ArmorShoesList.AddForm(Game.GetFormFromFile(0x02000953, "DX_Atom_Girl_Outfit.esp"))			; boots v2.83
 			; fishnet and panty use cage armor ground object - do not use for sleepwear
 		endIf
 	endIf
@@ -1509,6 +1511,8 @@ Function CheckCompatibility()
 			DTSleep_ArmorBackPacksNoGOList.AddForm(extraArmor as Form)
 		endIf
 	endIf
+	
+	
 	
 	; Ranger Gear
 	if ((DTSConditionals as DTSleep_Conditionals).IsRangerGearActive == false)
@@ -3286,9 +3290,9 @@ int Function CheckCustomArmorsAndBackpacks()
 	Armor extraArmor = IsPluginActive(0x03000936, "DX_Overboss_Outfit.esp") as Armor
 	if (extraArmor != None)
 		DTSleep_ExtraArmorsEnabled.SetValue(1.0)
-		if (!DTSleep_ArmorJacketsClothingList.HasForm(extraArmor))
+		if (!DTSleep_ArmorJacketsClothingList.HasForm(extraArmor as Form))
 			modCount += 1
-			DTSleep_ArmorJacketsClothingList.AddForm(extraArmor)
+			DTSleep_ArmorJacketsClothingList.AddForm(extraArmor as Form)
 		endIf	
 	endIf
 	
@@ -3296,23 +3300,43 @@ int Function CheckCustomArmorsAndBackpacks()
 	extraArmor = IsPluginActive(0x03000936, "DX_Harley_Quinn_Outfit.esp") as Armor
 	if (extraArmor != None)
 		DTSleep_ExtraArmorsEnabled.SetValue(1.0)
-		if (!DTSleep_ArmorJacketsClothingList.HasForm(extraArmor))
+		if (!DTSleep_ArmorJacketsClothingList.HasForm(extraArmor as Form))
 			modCount += 1
-			DTSleep_ArmorJacketsClothingList.AddForm(extraArmor)
+			DTSleep_ArmorJacketsClothingList.AddForm(extraArmor as Form)
+		endIf
+	endIf
+	
+	; DX StarTrek TOS
+	extraArmor = IsPluginActive(0x05028405, "DX_StarTrek_TOS_Uniform.esp") as Armor		; Tricorder slot 54
+	if (extraArmor != None)
+		DTSleep_ExtraArmorsEnabled.SetValue(1.0)
+		if (!DTSleep_ArmorExtraPartsList.HasForm(extraArmor as Form))
+			modCount += 1
+			DTSleep_ArmorExtraPartsList.AddForm(extraArmor as Form)
 		endIf
 	endIf
 	
 	; CROSS old Brotherhood under armor 
 	if ((DTSConditionals as DTSleep_Conditionals).IsCrossBosUniActive == false)
 		extraArmor = IsPluginActive(0x080009BC, "CROSS_Uni_BosUniform.esp") as Armor  ; boots
-		if (extraArmor)
+		if (extraArmor != None)
 			DTSleep_ExtraArmorsEnabled.SetValue(1.0)
 			(DTSConditionals as DTSleep_Conditionals).IsCrossBosUniActive = true
-			if (!DTSleep_ArmorExtraClothingList.HasForm(extraArmor))
-				modCount += 1
-				DTSleep_ArmorExtraClothingList.AddForm(extraArmor)
-				DTSleep_ArmorExtraClothingList.AddForm(Game.GetFormFromFile(0x080009B8, "CROSS_Uni_BosUniform.esp") as Armor)
+			if (!DTSleep_ArmorShoesList.HasForm(extraArmor as Form))
+				DTSleep_ArmorShoesList.AddForm(extraArmor as Form)
 			endIf
+			if (!DTSleep_ArmorExtraClothingList.HasForm(extraArmor as Form))
+				modCount += 1
+				DTSleep_ArmorExtraClothingList.AddForm(extraArmor as Form)
+				DTSleep_ArmorExtraClothingList.AddForm(Game.GetFormFromFile(0x080009B8, "CROSS_Uni_BosUniform.esp"))
+			endIf
+		endIf
+	else
+		; already have plugin recorded, check if need boots ; v2.83
+		Form bootForm = Game.GetFormFromFile(0x080009BC, "CROSS_Uni_BosUniform.esp")
+		if (bootForm != None && !DTSleep_ArmorShoesList.HasForm(bootForm))
+			modCount += 1
+			DTSleep_ArmorShoesList.AddForm(bootForm)
 		endIf
 	endIf
 	
@@ -5380,7 +5404,7 @@ Function UpgradeToVersion()
 			endIf
 		endIf
 		
-		if (lastVers < 2.80)
+		if (lastVers < 2.80) ;v2.80
 			if ((DTSConditionals as DTSleep_Conditionals).IsHeatherCompanionActive)
 				if ((DTSConditionals as DTSleep_Conditionals).HeatherCampanionVers >= 2.0)
 					; --------- v2.80 ---- armor-all exception for Heather's outfits
@@ -5391,6 +5415,12 @@ Function UpgradeToVersion()
 					DTSleep_ArmorAllExceptionList.AddForm(Game.GetFormFromFile(0x04BA858B, heatherPluginName))	; trophy armor
 					DTSleep_ArmorAllExceptionList.AddForm(Game.GetFormFromFile(0x04F60C5B, heatherPluginName))  ; Casdin Caravan
 				endIf
+			endIf
+		endIf
+		
+		if (lastVers < 2.83)  ;v2.83
+			if ((DTSConditionals as DTSleep_Conditionals).IsDXAtomGirlActive)
+				DTSleep_ArmorShoesList.AddForm(Game.GetFormFromFile(0x02000953, "DX_Atom_Girl_Outfit.esp"))			; boots 
 			endIf
 		endIf
 		
