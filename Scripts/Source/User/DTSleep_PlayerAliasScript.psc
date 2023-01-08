@@ -1997,25 +1997,33 @@ Function CheckCompatibility()
 			(DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive = true					;v2.50 moved below dance idle
 			
 			Form idleForm = None
-			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.280)				; v2.79 updated for latest SC
-				
-				idleForm = Game.GetFormFromFile(0x08032D6E, "SavageCabbage_Animations.esp")
+			
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.290)				; v2.84 update for latest
+			
+				idleForm = Game.GetFormFromFile(0x08033D09, "SavageCabbage_Animations.esp")
 				
 				if (idleForm != None)
-					(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.280
+					(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.290
 				else
-					idleForm = Game.GetFormFromFile(0x0803257D, "SavageCabbage_Animations.esp")
+				
+					idleForm = Game.GetFormFromFile(0x08032D6E, "SavageCabbage_Animations.esp")
+					
 					if (idleForm != None)
-						(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.270
+						(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.280
 					else
-						idleForm = Game.GetFormFromFile(0x08030D9C, "SavageCabbage_Animations.esp")
+						idleForm = Game.GetFormFromFile(0x0803257D, "SavageCabbage_Animations.esp")
 						if (idleForm != None)
-							(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.260
-							
-						else 
-							idleForm = Game.GetFormFromFile(0x08030575, "SavageCabbage_Animations.esp")
+							(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.270
+						else
+							idleForm = Game.GetFormFromFile(0x08030D9C, "SavageCabbage_Animations.esp")
 							if (idleForm != None)
-								(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.250
+								(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.260
+								
+							else 
+								idleForm = Game.GetFormFromFile(0x08030575, "SavageCabbage_Animations.esp")
+								if (idleForm != None)
+									(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.250
+								endIf
 							endIf
 						endIf
 					endIf
@@ -4570,7 +4578,7 @@ bool Function CheckGameSettings()
 	endIf
 	
 	; check for old main script
-	if (SleepQuestScript.ChanceForIntimateSceneAdjDance(500) != 2413)
+	if (SleepQuestScript.ChanceForIntimateSceneAdjDance(500) != 2833)
 	
 		if (DTSleep_BadVersWarnMsg.Show() >= 1)
 			Utility.Wait(0.33)

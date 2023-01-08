@@ -4,11 +4,7 @@ Scriptname Fragments:Terminals:TERM_DTSleep_OptionFootwearT_011C91E5 Extends Ter
 ;BEGIN FRAGMENT Fragment_Terminal_01
 Function Fragment_Terminal_01(ObjectReference akTerminalRef)
 ;BEGIN CODE
-if (pDTSleep_AdultContentOn.GetValueInt() < 2)
-  pDTSleep_SettingUndressShoes.SetValueInt(2)
-else
-  pDTSleep_SettingUndressShoes.SetValueInt(1)
-endIf
+pDTSleep_SettingUndressShoes.SetValueInt(1)
 ;END CODE
 EndFunction
 ;END FRAGMENT
@@ -32,11 +28,7 @@ EndFunction
 ;BEGIN FRAGMENT Fragment_Terminal_04
 Function Fragment_Terminal_04(ObjectReference akTerminalRef)
 ;BEGIN CODE
-if (pDTSleep_AdultContentOn.GetValueInt() < 2)
-   pDTSleep_SettingUndressStockings.SetValueInt(2)
-else
-  pDTSleep_SettingUndressStockings.SetValueInt(1)
-endIf
+pDTSleep_SettingUndressStockings.SetValueInt(1)
 ;END CODE
 EndFunction
 ;END FRAGMENT

@@ -80,11 +80,12 @@ bool property MaleBodyMorphEnabled auto hidden
 
 int LastGunAIndex = -1
 int LastGunBIndex = -1
-int MaleRoleSex = -1
-int SecondRoleSex = -1
+int MaleRoleSex = -1							; of SceneData.MaleRole
+int SecondRoleSex = -1							; third (other) actor
 int SceneRunning = -1
 bool MeIsStopping = false
 float SecondActorScale = 0.0					; v2.64
+float ThirdActorScale = 0.0						; v2.84
 InputEnableLayer DTSleepPlayAACInputLayer
 int DoggyQuitTimer = 99 const
 int SeqLimitTimerID = 101 const
@@ -144,7 +145,7 @@ Event OnEffectStart(Actor akfActor, Actor akmActor)
 		endIf
 	endIf
 	
-	;Debug.Trace("[DTSleep_PlayAAC] onStart cast " + akmActor + "/" + akfActor)
+	;Debug.Trace("[DTSleep_PlayAAC] onStart cast " + akmActor + "/" + akfActor)	
 	
 	if (SceneData.CompanionInPowerArmor)
 		secondActorOkay = false
@@ -510,6 +511,7 @@ String Function GetArmorNudeMorphString(int kind)
 	return "Erection"
 endFunction
 
+
 Function InitSceneAndPlay()
 
 	float angleOffset = 0.0
@@ -608,7 +610,13 @@ Function InitSceneAndPlay()
 				longScene = 1
 			endIf
 		elseIf (SequenceID == 754)
-			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.28)		; v2.79
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.29)			; v2.84
+				longScene = 2
+			elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.28)		; v2.79
+				longScene = 1
+			endIf
+		elseIf (SequenceID == 755)
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.29)			; v2.84
 				longScene = 1
 			endIf
 		elseIf (SequenceID == 758)
@@ -622,7 +630,11 @@ Function InitSceneAndPlay()
 				longScene = 1
 			endIf
 		elseIf (SequenceID == 761)
-			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.23)
+			if (otherActor > 0)
+				if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.29)		; v2.84
+					longScene = 1
+				endIf
+			elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.23)
 				longScene = 1
 			endIf
 		elseIf (SequenceID >= 763 && SequenceID <= 764)
@@ -657,10 +669,24 @@ Function InitSceneAndPlay()
 			endIf
 		elseIf (SequenceID == 781)
 			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.240)
+				if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.29)
+					longScene = 2
+				else
+					longScene = 1
+				endIf
+			endIf
+		elseIf (SequenceID == 782)											; v2.79
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.280)
 				longScene = 1
 			endIf
-		elseIf (SequenceID >= 782 && SequenceID <= 783)											; v2.79
-			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.280)
+		elseIf (SequenceID == 783)
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.290)		; v2.84
+				longScene = 2
+			elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.280)
+				longScene = 1
+			endIf
+		elseIf (SequenceID >= 793 && SequenceID <= 794)										; v2.84
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.290)
 				longScene = 1
 			endIf
 		elseIf (SequenceID == 795)
@@ -756,51 +782,202 @@ Function InitSceneAndPlay()
 	; in other file for easy access
 	(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).MoveActorsToAACPositions(MainActor, SecondActor, ThirdActor, mainYOff, mainAngleOff, secondAngleOff, mainZOff)
 
-	;Debug.Trace("[DTSleep_PlayAAC] actors (MST) " + MainActor + "/" + SecondActor + "/" + ThirdActor)
+	;Debug.Trace("[DTSleep_PlayAAC] actors (MST) " + MainActor + " / " + SecondActor + " / " + ThirdActor)
 	;Debug.Trace("[DTSleep_PlayAAC] actors (MFO) " + SceneData.MaleRole + "/" + SceneData.FemaleRole + "/" + SceneData.SecondMaleRole + "/" + SceneData.SecondFemaleRole)
 	
 	; ----------
-	; v2.64 - scale companion for kiss animation alignment correction
+	; v2.64 - scale companion for kiss/intimacy animation alignment correction
 	;	animation stretches female role up for face alignment
-	;    ...appears to be based on player male scale 1.000 and female NPC scale 0.980 (male player kissing Piper at scale 0.98 perfectly aligns)
+	;    ...based on player male height-scale 1.000 and female NPC height-scale 0.980 
+	;   -----------
+	;   v2.84 --- FIX to correctly handle female companions scale and custom heights or scaling
+	;         --- also allow preference for player to recheck scales
+	;         
+	;   NPC scaling works like scaleFactor (SetScale) * baseScale = final-scale (GetScale), where default baseScale is 1.0 for male and 0.98 for female
+	;      by default scale is 1.0 so female like Piper is 1.0 * 0.98 = 0.98
+	;      player-character is always 1.0, male or female
+	;
+	;      baseScale can be modified by plugin patch-override Height Min/Max where 1.0 for female is 0.98
+	;       so best we find baseScale by SetScale to 1 then GetScale
+	;   -----------
 	;   preference correct alignment
 	;   restore during StopAnimationSequence if SecondActorScale > 0.0
 	;
-	SecondActorScale = -1.0				; init to no-scale
+	SecondActorScale = -1.0				; init to no-scale to avoid saving scale at end unless we modify it
+	ThirdActorScale = -1.0				;   v2.84
+
+	; kiss-preference 1= align, force default scale 1.0; 2= align, maintain custom scaling
+	int kissPrefVal = DTSleep_SettingScaleActorKiss.GetValueInt()
+	float origActorScale = -1.0
 	
-	if (DTSleep_SettingScaleActorKiss.GetValueInt() >= 1)
-		if (SequenceID >= 97 && SequenceID <= 98 && SecondActor != None)
-			SecondActorScale = SecondActor.GetScale()
+	if (kissPrefVal >= 1)
+	
+		if (SequenceID == 99 && SecondActor != None && SceneData.RaceRestricted < 13)
+			; hug only but let's check preference
+			if (kissPrefVal == 1)
+				; correct scale if necessary to prepare for hug
+				float currentScale = SecondActor.GetScale()
+				if (currentScale != 1.00 && currentScale != 0.980)
+					; could be correct if height modified
+					SecondActor.SetScale(1.0)
+					float baseScale = SecondActor.GetScale()
+					if (baseScale != currentScale)
+						Debug.Trace("[DTSleep_PlayAAC] !!!! (hug) setting " + SecondActor + " to default scale with base-scale " + baseScale)
+					endIf
+				endIf
+			endIf
+		elseIf (SequenceID >= 97 && SequenceID <= 98 && SecondActor != None)
+		
+			; kissing: do we need to modify second-actor scale?
 			
-			if (SecondActorScale >= 0.8 && SecondActorScale <= 1.20)	; limit to reasonably expected value
-				float scaleVal = 0.9840 								; female PC kiss male role
+			float currentScale = SecondActor.GetScale()
+			float baseScale = -1.0
+			
+			; find base-scale   - v2.84 FIX - we need later to set the correct scale for animation
+			SecondActor.SetScale(1.0)
+			baseScale = SecondActor.GetScale()
+			
+			if (currentScale == baseScale)
+				SecondActorScale = 1.0						; default expected   v2.84 FIX
+			elseIf (kissPrefVal >= 2)
+				; player wants to keep modified scale
+				SecondActorScale = currentScale / baseScale	
+			else
+				Debug.Trace("[DTSleep_PlayAAC] !!!! (kissing) correcting scale for actor " + SecondActor + " to default scale with base-scale " + baseScale + " from in-game scale " + currentScale)
+				SecondActorScale = 1.0
+				currentScale = baseScale			; v2.84.1  update current for scale correction before checking range 
+			endIf
+			
+			;Debug.Trace("[DTSleep_PlayAAC] kissing " + SecondActor + " of origin-scale " + SecondActorScale + " * base-scale " + baseScale + " = game-scale " + currentScale) 
+		
+			
+			if (currentScale >= 0.80 && currentScale <= 1.20)				; limit to reasonably expected value (same since feature started)
+				;
+				float scaleTargetVal = 0.9840   							;  female PC in female-role kissing male 								
 				
 				if (SceneData.SameGender && SceneData.MaleRoleGender == 1 && MainActor == SceneData.FemaleRole)
-					scaleVal = 0.980									; female PC in female role kissing female
+					scaleTargetVal = 0.980									; female PC in female role kissing female
 					
 				elseIf (SceneData.MaleRole == MainActor && SceneData.MaleRoleGender == 0)
 					if (SceneData.SameGender)
-						scaleVal = 0.978
+						scaleTargetVal = 0.9765 
 					else
-						scaleVal = 0.980									; male PC kissing female (Piper's scale is 0.980)
+						scaleTargetVal = 0.980								; male PC kissing female
 					endIf
 				elseIf (SceneData.SameGender && SceneData.MaleRoleGender == 1 && MainActor == SceneData.MaleRole)
-					scaleVal = 0.9964									; female PC in male role kissing female
+					scaleTargetVal = 0.9765 								; formerly 0.9964 which is what we want for resulting scale	 FIX v2.84					
+																			; female PC in male role kissing female
+
 				endIf
 				
-				if (SecondActorScale == scaleVal)
-					SecondActorScale = -1.5
-					;Debug.Trace("[DTSleep_PlayAAC] kiss no scale actor " + SecondActor + " already at target scale " + scaleVal)
+				if (currentScale == scaleTargetVal)
+					; cancel for no rescale at end - no alignment needed, because NPC is perfect size for animation
+					SecondActorScale = -1.5 					
+
+					;Debug.Trace("[DTSleep_PlayAAC] kiss no scale actor " + SecondActor + " already at target scale " + scaleTargetVal)
 				else
-					;Debug.Trace("[DTSleep_PlayAAC] kiss scale actor " + SecondActor + " to scale val " + scaleVal)
+					float scaleVal = scaleTargetVal / baseScale
+							
 					SecondActor.SetScale(scaleVal)
 				endIf
 			else
 				SecondActorScale = -2.0
 			endIf
+			
+		elseIf (SequenceID >= 100 && SecondActor != None && SceneData.IsCreatureType <= 0 && !SceneData.CompanionInPowerArmor && SeqIDOkayToScale() && SceneData.RaceRestricted <= 0)
+			; adult animations
+			; check for custom height to adjust scale        v2.84
+			; if three actors, possible SecondActor is SecondMaleRole or SecondFemaleRole
+			float currentScale = SecondActor.GetScale()
+			float baseScale = -1.0
+			float targetActorScale = -1.0
+			
+			SecondActor.SetScale(1.0)
+			baseScale = SecondActor.GetScale()
+			
+			if (currentScale >= 0.83 && currentScale <= 1.15)					; limit scale range
+			
+				if (SecondActor == SceneData.MaleRole)
+					if (SceneData.MaleRoleGender == 0 && baseScale != 1.000)
+						targetActorScale = 1.00
+					elseIf (SceneData.MaleRoleGender == 1 && baseScale != 0.980)
+						targetActorScale = 0.980
+					endIf
+				elseIf (SecondActor == SceneData.SecondMaleRole)
+					if (baseScale != 1.000)
+						targetActorScale = 1.00
+					endIf
+				elseIf (SecondActor == SceneData.FemaleRole)
+					if (SceneData.SameGender && SceneData.MaleRoleGender == 0)
+						if (baseScale != 1.000)
+							targetActorScale = 1.00
+						endIf
+					elseIf (baseScale != 0.980)
+						targetActorScale = 0.980
+					endIf
+				elseIf (SecondActor == SceneData.SecondFemaleRole && baseScale != 0.980)
+					targetActorScale = 0.980
+				endIf
+				
+				if (targetActorScale >= 0.98)
+					
+					float scaleVal = targetActorScale / baseScale
+						
+					SecondActor.SetScale(scaleVal)
+					
+					if (kissPrefVal >= 2)
+						; player wants to keep custom scales
+						SecondActorScale = currentScale / baseScale
+					else
+						SecondActorScale = 1.0
+					endIf
+				elseIf (currentScale != baseScale && kissPrefVal >= 2)
+					; restore custom scale at end
+					SecondActorScale = currentScale / baseScale
+				endIf
+				
+				if (ThirdActor != None)
+					currentScale = ThirdActor.GetScale()
+					targetActorScale = -1.0
+					
+					if (currentScale >= 0.83 && currentScale <= 1.15)
+					
+						ThirdActor.SetScale(1.0)
+						baseScale = ThirdActor.GetScale()
+						ActorBase actBase = ThirdActor.GetBaseObject() as ActorBase
+						int gender = actBase.GetSex()
+						
+						if (gender == 1)
+							if (baseScale != 0.98)
+								targetActorSCale = 0.98
+							endIf
+						elseIf (gender == 0)
+							if (baseSCale != 1.00)
+								targetActorScale = 1.00
+							endIf
+						endIf
+						
+						if (targetActorScale >= 0.98)
+							float scaleVal = targetActorScale / baseScale
+							
+							ThirdActor.SetScale(scaleVal)
+							
+							if (kissPrefVal >= 2)
+								; player wants to keep custom scales
+								ThirdActorScale = currentScale / baseScale
+							else
+								ThirdActorScale = 1.0
+							endIf
+						elseIf (currentScale != baseScale && kissPrefVal >= 2)
+							; player wants to keep custom scales
+							ThirdActorScale = currentScale / baseScale
+						endIf
+					endIf
+				endIf
+			endIf
 		endIf
 	endIf
-	; ------------------ end scale correction for kiss
+	; ------------------ end scale correction for kiss and intimacy
 	
 	; fade-in
 	Game.FadeOutGame(false, true, 0.67, 2.1)
@@ -865,7 +1042,7 @@ endFunction
 
 Function PlaySequence(DTAACSceneStageStruct[] seqStagesArray)
 
-	;Debug.Trace("[DTSleep_PlayAAC] playSequence " + SequenceID + " with " + MainActor + ", " + SecondActor)
+	;Debug.Trace("[DTSleep_PlayAAC] playSequence " + SequenceID + " with " + MainActor + ", " + SecondActor) 
 	if (MainActor == None || SceneData == None)
 		Debug.Trace("DTSleep_PlayAAC] missing main actor or scene data--stopping")
 		StopAnimationSequence()
@@ -1181,6 +1358,32 @@ Function SetMorphForActor(Actor aActor, int lastKind, int toKind, float toMorphV
 	BodyGen.UpdateMorphs(aActor)
 endFunction
 
+Bool Function SeqIDOkayToScale()
+	if (SequenceID == 739 || SequenceID == 741 || SequenceID == 780)
+		return false
+	elseIf (SequenceID >= 798 && SequenceID <= 799)
+		return false
+	elseIf (SequenceID >= 760 && SequenceID < 777)
+		return false
+	elseIf (SequenceID == 779)
+		return false
+	elseIf (SequenceID >= 660 && SequenceID < 670)
+		return false
+	elseIf (SequenceID >= 695 && SequenceID < 698)
+		return false
+	elseIf (SequenceID == 547)
+		return false
+	elseIf (SequenceID >= 540 && SequenceID <= 541)
+		return false
+	elseIf (SequenceID == 547)
+		return false
+	elseIf (SequenceID == 940 || SequenceID == 947)
+		return false
+	endIf
+	
+	return true
+endFunction
+
 Function StopActor(Actor aActor)
 	if (aActor != None)
 
@@ -1235,9 +1438,16 @@ Function StopAnimationSequence()
 		StopActor(ThirdActor)
 		; v2.64 --- check restore scale
 		if (SecondActor != None && SecondActorScale > 0.0)
-			;Debug.Trace("[DTSleep_PlayAAC] rescale actor " + SecondActor + " to scale " + SecondActorScale)
+			
 			SecondActor.SetScale(SecondActorScale)
+			
 			SecondActorScale = 0.0
+			;Debug.Trace("[DTSleep_PlayAAC] check " + SecondActor + " scale -- " + SecondActor.GetScale()) 
+		endIf
+		if (ThirdActor != None && ThirdActorScale > 0.3)			; v2.84
+			ThirdActor.SetScale(ThirdActorScale)
+			
+			ThirdActorScale = 0.0
 		endIf
 		; -----
 		Utility.Wait(fadeTime * 0.5)

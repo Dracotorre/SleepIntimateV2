@@ -375,6 +375,7 @@ FormList property DTSleep_PilloryList auto const
 FormList property DTSleep_TortureDList auto const
 FormList property DTSleep_FlagpoleList auto const
 FormList property DTSleep_IntimatePropList auto const
+FormList property DTSleep_IntimateStoveList auto const 		; added v2.84
 FormList property DTSleep_IntimateTablesAllList auto const
 FormList property DTSleep_NotHumanList auto const			; added 2.62
 Spell property DTSleep_LoverBonusSpell auto const
@@ -531,6 +532,7 @@ Message property DTSleep_SceneCancelReplayMsg auto const			; v2.70
 Message property DTSleep_SceneCancelReplayPAMsg auto const			; v2.70
 Message property DTSleep_PrefSceneIgnoreMsg auto const				; v2.73  player may add scene to ignore list
 Message property DTSleep_PersuadePAFlagHelpMsg auto const			; v2.75 ask player to adjust AAF setting
+Message property DTSleep_PatchKissFixMessage auto const				; v2.84 patch
 EndGroup
 
 Group E_PromptsHuman
@@ -3000,7 +3002,7 @@ endFunction
 int Function ChanceForIntimateSceneAdjDance(int chance)
 	if (chance == 500)
 		; version check
-		return 2413
+		return 2833
 	endIf
 	; v2+ hug/kiss instead of dance
 	
@@ -8347,7 +8349,8 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 				;  6 = Pick Spot
 				;  7 = Try super mutant bed
 				;  8 = kitchen counter
-				;  0 = Try railing
+				;  10 = Try railing
+				;  20 = Stove (SM)
 				; -----------------------------------------------------
 				
 				if (specialFurn >= 103 && specialFurn <= 104)
@@ -8663,6 +8666,15 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 						if ((DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive || (DTSConditionals as DTSleep_Conditionals).IsMutatedLustActive)
 							; has oral option
 							DTSleep_SexStyleLevel.SetValue(19.0)			; strong oral value to avoid including embrace
+							if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.29 && DTSleep_SettingProps.GetValueInt() >= 1)
+								
+								; is there an stove nearby?  v2.84
+								propObjRef = DTSleep_CommonF.FindNearestObjectInListFromObjRef(DTSleep_IntimateStoveList, akFurniture, 600.0, true)
+								if (propObjRef != None)
+									DTSleep_SexStyleLevel.SetValue(20.0)
+								endIf
+								
+							endIf
 						else
 							DTSleep_SexStyleLevel.SetValueInt(6)			; hide Embrace and show Pick-Spot
 						endIf
@@ -8786,7 +8798,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 			endIf
 			
 			if (hugsOnly || animPacks.Length == 0 || animpacks[0] == 0)		; v2.53 - in case reverted to hugs
-				Debug.Trace(myScriptName + " ******************** REVERT SexStyle!!!! ***************")
+				DTDebug(" ******************** REVERT SexStyle!!!! ***************", 1)
 				DTSleep_SexStyleLevel.SetValue(0.0)
 			endIf 
 			
@@ -11262,13 +11274,15 @@ int Function IsCompanionActorReadyForScene(IntimateCompanionSet intimateActor, b
 					endIf
 					
 					; v1.24 - no longer require toy
-					if (DTSleep_SettingSwapRoles.GetValueInt() <= 0)			; v2.82 swap setting
+					; check swap setting v2.82 
+					if (DTSleep_SettingSwapRoles.GetValueInt() <= 0)			; v2.84.1 fixed order
+						; default player in male role as has been the case
 						SceneData.FemaleRole = PlayerRef
 						SceneData.MaleRole = compActor
 						MainQSceneScriptP.IsMaleCamOffset = false
 					else
-						SceneData.FemaleRole = compActor
 						SceneData.MaleRole = PlayerRef
+						SceneData.FemaleRole = compActor
 						MainQSceneScriptP.IsMaleCamOffset = true
 					endIf
 					;MainQSceneScriptP.ReverseCamXOffset = true
@@ -11288,6 +11302,7 @@ int Function IsCompanionActorReadyForScene(IntimateCompanionSet intimateActor, b
 					; strap-on not required
 					
 					if (DTSleep_SettingSwapRoles.GetValueInt() <= 0)			; v2.82 swap setting
+						; no  swap, same roles as old versions
 						SceneData.FemaleRole = PlayerRef
 						SceneData.MaleRole = compActor
 						MainQSceneScriptP.IsMaleCamOffset = false
@@ -13570,6 +13585,7 @@ int Function RestoreTestSettings(float oldVersion = 0.0)
 		RegisterForMenuOpenCloseEvent("WorkshopMenu")
 	endIf
 	
+	
 	if (DTSleep_AdultContentOn.GetValue() <= 1.5)
 		if (DTSleep_SettingChairsEnabled.GetValueInt() >= 2)
 			DTSleep_SettingChairsEnabled.SetValueInt(1)
@@ -13722,8 +13738,351 @@ int Function RestoreTestSettings(float oldVersion = 0.0)
 		count += 1
 	endIf
 
+
+	if (oldVersion >= 2.64 && oldVersion < 2.84)			; v2.84
+		; kiss-align on-update patcher fix
+
+		count += FixKissAlignScaleBug()	
+	endIf
+	
 	return count
 endFunction
+
+; ---------------------------------------------------Fix kiss-align scale bug --------------------
+; v2.84 - check and fix companion scales for known issues with kiss-align (player using height mod)
+    ;        and known game bug (after using furniture female stuck at male height)
+	;
+	;    original Kiss-Align failed to account for modified heights / base-scale
+	;       - modified base-scale smaller than default would cause actor to shrink
+	;       - modified base-scale larger than default would cause actor to grow
+	;
+	;    original Kiss-Align on R-X  playing female (Nora) could cause female companion to shrink
+	;  		- after initiated intimate scene with female companion with PC having ToyArmor then embraces afterwards
+	;       - shrinking by 0.98 * 0.98 = 0.9604 and so on
+	;
+	;    origScale (SetScale) * baseScale = gameScale (GetScale)
+	;    baseScale may be modifed by patch override of Height Min/Max; Height of 1.0 for female is 0.98 baseScale, for male is 1.0
+	; --------------------------------------
+	;    returns zero unless changes kiss-align preference to 2 due to using custom scales more than once
+	;
+int Function FixKissAlignScaleBug()
+	int bugFixCount = 0							; scale fixes due to game-bug
+	int kissFixCount = 0						; scale fixes due to kiss-align bug
+	int notFixCount = 0							; modified scale, not fixed
+	int totalActorsChecked = 0
+	Actor heatherActor = GetHeatherActor()		
+	Actor nwBarbActor = GetNWSBarbActor()
+	Actor anActorFixedForKissBug = None
+	
+	Debug.Trace(" ---------------------------------------------------------------------------- ")
+	Debug.Trace(myScriptName + " -----       Kiss-Align Patch: checking romanced companions")
+	Debug.Trace(" ---------------------------------------------------------------------------- ")
+	
+	; check only those that may have been kissed -- if infatuated and human (or synth)
+	
+	if (CompanionCaitRef.GetValue(CA_AffinityAV) > 999.0)
+		ActorBase compBase = (CompanionCaitRef.GetLeveledActorBase() as ActorBase)
+		
+		if (compBase.GetRace() == HumanRace)
+			totalActorsChecked += 1
+			int checkVal = CheckScaleAndFixKissAlignForActor(CompanionCaitRef, 0.98)
+			if (checkVal == 0)
+				notFixCount += 1
+			elseIf (checkVal == 1)
+				bugFixCount += 1
+			elseIf (checkVal >= 2)
+				kissFixCount += 1
+				anActorFixedForKissBug = CompanionCaitRef
+			endIf
+		endIf
+	endIf
+	if (CurieRef.GetValue(CA_AffinityAV) > 999.0)
+		ActorBase compBase = (CurieRef.GetLeveledActorBase() as ActorBase)
+		Race curieRace = compBase.GetRace()
+		; SynthGen2 is for Valentine, but for some reason Curie may show as that race so we include
+		if (curieRace == SynthGen2RaceValentine || curieRace == HumanRace)
+			totalActorsChecked += 1
+			int checkVal = CheckScaleAndFixKissAlignForActor(CurieRef, 0.98)
+			if (checkVal == 0)
+				notFixCount += 1
+			elseIf (checkVal == 1)
+				bugFixCount += 1
+			elseIf (checkVal >= 2)
+				kissFixCount += 1
+				anActorFixedForKissBug = CurieRef
+			endIf
+		endIf
+	endIf
+	if (CompanionPiperRef.GetValue(CA_AffinityAV) > 999.0)
+		ActorBase compBase = (CompanionPiperRef.GetLeveledActorBase() as ActorBase)
+		if (compBase.GetRace() == HumanRace)
+			totalActorsChecked += 1
+			int checkVal = CheckScaleAndFixKissAlignForActor(CompanionPiperRef, 0.98)
+			if (checkVal == 0)
+				notFixCount += 1
+			elseIf (checkVal == 1)
+				bugFixCount += 1
+			elseIf (checkVal >= 2)
+				kissFixCount += 1
+				anActorFixedForKissBug = CompanionPiperRef
+			endIf
+		endIf
+	endIf
+	
+	; males
+	if (CompanionDeaconRef.GetValue(CA_AffinityAV) > 999.0)
+		ActorBase compBase = (CompanionDeaconRef.GetLeveledActorBase() as ActorBase)
+		if (compBase.GetRace() == HumanRace)
+			totalActorsChecked += 1
+			int checkVal = CheckScaleAndFixKissAlignForActor(CompanionDeaconRef, 1.00)
+			if (checkVal == 0)
+				notFixCount += 1
+			elseIf (checkVal == 1)
+				bugFixCount += 1
+			elseIf (checkVal >= 2)
+				kissFixCount += 1
+				anActorFixedForKissBug = CompanionDeaconRef
+			endIf
+		endIf
+	endIf
+	if (CompanionX6Ref.GetValue(CA_AffinityAV) > 999.0)
+		totalActorsChecked += 1
+		int checkVal = CheckScaleAndFixKissAlignForActor(CompanionX6Ref, 1.00)
+		if (checkVal == 0)
+			notFixCount += 1
+		elseIf (checkVal == 1)
+			bugFixCount += 1
+		elseIf (checkVal >= 2)
+			kissFixCount += 1
+			anActorFixedForKissBug = CompanionX6Ref
+		endIf
+	endIf
+	if (CompanionMacCreadyRef.GetValue(CA_AffinityAV) > 999.0)
+		ActorBase compBase = (CompanionMacCreadyRef.GetLeveledActorBase() as ActorBase)
+		if (compBase.GetRace() == HumanRace)
+			totalActorsChecked += 1
+			int checkVal = CheckScaleAndFixKissAlignForActor(CompanionMacCreadyRef, 1.00)
+			if (checkVal == 0)
+				notFixCount += 1
+			elseIf (checkVal == 1)
+				bugFixCount += 1
+			elseIf (checkVal >= 2)
+				kissFixCount += 1
+				anActorFixedForKissBug = CompanionMacCreadyRef
+			endIf
+		endIf
+	endIf
+	
+	if ((DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).GarveyRef.GetValue(CA_AffinityAV) > 999.0)
+		ActorBase compBase = ((DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).GarveyRef.GetLeveledActorBase() as ActorBase)
+		if (compBase.GetRace() == HumanRace)
+			totalActorsChecked += 1
+			int checkVal = CheckScaleAndFixKissAlignForActor((DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).GarveyRef, 1.00)
+			if (checkVal == 0)
+				notFixCount += 1
+			elseIf (checkVal == 1)
+				bugFixCount += 1
+			elseIf (checkVal >= 2)
+				kissFixCount += 1
+				anActorFixedForKissBug = (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).GarveyRef
+			endIf
+		endIf
+	endIf
+	if ((DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).HancockRef.GetValue(CA_AffinityAV) > 999.0)
+		ActorBase compBase = ((DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).HancockRef.GetLeveledActorBase() as ActorBase)
+		if (compBase.GetRace() == GhoulRace)
+			totalActorsChecked += 1
+			int checkVal = CheckScaleAndFixKissAlignForActor((DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).HancockRef, 1.00)
+			if (checkVal == 0)
+				notFixCount += 1
+			elseIf (checkVal == 1)
+				bugFixCount += 1
+			elseIf (checkVal >= 2)
+				kissFixCount += 1
+				anActorFixedForKissBug = (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).HancockRef
+			endIf
+		endIf
+	endIf
+	
+	if ((DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).CompanionValentineRef.GetValue(CA_AffinityAV) > 999.0)
+		CompanionActorScript compActor = (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).CompanionValentineRef as CompanionActorScript
+		if (compActor.IsRomantic())
+			totalActorsChecked += 1
+			int checkVal = CheckScaleAndFixKissAlignForActor((DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).CompanionValentineRef, 1.00)
+			if (checkVal == 0)
+				notFixCount += 1
+			elseIf (checkVal == 1)
+				bugFixCount += 1
+			elseIf (checkVal >= 2)
+				kissFixCount += 1
+				anActorFixedForKissBug = (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).CompanionValentineRef
+			endIf
+		endIf
+	endIf
+	
+	if ((DTSConditionals as DTSleep_Conditionals).NukaWorldDLCGageRef != None)
+		if ((DTSConditionals as DTSleep_Conditionals).NukaWorldDLCGageRef.GetValue(CA_AffinityAV) > 999.0)
+			ActorBase compBase = ((DTSConditionals as DTSleep_Conditionals).NukaWorldDLCGageRef.GetLeveledActorBase() as ActorBase)
+			if (compBase.GetRace() == HumanRace)
+				totalActorsChecked += 1
+				int checkVal = CheckScaleAndFixKissAlignForActor((DTSConditionals as DTSleep_Conditionals).NukaWorldDLCGageRef, 1.00)
+				if (checkVal == 0)
+					notFixCount += 1
+				elseIf (checkVal == 1)
+					bugFixCount += 1
+				elseIf (checkVal >= 2)
+					kissFixCount += 1
+					anActorFixedForKissBug = (DTSConditionals as DTSleep_Conditionals).NukaWorldDLCGageRef
+				endIf
+			endIf
+		endIf
+	endIf
+	if ((DTSConditionals as DTSleep_Conditionals).FarHarborDLCLongfellowRef != None)
+		if ((DTSConditionals as DTSleep_Conditionals).FarHarborDLCLongfellowRef.GetValue(CA_AffinityAV) > 999.0)
+			ActorBase compBase = ((DTSConditionals as DTSleep_Conditionals).FarHarborDLCLongfellowRef.GetLeveledActorBase() as ActorBase)
+			if (compBase.GetRace() == HumanRace)
+				totalActorsChecked += 1
+				int checkVal = CheckScaleAndFixKissAlignForActor((DTSConditionals as DTSleep_Conditionals).FarHarborDLCLongfellowRef, 1.00)
+				if (checkVal == 0)
+					notFixCount += 1
+				elseIf (checkVal == 1)
+					bugFixCount += 1
+				elseIf (checkVal >= 2)
+					kissFixCount += 1
+					anActorFixedForKissBug = (DTSConditionals as DTSleep_Conditionals).FarHarborDLCLongfellowRef
+				endIf
+			endIf
+		endIf
+	endIf
+	
+	; mods
+	if (heatherActor != None)
+		if (IsHeatherInLove() >= 1)
+			totalActorsChecked += 1
+			int checkVal = CheckScaleAndFixKissAlignForActor(heatherActor, 0.98)
+			if (checkVal == 0)
+				notFixCount += 1
+			elseIf (checkVal == 1)
+				bugFixCount += 1
+			elseIf (checkVal >= 2)
+				kissFixCount += 1
+				if (anActorFixedForKissBug == None)
+					anActorFixedForKissBug = heatherActor
+				endIf
+			endIf
+		endIf 
+	endIf
+	if (nwBarbActor != None)
+		if (IsNWSBarbInLove())
+			totalActorsChecked += 1
+			int checkVal = CheckScaleAndFixKissAlignForActor(nwBarbActor, 0.98)
+			if (checkVal == 0)
+				notFixCount += 1
+			elseIf (checkVal == 1)
+				bugFixCount += 1
+			elseIf (checkVal >= 2)
+				kissFixCount += 1
+				if (anActorFixedForKissBug == None)
+					anActorFixedForKissBug = nwBarbActor
+				endIf
+			endIf
+		endIf
+	endIf
+	
+	if (kissFixCount > 0)
+		; report
+		Utility.WaitMenuMode(0.5)
+		
+		DTSleep_PatchKissFixMessage.Show(kissFixCount, totalActorsChecked)
+		
+		Utility.WaitMenuMode(1.33)
+		
+	elseIf (notFixCount > 2)
+		; no report
+		if (DTSleep_SettingScaleActorKiss.GetValueInt() == 1 && (DTSConditionals as DTSleep_Conditionals).ImaPCMod)
+		
+			DTSleep_SettingScaleActorKiss.SetValueInt(2)
+			
+			return 1
+		endIf
+
+		
+	endIf
+	
+	Debug.Trace(" ---------------------------------------------------------------------------- ")
+	Debug.Trace(myScriptName + " -----       Kiss-Align Patch Done!! ")
+	Debug.Trace(" ---------------------------------------------------------------------------- ")
+	
+	return 0
+endFunction
+
+; ------------------- check and fix known kiss-align issues ----------------
+; returns negative for no issue, 
+; returns 0 for found modified-scale not fixed,
+;         1 for game bug fix
+;         2 for modified-height fix,
+;         3 for R-X same-gender role-reverse bug 
+;
+int Function CheckScaleAndFixKissAlignForActor(Actor anActor, float expectedScale)
+
+	; (1) there exists a furniture bug that may leave females scaled up (1.02 * 0.98 = 1.0)
+	; (2) when base-scale != in-game-scale pre-2.84 kiss-align broke, so fix (2)
+	; (3) when same-gender female on R-X with reversed roles, pre-2.84 kiss-align shrinks companion, so fix 
+	
+	if (anActor == None)
+		return -2
+	endIf
+	
+	float currentScale = anActor.GetScale()
+	
+	if (currentScale != expectedScale && currentScale > 0.5 && currentScale < 1.5)
+		anActor.SetScale(1.0)
+		float baseScale = anActor.GetScale()
+		if (baseScale != currentScale)
+			if (baseScale == 0.98 && currentScale > 0.9995 && currentScale <= 1.00)
+				; game bug
+				Debug.Trace(myScriptName + " ******* FIX SCALE for actor " + anActor + " likely due to game bug left scaled up to 1.0")
+				anActor.SetScale(1.0)
+				
+				return 1
+				
+			elseIf (baseScale != expectedScale && baseScale != 1.0)
+				; height-modified actor -- could be kiss-align bug
+				float kissScale1 = baseScale * baseScale				; first kiss resulting scale
+				
+				if (baseScale < 1.0 && currentScale <= kissScale1)
+					Debug.Trace(myScriptName + " ******* FIX SCALE for short actor " + anActor + " from in-game scale " + currentScale + " with MODIFIED base-scale " + baseScale)
+					anActor.SetScale(1.0)
+					
+					return 2
+				elseIf (baseScale > 1.0 && currentScale >= kissScale1)
+					Debug.Trace(myScriptName + " ******* FIX SCALE for tall actor " + anActor + " from in-game scale " + currentScale + " with MODIFIED base-scale " + baseScale)
+					anActor.SetScale(1.0)
+					
+					return 2
+				endIf
+
+			elseIf (baseScale == 0.98 && expectedScale == 0.98 && currentScale > 0.77 && currentScale < 0.98)
+				; could be same-gender female kiss-align bug
+				if (DTSleep_AdultContentOn.GetValue() >= 2.0 && IsAdultAnimationAvailable() && (Debug.GetPlatformName() as bool))
+					if (currentScale <= 0.96040 && currentScale > 0.72)
+						Debug.Trace(myScriptName + " ******* FIX SCALE for actor " + anActor + " from scale " + currentScale + " likely due to R-X same-gender role-reverse")
+						anActor.SetScale(1.0)
+						
+						return 3
+					endIf
+				endIf
+			endIf
+			
+			Debug.Trace(myScriptName + " ******** found scaled actor " + anActor + " not fixed with baseScale " + baseScale + " at in-game scale " + currentScale)
+			
+			return 0
+		endIf
+	endIf
+	
+	return -1		; no issues
+endFunction
+; ---------------------------------------------- end Fix kiss-align on-update -----------------------
 
 Function SetAffinityForCreature(int creatureType)
 
@@ -15241,7 +15600,7 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 				
 				if (fadeUndressLevel == 3 || (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsObjBed(bedRef))
 					remJacketsOutside = true
-					SetUndressFootwearVals(1)
+					SetUndressFootwearVals(0)			; not in sleep clothes so don't mark as bed even if a bed (embrace is a standing scene)
 				else
 					(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).KeepShoesEquipped = true
 					(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).KeepStockingsEquipped = true
@@ -15250,7 +15609,7 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 				(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).StartForManualStopRespect(companionRef, true, remJacketsOutside)
 				
 			elseIf ((DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).StartForManualStopSleepwear(companionRef, bedRef, isNaked) == false)
-				
+				; sleep clothes assumed for bed
 				; ? could check undress pref for always
 				SetUndressFootwearVals(1)
 				(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).StartForManualStopRespect(companionRef, true, true)

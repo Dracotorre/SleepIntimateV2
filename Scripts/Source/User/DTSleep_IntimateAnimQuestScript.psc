@@ -156,6 +156,7 @@ FormList property DTSleep_IntimatePierRailingList auto const		; v2.70
 FormList property DTSleep_IntimateCouchLimSpaceList auto const		; v2.73
 FormList property DTSleep_IntimateLockerList auto const				; v2.77
 FormList property DTSleep_IntimateLockerAdjList auto const			; 
+FormList property DTSleep_IntimateStoveList auto const 				; added v2.84
 Static property DTSleep_MainNode auto const Mandatory
 Static property DTSleep_DummyNode auto const Mandatory
 ObjectReference property JailDoor1Quincy1Ref auto const
@@ -263,6 +264,7 @@ int FurnTypeIsWorkbenchArmor = 313 const
 int FurnTypeIsWorkBenchWeaponLarge = 314 const
 int FurnTypeIsRailing = 315 const
 int FurnTypeIsLocker = 316 const	; v2.77
+int FurnTypeIsStove = 317 const		; v2.84
 
 
 InputEnableLayer DTSleepIAQInputLayer ; not currently using
@@ -1299,12 +1301,22 @@ bool Function PlayActionXOXO()
 	
 	sidArray = SceneIDArrayForAnimationSet(-3, false, true, true, sidArray, 2)
 	
+	
 	if (sidArray.Length == 1)			; v2.60 fix - sometimes returned single
 		id = sidArray[0]
 		
 	elseIf (sidArray != None && sidArray.Length > 1)
 		id = sidArray[Utility.RandomInt(0, sidArray.Length - 1)]
 	endIf
+	
+	if (SleepBedRef != None && IsObjBed(SleepBedRef))			; reduce repeated hugs at bed  v2.84.1
+		if (id == 99 && LastSceneID == 99)
+			id = 97
+		endIf
+
+		LastSceneID = id
+	endIf
+	
 	if (id < 90 || (id >= 100 && id != 780))
 		Debug.Trace(myScriptName + " found invalid hug/kiss id (" + id + ") - force 97 ")
 		id = 97
@@ -2129,12 +2141,16 @@ float Function GetTimeForPlayID(int id)
 		return 14.2
 		
 	elseIf (id >= 98 && id <= 99)		; hug, kiss
+		
 		return 18.0
+		
 	elseIf (id == 548)					; hug
 		return 18.0
 		
 	elseIf (id >= 90 && id < 98)		; hug and kiss
+		
 		return 28.0
+		
 	elseIf (id == 549)					; hug and kiss
 		return 28.0
 	elseIf (id == 780)					; booth flirt
@@ -2192,8 +2208,11 @@ float Function GetTimeForPlayID(int id)
 				return 86.0
 			
 			elseIf (id == 794)
-				DTSleep_IntimateSceneLen.SetValueInt(0)
-				return 28.0
+				; v2.84 fall-through for 1.29
+				if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.290)
+					DTSleep_IntimateSceneLen.SetValueInt(0)
+					return 28.0
+				endIf
 				
 			elseIf (id == 781)
 				DTSleep_IntimateSceneLen.SetValueInt(0)
@@ -2264,9 +2283,11 @@ float Function GetTimeForPlayID(int id)
 				endIf
 				
 			elseIf (id == 755)
-				DTSleep_IntimateSceneLen.SetValueInt(0)
-				
-				return 32.0
+				; v2.84 - fall through for 1.29
+				if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.29)
+					DTSleep_IntimateSceneLen.SetValueInt(0)
+					return 32.0
+				endIf
 			elseIf (id == 757)
 				; no ping-pong allowed
 				DTSleep_IntimateSceneLen.SetValueInt(1)
@@ -2284,9 +2305,11 @@ float Function GetTimeForPlayID(int id)
 				return 86.0
 				
 			elseIf (id == 781)
-				DTSleep_IntimateSceneLen.SetValueInt(0)
-				
-				return 30.7
+				; v2.84 - fall through for 1.28
+				if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.29)
+					DTSleep_IntimateSceneLen.SetValueInt(0)
+					return 30.7
+				endIf
 			elseIf (id >= 782 && id <= 783)
 				; v2.79 - fall through for 1.28
 				if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.28)
@@ -4669,7 +4692,7 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 							if (id >= 504)
 								; TODO: not needed and wrong???
 								; main node should be on bed or at player character
-								if (DTSleep_SettingTestMode.GetValue() > 0.0 && DTSleep_DebugMode.GetValue() >= 2.0) ;TODO remove
+								if (DTSleep_SettingTestMode.GetValue() > 0.0 && DTSleep_DebugMode.GetValue() >= 2.0)
 									Debug.Trace(myScriptName + " set dummyNode at mainNode for AnimSet 5+")
 								endIf
 								dummyNode = DTSleep_CommonF.PlaceFormAtNodeRefForNodeForm(mainNode, facingStr, DTSleep_DummyNode, false)
@@ -5439,6 +5462,8 @@ bool Function SceneIDArrayPrepMyFurnitureType()
 			MySleepBedFurnType = FurnTypeIsJail
 		elseIf (SleepBedRef.HasKeyword(DTSleep_IntimateLockerKeyword) || DTSleep_IntimateLockerList.HasForm(baseBedForm))
 			MySleepBedFurnType = FurnTypeIsLocker
+		elseIf (DTSleep_IntimateStoveList.HasForm(baseBedForm))
+			MySleepBedFurnType = FurnTypeIsStove
 		endIf	
 	endIf
 
@@ -5857,7 +5882,7 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 						elseIf (MySleepBedFurnType == FurnTypeIsTableDinerBooth)		;v2.35
 							sidArray.Add(43)
 							;if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
-							;	sidArray.Add(80)		; TODO: just a tease
+							;	sidArray.Add(80)		
 							;endIf
 							sidArray.Add(44)
 						elseIf (MySleepBedFurnType == FurnTypeIsTableDining)
@@ -6020,6 +6045,10 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 				if (packID == 6 && (DTSConditionals as DTSleep_Conditionals).LeitoAnimVers >= 2.1)
 					sidArray.Add(96)
 					sidArray.Add(97)
+				endIf
+			elseIf (MySleepBedFurnType == FurnTypeIsStove && !MainActorPositionByCaller)					; v2.84
+				if (packID == 7)
+					sidArray.Add(79)
 				endIf
 			elseIf (packID == 9)
 				okayAdd = true

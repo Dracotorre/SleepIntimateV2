@@ -515,7 +515,7 @@ EndFunction
 ;BEGIN FRAGMENT Fragment_Terminal_61
 Function Fragment_Terminal_61(ObjectReference akTerminalRef)
 ;BEGIN CODE
-pDTSleep_SettingScaleActorKiss.SetValue(0.0)
+pDTSleep_SettingScaleActorKiss.SetValue(2.0)
 ;END CODE
 EndFunction
 ;END FRAGMENT
@@ -590,6 +590,14 @@ EndFunction
 Function Fragment_Terminal_71(ObjectReference akTerminalRef)
 ;BEGIN CODE
 pDTSleep_SettingSwapRoles.SetValue(0.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_72
+Function Fragment_Terminal_72(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingScaleActorKiss.SetValue(0.0)
 ;END CODE
 EndFunction
 ;END FRAGMENT

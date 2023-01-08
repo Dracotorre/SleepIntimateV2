@@ -716,13 +716,13 @@
 		},
 		{
 			"id": "MCM_SettingSwapRoles:Intimacy",
-			"text": "Role",
+			"text": "Same-Gender Role",
 			"type": "dropdown",
 			"help": "generally for same-gender scenes to swap roles",
 			"valueOptions": {
 				"options": ["Default", "Opposite"],
 				"sourceType": "GlobalValue",
-				"sourceForm": "SleepIntimate.esp|1CC715",
+				"sourceForm": "SleepIntimate.esp|1CD647",
 				"propertyName": "DTSleep_SettingSwapRoles"
 			}
 		},
@@ -788,11 +788,11 @@
 		},
 		{
 			"id": "MCM_SettingScaleActorKiss:Intimacy",
-			"text": "Kiss Align",
+			"text": "Kiss Actor Align",
 			"type": "dropdown",
-			"help": "scale companion for better kiss alignment",
+			"help": "kiss and animations alignment; for custom-height companion choose default",
 			"valueOptions": {
-				"options": ["Disabled", "Enabled"],
+				"options": ["Disabled", "Enabled-Default", "Enabled-Custom"],
 				"sourceType": "GlobalValue",
 				"sourceForm": "SleepIntimate.esp|1B6973",
 				"propertyName": "DTSleep_SettingScaleActorKiss"

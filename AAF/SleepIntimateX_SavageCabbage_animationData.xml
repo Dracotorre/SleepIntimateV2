@@ -1,4 +1,4 @@
-<meta title="SleepIntimateX_SavageCabbage_animationData.xml" version="2.79" dataSet="animation"/>
+<meta title="SleepIntimateX_SavageCabbage_animationData.xml" version="2.84" dataSet="animation"/>
 <defaults source="SavageCabbage_Animations.esp"/>
 
 <animation id="SIX_SC_FM-Bed01-01Handjob" frames="390">
@@ -819,12 +819,30 @@
 	</actor>
 </animation>
 
-<animation id="SIX_SC_FM-ChairLow01-02Doggy" frames="500">
+<animation id="SIX_SC_FM-ChairLow01-03Doggy" frames="500">
 	<actor gender="F">
 		<idle form="1002"/>
 	</actor>
 	<actor gender="M">
 		<idle form="1003"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-ChairLow01-04Doggy" frames="500">
+	<actor gender="F">
+		<idle form="33CB4"/>
+	</actor>
+	<actor gender="M">
+		<idle form="33CB5"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-ChairLow01-05Doggy" frames="500">
+	<actor gender="F">
+		<idle form="33CB6"/>
+	</actor>
+	<actor gender="M">
+		<idle form="33CB7"/>
 	</actor>
 </animation>
 
@@ -2527,6 +2545,20 @@
 	</actor>
 </animation>
 
+<animation id="SIX_SC_FSMSM-Standing01-04DoubleTeam" frames="500">
+	<actor gender="F">
+		<idle form="33CF6"/>
+	</actor>
+	<actor gender="M" skeleton="Supermutant">
+		<idle form="33CF7"/>
+		<!--<value path="morph" value="Erection Up" to="1"/>-->
+	</actor>
+	<actor gender="M" skeleton="Supermutant">
+		<idle form="33CF8"/>
+		<!--<value path="morph" value="Erection Up" to="1"/>-->
+	</actor>
+</animation>
+
 <!-- **************************** v1.2 ****************** -->
 
 <animation id="SIX_SC-FM-Human-Crane01-03Carry" frames="500">
@@ -2616,6 +2648,24 @@
 	</actor>
 	<actor gender="M">
 		<idle form="2FD8A"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-Couch_PlayerHouse01-05Facefuck" frames="500">
+	<actor gender="F">
+		<idle form="33CB8"/>
+	</actor>
+	<actor gender="M">
+		<idle form="33CB9"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-Couch_PlayerHouse01-06Facefuck" frames="500">
+	<actor gender="F">
+		<idle form="33CBA"/>
+	</actor>
+	<actor gender="M">
+		<idle form="33CBB"/>
 	</actor>
 </animation>
 
@@ -3073,6 +3123,15 @@
 	</actor>
 </animation>
 
+<animation id="SIX_SC-FM-Human-ArmorBench01-02Start" frames="500">
+	<actor gender="F">
+		<idle form="33CAE"/>
+	</actor>
+	<actor gender="M">
+		<idle form="33CAF"/>
+	</actor>
+</animation>
+
 <animation id="SIX_SC-FM-Human-ArmorBench01-03Doggy" frames="500">
 	<actor gender="F">
 		<idle form="30D2A"/>
@@ -3118,7 +3177,25 @@
 	</actor>
 </animation>
 
-<animation id="SC-FM-Human-WeaponWorkbenchLarge01-03Doggy" frames="500">
+<animation id="SIX_SC-FM-Human-ArmorBench01-08Finish" frames="500">
+	<actor gender="F">
+		<idle form="33CB0/>
+	</actor>
+	<actor gender="M">
+		<idle form="33CB1"/>
+	</actor>
+</animation>
+
+<animation id="SIX-SC-FM-Human-WeaponWorkbenchLarge01-01Tease" frames="500">
+	<actor gender="F">
+		<idle form="33CD8"/>
+	</actor>
+	<actor gender="M">
+		<idle form="33CD9"/>
+	</actor>
+</animation>
+
+<animation id="SIX-SC-FM-Human-WeaponWorkbenchLarge01-03Doggy" frames="500">
 	<actor gender="F">
 		<idle form="31D12"/>
 	</actor>
@@ -3127,12 +3204,30 @@
 	</actor>
 </animation>
 
-<animation id="SC-FM-Human-WeaponWorkbenchLarge01-04Doggy" frames="500">
+<animation id="SIX-SC-FM-Human-WeaponWorkbenchLarge01-04Doggy" frames="500">
 	<actor gender="F">
 		<idle form="31D14"/>
 	</actor>
 	<actor gender="M">
 		<idle form="31D15"/>
+	</actor>
+</animation>
+
+<animation id="SIX-SC-FM-Human-WeaponWorkbenchLarge01-05Doggy" frames="500">
+	<actor gender="F">
+		<idle form="33CDA"/>
+	</actor>
+	<actor gender="M">
+		<idle form="33CDB"/>
+	</actor>
+</animation>
+
+<animation id="SIX-SC-FM-Human-WeaponWorkbenchLarge01-06Doggy" frames="500">
+	<actor gender="F">
+		<idle form="33CDC"/>
+	</actor>
+	<actor gender="M">
+		<idle form="33CDD"/>
 	</actor>
 </animation>
 
@@ -3359,6 +3454,15 @@
 	</actor>
 </animation>
 
+<animation id="SIX_SC-FM-Human-Mattress01-02Start" frames="400">
+	<actor gender="F">
+		<idle form="33CD2"/>
+	</actor>
+	<actor gender="M">
+		<idle form="33CD3" />
+	</actor>
+</animation>
+
 <animation id="SIX_SC-FM-Human-Mattress01-03Missionary" frames="400">
 	<actor gender="F">
 		<idle form="32545"/>
@@ -3518,5 +3622,80 @@
 	</actor>
 	<actor gender="M">
 		<idle form="32542" />
+	</actor>
+</animation>
+
+<!-- v2.84, SC 1.2.9 -->
+
+<animation id="SIX_SC-FM-SuperMutant-StovePlayerHouseRuin01-01Tease" frames="350">
+	<actor gender="F">
+		<idle form="33CFB"/>
+	</actor>
+	<actor gender="M" skeleton="Supermutant">
+		<idle form="33CFC"/>
+		<!--<value path="morph" value="Erection Strait" to="1"/>-->
+	</actor>
+</animation>
+<animation id="SIX_SC-FM-SuperMutant-StovePlayerHouseRuin01-02Start" frames="400">
+	<actor gender="F">
+		<idle form="33CFD"/>
+	</actor>
+	<actor gender="M" skeleton="Supermutant">
+		<idle form="33CFE"/>
+		<!--<value path="morph" value="Erection Strait" to="1"/>-->
+	</actor>
+</animation>
+<animation id="SIX_SC-FM-SuperMutant-StovePlayerHouseRuin01-03Missionary" frames="400">
+	<actor gender="F">
+		<idle form="33CFF"/>
+	</actor>
+	<actor gender="M" skeleton="Supermutant">
+		<idle form="33D00"/>
+		<!--<value path="morph" value="Erection Strait" to="1"/>-->
+	</actor>
+</animation>
+<animation id="SIX_SC-FM-SuperMutant-StovePlayerHouseRuin01-04Missionary" frames="400">
+	<actor gender="F">
+		<idle form="33D01"/>
+	</actor>
+	<actor gender="M" skeleton="Supermutant">
+		<idle form="33D02"/>
+		<!--<value path="morph" value="Erection Strait" to="1"/>-->
+	</actor>
+</animation>
+<animation id="SIX_SC-FM-SuperMutant-StovePlayerHouseRuin01-05Missionary" frames="400">
+	<actor gender="F">
+		<idle form="33D03"/>
+	</actor>
+	<actor gender="M" skeleton="Supermutant">
+		<idle form="33D04"/>
+		<!--<value path="morph" value="Erection Strait" to="1"/>-->
+	</actor>
+</animation>
+<animation id="SIX_SC-FM-SuperMutant-StovePlayerHouseRuin01-06Missionary" frames="400">
+	<actor gender="F">
+		<idle form="33D05"/>
+	</actor>
+	<actor gender="M" skeleton="Supermutant">
+		<idle form="33D06"/>
+		<!--<value path="morph" value="Erection Strait" to="1"/>-->
+	</actor>
+</animation>
+<animation id="SIX_SC-FM-SuperMutant-StovePlayerHouseRuin01-07Missionary" frames="400">
+	<actor gender="F">
+		<idle form="33D07"/>
+	</actor>
+	<actor gender="M" skeleton="Supermutant">
+		<idle form="33D08"/>
+		<!--<value path="morph" value="Erection Strait" to="1"/>-->
+	</actor>
+</animation>
+<animation id="SIX_SC-FM-SuperMutant-StovePlayerHouseRuin01-08Finish" frames="400">
+	<actor gender="F">
+		<idle form="33D09"/>
+	</actor>
+	<actor gender="M" skeleton="Supermutant">
+		<idle form="33D0A"/>
+		<!--<value path="morph" value="Erection Strait" to="1"/>-->
 	</actor>
 </animation>
