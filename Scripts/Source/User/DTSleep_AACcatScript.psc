@@ -73,6 +73,8 @@ int Function GetStageCountForSequenceID(int seqID, int longScene = 0, int other 
 		result = 1
 		if (seqID >= 509 && seqID <= 511)
 			result = 2
+		elseIf (seqID == 535)
+			result = 5
 		elseIf (seqID >= 546 && seqID <= 547)
 			result = 6
 		endIf
@@ -4331,6 +4333,40 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 				ssStruct.PositionID = "DTSIX_510_S2"
 			endIf
 			ssStruct.ArmorNudeAGun = 1
+		elseIf (seqID == 535)						; RaidMyHeart  v2.90
+			ssStruct.PluginName = "Raid My Heart.esp"
+			ssStruct.ArmorNudeAGun = -1
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x02000F99		
+				ssStruct.MAnimFormID = 0x02000F9A
+				ssStruct.PositionOrigID = "RMH Couch Cuddle S1"
+				ssStruct.PositionID = "DTSIX_535_S1"
+				ssStruct.StageTime = 6.5
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x02000F9B		
+				ssStruct.MAnimFormID = 0x02000F9C
+				ssStruct.PositionOrigID = "RMH Couch Cuddle S1 - S2"
+				ssStruct.PositionID = "DTSIX_535_S2"
+				ssStruct.StageTime = 5.0
+			;elseIf (stageNumber == 3)
+			;	ssStruct.FAnimFormID = 0x02000F9D		
+			;	ssStruct.MAnimFormID = 0x02000F9E
+			;	ssStruct.PositionOrigID = "RMH Couch Cuddle S2"
+			;	ssStruct.PositionID = "DTSIX_535_S3"
+			;	ssStruct.StageTime = 11.5
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x02000F9F		
+				ssStruct.MAnimFormID = 0x02000FA0
+				ssStruct.PositionOrigID = "RMH Couch Cuddle S2 - S3"
+				ssStruct.PositionID = "DTSIX_535_S4"
+				ssStruct.StageTime = 5.0
+			else
+				ssStruct.FAnimFormID = 0x02000FA1		
+				ssStruct.MAnimFormID = 0x02000FA2
+				ssStruct.PositionOrigID = "RMH Couch Cuddle S3"
+				ssStruct.PositionID = "DTSIX_535_S5"
+				ssStruct.StageTime = 11.5
+			endIf
 			
 		elseIf (seqID == 536)						; Atomic PA 2 
 			ssStruct.FAnimFormID = 0x0201A288
@@ -4441,6 +4477,12 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 				ssStruct.PositionOrigID = "Atomic Spanking S3 Spank"
 				ssStruct.PositionID = "DTSIX_547_S6"
 			endIf
+		elseIf (seqID == 550)						; Atomic Blow Job - AL2.7, v2.86
+			ssStruct.FAnimFormID = 0x0204E055
+			ssStruct.MAnimFormID = 0x0204E056
+			ssStruct.PositionOrigID = "Atomic Blowjob"
+			ssStruct.PositionID = "DTSIX_550_S1"
+		
 		elseIf (seqID == 551)						; Atomic Threesome FMM Handjob
 			ssStruct.FAnimFormID = 0x02005BAE
 			ssStruct.MAnimFormID = 0x02005BAF
@@ -4455,6 +4497,11 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 			ssStruct.OAnimFormID = 0x02043FBD		; female other on top
 			ssStruct.PositionOrigID = "Atomic Threesome 2"
 			ssStruct.PositionID = "DTSIXFMF_552_S1"
+		;elseIf (seqID == 553)									; added AL2.7, v2.86
+		;	ssStruct.FAnimFormID = 0x0204E7F0
+		;	ssStruct.MAnimFormID = 0x0204E7F1
+		;	ssStruct.PositionOrigID = "Atomic Flying-V (Player House Kitchen Table)"
+		;	ssStruct.PositionID = "DTSIX_553_S1"
 		endIf
 	elseIf (seqID >= 560 && seqID < 590)
 		ssStruct.PluginName = "Mutated Lust.esp"

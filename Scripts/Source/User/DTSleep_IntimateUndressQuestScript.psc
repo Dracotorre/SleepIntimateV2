@@ -908,7 +908,7 @@ endFunction
 ; if includeClothing and observeWinter=false then also removes Lacy Underwear bottoms etc
 ;
 bool Function StartForManualStop(bool includeClothing, Actor companionActorRef, bool observeWinter = true, bool companionReqNudeSuit = true, ObjectReference optionalBedRef = none, bool includePipBoy = false)
-	;Debug.Trace(myScriptName + " starting manual undress with companion: " + companionActorRef)
+	;Debug.Trace(myScriptName + " starting manual undress with companion: " + companionActorRef + " require Nude-suit: " + companionReqNudeSuit)
 	
 	;float timeStart = Utility.GetCurrentRealTime()
 	
@@ -953,7 +953,7 @@ bool Function StartForManualStop(bool includeClothing, Actor companionActorRef, 
 		endIf
 	endIf
 	
-	DTDebug(" starting manual stop with companion: " + CompanionRef + " and 2nd comp: " + CompanionSecondRef, 2)
+	DTDebug(" starting manual stop with companion: " + CompanionRef + " with Custom Nude-Suit: " + DressData.CompanionNudeSuit + ", and 2nd comp: " + CompanionSecondRef, 2)
 	
 	if (DTSleep_EquipMonInit.GetValueInt() < 5)
 		; force naked to initialize
@@ -1486,6 +1486,34 @@ bool Function CheckRemoveAllNudeSuits(Actor actorRef, bool checkCustom = true)
 	return true
 endFunction
 
+; v2.86 - limit to only unique companions
+bool Function CompanionIsUnique(Actor actorRef)
+
+	if (actorRef != None)
+		if (GetGenderForActor(actorRef) == 1)
+			if ((DTSConditionals as DTSleep_Conditionals).IsUniqueFollowerFemActive)
+				if (actorRef == CaitRef)
+					return true
+				elseIf (actorRef == PiperRef)
+					return true
+				elseIf (actorRef == CurieRef)
+					return true
+				endIf
+			endIf
+			
+		elseIf ((DTSConditionals as DTSleep_Conditionals).IsUniqueFollowerMaleActive)
+		
+			int armorIDX = GetCompanionLeitoArmorIndexPublic(actorRef)
+			if (armorIDX >= 0)
+				return true
+			endIf
+		endIf
+	endIf
+
+	return false
+endFunction
+
+
 int Function GetCompanionLeitoArmorIndexPublic(Actor actorRef)
 	
 	int armorIndex = -1
@@ -1619,7 +1647,7 @@ Armor Function GetCustomNudeSuitForCompanion(Actor actorRef)
 
 	if (actorRef != None)
 	
-		int armorIndex = -1
+		int armorIndex = -2
 		int gender = GetGenderForActor(actorRef)
 		
 		; v2.60 - NanaRace has its own body,
@@ -1682,6 +1710,34 @@ Armor Function GetCustomNudeSuitForCompanion(Actor actorRef)
 		if (gender == 1 && armorIndex < 0 && (DTSConditionals as DTSleep_Conditionals).IsHeatherCompanionActive)
 			if (actorRef == GetHeatherActor())
 				armorIndex = (DTSConditionals as DTSleep_Conditionals).ModCompanionBodyHeatherIndex
+			endIf
+		endIf
+		
+		; Insane Ivy - v2.86
+		if (gender == 1 && armorIndex < 0 && (DTSConditionals as DTSleep_Conditionals).ModCompanionBodyInsaneIvyIndex >= 0)
+			if (actorRef == (DTSConditionals as DTSleep_Conditionals).InsaneIvyRef)
+				armorIndex = (DTSConditionals as DTSleep_Conditionals).ModCompanionBodyInsaneIvyIndex
+			endIf
+		endIf
+		
+		; NoraSpouse   - v2.86
+		if (gender == 1 && armorIndex < 0 && (DTSConditionals as DTSleep_Conditionals).ModCompanionBodyNoraIndex >= 0)
+			if (actorRef == (DTSConditionals as DTSleep_Conditionals).NoraSpouseRef)
+				armorIndex = (DTSConditionals as DTSleep_Conditionals).ModCompanionBodyNoraIndex
+			endIf
+		endIf
+		
+		; I'm Darlene - v2.86
+		if (gender == 1 && armorIndex < 0 && (DTSConditionals as DTSleep_Conditionals).ModCompanionBodyDarleneIndex >= 0)
+			if (actorRef == (DTSConditionals as DTSleep_Conditionals).ModDarleneRef)
+				armorIndex = (DTSConditionals as DTSleep_Conditionals).ModCompanionBodyDarleneIndex
+			endIf
+		endIf
+		
+		; "Tori" Victoria -  v2.86
+		if (gender == 1 && armorIndex < 0 && (DTSConditionals as DTSleep_Conditionals).ModCompanionBodyCompVictoriaIndex >= 0)
+			if (actorRef == (DTSConditionals as DTSleep_Conditionals).ModCompVictoriaRef)
+				armorIndex = (DTSConditionals as DTSleep_Conditionals).ModCompanionBodyCompVictoriaIndex
 			endIf
 		endIf
 		
@@ -4712,7 +4768,7 @@ Function UndressActorArmorFootwear(Actor actorRef)
 		Armor shoeArmor = None
 		Armor stockingArmor = None
 		
-		DTDebug("undress footwear for " + actorRef + ", keepShoesEquip = " + KeepShoesEquipped + "; keepStockings = " + KeepStockingsEquipped, 2) ; TODO: remove
+		;DTDebug("undress footwear for " + actorRef + ", keepShoesEquip = " + KeepShoesEquipped + "; keepStockings = " + KeepStockingsEquipped, 2)
 		
 		if (actorRef == PlayerRef)
 		
@@ -5153,9 +5209,15 @@ Function UndressActorCompanionDressNudeSuit(Actor actorRef, bool hasSleepMainOut
 		return
 	endIf
 	
-	if (actorRef == CompanionRef && DressData.CompanionNudeSuit == None && !hasStrapOn && !(DTSConditionals as DTSleep_Conditionals).IsUniqueFollowerFemActive && DTSleep_SettingAltFemBody.GetValue() >= 1.0 && BodySwapCompanionEnabled && AltFemBodyEnabled && DTSleep_AdultContentOn.GetValue() >= 2.0 && GetGenderForActor(actorRef) == 1)
+	if (actorRef == CompanionRef && DressData.CompanionNudeSuit == None && !hasStrapOn && !CompanionIsUnique(actorRef) && DTSleep_SettingAltFemBody.GetValue() >= 1.0 && BodySwapCompanionEnabled && AltFemBodyEnabled && DTSleep_AdultContentOn.GetValue() >= 2.0 && GetGenderForActor(actorRef) == 1)
 		
 		actorRef.EquipItem(DTSleep_AltFemNudeBody, true, true)
+		
+	; v2.86 - prioritize condition up
+	elseIf (actorRef == CompanionValentineRef && DTSleep_SettingSynthHuman.GetValue() >= 1.0 && DTSleep_AdultContentOn.GetValue() >= 2.0 && BodySwapCompanionEnabled)
+		DTDebug(" equip synth2 nude-armor on " + actorRef, 2)
+
+		actorRef.EquipItem(DTSleep_SkinSynthGen2DirtyNude, true, true)
 		
 	elseIf (actorRef == CompanionRef && DressData.CompanionRequiresNudeSuit)
 	
@@ -5184,17 +5246,13 @@ Function UndressActorCompanionDressNudeSuit(Actor actorRef, bool hasSleepMainOut
 			Utility.WaitMenuMode(0.1)
 			DTDebug(" equip custom companion nude-ring + Nude Suit " + DressData.CompanionNudeSuit + " on " + actorRef, 2)
 			
-			;if (BodySwapCompanionEnabled)
+			if (DressData.CompanionNudeSuit != None)			; v2.86
 				actorRef.EquipItem(DressData.CompanionNudeSuit, true, true) ; prevent NPC main outfit auto-equip
 				Utility.WaitMenuMode(0.1)
-			;endIf
+			endIf
 		endIf
-	elseIf (actorRef == CompanionValentineRef && DTSleep_SettingSynthHuman.GetValue() >= 1.0 && DTSleep_AdultContentOn.GetValue() >= 2.0 && BodySwapCompanionEnabled)
-		DTDebug(" equip synth2 nude-armor on " + actorRef, 2)
-
-		actorRef.EquipItem(DTSleep_SkinSynthGen2DirtyNude, true, true)
 	
-	elseIf (actorRef == CompanionSecondRef && !hasStrapOn && DTSleep_SettingAltFemBody.GetValue() >= 1.0 && !(DTSConditionals as DTSleep_Conditionals).IsUniqueFollowerFemActive && BodySwapCompanionEnabled && AltFemBodyEnabled && DTSleep_AdultContentOn.GetValue() >= 2.0 && GetGenderForActor(actorRef) == 1)
+	elseIf (actorRef == CompanionSecondRef && !hasStrapOn && DTSleep_SettingAltFemBody.GetValue() >= 1.0 && !CompanionIsUnique(actorRef) && BodySwapCompanionEnabled && AltFemBodyEnabled && DTSleep_AdultContentOn.GetValue() >= 2.0 && GetGenderForActor(actorRef) == 1)
 		;v2.26 - 2nd companion alt female body
 		;v2.47 - support custom body for 2nd companion
 		Armor customNudeSuit = GetCustomNudeSuitForCompanion(actorRef)

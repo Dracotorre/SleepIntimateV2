@@ -95,13 +95,13 @@ bool Function IsAllowedLover(Actor akActor)
 		Debug.Trace("[DTSleep_TrueLoveQuest] IsAllowed? actor is child!")
 	endIf
 	
+	; first check spouse custom companions
 	if ((DTSConditionals as DTSleep_Conditionals).NoraSpouseRef != None && akActor == (DTSConditionals as DTSleep_Conditionals).NoraSpouseRef)
 			
 		return true
-	elseIf ((DTSConditionals as DTSleep_Conditionals).NoraSpouse2Ref != None && akActor == (DTSConditionals as DTSleep_Conditionals).NoraSpouse2Ref)
-			
-		return true
+
 	elseIf ((DTSConditionals as DTSleep_Conditionals).DualSurvivorsNateRef != None && akActor == (DTSConditionals as DTSleep_Conditionals).DualSurvivorsNateRef)
+		
 		return true
 	endIf
 	
@@ -313,6 +313,12 @@ int Function CheckCustomCompanionsForActor(Actor akActor)
 			endIf
 			return 0
 		endIf
+	endIf
+	
+	; v2.85 - Ivy now available from start
+	if ((DTSConditionals as DTSleep_Conditionals).InsaneIvyRef != None && akActor == (DTSConditionals as DTSleep_Conditionals).InsaneIvyRef)
+		
+		return 2
 	endIf
 	
 	;v2.41

@@ -1279,23 +1279,52 @@ Function CheckCompatibility()
 	endIf
 	
 	; Nora Spouse companion
+	; v2.86 FIX -ESM had wrong form-ID ... changed to use same as old Nora-esp
+	
+	string noraSpouseName = "NoraSpouse.esp"
 	if (Game.IsPluginInstalled("NoraSpouse.esm"))
-		if ((DTSConditionals as DTSleep_Conditionals).NoraSpouse2Ref == None) 
-			(DTSConditionals as DTSleep_Conditionals).NoraSpouse2Ref = Game.GetFormFromFile(0x21000F9A, "NoraSpouse.esm") as Actor
-			DTSleep_CompanionRomance2List.AddForm((DTSConditionals as DTSleep_Conditionals).NoraSpouse2Ref as Form)
-			DTSleep_CompanionIntimateAllList.AddForm((DTSConditionals as DTSleep_Conditionals).NoraSpouse2Ref as Form)
-		endIf
-	else
-		(DTSConditionals as DTSleep_Conditionals).NoraSpouse2Ref = None
+		noraSpouseName = "NoraSpouse.esm"
 	endIf
-	if (Game.IsPluginInstalled("NoraSpouse.esp"))
+		
+	if (Game.IsPluginInstalled(noraSpouseName))
+		Debug.Trace(myScriptName + " found " + noraSpouseName)
+		
 		if ((DTSConditionals as DTSleep_Conditionals).NoraSpouseRef == None) 
-			(DTSConditionals as DTSleep_Conditionals).NoraSpouseRef = Game.GetFormFromFile(0x21001735, "NoraSpouse.esp") as Actor
+			(DTSConditionals as DTSleep_Conditionals).NoraSpouseRef = Game.GetFormFromFile(0x21001735, noraSpouseName) as Actor
 			DTSleep_CompanionRomance2List.AddForm((DTSConditionals as DTSleep_Conditionals).NoraSpouseRef as Form)
 			DTSleep_CompanionIntimateAllList.AddForm((DTSConditionals as DTSleep_Conditionals).NoraSpouseRef as Form)
 		endIf
+		
+		; check for unique body   - v2.86
+		if ((DTSConditionals as DTSleep_Conditionals).ModCompanionBodyNoraIndex <= 0)
+			; Nora Survives
+			Armor bodyNakedArmor = Game.GetFormFromFile(0x02000F9D, "NoraSurvivesUniquePlayerPatch.esp") as Armor
+			if (bodyNakedArmor != None && !DTSleep_ModCompanionBodiesLst.HasForm(bodyNakedArmor))
+				DTSleep_ModCompanionBodiesLst.AddForm(bodyNakedArmor)
+				
+				(DTSConditionals as DTSleep_Conditionals).ModCompanionBodyNoraIndex = DTSleep_ModCompanionBodiesLst.GetSize() - 1
+			else
+				; NoraSpouse - Unique Follower Patch   -- has multiple plugin choices
+				string noraBodyName = "NoraSpouse - Unique Follower Patch - No Health Boost+LooksMenu.esp"
+				if (!Game.IsPluginInstalled(noraBodyName))
+					noraBodyName = "NoraSpouse - Unique Follower Patch - Health Boost+LooksMenu.esp"
+					if (!Game.IsPluginInstalled(noraBodyName))
+						noraBodyName = "NoraSpouse - Unique Follower Patch.esp"
+					endIf
+				endIf
+				
+				bodyNakedArmor = Game.GetFormFromFile(0x02000800, noraBodyName) as Armor
+				if (bodyNakedArmor != None && !DTSleep_ModCompanionBodiesLst.HasForm(bodyNakedArmor))
+					DTSleep_ModCompanionBodiesLst.AddForm(bodyNakedArmor)
+				
+					(DTSConditionals as DTSleep_Conditionals).ModCompanionBodyNoraIndex = DTSleep_ModCompanionBodiesLst.GetSize() - 1
+				endIf
+			endIf
+		endIf
+		
 	else
 		(DTSConditionals as DTSleep_Conditionals).NoraSpouseRef = None
+		(DTSConditionals as DTSleep_Conditionals).NoraSpouse2Ref = None			; no longer used  - v2.86
 	endIf
 	
 	; Dual Survivors
@@ -1315,6 +1344,17 @@ Function CheckCompatibility()
 			if ((DTSConditionals as DTSleep_Conditionals).InsaneIvyRef == None)
 				(DTSConditionals as DTSleep_Conditionals).InsaneIvyRef = Game.GetFormFromFile(0x2108598C, "CompanionIvy.esp") as Actor
 			endIf
+			
+			; Ivy's custom/unique body - v2.86
+			if ((DTSConditionals as DTSleep_Conditionals).ModCompanionBodyInsaneIvyIndex < 0)
+
+				Armor bodyNakedArmor = Game.GetFormFromFile(0x020558D9, "CompanionIvy.esp") as Armor
+				if (bodyNakedArmor != None && !DTSleep_ModCompanionBodiesLst.HasForm(bodyNakedArmor))
+					DTSleep_ModCompanionBodiesLst.AddForm(bodyNakedArmor)
+					
+					(DTSConditionals as DTSleep_Conditionals).ModCompanionBodyInsaneIvyIndex = DTSleep_ModCompanionBodiesLst.GetSize() - 1
+				endIf
+			endIf
 		else
 			(DTSConditionals as DTSleep_Conditionals).InsaneIvyRef = None
 		endIf
@@ -1327,6 +1367,42 @@ Function CheckCompatibility()
 		endIf
 	elseIf (Game.IsPluginInstalled("PersonalGuard.esp") == false)
 		(DTSConditionals as DTSleep_Conditionals).ModPersonalGuardCtlKY = None
+	endIf
+	
+	; Darlene (VanessaNPC) -- uses normal affinity, has unique body  - v2.86
+	if (Game.IsPluginInstalled("Darlene.esm"))
+		if ((DTSConditionals as DTSleep_Conditionals).ModDarleneRef == None)
+			(DTSConditionals as DTSleep_Conditionals).ModDarleneRef = Game.GetFormFromFile(0x08007306, "Darlene.esm") as Actor  ; VanessaNPCREF
+			
+			if ((DTSConditionals as DTSleep_Conditionals).ModCompanionBodyDarleneIndex <= 0)
+				Armor bodyNakedArmor = Game.GetFormFromFile(0x02007F8D, "Darlene.esm") as Armor
+				if (bodyNakedArmor != None && !DTSleep_ModCompanionBodiesLst.HasForm(bodyNakedArmor))
+					DTSleep_ModCompanionBodiesLst.AddForm(bodyNakedArmor)
+					
+					(DTSConditionals as DTSleep_Conditionals).ModCompanionBodyDarleneIndex = DTSleep_ModCompanionBodiesLst.GetSize() - 1
+				endIf
+			endIf
+		endIf
+	else
+		(DTSConditionals as DTSleep_Conditionals).ModDarleneRef = None
+	endIf
+	
+	; CompVictoria - TO-R1 Victoria "Tori" - v2.86
+	if (Game.IsPluginInstalled("CompVictoria.esp"))
+		if ((DTSConditionals as DTSleep_Conditionals).ModCompVictoriaRef == None)
+			(DTSConditionals as DTSleep_Conditionals).ModCompVictoriaRef = Game.GetFormFromFile(0x08001763, "CompVictoria.esp") as Actor  ; Placed NPC
+			
+			if ((DTSConditionals as DTSleep_Conditionals).ModCompanionBodyCompVictoriaIndex <= 0)
+				Armor bodyNakedArmor = Game.GetFormFromFile(0x0200175B, "CompVictoria.esp") as Armor
+				if (bodyNakedArmor != None && !DTSleep_ModCompanionBodiesLst.HasForm(bodyNakedArmor))
+					DTSleep_ModCompanionBodiesLst.AddForm(bodyNakedArmor)
+					
+					(DTSConditionals as DTSleep_Conditionals).ModCompanionBodyCompVictoriaIndex = DTSleep_ModCompanionBodiesLst.GetSize() - 1
+				endIf
+			endIf
+		endIf
+	else
+		(DTSConditionals as DTSleep_Conditionals).ModCompVictoriaRef = None
 	endIf
 	
 	; Let's dance
@@ -2086,6 +2162,13 @@ Function CheckCompatibility()
 			(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = -1.0
 		endIf
 		
+		; Rufgt Raid my Heart - available for XOXO			; v2.90
+		;if (Game.IsPluginInstalled("Raid My Heart.esp"))
+		;	(DTSConditionals as DTSleep_Conditionals).IsRufgtRaidHeartActive = true
+		;else
+		;	(DTSConditionals as DTSleep_Conditionals).IsRufgtRaidHeartActive = false
+		;endIf
+		
 		; -------------------------- X ------------------
 		
 		if (DTSleep_AdultContentOn.GetValue() >= 2.0)
@@ -2168,23 +2251,30 @@ Function CheckCompatibility()
 					(DTSConditionals as DTSleep_Conditionals).IsAtomicLustActive = true
 					DTSleep_ActivPAStation.SetValue(1.0)
 					
-					if ((DTSConditionals as DTSleep_Conditionals).AtomicLustVers < 2.61)
-						Idle anIdle = Game.GetFormFromFile(0x0804D0BC, alPlugName) as Idle
+					if ((DTSConditionals as DTSleep_Conditionals).AtomicLustVers < 2.70)
+						Idle anIdle = Game.GetFormFromFile(0x0804E055, alPlugName) as Idle		;v2.86
 						
 						if (anIdle != None)
-							(DTSConditionals as DTSleep_Conditionals).AtomicLustVers = 2.61
-					
-						elseIf ((DTSConditionals as DTSleep_Conditionals).AtomicLustVers < 2.50)
-							anIdle = Game.GetFormFromFile(0x0804C920, alPlugName) as Idle
-							if (anIdle != None)
-								(DTSConditionals as DTSleep_Conditionals).AtomicLustVers = 2.50
+							(DTSConditionals as DTSleep_Conditionals).AtomicLustVers = 2.70
 							
-							elseIf ((DTSConditionals as DTSleep_Conditionals).AtomicLustVers < 2.43)
-								anIdle = Game.GetFormFromFile(0x08043FBA, alPlugName) as Idle
+						elseIf ((DTSConditionals as DTSleep_Conditionals).AtomicLustVers < 2.61)
+							anIdle = Game.GetFormFromFile(0x0804D0BC, alPlugName) as Idle
+							
+							if (anIdle != None)
+								(DTSConditionals as DTSleep_Conditionals).AtomicLustVers = 2.61
+						
+							elseIf ((DTSConditionals as DTSleep_Conditionals).AtomicLustVers < 2.50)
+								anIdle = Game.GetFormFromFile(0x0804C920, alPlugName) as Idle
 								if (anIdle != None)
-									(DTSConditionals as DTSleep_Conditionals).AtomicLustVers = 2.43
-								else
-									(DTSConditionals as DTSleep_Conditionals).AtomicLustVers = 2.21
+									(DTSConditionals as DTSleep_Conditionals).AtomicLustVers = 2.50
+								
+								elseIf ((DTSConditionals as DTSleep_Conditionals).AtomicLustVers < 2.43)
+									anIdle = Game.GetFormFromFile(0x08043FBA, alPlugName) as Idle
+									if (anIdle != None)
+										(DTSConditionals as DTSleep_Conditionals).AtomicLustVers = 2.43
+									else
+										(DTSConditionals as DTSleep_Conditionals).AtomicLustVers = 2.21
+									endIf
 								endIf
 							endIf
 						endIf
@@ -3321,6 +3411,16 @@ int Function CheckCustomArmorsAndBackpacks()
 		if (!DTSleep_ArmorExtraPartsList.HasForm(extraArmor as Form))
 			modCount += 1
 			DTSleep_ArmorExtraPartsList.AddForm(extraArmor as Form)
+		endIf
+	endIf
+	
+	; DX Azur Lane St Louis   v2.86
+	extraArmor = IsPluginActive(0x05028405, "DX_StLouis.esp") as Armor			; necklace
+	if (extraArmor != None)
+		if (!DTSleep_ArmorNecklaceSlot50List.HasForm(extraArmor as Form))
+			modCount += 1
+			; actually uses slot 54, but does not matter
+			DTSleep_ArmorNecklaceSlot50List.AddForm(extraArmor as Form)
 		endIf
 	endIf
 	

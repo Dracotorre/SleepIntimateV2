@@ -1317,7 +1317,7 @@ bool Function PlayActionXOXO()
 		LastSceneID = id
 	endIf
 	
-	if (id < 90 || (id >= 100 && id != 780))
+	if (id < 90 || (id >= 100 && id != 780 && id != 535))
 		Debug.Trace(myScriptName + " found invalid hug/kiss id (" + id + ") - force 97 ")
 		id = 97
 	endIf
@@ -2128,9 +2128,10 @@ float Function GetTimeForPlayID(int id)
 	;SceneData.WaitSecs = 11.2
 	float waitSecX2 = SceneData.WaitSecs + SceneData.WaitSecs
 	float waitSecX4 = waitSecX2 + waitSecX2
+	DTSleep_IntimateSceneLen.SetValueInt(0)
 	
 	if (id == 6001)
-		return 275.92
+		return 301.12
 	endIf
 
 	if (id <= 10)
@@ -2153,6 +2154,10 @@ float Function GetTimeForPlayID(int id)
 		
 	elseIf (id == 549)					; hug and kiss
 		return 28.0
+	elseIf (id == 535)
+		DTSleep_IntimateSceneLen.SetValueInt(1)
+		return 39.0						; couch cuddle  TODO: ?????
+		
 	elseIf (id == 780)					; booth flirt
 		return 28.0
 		
@@ -2515,6 +2520,22 @@ bool Function IsObjBenchSofa(ObjectReference obj, Form baseBedForm)
 		if (DTSleep_IntimateCouchList.HasForm(baseBedForm))
 			return true
 		elseIf (DTSleep_IntimateBenchList.HasForm(baseBedForm))
+			return true
+		endIf
+	endIf
+	
+	return false
+endFunction
+
+bool Function IsObjSofa(ObjectReference obj, Form baseBedForm)
+	if (obj != None)
+		if (obj.HasKeyword(AnimFurnCouchKY))
+			return true
+		endIf
+		if (baseBedForm == None)
+			baseBedForm = obj.GetBaseObject()
+		endIf
+		if (DTSleep_IntimateCouchList.HasForm(baseBedForm))
 			return true
 		endIf
 	endIf
@@ -3776,7 +3797,7 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 									yOffset = 0.0
 								endIf
 							endIf
-						elseIf (id >= 536 && id <= 538)
+						elseIf (id >= 535 && id <= 538)
 							placeOnBedSimple = true
 							markerIsBed = true
 						elseIf (id == 552)
@@ -5557,17 +5578,23 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 	
 	; safe content first
 	;; v2.10 - use internal hugs only 
-	if (includeHugs > 0 && (packID <= 0 || packID == 5))
+	if (includeHugs > 0 && packID <= 0) ; fix removed condition packID==5 to avoid bad IDs v2.86
 		; v2 included hugs/kisses
 		if ((!SceneData.IsUsingCreature || SceneData.IsCreatureType == 3) && !SceneData.CompanionInPowerArmor)
 			
 			; v2.60 allow diner booth flirt for adult-pack users
-			if (DTSleep_AdultContentOn.GetValue() >= 2.0 && (DTSConditionals as DTSleep_Conditionals).ImaPCMod && IsObjDinerBoothTable(SleepBedRef, baseBedForm))
-				if ((DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive)
-					; booth-sit flirt
-					sidArray.Add(780)
-				endIf
-			else
+			; v2.86 also include XOXO-PC users
+			if (DTSleep_AdultContentOn.GetValue() >= 1.1 && (DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive && (DTSConditionals as DTSleep_Conditionals).ImaPCMod && IsObjDinerBoothTable(SleepBedRef, baseBedForm))
+				
+				; booth-sit flirt
+				sidArray.Add(780)
+				
+			;elseIf (DTSleep_AdultContentOn.GetValue() >= 1.1 && (DTSConditionals as DTSleep_Conditionals).IsRufgtRaidHeartActive && (DTSConditionals as DTSleep_Conditionals).ImaPCMod && IsObjSofa(SleepBedRef, baseBedForm))
+			;	
+			;	; v2.90 - allow couch cuddle for PC users
+			;	sidArray.Add(535) TODO: add??
+				
+			else				
 				sidArray.Add(99)
 				if (embraceType > 0)
 					sidArray.Add(98)
@@ -6214,8 +6241,8 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 									sidArray.Add(10)
 								endIf
 							endIf
-							;if (DoesMainActorPrefID(50) && (!SceneData.SameGender || SceneData.MaleRoleGender == 0))
-							;	sidArray.Add(46)
+							;if ((DTSConditionals as DTSleep_Conditionals).AtomicLustVers >= 2.70 && DoesMainActorPrefID(50) && (!SceneData.SameGender || SceneData.MaleRoleGender == 0))
+							;	sidArray.Add(50)			; v2.90 TODO:
 							;endIf
 							if ((DTSConditionals as DTSleep_Conditionals).AtomicLustVers >= 2.42 && !SceneData.SameGender)
 								if (DoesMainActorPrefID(5) && MySleepBedFurnType == FurnTypeIsDoubleBed && !standOnly)
@@ -6865,6 +6892,8 @@ bool Function IsSceneAAFSafe(int sid, bool strictlyID)					; v2.75 added strictl
 			return false
 		endIf
 	elseIf (sid == 780)
+		return false
+	elseIf (sid == 535)
 		return false
 
 	elseIf (sid >= 590 && sid <= 599)
