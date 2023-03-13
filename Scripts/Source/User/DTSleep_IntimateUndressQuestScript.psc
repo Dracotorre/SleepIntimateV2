@@ -58,6 +58,7 @@ Keyword property DTSleep_OutfitContainerKY auto const
 Keyword property DTSleep_OwnBedPrivateKY auto const
 Keyword property IsSleepFurnitureKY auto const
 Keyword property DTSleep_SleepwearKY auto const
+Keyword property DTSleep_SleepwearCamiKY auto const
 
 GlobalVariable property DTSleep_EquipMonInit auto
 GlobalVariable property DTSleep_ExtraArmorsEnabled auto
@@ -2312,32 +2313,90 @@ bool Function IsActorWearingJacket(Actor actorRef)
 	return false
 endFunction
 
-bool Function IsActorCarryingSleepwear(Actor actorRef, ObjectReference bedContainerRef = None)
+; v2.85 - exceptRobe 
+bool Function IsActorCarryingSleepwear(Actor actorRef, ObjectReference bedContainerRef = None, bool exceptRobe = false)
 	if (actorRef != None)
+	
 		if (bedContainerRef != None && bedContainerRef.HasKeyWord(DTSleep_OutfitContainerKY) && (bedContainerRef as DTSleep_OutfitContainerScript).HasStoredOutfit == 2)
 			return true
 			
 		elseIf (DTSleep_EquipMonInit.GetValueInt() > 0)
 			if (actorRef == PlayerRef)
 				if (DressData.PlayerEquippedSleepwearItem != None)
+					if (exceptRobe)
+						if (DressData.PlayerEquippedSleepwearItem.HasKeyWord(DTSleep_SleepwearCamiKY))
+							return true
+						elseIf (DressData.PlayerEquippedSleepwearItem.HasKeyWord(DTSleep_SleepwearKY))
+							return false
+						endIf 
+						if ((DressData.PlayerEquippedSleepwearItem as Form) == DTSleep_SleepAttireMale.GetAt(0))
+							return false
+						endIf
+					endIf
+					
 					return true
+					
 				elseIf (DressData.PlayerEquippedSlot58IsSleepwear)
 					return true
-				elseIf (DressData.CompanionEquippedSlotFXIsSleepwear)
+				elseIf (DressData.PlayerEquippedSlotFXIsSleepwear)				; v2.87 correction to player (was companion)
 					return true
+				elseIf (DressData.PlayerLastEquippedSleepwearItem != None)		; v2.87
+					if (actorRef.GetItemCount(DressData.PlayerLastEquippedSleepwearItem) > 0)
+						if (exceptRobe)
+							if (DressData.PlayerLastEquippedSleepwearItem.HasKeyWord(DTSleep_SleepwearCamiKY))
+								return true
+							elseIf (DressData.PlayerLastEquippedSleepwearItem.HasKeyWord(DTSleep_SleepwearKY))
+								return false
+							endIf 
+							if ((DressData.PlayerLastEquippedSleepwearItem as Form) == DTSleep_SleepAttireMale.GetAt(0))
+								return false
+							endIf
+						endIf
+						return true
+					endIf
 				endIf
 			elseIf (actorRef == CompanionRef && DressData.CompanionActor)
 				if (DressData.CompanionEquippedSleepwearItem != None)
+					if (exceptRobe)
+						if (DressData.CompanionEquippedSleepwearItem.HasKeyWord(DTSleep_SleepwearCamiKY))
+							return true
+						elseIf (DressData.CompanionEquippedSleepwearItem.HasKeyWord(DTSleep_SleepwearKY))
+							return false
+						endIf
+						if ((DressData.CompanionEquippedSleepwearItem as Form) == DTSleep_SleepAttireMale.GetAt(0))
+							return false
+						endIf						
+					endIf
+					
 					return true
+					
 				elseIf (DressData.CompanionEquippedSlot58IsSleepwear)
 					return true
 				elseIf (DressData.CompanionEquippedSlotFXIsSleepwear)
 					return true
+				elseIf (DressData.CompanionLastEquippedSleepwearItem != None)						; v2.87
+					if (actorRef.GetItemCount(DressData.CompanionLastEquippedSleepwearItem) > 0)
+						if (exceptRobe)
+							if (DressData.CompanionLastEquippedSleepwearItem.HasKeyWord(DTSleep_SleepwearCamiKY))
+								return true
+							elseIf (DressData.CompanionLastEquippedSleepwearItem.HasKeyWord(DTSleep_SleepwearKY))
+								return false
+							endIf
+							if ((DressData.CompanionLastEquippedSleepwearItem as Form) == DTSleep_SleepAttireMale.GetAt(0))
+								return false
+							endIf	
+						endIf
+						return true
+					endIf
 				endIf
 			endIf
 		endIf
 		
 		if (actorRef.WornHasKeyword(DTSleep_SleepwearKY))
+			if (exceptRobe && !actorRef.WornHasKeyword(DTSleep_SleepwearCamiKY))
+				return false
+			endIf
+			
 			return true
 		endIf
 		
@@ -2350,6 +2409,15 @@ bool Function IsActorCarryingSleepwear(Actor actorRef, ObjectReference bedContai
 			item = SleepwearFoundForActorFromList(actorRef, DTSleep_SleepAttireMale)
 		endIf
 		if (item != None)
+			if (exceptRobe)
+				if (item.HasKeyWord(DTSleep_SleepwearKY))
+					return false
+				endIf 
+				if ((item as Form) == DTSleep_SleepAttireMale.GetAt(0))
+					return false
+				endIf
+			endIf
+			
 			return true
 		endIf
 	endIf

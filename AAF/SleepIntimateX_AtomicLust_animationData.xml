@@ -1,4 +1,4 @@
-<meta title="SleepIntimateX_AtomicLust_animationData.xml" version="2.35" dataSet="animation"/>
+<meta title="SleepIntimateX_AtomicLust_animationData.xml" version="2.87" dataSet="animation"/>
 <defaults source="Atomic Lust.esp"/>
 
 <animation id="SIX_AL_AtomicSpork" frames="304">
@@ -142,6 +142,16 @@
 	</actor>
 	<actor gender="M">
 		<idle form="02043FBE" id="AtomicThreesome2M"/>
+	</actor>
+</animation>
+
+<animation id="SIX_AL_AtomicBlowjob" frames="1280" frameRate="60">
+	<actor gender="F">
+		<idle form="0204E055" id="AtomicBlowjobF"/>
+		<value path="action" value="BJ Face" target="0" to="0"/>
+	</actor>
+	<actor gender="M">
+		<idle form="0204E056" id="AtomicBlowjobM"/>
 	</actor>
 </animation>
 

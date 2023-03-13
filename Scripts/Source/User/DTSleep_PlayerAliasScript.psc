@@ -2162,12 +2162,12 @@ Function CheckCompatibility()
 			(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = -1.0
 		endIf
 		
-		; Rufgt Raid my Heart - available for XOXO			; v2.90
-		;if (Game.IsPluginInstalled("Raid My Heart.esp"))
-		;	(DTSConditionals as DTSleep_Conditionals).IsRufgtRaidHeartActive = true
-		;else
-		;	(DTSConditionals as DTSleep_Conditionals).IsRufgtRaidHeartActive = false
-		;endIf
+		; Rufgt Raid my Heart - available for XOXO			; v2.88
+		if (Game.IsPluginInstalled("Raid My Heart.esp"))
+			(DTSConditionals as DTSleep_Conditionals).IsRufgtRaidHeartActive = true
+		else
+			(DTSConditionals as DTSleep_Conditionals).IsRufgtRaidHeartActive = false
+		endIf
 		
 		; -------------------------- X ------------------
 		

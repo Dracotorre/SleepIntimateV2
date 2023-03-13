@@ -2156,7 +2156,7 @@ float Function GetTimeForPlayID(int id)
 		return 28.0
 	elseIf (id == 535)
 		DTSleep_IntimateSceneLen.SetValueInt(1)
-		return 39.0						; couch cuddle  TODO: ?????
+		return 22.0						; couch cuddle  TODO: ?????
 		
 	elseIf (id == 780)					; booth flirt
 		return 28.0
@@ -3460,6 +3460,9 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 							
 						elseIf (id > 505 && id < 600)
 							mainActorIsMaleRole = false	; force to position 2nd actor behind
+							if (id == 550)								; v2.87
+								onFloorOK = true
+							endIf
 							
 						elseIf (id >= 650 && id < 682)					; v2.73 - changed upper limit to use newer Leito in AAC
 							if (id >= 660)
@@ -3779,7 +3782,7 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 							zOffset = 0.0
 							yOffset = 16.0
 							
-						elseIf (id == 501 || (id >= 504 && id <= 509) || id == 541 || id == 550)
+						elseIf (id == 501 || (id >= 504 && id <= 509) || id == 541)
 							placeOnBedSimple = true
 							zOffset = PositionMarkerOnBedZAdjustForSceneID(id)
 							if (zOffset == 0.0)
@@ -3800,6 +3803,15 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 						elseIf (id >= 535 && id <= 538)
 							placeOnBedSimple = true
 							markerIsBed = true
+						
+						elseIf (id == 550)						;v2.87
+							if (MainActorPositionByCaller || standOnly || isFloorBed || restrictPlaceOnBed)
+								placeOnBedSimple = false
+							else
+								placeOnBedSimple = true
+								; might be placed on table
+								zOffset = PositionMarkerOnBedZAdjustForSceneID(id)
+							endIf
 						elseIf (id == 552)
 							zOffset = PositionMarkerOnBedZAdjustForSceneID(id)
 							placeOnBedSimple = true
@@ -5589,10 +5601,10 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 				; booth-sit flirt
 				sidArray.Add(780)
 				
-			;elseIf (DTSleep_AdultContentOn.GetValue() >= 1.1 && (DTSConditionals as DTSleep_Conditionals).IsRufgtRaidHeartActive && (DTSConditionals as DTSleep_Conditionals).ImaPCMod && IsObjSofa(SleepBedRef, baseBedForm))
-			;	
-			;	; v2.90 - allow couch cuddle for PC users
-			;	sidArray.Add(535) TODO: add??
+			elseIf (DTSleep_AdultContentOn.GetValue() >= 1.1 && (DTSConditionals as DTSleep_Conditionals).IsRufgtRaidHeartActive && (DTSConditionals as DTSleep_Conditionals).ImaPCMod && IsObjSofa(SleepBedRef, baseBedForm))
+				
+				; v2.87 - allow couch cuddle for PC users
+				sidArray.Add(535)
 				
 			else				
 				sidArray.Add(99)
@@ -5889,6 +5901,12 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 							sidArray.Add(56)  ; Cunnilingus for pool table - includes FMM
 						endIf
 					elseIf (packID == 1 || packID == 6)
+						if (MySleepBedFurnType == FurnTypeIsTablePicnic)
+							sidArray.Add(50)
+						elseIf ((!(DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive && MySleepBedFurnType == FurnTypeIsTablePool))
+							sidArray.Add(50)
+						endIf
+					elseIf (packID == 5 && (DTSConditionals as DTSleep_Conditionals).AtomicLustVers >= 2.70 )		; v2.87
 						if (MySleepBedFurnType == FurnTypeIsTablePicnic)
 							sidArray.Add(50)
 						elseIf ((!(DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive && MySleepBedFurnType == FurnTypeIsTablePool))
@@ -6241,9 +6259,9 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 									sidArray.Add(10)
 								endIf
 							endIf
-							;if ((DTSConditionals as DTSleep_Conditionals).AtomicLustVers >= 2.70 && DoesMainActorPrefID(50) && (!SceneData.SameGender || SceneData.MaleRoleGender == 0))
-							;	sidArray.Add(50)			; v2.90 TODO:
-							;endIf
+							if ((DTSConditionals as DTSleep_Conditionals).AtomicLustVers >= 2.70 && DoesMainActorPrefID(50) && (!SceneData.SameGender || SceneData.MaleRoleGender == 0))
+								sidArray.Add(50)			; v2.87
+							endIf
 							if ((DTSConditionals as DTSleep_Conditionals).AtomicLustVers >= 2.42 && !SceneData.SameGender)
 								if (DoesMainActorPrefID(5) && MySleepBedFurnType == FurnTypeIsDoubleBed && !standOnly)
 									sidArray.Add(5)
@@ -7040,6 +7058,18 @@ bool Function SceneIDAtPlayerPosition(int sid)
 		return true
 	elseIf (sid >= 546 && sid <= 549)
 		return true
+	elseIf (sid == 550)							; v2.87
+		if (SleepBedRef == None || SleepBedRef.HasKeyword(AnimFurnFloorBedAnimKY))
+			return true
+		elseIf (SceneData.FemaleRole == MainActorRef)
+			if (MySleepBedFurnType == FurnTypeIsTablePicnic || MySleepBedFurnType == FurnTypeIsTablePool)
+				; put on table 
+				return false
+			endIf
+		endIf
+
+		return true
+		
 	elseIf (sid >= 562 && sid <= 563)
 		return true
 	;elseIf (sid == 551)	; not enough room - causes player character to get pushed	
@@ -7049,7 +7079,7 @@ bool Function SceneIDAtPlayerPosition(int sid)
 			return true
 		elseIf (sid > 650 && sid < 654 && SceneData.FemaleRole == MainActorRef)
 			if (SleepBedRef.HasKeyword(AnimFurnLayDownUtilityBoxKY))			; v2.70 be like 150
-				if (sid == 151)
+				if (sid == 651)													; v2.87 corrected 151 -> 651
 					return false
 				endIf
 			elseIf (MySleepBedFurnType == FurnTypeIsTablePicnic || MySleepBedFurnType == FurnTypeIsTablePool)

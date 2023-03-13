@@ -9200,22 +9200,22 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 					bool dinerBoothCustomReady = false 	; for custom animations (not embrace)  v2.83
 					
 					; v2.83 moved up before undress to pass along if dinerBooth
-					; v2.90 or couch cuddle
+					; v2.87 or couch cuddle
 					if (hugsOnly && DTSleep_AdultContentOn.GetValue() >= 1.1)
-						if ((DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive)
+						if ((DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive && DTSleep_AdultContentOn.GetValue() >= 2.0)
 							if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsObjDinerBoothTable(furnToPlayObj, furnBaseForm))
 								dinerBoothCustomReady = true
 								seatIsSpecialEmbrace = true
 								undressLevel = 3				; set to observe footwear preferences  - v2.83
 							endIf
 						endIf
-						; TODO: enable later
-						;if (!seatIsSpecialEmbrace && (DTSConditionals as DTSleep_Conditionals).IsRufgtRaidHeartActive)
-						;	if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsObjSofa(furnToPlayObj, furnBaseForm))
-						;		seatIsSpecialEmbrace = true
-						;		undressLevel = 3				; set observe footwear preferences
-						;	endIf
-						;endIf
+						
+						if (!seatIsSpecialEmbrace && (DTSConditionals as DTSleep_Conditionals).IsRufgtRaidHeartActive)
+							if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsObjSofa(furnToPlayObj, furnBaseForm))
+								seatIsSpecialEmbrace = true
+								undressLevel = 3				; set observe footwear preferences
+							endIf
+						endIf
 					endIf
 					
 					; **** undress and get scene ID if there is one 
@@ -11876,8 +11876,9 @@ Function LoverBonusStrong(bool isAdd, bool notify = false)
 			
 			StartTimerGameTime(20.0, LoverStrongPerkGameTimerID)     ; in game hours
 		endIf
-		; v2.35  TODO: test-mode
-		if (IntimacySMCount >= 5 || (DTSleep_SettingTestMode.GetValue() >= 1.0 && DTSleep_DebugMode.GetValue() >= 3.0))
+
+		; v2.87 - okay for all--removed test-mode requirement
+		if (IntimacySMCount >= 5)
 			if (!PlayerRef.IsInFaction(DTSleep_MutantAllyFaction))
 				if (PlayerHasActiveCompanion.GetValueInt() <= 0)
 					DTSleep_MutantAllySpell.Cast(PlayerRef, PlayerRef)
@@ -15575,14 +15576,19 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 				if (seqID >= 548 && seqID <= 549)
 					; partial undress check for hugs
 					if (fadeUndressLevel >= 2)
-						fadeUndressLevel = 1
+						fadeUndressLevel = 1			; sleep clothes / respect
 					elseIf (mainActorIsPositioned)
 						includeClothing = false
 					endIf
 				elseIf (seqID == 501)
-					; TODO: allow other sleepwear, not bathrobe - what about dresses??
-					fadeUndressLevel = 3			; observe footwear, no change into sleepwear due to bathrobe flipping up
-					includeClothing = false
+					; bed cuddle
+					; allow other sleepwear, not bathrobe - what about dresses??    v2.87
+					if ((DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).IsActorCarryingSleepwear(PlayerRef, None, true) && (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).IsActorCarryingSleepwear(IntimateCompanionRef, None, true))
+						fadeUndressLevel = 1
+					else
+						fadeUndressLevel = 3			; observe footwear, no change into sleepwear due to bathrobe flipping up
+						includeClothing = false
+					endIf
 				endIf
 			endIf
 		endIf
@@ -16735,6 +16741,7 @@ Function TestModeOutput()
 			Debug.Trace(myScriptName + "   Atomic vers: " + (DTSConditionals as DTSleep_Conditionals).AtomicLustVers)
 			Debug.Trace(myScriptName + "  Mutated Lust: " + (DTSConditionals as DTSleep_Conditionals).IsMutatedLustActive)
 			Debug.Trace(myScriptName + "     old Rufgt: " + (DTSConditionals as DTSleep_Conditionals).IsRufgtActive)
+			Debug.Trace(myScriptName + "   RaidMyHeart: " + (DTSConditionals as DTSleep_Conditionals).IsRufgtRaidHeartActive)
 			Debug.Trace(myScriptName + " LeFO4Anim AAF: " + (DTSConditionals as DTSleep_Conditionals).IsLeitoAAFActive)
 			Debug.Trace(myScriptName + " SavageCabbage: " + (DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive)
 			Debug.Trace(myScriptName + "  SavageC vers: " + (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers)

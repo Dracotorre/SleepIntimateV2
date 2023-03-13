@@ -74,7 +74,7 @@ int Function GetStageCountForSequenceID(int seqID, int longScene = 0, int other 
 		if (seqID >= 509 && seqID <= 511)
 			result = 2
 		elseIf (seqID == 535)
-			result = 5
+			result = 4
 		elseIf (seqID >= 546 && seqID <= 547)
 			result = 6
 		endIf
@@ -4348,18 +4348,18 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 				ssStruct.PositionOrigID = "RMH Couch Cuddle S1 - S2"
 				ssStruct.PositionID = "DTSIX_535_S2"
 				ssStruct.StageTime = 5.0
-			;elseIf (stageNumber == 3)
-			;	ssStruct.FAnimFormID = 0x02000F9D		
-			;	ssStruct.MAnimFormID = 0x02000F9E
-			;	ssStruct.PositionOrigID = "RMH Couch Cuddle S2"
-			;	ssStruct.PositionID = "DTSIX_535_S3"
-			;	ssStruct.StageTime = 11.5
 			elseIf (stageNumber == 3)
-				ssStruct.FAnimFormID = 0x02000F9F		
-				ssStruct.MAnimFormID = 0x02000FA0
-				ssStruct.PositionOrigID = "RMH Couch Cuddle S2 - S3"
-				ssStruct.PositionID = "DTSIX_535_S4"
-				ssStruct.StageTime = 5.0
+				ssStruct.FAnimFormID = 0x02000F9D		
+				ssStruct.MAnimFormID = 0x02000F9E
+				ssStruct.PositionOrigID = "RMH Couch Cuddle S2"
+				ssStruct.PositionID = "DTSIX_535_S3"
+				ssStruct.StageTime = 2.0
+			;elseIf (stageNumber == 3)
+			;	ssStruct.FAnimFormID = 0x02000F9F		
+			;	ssStruct.MAnimFormID = 0x02000FA0
+			;	ssStruct.PositionOrigID = "RMH Couch Cuddle S2 - S3"
+			;	ssStruct.PositionID = "DTSIX_535_S4"
+			;	ssStruct.StageTime = 2.0
 			else
 				ssStruct.FAnimFormID = 0x02000FA1		
 				ssStruct.MAnimFormID = 0x02000FA2
