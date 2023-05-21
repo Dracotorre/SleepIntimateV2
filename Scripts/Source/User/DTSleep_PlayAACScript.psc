@@ -545,7 +545,7 @@ Function InitSceneAndPlay()
 	if (SequenceID >= 100)
 		if (SceneData.CompanionInPowerArmor)
 			longScene = -1
-		elseIf (SequenceID == 705 || SequenceID == 715)
+		elseIf (SequenceID == 705)
 			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers == 1.24)
 				longScene = 1
 			elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.25)
@@ -555,7 +555,21 @@ Function InitSceneAndPlay()
 			if (otherActor > 0 && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.25)
 				longScene = 1
 			endIf
-		elseIf (SequenceID == 737 || SequenceID == 733 || SequenceID == 742 || SequenceID == 748 || SequenceID == 749)
+		elseIf (SequenceID == 715)
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers == 1.24)
+				longScene = 1
+			elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.30)   ; v2.88
+				longScene = 3
+			elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.25)
+				longScene = 2
+			endIf
+		elseIf (SequenceID == 733)
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.30)			; v2.88
+				longScene = 2
+			elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.1)
+				longScene = 1
+			endIf
+		elseIf (SequenceID == 737 || SequenceID == 742 || SequenceID == 748 || SequenceID == 749)
 			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.1)
 				longScene = 1
 				if (SequenceID == 737 && DTSleep_IntimateSceneLen.GetValueInt() >= 3)
@@ -608,6 +622,10 @@ Function InitSceneAndPlay()
 				longScene = 2
 			elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
 				longScene = 1
+			endIf
+		elseIf (SequenceID == 753)
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.30)
+				longScene = 1																	; v2.88
 			endIf
 		elseIf (SequenceID == 754)
 			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.29)			; v2.84
@@ -680,13 +698,21 @@ Function InitSceneAndPlay()
 				longScene = 1
 			endIf
 		elseIf (SequenceID == 783)
-			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.290)		; v2.84
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.300)		; v2.88
+				longScene = 3
+			elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.290)		; v2.84
 				longScene = 2
 			elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.280)
 				longScene = 1
 			endIf
-		elseIf (SequenceID >= 793 && SequenceID <= 794)										; v2.84
-			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.290)
+		elseIf (SequenceID == 787)														; v2.88
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.300)
+				longScene = 1
+			endIf
+		elseIf (SequenceID >= 793 && SequenceID <= 794)										; v2.84, v2.88
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.300)
+				longScene = 2
+			elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.290)
 				longScene = 1
 			endIf
 		elseIf (SequenceID == 795)
@@ -1150,7 +1176,7 @@ Function PlayAnimAtStage(DTAACSceneStageStruct stage, Actor mActor, Actor fActor
 			endIf
 		endIf
 		
-		;Debug.Trace("[DTSleep_PlayAAC] stage " + stage.StageNum + ", waitSecs = " + waitSecs)
+		;Debug.Trace("[DTSleep_PlayAAC] stage " + stage.StageNum + ", waitSecs = " + waitSecs + ", " + stage.PositionID)
 		
 		Idle a2 = None
 		Idle a1 = Game.GetFormFromFile(stage.FAnimFormID, stage.PluginName) as Idle

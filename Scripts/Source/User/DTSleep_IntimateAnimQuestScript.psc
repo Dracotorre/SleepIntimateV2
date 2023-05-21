@@ -24,7 +24,7 @@ ScriptName DTSleep_IntimateAnimQuestScript extends Quest
 ;  200 - 249 - Crazy gun bed idles
 ;  250 - 299 - Crazy gun stand idles
 ;  300 - 499 - reserved
-;  500 - 599 - "Atomic Lust" and "Mutated lust" 
+;  500 - 599 - "Atomic Lust" and "Mutated lust" and Old Rufgt and "Raid My Heart"
 ;  600 - 599 - Leito v2 
 ;  700 - 799 - SavageCabbage 
 ;  800 - 899 - ZaZout4 
@@ -157,6 +157,7 @@ FormList property DTSleep_IntimateCouchLimSpaceList auto const		; v2.73
 FormList property DTSleep_IntimateLockerList auto const				; v2.77
 FormList property DTSleep_IntimateLockerAdjList auto const			; 
 FormList property DTSleep_IntimateStoveList auto const 				; added v2.84
+FormList property DTSleep_IntimatePatioTableList auto const			; added v2.88
 Static property DTSleep_MainNode auto const Mandatory
 Static property DTSleep_DummyNode auto const Mandatory
 ObjectReference property JailDoor1Quincy1Ref auto const
@@ -248,6 +249,7 @@ int FurnTypeIsTablePicnic = 253 const
 int FurnTypeIsTablePool = 254 const
 int FurnTypeIsTableRound = 255 const
 int FurnTypeIsTableTable = 256 const
+int FurnTypeIsTablePatio = 257 const ; v2.88
 
 ; other furniture
 int FurnTypeIsPillory = 300 const
@@ -2264,7 +2266,10 @@ float Function GetTimeForPlayID(int id)
 			elseIf (id == 732)
 				DTSleep_IntimateSceneLen.SetValueInt(0)
 				return 48.0
-			elseIf (id >= 713 && id <= 715)
+			elseIf (id >= 713 && id <= 714)
+				DTSleep_IntimateSceneLen.SetValueInt(0)
+				return 32.0
+			elseIf (id == 715 && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers <= 1.24)		; v2.88
 				DTSleep_IntimateSceneLen.SetValueInt(0)
 				return 32.0
 			elseIf (SceneData.SecondMaleRole != None && id == 707)
@@ -2702,6 +2707,8 @@ bool Function IsObjTable(ObjectReference obj, Form baseBedForm)
 		elseIf (DTSleep_IntimateDinerBoothTableAllList.HasForm(baseBedForm))
 			return true
 		elseIf (DTSleep_IntimatePoolTableList.HasForm(baseBedForm))
+			return true
+		elseIf (DTSleep_IntimatePatioTableList.HasForm(baseBedForm))			; v2.88
 			return true
 		endIf
 	endIf
@@ -4256,8 +4263,8 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 							elseIf (id >= 767 && id <= 768)
 								placeOnBedSimple = true
 								markerIsBed = true
-							elseIf (id == 773)
-								; strong on couch
+							elseIf (id >= 772 && id <= 773)
+								; strong on patio table or couch
 								placeOnBedSimple = true
 								markerIsBed = true
 							elseIf (!restrictPlaceOnBed)
@@ -5459,6 +5466,8 @@ bool Function SceneIDArrayPrepMyFurnitureType()
 				MySleepBedFurnType = FurnTypeIsTableRound	
 			elseIf (DTSleep_IntimateDeskList.HasForm(baseBedForm))
 				MySleepBedFurnType = FurnTypeIsTableDesk
+			elseIf (DTSleep_IntimatePatioTableList.HasForm(baseBedForm))
+				MySleepBedFurnType = FurnTypeIsTablePatio					; v2.88
 			else
 				MySleepBedFurnType = FurnTypeIsTableTable
 			endIf
@@ -5888,13 +5897,16 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 		elseIf (MySleepBedFurnType >= 250 && MySleepBedFurnType < 300 && !MainActorPositionByCaller)
 			; ***** tables ******
 			
-			;if (SceneData.IsUsingCreature && !SceneData.SameGender && SceneData.IsCreatureType == 2)
-			;	if (!IsAAFEnabled() && DTSleep_IntimateRoundTableList.HasForm(baseBedForm))
-			;		sidArray.Add(74) ; stand-only
-			;		sidArray.Add(73) ; stand-only
-			;	endIf
+			if (SceneData.IsUsingCreature && !SceneData.SameGender && SceneData.IsCreatureType == 1)
 				
-			if (!SceneData.IsUsingCreature && !SceneData.CompanionInPowerArmor)
+				if (MySleepBedFurnType == FurnTypeIsTablePatio)				; v2.88
+					if (packID == 7)
+						sidArray.Add(72)
+						
+					endIf
+				endIf
+				
+			elseIf (!SceneData.IsUsingCreature && !SceneData.CompanionInPowerArmor)
 				if (playerPick && DoesMainActorPrefID(50))								; v2.53 -- moved 2.51 fix so can have oral
 					if (packID == 7)
 						if (MySleepBedFurnType == FurnTypeIsTablePool)
@@ -6095,6 +6107,7 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 				if (packID == 7)
 					sidArray.Add(79)
 				endIf
+			
 			elseIf (packID == 9)
 				okayAdd = true
 				if (playerPick && !DoesMainActorPrefID(53))
@@ -6167,16 +6180,27 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 					endIf
 				endIf
 			elseIf (packID == 5)
-				if (!playerPick || DoesMainActorPrefID(50))
+				if (playerPick && DoesMainActorPrefID(50))
 					if (!(DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive || Utility.RandomInt(1, 7) > 5)
 						; reduce frequency - v2.73
 						sidArray.Add(62)
 					endIf
 					sidArray.Add(63) ; requires specific mesh, but close enough
-				elseIf (!(DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive && !(DTSConditionals as DTSleep_Conditionals).IsLeitoActive && !(DTSConditionals as DTSleep_Conditionals).IsLeitoAAFActive && !(DTSConditionals as DTSleep_Conditionals).IsGrayCreatureActive)
-					; nothing else, must add
-					sidArray.Add(62)
-					sidArray.Add(63) ; requires specific mesh, but close enough
+					if ((DTSConditionals as DTSleep_Conditionals).MutatedLustVers >= 1.4)
+						sidArray.Add(65)
+					endIf
+				else
+					; check MutantLust version-  v2.88
+
+					if ((DTSConditionals as DTSleep_Conditionals).MutatedLustVers >= 1.4)
+						
+						sidArray.Add(64)
+					elseIf (!(DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive && !(DTSConditionals as DTSleep_Conditionals).IsLeitoActive && !(DTSConditionals as DTSleep_Conditionals).IsLeitoAAFActive && !(DTSConditionals as DTSleep_Conditionals).IsGrayCreatureActive)
+					
+						; nothing else, must add
+						sidArray.Add(62)
+						sidArray.Add(63) ; requires specific mesh, but close enough
+					endIf
 				endIf
 			endIf
 			
@@ -7106,7 +7130,7 @@ bool Function SceneIDAtPlayerPosition(int sid)
 		return true
 	elseIf (sid == 769)
 		return true
-	elseIf (sid >= 770 && sid <= 776 && sid != 773)				;v2.70 added 773 to strong on couch
+	elseIf (sid >= 770 && sid <= 776 && sid != 773 && sid != 772)		;v2.70 added 773 to strong on couch, v2.88 added 772-patio-table
 		return true
 	elseIf (sid == 784)
 		return true

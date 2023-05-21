@@ -58,6 +58,7 @@ bool property IsAtomicLustActive = false auto conditional hidden
 float property AtomicLustVers = 0.0 auto conditional hidden
 bool property IsBP70Active = false auto conditional hidden
 bool property IsMutatedLustActive = false auto conditional hidden
+float property MutatedLustVers = 0.0 auto conditional hidden
 bool property IsRufgtActive = false auto conditional hidden
 bool property IsRufgtRaidHeartActive = false auto conditional hidden			; added v2.87
 bool property IsHoloboyActive = false auto conditional hidden

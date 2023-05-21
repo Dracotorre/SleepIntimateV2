@@ -376,6 +376,7 @@ FormList property DTSleep_TortureDList auto const
 FormList property DTSleep_FlagpoleList auto const
 FormList property DTSleep_IntimatePropList auto const
 FormList property DTSleep_IntimateStoveList auto const 		; added v2.84
+FormList property DTSleep_IntimatePatioTableList auto const	; added v2.88
 FormList property DTSleep_IntimateTablesAllList auto const
 FormList property DTSleep_NotHumanList auto const			; added 2.62
 Spell property DTSleep_LoverBonusSpell auto const
@@ -8217,21 +8218,21 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 						endIf
 					endIf
 					
-					if (setPickSpot)  ; v2.70 --- remove random --- || Utility.RandomInt(2,9) > 6)
+					;if (setPickSpot)  ; v2.70 --- remove random --- || Utility.RandomInt(2,9) > 6)
 						if ((DTSConditionals as DTSleep_Conditionals).IsLeitoActive)
 							animPacks.Add(1)
 						elseIf ((DTSConditionals as DTSleep_Conditionals).IsLeitoAAFActive)
 							animPacks.Add(6)
 						endIf
 						
-						if ((DTSConditionals as DTSleep_Conditionals).IsAtomicLustActive)
+						if ((DTSConditionals as DTSleep_Conditionals).IsMutatedLustActive)			; v2.88 fix strong uses mutated, not atomic
 							animPacks.Add(5)
 						endIf
 						
 						if ((DTSConditionals as DTSleep_Conditionals).IsGrayCreatureActive)
 							animPacks.Add(9)
 						endIf
-					endIf
+					;endIf
 					
 					if (animPacks.Length > 0)
 						if (setPickSpot)
@@ -8389,6 +8390,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 				;  8 = kitchen counter
 				;  10 = Try railing
 				;  20 = Stove (SM)
+				;  30 = Patio Table (SM)
 				; -----------------------------------------------------
 				
 				if (specialFurn >= 103 && specialFurn <= 104)
@@ -8706,12 +8708,19 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 							DTSleep_SexStyleLevel.SetValue(19.0)			; strong oral value to avoid including embrace
 							if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.29 && DTSleep_SettingProps.GetValueInt() >= 1)
 								
-								; is there an stove nearby?  v2.84
-								propObjRef = DTSleep_CommonF.FindNearestObjectInListFromObjRef(DTSleep_IntimateStoveList, akFurniture, 600.0, true)
-								if (propObjRef != None)
-									DTSleep_SexStyleLevel.SetValue(20.0)
+								if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.30)
+									; is there a patio table nearby?   v2.88
+									propObjRef = DTSleep_CommonF.FindNearestObjectInListFromObjRef(DTSleep_IntimatePatioTableList, akFurniture, 600.0, true)
+									if (propObjRef != None)
+										DTSleep_SexStyleLevel.SetValue(30.0)
+									else
+										; is there an stove nearby?  v2.84
+										propObjRef = DTSleep_CommonF.FindNearestObjectInListFromObjRef(DTSleep_IntimateStoveList, akFurniture, 600.0, true)
+										if (propObjRef != None)
+											DTSleep_SexStyleLevel.SetValue(20.0)
+										endIf
+									endIf
 								endIf
-								
 							endIf
 						else
 							DTSleep_SexStyleLevel.SetValueInt(6)			; hide Embrace and show Pick-Spot
@@ -8942,6 +8951,8 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 					checkVal = 0
 					if (propObjRef != None)
 						furnToPlayObj = propObjRef
+					else
+						DTDebug("picked table or prop, but no prop object!", 1)
 					endIf
 					pickSpot = false
 					int sexStyleVal = DTSleep_SexStyleLevel.GetValueInt()
@@ -10320,22 +10331,19 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 				endIf
 			endIf
 			
-		elseIf (furnObjRef != None && (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsObjDinerBoothTable(furnObjRef, baseBedForm))
-			; diner booth table
-			if (hasSavageCabbageAnims && !SceneData.SameGender)
-				animSets.Add(7)
-			endif
-			
 		elseIf (IntimateCompanionRef == StrongCompanionRef)
+			
+			SceneData.PreferStandOnly = true
+			
 			if (baseBedForm != None)
 				if (hasSavageCabbageAnims)
+					
 					
 					if (baseBedForm.HasKeyword(AnimFurnFloorBedAnims))
 						animSets.Add(7)
 						
 					elseIf (DTSleep_BedsBigDoubleList.HasForm(baseBedForm))
 						animSets.Add(7)
-
 					endIf
 				endIf
 				if (baseBedForm.HasKeyword(AnimFurnFloorBedAnims))
@@ -10355,7 +10363,7 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 				animSetCount += 1
 				animSets.Add(9)
 			endIf
-			SceneData.PreferStandOnly = true
+			
 			
 			if (animSetCount == 0)
 				SceneData.AnimationSet = 0
@@ -10371,6 +10379,11 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 			if (hasSavageCabbageAnims && !SceneData.SameGender)
 				animSets.Add(7)
 			endIf
+		elseIf (furnObjRef != None && (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsObjDinerBoothTable(furnObjRef, baseBedForm))
+			; diner booth table
+			if (hasSavageCabbageAnims && !SceneData.SameGender)
+				animSets.Add(7)
+			endif
 			
 		;elseIf (SceneData.IsUsingCreature && baseBedForm.HasKeyword(AnimFurnFloorBedAnims))
 		;	if (hasLeitoAnims)
@@ -14998,10 +15011,11 @@ bool Function SetUndressForRespectSit(ObjectReference akFurniture, Actor compani
 				(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).PlayerIsAroused = false
 				(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).AltFemBodyEnabled = false
 				(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).PlayerRedressEnabled = true
-				(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).KeepShoesEquipped = false   	; v2.80
-				(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).KeepStockingsEquipped = false
+				(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).KeepShoesEquipped = true   	; v2.88 change to true
+				(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).KeepStockingsEquipped = true  ;   changed to true
 				; always redress 
 				
+				SetUndressFootwearVals(0)					; v2.88 --normally Undress ignores footwear unless remove hat and jacket
 				SetUndressBodySwaps()
 				
 				IntimateWeatherScoreSet wScore = ChanceForIntimateSceneWeatherScore()

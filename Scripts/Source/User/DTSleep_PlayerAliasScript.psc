@@ -2074,31 +2074,38 @@ Function CheckCompatibility()
 			
 			Form idleForm = None
 			
-			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.290)				; v2.84 update for latest
-			
-				idleForm = Game.GetFormFromFile(0x08033D09, "SavageCabbage_Animations.esp")
+			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.300)				; v2.88
+				idleForm = Game.GetFormFromFile(0x08034511, "SavageCabbage_Animations.esp")
 				
 				if (idleForm != None)
-					(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.290
-				else
-				
-					idleForm = Game.GetFormFromFile(0x08032D6E, "SavageCabbage_Animations.esp")
+					(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.300
+					
+				elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.29)
+							
+					idleForm = Game.GetFormFromFile(0x08033D09, "SavageCabbage_Animations.esp")
 					
 					if (idleForm != None)
-						(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.280
+						(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.290				; v2.84 update for latest
 					else
-						idleForm = Game.GetFormFromFile(0x0803257D, "SavageCabbage_Animations.esp")
+					
+						idleForm = Game.GetFormFromFile(0x08032D6E, "SavageCabbage_Animations.esp")
+						
 						if (idleForm != None)
-							(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.270
+							(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.280
 						else
-							idleForm = Game.GetFormFromFile(0x08030D9C, "SavageCabbage_Animations.esp")
+							idleForm = Game.GetFormFromFile(0x0803257D, "SavageCabbage_Animations.esp")
 							if (idleForm != None)
-								(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.260
-								
-							else 
-								idleForm = Game.GetFormFromFile(0x08030575, "SavageCabbage_Animations.esp")
+								(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.270
+							else
+								idleForm = Game.GetFormFromFile(0x08030D9C, "SavageCabbage_Animations.esp")
 								if (idleForm != None)
-									(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.250
+									(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.260
+									
+								else 
+									idleForm = Game.GetFormFromFile(0x08030575, "SavageCabbage_Animations.esp")
+									if (idleForm != None)
+										(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = 1.250
+									endIf
 								endIf
 							endIf
 						endIf
@@ -2162,7 +2169,7 @@ Function CheckCompatibility()
 			(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = -1.0
 		endIf
 		
-		; Rufgt Raid my Heart - available for XOXO			; v2.88
+		; Rufgt Raid my Heart - available for XOXO			; v2.87
 		if (Game.IsPluginInstalled("Raid My Heart.esp"))
 			(DTSConditionals as DTSleep_Conditionals).IsRufgtRaidHeartActive = true
 		else
@@ -2288,6 +2295,14 @@ Function CheckCompatibility()
 				; Mutated Lust
 				if (Game.IsPluginInstalled("Mutated Lust.esp"))
 					(DTSConditionals as DTSleep_Conditionals).IsMutatedLustActive = true
+					if ((DTSConditionals as DTSleep_Conditionals).MutatedLustVers < 1.4)
+						Idle mutatedIdle = Game.GetFormFromFile(0x0900C618, "Mutated Lust.esp") as Idle
+						if (mutatedIdle != None)
+							(DTSConditionals as DTSleep_Conditionals).MutatedLustVers = 1.4
+						else
+							(DTSConditionals as DTSleep_Conditionals).MutatedLustVers = 1.3
+						endIf
+					endIf
 				else
 					(DTSConditionals as DTSleep_Conditionals).IsMutatedLustActive = false
 				endIf
@@ -3112,6 +3127,27 @@ int Function CheckCustomPlayerHomes()
 		
 		DTSleep_NotHumanList.AddForm(mannequinForm)
 		DTSleep_NotHumanList.AddForm(Game.GetFormFromFile(0x090008C6, aesFurnName))
+	endIf
+	
+	; PsBoss Beds    - v2.88
+	Form pBedForm = IsPluginActive(0x09000001, "PsBoss Beds.esp")
+	if (pBedForm != None && !DTSleep_BedList.HasForm(pBedForm))
+		modCount += 1
+		
+		AddToBedsList(pBedForm, true)
+		AddToBedsList(Game.GetFormFromFile(0x09000002, "PsBoss Beds.esp"), true)
+		AddToBedsList(Game.GetFormFromFile(0x09000003, "PsBoss Beds.esp"), true)
+		AddToBedsList(Game.GetFormFromFile(0x09000004, "PsBoss Beds.esp"), true)
+		AddToBedsList(Game.GetFormFromFile(0x09000005, "PsBoss Beds.esp"), true)
+		AddToBedsList(Game.GetFormFromFile(0x09000006, "PsBoss Beds.esp"), true)
+		AddToBedsList(Game.GetFormFromFile(0x09000007, "PsBoss Beds.esp"), true)
+		AddToBedsList(Game.GetFormFromFile(0x09000008, "PsBoss Beds.esp"), true)
+		AddToBedsList(Game.GetFormFromFile(0x09000009, "PsBoss Beds.esp"), true)
+		AddToBedsList(Game.GetFormFromFile(0x0900000A, "PsBoss Beds.esp"), true)
+		AddToBedsList(Game.GetFormFromFile(0x0900000B, "PsBoss Beds.esp"), true)
+		AddToBedsList(Game.GetFormFromFile(0x0900000C, "PsBoss Beds.esp"), true)
+		AddToBedsList(Game.GetFormFromFile(0x0900000D, "PsBoss Beds.esp"), true)
+		AddToBedsList(Game.GetFormFromFile(0x0900000E, "PsBoss Beds.esp"), true)
 	endIf
 	
 	; BasementLiving handled in regular section
@@ -4631,6 +4667,14 @@ int Function CheckCustomArmorsAndBackpacks()
 		; new lists for v2.71
 		DTSleep_ArmorJewelry56List.AddForm(Game.GetFormFromFile(0x0901ABD2, dxVintageName))		; bracelet
 		DTSleep_ArmorJewelry57List.AddForm(Game.GetFormFromFile(0x0901B36E, dxVintageName))		; anklet
+	endIf
+	
+	; DX Naughty Secretary  - v2.88
+	extraForm = IsPluginActive(0x0902B93A, "DX_NaughtySecretary.esp")						; socks
+	if (extraForm != None && !DTSleep_ArmorGlassesList.HasForm(extraForm))
+		modCount += 1
+		DTSleep_ArmorExtraClothingList.AddForm(extraForm)
+		DTSleep_ArmorGlassesList.AddForm(Game.GetFormFromFile(0x0902DF3A, "DX_NaughtySecretary.esp"))
 	endIf
 	
 	
