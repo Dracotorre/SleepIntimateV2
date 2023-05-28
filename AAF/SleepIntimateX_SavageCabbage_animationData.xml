@@ -1,4 +1,4 @@
-<meta title="SleepIntimateX_SavageCabbage_animationData.xml" version="2.84" dataSet="animation"/>
+<meta title="SleepIntimateX_SavageCabbage_animationData.xml" version="2.88" dataSet="animation"/>
 <defaults source="SavageCabbage_Animations.esp"/>
 
 <animation id="SIX_SC_FM-Bed01-01Handjob" frames="390">
@@ -549,6 +549,14 @@
 
 <!---- chairs ---->
 
+<animation id="SIX_SC_FM-Throne01-02Start" frames="500">
+	<actor gender="F">
+		<idle form="344DC"/>
+	</actor>
+	<actor gender="M">
+		<idle form="344DD"/>
+	</actor>
+</animation>
 <animation id="SIX_SC_FM-Throne01-03Handjob" frames="500">
 	<actor gender="F">
 		<idle form="101A"/>
@@ -735,6 +743,24 @@
 	</actor>
 	<actor gender="M">
 		<idle form="1801"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-Stool01-01Tease" frames="350">
+	<actor gender="F">
+		<idle form="344D8"/>
+	</actor>
+	<actor gender="M">
+		<idle form="344D9"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC_FM-Stool01-02Start frames="350">
+	<actor gender="F">
+		<idle form="344DA"/>
+	</actor>
+	<actor gender="M">
+		<idle form="344DB"/>
 	</actor>
 </animation>
 
@@ -1821,10 +1847,46 @@
 		<idle form="2FD9E"/>
 	</actor>
 	<actor gender="M">
-		<idle form="2FDA0"/>
+		<idle form="2FD9F"/>
 	</actor>
 	<actor gender="M">
-		<idle form="2FD9F"/>
+		<idle form="2FDA0"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FMM-Human-BunkBed01-05Threesome" frames="500">
+	<actor gender="F">
+		<idle form="344F2"/>
+	</actor>
+	<actor gender="M">
+		<idle form="344F3"/>
+	</actor>
+	<actor gender="M">
+		<idle form="344F4"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FMM-Human-BunkBed01-06Threesome" frames="500">
+	<actor gender="F">
+		<idle form="344F5"/>
+	</actor>
+	<actor gender="M">
+		<idle form="344F6"/>
+	</actor>
+	<actor gender="M">
+		<idle form="344F7"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FMM-Human-BunkBed01-07ClimaxLoop" frames="500">
+	<actor gender="F">
+		<idle form="344F8"/>
+	</actor>
+	<actor gender="M">
+		<idle form="344F9"/>
+	</actor>
+	<actor gender="M">
+		<idle form="344FA"/>
 	</actor>
 </animation>
 
@@ -2780,6 +2842,69 @@
 	</actor>
 </animation>
 
+<animation id="SIX_SIX_SC-FM-Human-Throne02-01Tease" frames="500">
+	<actor gender="F">
+		<idle form="344DE"/>
+	</actor>
+	<actor gender="M">
+		<idle form="344DF"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-Throne02-02Start" frames="500">
+	<actor gender="F">
+		<idle form="344E0"/>
+	</actor>
+	<actor gender="M">
+		<idle form="344E1"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-Throne02-04ReverseCowgirl" frames="500">
+	<actor gender="F">
+		<idle form="344E2"/>
+	</actor>
+	<actor gender="M">
+		<idle form="344E3"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-Throne02-05ReverseCowgirl" frames="500">
+	<actor gender="F">
+		<idle form="344E4"/>
+	</actor>
+	<actor gender="M">
+		<idle form="344E5"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-Throne02-06ReverseCowgirl" frames="500">
+	<actor gender="F">
+		<idle form="344E6"/>
+	</actor>
+	<actor gender="M">
+		<idle form="344E7"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-Throne02-07ClimaxLoop" frames="500">
+	<actor gender="F">
+		<idle form="344E8"/>
+	</actor>
+	<actor gender="M">
+		<idle form="344E9"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-Throne02-08Finish" frames="500">
+	<actor gender="F">
+		<idle form="344EA"/>
+	</actor>
+	<actor gender="M">
+		<idle form="344EB"/>
+	</actor>
+</animation>
+
 <animation id="SIX_SC-FM-Human-JailCellSmall01-01Tease" frames="500">
 	<actor gender="F">
 		<idle form="30560"/>
@@ -3195,6 +3320,15 @@
 	</actor>
 </animation>
 
+<animation id="SIX_SC-FM-Human-WeaponWorkbenchLarge01-02Start" frames="500">
+	<actor gender="F">
+		<idle form="344EC"/>
+	</actor>
+	<actor gender="M">
+		<idle form="344ED"/>
+	</actor>
+</animation>
+
 <animation id="SIX-SC-FM-Human-WeaponWorkbenchLarge01-03Doggy" frames="500">
 	<actor gender="F">
 		<idle form="31D12"/>
@@ -3228,6 +3362,15 @@
 	</actor>
 	<actor gender="M">
 		<idle form="33CDD"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-WeaponWorkbenchLarge01-07ClimaxLoop" frames="500">
+	<actor gender="F">
+		<idle form="344EE"/>
+	</actor>
+	<actor gender="M">
+		<idle form="344EF"/>
 	</actor>
 </animation>
 
@@ -3553,6 +3696,24 @@
 	</actor>
 </animation>
 
+<animation id="SIX_SC-FM-Human-SleepingBag01-07ClimaxLoop" frames="400">
+	<actor gender="F">
+		<idle form="344D4"/>
+	</actor>
+	<actor gender="M">
+		<idle form="344D5" />
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-Human-SleepingBag01-08Finish" frames="400">
+	<actor gender="F">
+		<idle form="344D6"/>
+	</actor>
+	<actor gender="M">
+		<idle form="344D7" />
+	</actor>
+</animation>
+
 <animation id="SIX_SC-FM-Human-Lockers01-01Tease" frames="400">
 	<actor gender="F">
 		<idle form="32533"/>
@@ -3697,5 +3858,79 @@
 	<actor gender="M" skeleton="Supermutant">
 		<idle form="33D0A"/>
 		<!--<value path="morph" value="Erection Strait" to="1"/>-->
+	</actor>
+</animation>
+
+<!-- ------ new super mutant v2.88, SC-1.3  -->
+
+<animation id="SIX_SC-FM-SuperMutant-PatioTable01-01Tease" frames="400">
+	<actor gender="F">
+		<idle form="34503"/>
+	</actor>
+	<actor gender="M" skeleton="Supermutant">
+		<idle form="34504"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-SuperMutant-PatioTable01-02Start" frames="400">
+	<actor gender="F">
+		<idle form="34505"/>
+	</actor>
+	<actor gender="M" skeleton="Supermutant">
+		<idle form="34506"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-SuperMutant-PatioTable01-03Sitting" frames="400">
+	<actor gender="F">
+		<idle form="34507"/>
+	</actor>
+	<actor gender="M" skeleton="Supermutant">
+		<idle form="34508"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-SuperMutant-PatioTable01-04Missionary" frames="400">
+	<actor gender="F">
+		<idle form="34509"/>
+	</actor>
+	<actor gender="M" skeleton="Supermutant">
+		<idle form="3450A"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-SuperMutant-PatioTable01-05Sideways" frames="400">
+	<actor gender="F">
+		<idle form="3450B"/>
+	</actor>
+	<actor gender="M" skeleton="Supermutant">
+		<idle form="3450C"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-SuperMutant-PatioTable01-06Sideways" frames="400">
+	<actor gender="F">
+		<idle form="3450D"/>
+	</actor>
+	<actor gender="M" skeleton="Supermutant">
+		<idle form="3450E"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-SuperMutant-PatioTable01-07ClimaxLoop" frames="400">
+	<actor gender="F">
+		<idle form="3450F"/>
+	</actor>
+	<actor gender="M" skeleton="Supermutant">
+		<idle form="34510"/>
+	</actor>
+</animation>
+
+<animation id="SIX_SC-FM-SuperMutant-PatioTable01-08Finish" frames="400">
+	<actor gender="F">
+		<idle form="34511"/>
+	</actor>
+	<actor gender="M" skeleton="Supermutant">
+		<idle form="34512"/>
 	</actor>
 </animation>

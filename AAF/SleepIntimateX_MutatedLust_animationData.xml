@@ -1,4 +1,4 @@
-<meta title="SleepIntimateX_MutatedLust_animationData.xml" version="2.18" dataSet="animation"/>
+<meta title="SleepIntimateX_MutatedLust_animationData.xml" version="2.88" dataSet="animation"/>
 <defaults source="Mutated Lust.esp"/>
 
 
@@ -21,5 +21,25 @@
 	</actor>
 	<actor gender="M" skeleton="Supermutant">
 		<idle form="01004C71"/>
+	</actor>
+</animation>
+
+<animation id="SIX_ML_MutatedSMCowgirl" frames="300">
+	<actor gender="F">
+		<idle form="0100BE7D"/>
+		<!--<value path="morph" value="Erection Down" to="0.48"/> -->
+	</actor>
+	<actor gender="M" skeleton="Supermutant">
+		<idle form="0100BE7E"/>
+	</actor>
+</animation>
+
+<animation id="SIX_ML_MutatedSMJerking" frames="300">
+	<actor gender="F">
+		<idle form="0100C618"/>
+		<!--<value path="morph" value="Erection up" to="0.2"/> -->
+	</actor>
+	<actor gender="M" skeleton="Supermutant">
+		<idle form="0100C619"/>
 	</actor>
 </animation>

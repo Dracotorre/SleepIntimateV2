@@ -1360,6 +1360,7 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 					ssStruct.OAnimFormID = 0x05010C3E			; v2.49 swapped male roles so primary on bottom
 					ssStruct.MAnimFormID = 0x05010C3D
 					ssStruct.PositionID = "DTSIXFMM_715_S1"
+					ssStruct.PositionOrigID = "FMM-BunkBed01-03Threesome"
 				elseIf (stageNumber == 3)
 					ssStruct.FAnimFormID = 0x0502FD9E			; v2.49, SC 1.2.4
 					ssStruct.MAnimFormID = 0x0502FD9F			; note order for male assignment to prevent sudden switch places
@@ -1367,26 +1368,22 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 					ssStruct.PositionID = "DTSIXFMM_715_S2"
 				elseIf (stageNumber == 4 && longScene >= 3)
 					ssStruct.FAnimFormID = 0x050344F2			; v2.88
-					ssStruct.MAnimFormID = 0x050344F4			; note order for male assignment to prevent sudden switch places
-					ssStruct.OAnimFormID = 0x050344F3
+					ssStruct.MAnimFormID = 0x050344F3			
+					ssStruct.OAnimFormID = 0x050344F4
 					ssStruct.PositionID = "DTSIXFMM_715_S3"
-				elseIf (stageNumber == 5 && longScene >= 3)
-					ssStruct.FAnimFormID = 0x050344F2			; v2.88
-					ssStruct.MAnimFormID = 0x050344F4			; note order for male assignment to prevent sudden switch places
-					ssStruct.OAnimFormID = 0x050344F3
-					ssStruct.PositionID = "DTSIXFMM_715_S4"
 					ssStruct.PositionOrigID = "SC-FMM-Human-BunkBed01-05Threesome"
-				elseIf (stageNumber == 6 && Utility.RandomInt(1,9) > 5)
+																
+				elseIf (stageNumber == 5)
 					ssStruct.FAnimFormID = 0x050344F5			; v2.88
-					ssStruct.MAnimFormID = 0x050344F7			; note order for male assignment to prevent sudden switch places
-					ssStruct.OAnimFormID = 0x050344F6
-					ssStruct.PositionID = "DTSIXFMM_715_S5"
+					ssStruct.MAnimFormID = 0x050344F6			
+					ssStruct.OAnimFormID = 0x050344F7
+					ssStruct.PositionID = "DTSIXFMM_715_S4"
 					ssStruct.PositionOrigID = "SC-FMM-Human-BunkBed01-06Threesome"
 				elseIf (longScene >= 3)
 					ssStruct.FAnimFormID = 0x050344F8			; v2.88
-					ssStruct.MAnimFormID = 0x050344F9			; note order for male assignment to prevent sudden switch places
+					ssStruct.MAnimFormID = 0x050344F9			
 					ssStruct.OAnimFormID = 0x050344FA
-					ssStruct.PositionID = "DTSIXFMM_715_S6"
+					ssStruct.PositionID = "DTSIXFMM_715_S5"
 					ssStruct.PositionOrigID = "SC-FMM-Human-BunkBed01-07ClimaxLoop"
 				endIf
 				if (scEVB)
@@ -1403,7 +1400,6 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 					endIf
 				elseIf (longScene <= 0)
 					ssStruct.StageTime = 32.0
-					ssStruct.PositionOrigID = "FMM-BunkBed01-03Threesome"
 				endIf
 				
 			elseIf (seqID == 732)
