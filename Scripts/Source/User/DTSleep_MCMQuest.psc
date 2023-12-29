@@ -23,6 +23,7 @@ GlobalVariable property DTSleep_ActivChairs auto const
 GlobalVariable property DTSleep_IsSoSActive2 auto const
 GlobalVariable property DTSleep_IsSoSActive auto const
 { deprecated }
+GlobalVariable property DTSleep_IsNNESActive auto const								; v2.90
 EndGroup
 
 Group B_Global_Settings
@@ -89,6 +90,10 @@ int property MCMShoesEquipped = 0 auto hidden
 int property MCMShoesNotFound = 0 auto hidden
 int property MCMStockingsEquipped = 0 auto hidden
 int property MCMStockingsNotFound = 0 auto hidden
+int property MCMNNESActiveOn = 0 auto hidden					; v2.90
+int property MCMNNESActiveOff = 0 auto hidden					; v2.90
+int property MCMEmbraceModsOn = 0 auto hidden					; v3.0
+int property MCMEmbraceModsOff = 0 auto hidden					; v3.0
 
 ; ***************************** Events ********************************
 
@@ -273,6 +278,12 @@ Function SleepOrSaveToggle(float val)
 	MCM.RefreshMenu()
 EndFunction
 
+Function NNESToggle(float val)
+	(pDTSleep_MainQuest as DTSleep_MainQuestScript).ModSetNNESToggle()
+	UpdateNNES()
+	MCM.RefreshMenu()
+EndFunction
+
 Function StartUndressCheck(float val)
 	;Debug.Trace("[DTSleep_MCM] StartUndressCheck")
 	DTSleep_CaptureExtraPartsEnabled.SetValue(Utility.GetCurrentGameTime())
@@ -438,6 +449,8 @@ Function Update(bool doRefresh)
 	
 	UpdateSoS()
 	
+	UpdateNNES()						; v2.90
+	
 	if (doRefresh)
 		MCM.RefreshMenu()
 	endIf
@@ -474,6 +487,15 @@ Function UpdateAdultValues()
 		MCMAdultSexSeatsOn = 0
 		MCMAdultSexSeatsOff = 1
 	endIf
+	
+	if ((pDTSleep_MainQuest as DTSleep_MainQuestScript).IsEmbraceAnimationPacksAvailable())
+		MCMEmbraceModsOn = 1
+		MCMEmbraceModsOff = 0
+	else
+		MCMEmbraceModsOn = 0
+		MCMEmbraceModsOff = 1
+	endIf
+	
 EndFunction
 
 Function UpdateIntimateUndressValues()
@@ -506,6 +528,24 @@ Function UpdateSoS()
 		else
 			MCMSoSActiveOn = 0
 			MCMSoSActiveOff = 0
+		endIf
+	endIf
+
+EndFunction
+
+Function UpdateNNES()										; v2.90
+
+	if (DTSleep_IsNNESActive != None)
+		int sosVal = DTSleep_IsNNESActive.GetValueInt()
+		if (sosVal >= 2)
+			MCMNNESActiveOn = 1
+			MCMNNESActiveOff = 0
+		elseIf (sosVal == 1)
+			MCMNNESActiveOn = 0
+			MCMNNESActiveOff = 1
+		else
+			MCMNNESActiveOn = 0
+			MCMNNESActiveOff = 0
 		endIf
 	endIf
 

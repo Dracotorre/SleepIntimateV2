@@ -114,7 +114,7 @@ EndFunction
 ;BEGIN FRAGMENT Fragment_Terminal_14
 Function Fragment_Terminal_14(ObjectReference akTerminalRef)
 ;BEGIN CODE
-pDTSleep_SettingUndress.SetValue(0.0)
+pDTSleep_SettingUndress.SetValue(0.0
 ;END CODE
 EndFunction
 ;END FRAGMENT
@@ -649,3 +649,5 @@ GlobalVariable Property pDTSleep_SettingAAF Auto Const Mandatory
 GlobalVariable Property pDTSleep_SettingBedOwn Auto Const Mandatory
 
 GlobalVariable Property pDTSleep_SettingMenuStyle Auto Const Mandatory
+
+GlobalVariable Property pDTSleep_SettingChairsEnabled Auto Const Mandatory

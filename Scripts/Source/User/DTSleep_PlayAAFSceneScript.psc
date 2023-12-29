@@ -487,7 +487,7 @@ bool Function PlaySequence()
 	
 	if (SceneData.CompanionInPowerArmor)
 		longScene = -1
-	elseIf (SequenceID == 705)
+	elseIf (SequenceID == 705 || SequenceID == 715)
 		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers == 1.24)
 			longScene = 1
 		elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.25)
@@ -497,21 +497,7 @@ bool Function PlaySequence()
 		if (otherActor > 0 && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.25)
 			longScene = 1
 		endIf
-	elseIf (SequenceID == 715)
-		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers == 1.24)
-			longScene = 1
-		elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.30)   ; v2.88
-			longScene = 3
-		elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.25)
-			longScene = 2
-		endIf
-	elseIf (SequenceID == 733)
-		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.30)			; v2.88
-			longScene = 2
-		elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.1)
-			longScene = 1
-		endIf
-	elseIf (SequenceID == 737 || SequenceID == 742 || SequenceID == 748 || SequenceID == 749)
+	elseIf (SequenceID == 737 || SequenceID == 733 || SequenceID == 742 || SequenceID == 748 || SequenceID == 749)
 		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.1)
 			longScene = 1
 			if (SequenceID == 737 && DTSleep_IntimateSceneLen.GetValueInt() >= 3)
@@ -564,10 +550,6 @@ bool Function PlaySequence()
 			longScene = 2
 		elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
 			longScene = 1
-		endIf
-	elseIf (SequenceID == 753)
-		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.30)
-			longScene = 1																	; v2.88
 		endIf
 	elseIf (SequenceID == 754)
 		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.29)			; v2.84
@@ -640,21 +622,13 @@ bool Function PlaySequence()
 			longScene = 1
 		endIf
 	elseIf (SequenceID == 783)
-		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.300)		; v2.88
-			longScene = 3
-		elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.290)		; v2.84
+		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.290)		; v2.84
 			longScene = 2
 		elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.280)
 			longScene = 1
 		endIf
-	elseIf (SequenceID == 787)														; v2.88
-		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.300)
-			longScene = 1
-		endIf
-	elseIf (SequenceID >= 793 && SequenceID <= 794)										; v2.84, v2.88
-		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.300)
-			longScene = 2
-		elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.290)
+	elseIf (SequenceID >= 793 && SequenceID <= 794)										; v2.84
+		if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.290)
 			longScene = 1
 		endIf
 	elseIf (SequenceID == 795)
@@ -750,6 +724,10 @@ bool Function PlaySequence()
 				if (MySeqStagesArray.Length == 1)
 					
 					string posID = MySeqStagesArray[0].PositionID
+					if (SequenceID >= 1000)
+						; No DTSIX-AAF files, use originals   - v3.0 TODO:
+						posID = MySeqStagesArray[0].PositionOrigID
+					endIf
 					if (SecondActor == None)
 						if (SceneData.MaleRole != None && MainActor == SceneData.MaleRole)
 							posID = MySeqStagesArray[0].PositionOrigID
@@ -1308,6 +1286,10 @@ Function PlayAASequenceLists(Actor mActor, Actor fActor, Actor oActor)
 
 		aafSettings.duration = 10.0
 		aafSettings.position = MySeqStagesArray[0].PositionID
+		if (SequenceID >= 1000)
+			; No DTSIX-AAF files, use originals   - v3.0 TODO:
+			aafSettings.position = MySeqStagesArray[0].PositionOrigID
+		endIf
 		if (SecondActor == None)
 			if (SceneData.MaleRole != None && MainActor == SceneData.MaleRole)
 				aafSettings.position = MySeqStagesArray[0].PositionOrigID
@@ -1429,7 +1411,13 @@ Function PlayAAContinuedSequence(float waitSecs)
 		
 		if (seqCount > 0)
 			;PlayPosition(CreateSeqPositionStr(SequenceID, MySeqStagesArray[seqCount].StageNum), loopWaitSecs)
-			PlayPosition(MySeqStagesArray[seqCount].PositionID, loopWaitSecs)
+			if (SequenceID < 1000)
+				; normal
+				PlayPosition(MySeqStagesArray[seqCount].PositionID, loopWaitSecs)
+			else
+				; No DTSIX-AAF files, use originals   - v3.0 TODO:
+				PlayPosition(MySeqStagesArray[seqCount].PositionOrigID, loopWaitSecs)
+			endIf
 		endIf
 		
 		if (pingPongCount > 0 && seqCount == (seqLen - 2))

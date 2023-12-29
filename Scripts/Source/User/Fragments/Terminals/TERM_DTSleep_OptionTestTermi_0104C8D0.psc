@@ -153,6 +153,29 @@ Function Fragment_Terminal_19(ObjectReference akTerminalRef)
 EndFunction
 ;END FRAGMENT
 
+;BEGIN FRAGMENT Fragment_Terminal_20
+Function Fragment_Terminal_20(ObjectReference akTerminalRef)
+;BEGIN CODE
+float val = pDTSleep_VR.GetValue()
+if (val < 1.0)
+   val = 2.0
+else
+   val = 3.0
+endIf
+pDTSleep_VR.SetValue(val)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_21
+Function Fragment_Terminal_21(ObjectReference akTerminalRef)
+;BEGIN CODE
+float val = pDTSleep_VR.GetValue() - 2.0
+pDTSleep_VR.SetValue(val)
+;END CODE
+EndFunction
+;END FRAGMENT
+
 ;END FRAGMENT CODE - Do not edit anything between this and the begin comment
 
 Quest Property pDTSleep_MainQuest Auto Const Mandatory
@@ -166,3 +189,5 @@ GlobalVariable Property pDTSleep_SettingFastTime Auto Const Mandatory
 GlobalVariable Property pDTSleep_SettingAACV Auto Const Mandatory
 
 GlobalVariable Property pDTSleep_SettingSynthHuman Auto Const Mandatory
+
+GlobalVariable Property pDTSleep_VR Auto Const Mandatory

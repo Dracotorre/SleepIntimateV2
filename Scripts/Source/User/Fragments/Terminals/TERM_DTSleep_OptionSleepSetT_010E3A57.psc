@@ -86,7 +86,7 @@ EndFunction
 ;BEGIN FRAGMENT Fragment_Terminal_11
 Function Fragment_Terminal_11(ObjectReference akTerminalRef)
 ;BEGIN CODE
-pDTSleep_SettingSave.SetValue(0.0)
+pDTSleep_SettingSave.SetValue(3.0)
 ;END CODE
 EndFunction
 ;END FRAGMENT
@@ -392,6 +392,30 @@ EndFunction
 Function Fragment_Terminal_50(ObjectReference akTerminalRef)
 ;BEGIN CODE
 (pDTSleep_MainQuest as DTSleep_MainQuestScript).SetToggleRedress()
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_51
+Function Fragment_Terminal_51(ObjectReference akTerminalRef)
+;BEGIN CODE
+(pDTSleep_MainQuest as DTSleep_MainQuestScript).ModSetNNESToggle()
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_52
+Function Fragment_Terminal_52(ObjectReference akTerminalRef)
+;BEGIN CODE
+(pDTSleep_MainQuest as DTSleep_MainQuestScript).ModSetNNESToggle()
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_53
+Function Fragment_Terminal_53(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingSave.SetValue(0.0)
 ;END CODE
 EndFunction
 ;END FRAGMENT

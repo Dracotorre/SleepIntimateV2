@@ -36,6 +36,8 @@ GlobalVariable property DTSL_CamDef_VanModeMax auto const
 { default camera ini fVanityModeMaxDist = 200.0}
 GlobalVariable property DTSL_CamDef_VanModeMin auto const
 { default camera ini fVanityModeMinDist = 32.0 }
+GlobalVariable property DTSleep_VR auto	const
+{ 3=VR-game, 2=VR-mode }
 
 bool property ReverseCamXOffset auto hidden
 bool property IsMaleCamOffset auto hidden
@@ -43,7 +45,7 @@ float property CamHeightOffset auto hidden
 
 Function GoSceneViewCamCustom(int lowCam = 1)
 	; v2.60 - include -1 for embrace scenes
-	if (lowCam >= -1 && DTSL_CamCustomEnabled.GetValue() > 0.0 && DTSleep_SettingCamera.GetValue() > 0.0)
+	if (DTSleep_VR.GetValue() <= 1.0 && lowCam >= -1 && DTSL_CamCustomEnabled.GetValue() > 0.0 && DTSleep_SettingCamera.GetValue() > 0.0)
 	; Utility.SetINIBool("bForceAutoVanityMode:Camera", false)
 	; Utility.SetINIFloat("fVanityModeMaxDist:Camera", 320.0)
 	; Utility.SetINIFloat("fVanityModeMinDist:Camera", 64.0)
@@ -126,6 +128,7 @@ Function GoSceneViewDone(bool goFirstOK)
 	
 endFunction
 
+; set useLowCam to 5 will override ForceThirdPerson
 Function GoSceneViewStart(int useLowCam = 1)
 	
 	; this AnimationVariable sometimes misreports so always force ThirdPerson
@@ -146,8 +149,9 @@ Function GoSceneViewStart(int useLowCam = 1)
 		endIf
 	endIf
 	
-	GoSceneViewCamCustom(useLowCam)  ; set custom cam before going third-person
-	Utility.Wait(0.06)
-	Game.ForceThirdPerson()
-
+	if (useLowCam <= -5 || DTSleep_VR.GetValue() <= 1.0)		; v3.0
+		GoSceneViewCamCustom(useLowCam)  ; set custom cam before going third-person
+		Utility.Wait(0.06)
+		Game.ForceThirdPerson()
+	endIf
 endFunction

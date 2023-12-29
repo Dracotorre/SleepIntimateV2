@@ -25,6 +25,7 @@ GlobalVariable property DTSleep_IsLeitoActive auto
 GlobalVariable property DTSleep_IsSYSCWActive auto
 GlobalVariable property DTSleep_SettingPrefSYSC auto
 GlobalVariable property DTSleep_IsSoSActive auto
+GlobalVariable property DTSleep_IsNNESActive auto						; added v2.90
 GlobalVariable property DTSleep_IsSleepTogetherActive auto
 GlobalVariable property DTSleep_IsZaZOut auto
 GlobalVariable property DTSleep_SettingUseLeitoGun auto const
@@ -121,6 +122,7 @@ FormList property DTSleep_ArmorShoesList auto const 				; v2.80
 Message property DTSleep_VersionMsg auto const
 Message property DTSleep_VersionDowngradeMsg auto const				; v2.60
 Message property DTSleep_VersionExplicitMsg auto const
+Message property DTSleep_VersionVRMessage auto const				; v3.0
 Message property DTSleep_VersionSafeMsg auto const
 Message property DTSleep_VersionOffMsg auto const
 Message property DTSleep_VersionUpUndressMsg auto const
@@ -264,7 +266,6 @@ Event OnPlayerLoadGame()
 		endIf
 	; else check reload??
 	endIf
-	
 	
 	StartTimer(4.2, 13)
 EndEvent
@@ -843,6 +844,20 @@ Function CheckCompatibility()
 		Debug.Trace(myScriptName + "SleepOrSave has been removed")
 		DTSleep_IsSoSActive.SetValue(-1.0)
 		(DTSConditionals as DTSleep_Conditionals).ModSoSPerk = None
+	endIf
+	
+	; NpcsNeedToEatandSleep (NNES) or Companions Need to Eat and Sleep
+	
+	if (DTSleep_IsNNESActive.GetValue() <= 0.0)
+		perk nnesPerk = IsPluginActive(0x01004CB4, "NpcsNeedtoEatandSleep.esp") as Perk
+		if (nnesPerk != None)
+			DTSleep_IsNNESActive.SetValue(3.0)		; init
+			(DTSConditionals as DTSleep_Conditionals).ModNNESPerk = nnesPerk
+		endIf
+	elseIf (!Game.IsPluginInstalled("NpcsNeedtoEatandSleep.esp"))
+		Debug.Trace(myScriptName + "NNES has been removed")
+		DTSleep_IsNNESActive.SetValue(-1.0)
+		(DTSConditionals as DTSleep_Conditionals).ModNNESPerk = None
 	endIf
 	
 	; See-You-Sleep
@@ -2169,12 +2184,20 @@ Function CheckCompatibility()
 			(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = -1.0
 		endIf
 		
-		; Rufgt Raid my Heart - available for XOXO			; v2.87
+		; Rufgt Raid my Heart - available for XOXO			; v2.88
 		if (Game.IsPluginInstalled("Raid My Heart.esp"))
 			(DTSConditionals as DTSleep_Conditionals).IsRufgtRaidHeartActive = true
 		else
 			(DTSConditionals as DTSleep_Conditionals).IsRufgtRaidHeartActive = false
 		endIf
+		
+		; CHAKPack  v3.00
+		if (Game.IsPluginInstalled("AVilas_CHAKPack.esp"))
+			(DTSConditionals as DTSleep_Conditionals).IsCHAKPackActive = true
+		else
+			(DTSConditionals as DTSleep_Conditionals).IsCHAKPackActive = false
+		endIf
+		
 		
 		; -------------------------- X ------------------
 		
@@ -2520,6 +2543,13 @@ Function CheckCompatibility()
 					(DTSConditionals as DTSleep_Conditionals).IsGrayCreatureActive = false
 				endIf
 				
+				; BP70 - v3.0  TODO: test for issues -- restrict
+				if (DTSleep_AdultContentOn.GetValue() >= 3.0 && Game.IsPluginInstalled("rxl_bp70_animations.esp"))
+					(DTSConditionals as DTSleep_Conditionals).IsBP70Active = true
+				else
+					(DTSConditionals as DTSleep_Conditionals).IsBP70Active = false
+				endIf
+				
 				; FPFP Family Planning Enhanced  - v2.71
 				if ((DTSConditionals as DTSleep_Conditionals).ModFPFP_Married == None)
 					Perk fpMarriedPerk = Game.GetFormFromFile(0x0901E9A1, "FP_FamilyPlanningEnhanced.esp") as Perk
@@ -2552,6 +2582,10 @@ Function CheckCompatibility()
 						DTSleep_ActivFlagpole.SetValue(-1.0)
 						DTSleep_ActivChairs.SetValue(2.0)
 					endIf
+				;elseIf ((DTSConditionals as DTSleep_Conditionals).IsBP70Active)
+					; limited chairs - v2.90
+				;	DTSleep_ActivFlagpole.SetValue(-1.0)
+				;	DTSleep_ActivChairs.SetValue(1.60)  ;-- kitchen seat, chair high/low, couch, bench
 				elseIf ((DTSConditionals as DTSleep_Conditionals).LeitoAnimVers >= 2.1)				; v2.73 allow only having Leito chairs
 					DTSleep_ActivFlagpole.SetValue(-1.0)
 					DTSleep_ActivChairs.SetValue(1.60)		; set to more restrictive list of seats for perk to mark as Relax+
@@ -2576,6 +2610,16 @@ Function CheckCompatibility()
 				SleepQuestScript.DTSleep_SettingChairsEnabled.SetValue(1.0)
 			endIf
 		endIf
+	else 
+		; adult-content < 1
+		(DTSConditionals as DTSleep_Conditionals).IsCHAKPackActive = false
+		(DTSConditionals as DTSleep_Conditionals).IsRufgtRaidHeartActive = false
+		if (SleepQuestScript.DTSleep_SettingChairsEnabled.GetValueInt() >= 2)
+			SleepQuestScript.DTSleep_SettingChairsEnabled.SetValue(1.0)
+		endIf
+		DTSleep_ActivPAStation.SetValue(-1.0)
+		DTSleep_IsZaZOut.SetValue(-2.0)
+		DTSleep_ActivChairs.SetValue(-2.0)
 	endIf
 	; ------------------ end Adult only ---------------------
 	
@@ -5089,6 +5133,9 @@ Function UpgradeToVersion()
 	elseIf (lastVers > 0.0 && lastVers < currentVersion)
 		; do stuff
 		
+		; check VR-mode v3.0
+		SleepQuestScript.CheckVRMode()
+		
 		;ActiveLevel = 1
 		int settingChangeCount = 0
 		
@@ -5589,6 +5636,9 @@ Function UpgradeToVersion()
 		if (ActiveLevel > 0)
 			if (DTSleep_EquipMonInit.GetValueInt() < 5 && SleepQuestScript.DTSleep_SettingUndress.GetValue() > 0.0)
 				DTSleep_VersionUpUndressMsg.Show(currentVersion)
+				
+			elseIf (SleepQuestScript.DTSleep_VR.GetValueInt() == 3)
+				DTSleep_VersionVRMessage.Show(currentVersion)
 				
 			elseIf (SleepQuestScript.IsAdultAnimationAvailable())
 				DTSleep_VersionExplicitMsg.Show(currentVersion)

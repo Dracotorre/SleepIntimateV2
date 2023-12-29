@@ -12,11 +12,13 @@ ScriptName DTSleep_AACcatScript Hidden
 ; 
 ; sequences by IDs defined in DTSleep_IntimateAnimQuestScript
 ;
-; Atomic Lust (500s) - 11 scenes
+; built-in hug & kiss (90s)
+; CHAK (400s)
+; Atomic Lust, RufGt, Mutant Lust (500s) - 11 scenes
 ; SavageCabbage_Animations (700s) - 42 scenes
 ; ZaZOut4 (800s) - 4 scenes (2 broken into shorter scenes)
 ; Gray (900s)
-;
+; BP70 (1000s)
 
 ; **********************  Structs **************
 ;
@@ -69,7 +71,16 @@ endFunction
 int Function GetStageCountForSequenceID(int seqID, int longScene = 0, int other = 0) global
 	int result = 4   ; most of them
 	
-	if (seqID >= 500 && seqID < 600)
+	if (seqID >= 400 && seqID < 500)
+		result = 1
+		if (seqID == 401 || seqID == 451 || seqID == 460)
+			result = 2
+		elseIf (seqID >= 450 && seqID < 490)
+			result = 3
+		elseIf (seqID == 494)
+			result = 2
+		endIf
+	elseIf (seqID >= 500 && seqID < 600)
 		result = 1
 		if (seqID >= 509 && seqID <= 511)
 			result = 2
@@ -330,6 +341,39 @@ int Function GetStageCountForSequenceID(int seqID, int longScene = 0, int other 
 		elseIf (seqID == 777)
 			result = 3
 		endIf
+	elseIf (seqID >= 1000)					; v3.00
+		result = 4
+		if (seqID == 1088)
+			result = 8
+		elseIf (seqID >= 1096)
+			result = 1
+		elseIf (seqID >= 1080 && seqID < 1083)
+			result = 1
+		elseIf (seqID == 1071)
+			result = 8
+		elseIf (seqID >= 1060 && seqID < 1061)
+			result = 1
+		elseIf (seqID == 1054)
+			result = 4
+		elseIf (seqID >= 1047 && seqID <= 1051)
+			result = 1
+		elseIf (seqID >= 1031 && seqID <= 1036)
+			result = 1
+		elseIf (seqID >= 1019 && seqID <= 1020)
+			result = 1
+		elseIf (seqID >= 1017 && seqID <= 1018)
+			result = 1
+		elseIf (seqID == 1016)
+			result = 6
+		elseIf (seqID >= 1012 && seqID <= 1015)
+			result = 1
+		elseIf (seqID == 1009)
+			result = 6
+		elseIf (seqID >= 1004 && seqID <= 1006)
+			result = 1
+		elseIf (seqID == 1003)
+			result = 6
+		endIf
 	endIf
 	
 	return result
@@ -347,7 +391,546 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 		return ssStruct
 	endIf
 	
-	if (seqID >= 960 && seqID < 1000)
+	if (seqID >= 1000)
+		ssStruct.PluginName = "rxl_bp70_animations.esp"
+		
+		if (seqID >= 1000 && seqID <= 1001)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x0900A85C
+				ssStruct.MAnimFormID = 0x0900A85D
+				ssStruct.PositionOrigID = "BP70 Bed Romantic Missionary 1 (Single Bed)"
+				ssStruct.PositionID = "DTSIX_1001_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x0900A85E
+				ssStruct.MAnimFormID = 0x0900A85F
+				ssStruct.PositionOrigID = "BP70 Bed Romantic Missionary 2 (Single Bed)"
+				ssStruct.PositionID = "DTSIX_1001_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x0900A860
+				ssStruct.MAnimFormID = 0x0900A861
+				ssStruct.PositionOrigID = "BP70 Bed Romantic Missionary 3 (Single Bed)"
+				ssStruct.PositionID = "DTSIX_1001_S3"
+			elseIf (stageNumber == 4)
+				ssStruct.FAnimFormID = 0x0900A862
+				ssStruct.MAnimFormID = 0x0900A863
+				ssStruct.PositionOrigID = "BP70 Bed Romantic Missionary 4 (Single Bed)"
+				ssStruct.PositionID = "DTSIX_1001_S4"
+			else
+				ssStruct.FAnimFormID = 0x0900A864
+				ssStruct.MAnimFormID = 0x0900A865
+				ssStruct.PositionOrigID = "BP70 Bed Romantic Missionary 5 (Single Bed)"
+				ssStruct.PositionID = "DTSIX_1001_S5"
+			endIf
+		elseIf (seqID == 1002)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x09015F1D
+				ssStruct.MAnimFormID = 0x09015F1E
+				ssStruct.PositionOrigID = "BP70 Prone Bone 01"
+				ssStruct.PositionID = "DTSIX_1002_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x09015F1F
+				ssStruct.MAnimFormID = 0x09015F20
+				ssStruct.PositionOrigID = "BP70 Prone Bone 02"
+				ssStruct.PositionID = "DTSIX_1002_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x09015F21
+				ssStruct.MAnimFormID = 0x09015F22
+				ssStruct.PositionOrigID = "BP70 Prone Bone 03"
+				ssStruct.PositionID = "DTSIX_1002_S3"
+			elseIf (stageNumber == 4)
+				ssStruct.FAnimFormID = 0x09015F23
+				ssStruct.MAnimFormID = 0x09015F24
+				ssStruct.PositionOrigID = "BP70 Prone Bone 04"
+				ssStruct.PositionID = "DTSIX_1002_S4"
+			endIf
+		
+		elseIf (seqID == 1003)
+			stageNumber += 1
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x09005454
+				ssStruct.MAnimFormID = 0x09005455
+				ssStruct.PositionOrigID = "BP70 Pit Doggy 01"
+				ssStruct.PositionID = "DTSIX_1003_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x09005456
+				ssStruct.MAnimFormID = 0x09005457
+				ssStruct.PositionOrigID = "BP70 Pit Doggy 02"
+				ssStruct.PositionID = "DTSIX_1003_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x09005458
+				ssStruct.MAnimFormID = 0x09005459
+				ssStruct.PositionOrigID = "BP70 Pit Doggy 03"
+				ssStruct.PositionID = "DTSIX_1003_S3"
+			elseIf (stageNumber == 4)
+				ssStruct.FAnimFormID = 0x0900545A
+				ssStruct.MAnimFormID = 0x0900545B
+				ssStruct.PositionOrigID = "BP70 Pit Doggy 04"
+				ssStruct.PositionID = "DTSIX_1003_S4"
+			elseIf (stageNumber == 5)
+				ssStruct.FAnimFormID = 0x0900545C
+				ssStruct.MAnimFormID = 0x0900545D
+				ssStruct.PositionOrigID = "BP70 Pit Doggy 05"
+				ssStruct.PositionID = "DTSIX_1003_S5"
+			elseIf (stageNumber == 6)
+				ssStruct.FAnimFormID = 0x0900545E
+				ssStruct.MAnimFormID = 0x0900545F
+				ssStruct.PositionOrigID = "BP70 Pit Doggy 06"
+				ssStruct.PositionID = "DTSIX_1003_S6"
+			else
+				ssStruct.FAnimFormID = 0x09005460
+				ssStruct.MAnimFormID = 0x09005461
+				ssStruct.PositionOrigID = "BP70 Pit Doggy 07"
+				ssStruct.PositionID = "DTSIX_1003_S7"
+			endIf
+		elseIf (seqID == 1004)
+			ssStruct.FAnimFormID = 0x09000808
+			ssStruct.MAnimFormID = 0x09000809
+			ssStruct.PositionOrigID = "rBP70 Lotus"
+			ssStruct.PositionID = "DTSIX_1004_S1"
+			ssStruct.StageTime = 24.0
+		elseIf (seqID == 1005)
+			ssStruct.FAnimFormID = 0x09000800
+			ssStruct.MAnimFormID = 0x09000801
+			ssStruct.PositionOrigID = "BP70 Cowgirl"
+			ssStruct.PositionID = "DTSIX_1005_S1"
+			ssStruct.StageTime = 24.0
+		elseIf (seqID == 1006)
+			ssStruct.FAnimFormID = 0x09000FAD
+			ssStruct.MAnimFormID = 0x09000FAE
+			ssStruct.PositionOrigID = "BP70 Romantic Cowgirl"
+			ssStruct.PositionID = "DTSIX_1006_S1"
+			ssStruct.StageTime = 24.0
+			ssStruct.ArmorNudeAGun = 1
+			
+		elseIf (seqID == 1008)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x0900174F
+				ssStruct.MAnimFormID = 0x09001750
+				ssStruct.PositionOrigID = "BP70 Mistress 1"
+				ssStruct.PositionID = "DTSIX_1008_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x09001751
+				ssStruct.MAnimFormID = 0x09001752
+				ssStruct.PositionOrigID = "BP70 Mistress 2"
+				ssStruct.PositionID = "DTSIX_1008_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x09001753
+				ssStruct.MAnimFormID = 0x09001754
+				ssStruct.PositionOrigID = "BP70 Mistress 3"
+				ssStruct.PositionID = "DTSIX_1008_S3"
+			elseIf (stageNumber == 4)
+				ssStruct.FAnimFormID = 0x09001755
+				ssStruct.MAnimFormID = 0x09001756
+				ssStruct.PositionOrigID = "BP70 Mistress 4"
+				ssStruct.PositionID = "DTSIX_1008_S4"
+			endIf
+		; spoon
+		elseIf (seqID == 1010)	
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x0900FC66
+				ssStruct.MAnimFormID = 0x0900FC67
+				ssStruct.PositionOrigID = "BP70 Spooning 01"
+				ssStruct.PositionID = "DTSIX_1010_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x0900FC68
+				ssStruct.MAnimFormID = 0x0900FC69
+				ssStruct.PositionOrigID = "BP70 Spooning 02"
+				ssStruct.PositionID = "DTSIX_1010_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x0900FC6A
+				ssStruct.MAnimFormID = 0x0900FC6B
+				ssStruct.PositionOrigID = "BP70 Spooning 03"
+				ssStruct.PositionID = "DTSIX_1010_S3"
+			elseIf (stageNumber == 4)
+				ssStruct.FAnimFormID = 0x0900FC6C
+				ssStruct.MAnimFormID = 0x0900FC6D
+				ssStruct.PositionOrigID = "BP70 Spooning 04"
+				ssStruct.PositionID = "DTSIX_1010_S4"
+			elseIf (stageNumber == 5)
+				ssStruct.FAnimFormID = 0x0900FC6E
+				ssStruct.MAnimFormID = 0x0900FC6F
+				ssStruct.PositionOrigID = "BP70 Spooning Orgasm (loop)"
+				ssStruct.PositionID = "DTSIX_1010_S5"
+			endIf
+		; other bed/floor
+		elseIf (seqID == 1012)
+			ssStruct.FAnimFormID = 0x0900C6A4
+			ssStruct.MAnimFormID = 0x0900C6A5
+			ssStruct.PositionOrigID = "P70 Lesbian Footplay"
+			ssStruct.PositionID = "DTSIXFF_1012_S1"
+			ssStruct.StageTime = 24.0
+			
+		elseIf (seqID == 1013)
+			ssStruct.FAnimFormID = 0x0900C6A6
+			ssStruct.MAnimFormID = 0x0900C6A7
+			ssStruct.PositionOrigID = "BP70 Lesbian Scissor"
+			ssStruct.PositionID = "DTSIXFF_1013_S1"
+			ssStruct.StageTime = 24.0
+		elseIf (seqID == 1014)
+			ssStruct.FAnimFormID = 0x09007A5E
+			ssStruct.MAnimFormID = 0x09007A5F
+			ssStruct.PositionOrigID = "BP70 Lesbian Cycling"
+			ssStruct.PositionID = "DTSIXFF_1014_S1"
+			ssStruct.StageTime = 24.0
+			
+		; require bed
+		elseIf (seqID == 1019)
+			ssStruct.FAnimFormID = 0x09005BDD
+			ssStruct.MAnimFormID = 0x09005BDE
+			ssStruct.PositionOrigID = "BP70 Pre-War Bed After Sex Relax"		; double bed cuddle
+			ssStruct.PositionID = "DTSIX_1019_S1"
+			ssStruct.StageTime = 24.0
+		elseIf (seqID == 1020)
+			ssStruct.FAnimFormID = 0x0900DD90
+			ssStruct.MAnimFormID = 0x0900DD91
+			ssStruct.PositionOrigID = "BP70 Bed Female Body Worship"		; single bed, tease
+			ssStruct.PositionID = "DTSIX_1020_S1"
+			ssStruct.StageTime = 24.0
+			ssStruct.MPosYOffset = -12.0
+		elseIf (seqID == 1021)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x0901674F
+				ssStruct.MAnimFormID = 0x09016750
+				ssStruct.PositionOrigID = "BP70 Pre-War Bed Pussy Play 1"	; doublebed oral
+				ssStruct.PositionID = "DTSIX_1021_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x09016751
+				ssStruct.MAnimFormID = 0x09016752
+				ssStruct.PositionOrigID = "BP70 Pre-War Bed Pussy Play 2"
+				ssStruct.PositionID = "DTSIX_1021_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x09016753
+				ssStruct.MAnimFormID = 0x09016754
+				ssStruct.PositionOrigID = "BP70 Pre-War Bed Pussy Play 3"
+				ssStruct.PositionID = "DTSIX_1021_S3"
+			elseIf (stageNumber == 4)
+				ssStruct.FAnimFormID = 0x09016755
+				ssStruct.MAnimFormID = 0x09016756
+				ssStruct.PositionOrigID = "BP70 Pre-War Bed Pussy Play 4"
+				ssStruct.PositionID = "DTSIX_1021_S4"
+			endIf
+			
+		; chair, sofa
+		elseIf (seqID == 1030)								; bench
+
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x0900E52E
+				ssStruct.MAnimFormID = 0x0900E52F
+				ssStruct.PositionOrigID = "BP70 Shaun's Conception 1"			; oral/manual - no shoes!!!
+				ssStruct.PositionID = "DTSIX_1030_S1"
+			elseIf (stagenumber == 2)
+				ssStruct.FAnimFormID = 0x0900E530
+				ssStruct.MAnimFormID = 0x0900E531
+				ssStruct.PositionOrigID = "BP70 Shaun's Conception 2"
+				ssStruct.PositionID = "DTSIX_1030_S2"
+			elseIf (stagenumber == 3)
+				ssStruct.FAnimFormID = 0x0900E532
+				ssStruct.MAnimFormID = 0x0900E533
+				ssStruct.PositionOrigID = "BP70 Shaun's Conception 3"
+				ssStruct.PositionID = "DTSIX_1030_S3"
+			elseIf (stagenumber == 4)
+				ssStruct.FAnimFormID = 0x0900CE50
+				ssStruct.MAnimFormID = 0x0900CE51
+				ssStruct.PositionOrigID = "BP70 Shaun's Conception 4"
+				ssStruct.PositionID = "DTSIX_1030_S4"
+			elseIf (stagenumber == 5)
+				ssStruct.FAnimFormID = 0x0900E534
+				ssStruct.MAnimFormID = 0x0900E535
+				ssStruct.PositionOrigID = "BP70 Shaun's Conception 5"
+				ssStruct.PositionID = "DTSIX_1030_S5"
+			endIf
+			
+		elseIf (seqID == 1035)							; Chair-high missionary
+			ssStruct.FAnimFormID = 0x0900543A
+			ssStruct.MAnimFormID = 0x0900543B
+			ssStruct.PositionOrigID = "BP70 Armchair Missionary"
+			ssStruct.PositionID = "DTSIX_1035_S1"
+			ssStruct.StageTime = 24.0
+		elseIf (seqID == 1036)							; Chair-high cowgirl
+			ssStruct.FAnimFormID = 0x0900543C
+			ssStruct.MAnimFormID = 0x0900543D
+			ssStruct.PositionOrigID = "BP70 Armchair Cowgirl"
+			ssStruct.PositionID = "DTSIX_1036_S1"
+			ssStruct.StageTime = 24.0
+		elseIf (seqID == 1037)							; Chair-high oral
+			if (stageNumber == 1)
+				ssStruct.StageTime = 7.5
+				ssStruct.FAnimFormID = 0x0900547A
+				ssStruct.MAnimFormID = 0x0900547C
+				ssStruct.PositionOrigID = "BP70 Armchair Cunnilingus 01"
+				ssStruct.PositionID = "DTSIX_1037_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x0900547D
+				ssStruct.MAnimFormID = 0x0900547E
+				ssStruct.PositionOrigID = "BP70 Armchair Cunnilingus 02"
+				ssStruct.PositionID = "DTSIX_1037_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x0900547F
+				ssStruct.MAnimFormID = 0x09005480
+				ssStruct.PositionOrigID = "BP70 Armchair Cunnilingus 03"
+				ssStruct.PositionID = "DTSIX_1037_S3"
+			elseIf (stageNumber == 4)
+				ssStruct.FAnimFormID = 0x09005481
+				ssStruct.MAnimFormID = 0x09005482
+				ssStruct.PositionOrigID = "BP70 Armchair Cunnilingus 04"
+				ssStruct.PositionID = "DTSIX_1037_S4"
+			elseIf (stageNumber == 5)
+				ssStruct.StageTime = 13.0
+				ssStruct.FAnimFormID = 0x09005483
+				ssStruct.MAnimFormID = 0x09005484
+				ssStruct.PositionOrigID = "BP70 Armchair Cunnilingus 05"
+				ssStruct.PositionID = "DTSIX_1037_S5"
+			endIf
+		
+		elseIf (seqID == 1039)							; couch blowjob
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x0900A07B
+				ssStruct.MAnimFormID = 0x0900A07C
+				ssStruct.PositionOrigID = "BP70 Couch Blowjob 1"
+				ssStruct.PositionID = "DTSIX_1039_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x0900A07D
+				ssStruct.MAnimFormID = 0x0900A07E
+				ssStruct.PositionOrigID = "BP70 Couch Blowjob 2"
+				ssStruct.PositionID = "DTSIX_1039_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x0900A07F
+				ssStruct.MAnimFormID = 0x0900A080
+				ssStruct.PositionOrigID = "BP70 Couch Blowjob 3"
+				ssStruct.PositionID = "DTSIX_1039_S3"
+			elseIf (stageNumber == 4)
+				ssStruct.FAnimFormID = 0x0900A081
+				ssStruct.MAnimFormID = 0x0900A082
+				ssStruct.PositionOrigID = "BP70 Couch Blowjob 4"
+				ssStruct.PositionID = "DTSIX_1039_S4"
+			elseIf (stageNumber == 5)
+				ssStruct.FAnimFormID = 0x0900A083
+				ssStruct.MAnimFormID = 0x0900A084
+				ssStruct.PositionOrigID = "BP70 Couch Blowjob Orgasm (Loop)"
+				ssStruct.PositionID = "DTSIX_1039_S5"
+			endIf
+		elseIf (seqID == 1040)							; couch cowgirl
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x09011B09
+				ssStruct.MAnimFormID = 0x09011B0A
+				ssStruct.PositionOrigID = "BP70 Couch Cowgirl 1"
+				ssStruct.PositionID = "DTSIX_1040_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x09011B0B
+				ssStruct.MAnimFormID = 0x09011B0C
+				ssStruct.PositionOrigID = "BP70 Couch Cowgirl 2"
+				ssStruct.PositionID = "DTSIX_1040_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x09011B0D
+				ssStruct.MAnimFormID = 0x09011B0E
+				ssStruct.PositionOrigID = "BP70 Couch Cowgirl 3"
+				ssStruct.PositionID = "DTSIX_1040_S3"
+			elseIf (stageNumber == 4)
+				ssStruct.FAnimFormID = 0x09011B0F
+				ssStruct.MAnimFormID = 0x09011B10
+				ssStruct.PositionOrigID = "BP70 Couch Cowgirl 4"
+				ssStruct.PositionID = "DTSIX_1040_S4"
+			elseIf (stageNumber == 5)
+				ssStruct.FAnimFormID = 0x09011B11
+				ssStruct.MAnimFormID = 0x09011B12
+				ssStruct.PositionOrigID = "BP70 Couch Cowgirl 5"
+				ssStruct.PositionID = "DTSIX_1040_S5"
+			endIf
+		elseIf (seqID == 1041)							; couch doggy -- leans over backside possibly hitting wall
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x090112F8
+				ssStruct.MAnimFormID = 0x090112F9
+				ssStruct.PositionOrigID = "BP70 Couch Doggy 1"
+				ssStruct.PositionID = "DTSIX_1041_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x090112FA
+				ssStruct.MAnimFormID = 0x090112FB
+				ssStruct.PositionOrigID = "BP70 Couch Doggy 2"
+				ssStruct.PositionID = "DTSIX_1041_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x090112FC
+				ssStruct.MAnimFormID = 0x090112FD
+				ssStruct.PositionOrigID = "BP70 Couch Doggy 3"
+				ssStruct.PositionID = "DTSIX_1041_S3"
+			elseIf (stageNumber == 4)
+				ssStruct.FAnimFormID = 0x090112FE
+				ssStruct.MAnimFormID = 0x090112FF
+				ssStruct.PositionOrigID = "BP70 Couch Doggy 4"
+				ssStruct.PositionID = "DTSIX_1041_S4"
+			elseIf (stageNumber == 5)
+				ssStruct.FAnimFormID = 0x09011300
+				ssStruct.MAnimFormID = 0x09011301
+				ssStruct.PositionOrigID = "BP70 Couch Doggy 5"
+				ssStruct.PositionID = "DTSIX_1041_S5"
+			endIf
+		elseIf (seqID == 1042)							; couch missionary
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x090035C4
+				ssStruct.MAnimFormID = 0x090035C5
+				ssStruct.PositionOrigID = "BP70 Couch Missionary 1"
+				ssStruct.PositionID = "DTSIX_1042_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x090035C6
+				ssStruct.MAnimFormID = 0x090035C7
+				ssStruct.PositionOrigID = "BP70 Couch Missionary 2"
+				ssStruct.PositionID = "DTSIX_1042_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x090035CA
+				ssStruct.MAnimFormID = 0x090035CB
+				ssStruct.PositionOrigID = "BP70 Couch Missionary 3"
+				ssStruct.PositionID = "DTSIX_1042_S3"
+			elseIf (stageNumber == 4)
+				ssStruct.FAnimFormID = 0x090035CC
+				ssStruct.MAnimFormID = 0x090035CD
+				ssStruct.PositionOrigID = "BP70 Couch Missionary 4"
+				ssStruct.PositionID = "DTSIX_1042_S4"
+			elseIf (stageNumber == 5)
+				ssStruct.FAnimFormID = 0x090035CE
+				ssStruct.MAnimFormID = 0x090035CF
+				ssStruct.PositionOrigID = "BP70 Couch Missionary 5"
+				ssStruct.PositionID = "DTSIX_1042_S5"
+			endIf
+			
+			; oral/manual bed/floor
+		elseIf (seqID == 1047)
+			ssStruct.FAnimFormID = 0x0900638B
+			ssStruct.MAnimFormID = 0x0900638C
+			ssStruct.PositionOrigID = "BP70 Leg Wrap Cunnilingus"
+			ssStruct.PositionID = "DTSIX_1047_S1"
+			ssStruct.StageTime = 24.0
+		elseIf (seqID == 1048)
+			ssStruct.FAnimFormID = 0x09007A63
+			ssStruct.MAnimFormID = 0x09007A64
+			ssStruct.PositionOrigID = "BP70 Laying Blowjob"
+			ssStruct.PositionID = "DTSIX_1048_S1"
+			ssStruct.StageTime = 24.0
+		elseIf (seqID == 1049)
+			ssStruct.FAnimFormID = 0x09000FB3
+			ssStruct.MAnimFormID = 0x09000FB4
+			ssStruct.PositionOrigID = "BP70 Cunnilingus"
+			ssStruct.PositionID = "DTSIX_1049_S1"
+			ssStruct.StageTime = 24.0
+			ssStruct.ArmorNudeAGun = 1
+			
+		; standing oral/manual (50-51)
+		elseIf (seqID == 1050)
+			ssStruct.FAnimFormID = 0x09006389
+			ssStruct.MAnimFormID = 0x0900638A
+			ssStruct.PositionOrigID = "BP70 Blowjob"
+			ssStruct.PositionID = "DTSIX_1050_S1"
+			ssStruct.StageTime = 24.0
+			ssStruct.FAngleOffset = 180.0
+		elseIf (seqID == 1051)
+			ssStruct.FAnimFormID = 0x0901038F
+			ssStruct.MAnimFormID = 0x09010390
+			ssStruct.PositionOrigID = "BP70 Standing 69"
+			ssStruct.PositionID = "DTSIX_1051_S1"
+			ssStruct.StageTime = 24.0
+			ssStruct.FAngleOffset = 180.0
+
+		; standing doggy (52-53), standing carry (54-55)
+		elseIf (seqID == 1054)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x090098D1
+				ssStruct.MAnimFormID = 0x090098D2
+				ssStruct.PositionOrigID = "BP70 Standing Sequence Stage 1"
+				ssStruct.PositionID = "DTSIX_1054_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x090098D3
+				ssStruct.MAnimFormID = 0x090098D4
+				ssStruct.PositionOrigID = "BP70 Standing Sequence Stage 2"
+				ssStruct.PositionID = "DTSIX_1054_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x090098D5
+				ssStruct.MAnimFormID = 0x090098D6
+				ssStruct.PositionOrigID = "BP70 Standing Sequence Stage 3"
+				ssStruct.PositionID = "DTSIX_1054_S3"
+			elseIf (stageNumber == 4)
+				ssStruct.FAnimFormID = 0x090098D7
+				ssStruct.MAnimFormID = 0x090098D8
+				ssStruct.PositionOrigID = "BP70 Standing Sequence Stage 4"
+				ssStruct.PositionID = "DTSIX_1054_S5"
+			endIf
+			
+		; masturbation solo 60-69
+		elseIf (seqID == 1060)					; single bed
+			ssStruct.FAnimFormID = 0x090035E5
+			ssStruct.MAnimFormID = 0x090035E6
+			ssStruct.PositionOrigID = ""
+			ssStruct.PositionID = "DTSIX_1060_S1"
+			ssStruct.StageTime = 24.0
+		elseIf (seqID == 1061)					; couch
+			ssStruct.FAnimFormID = 0x09012241
+			ssStruct.MAnimFormID = 0x09012242
+			ssStruct.PositionOrigID = ""
+			ssStruct.PositionID = "DTSIX_1061_S1"
+			ssStruct.StageTime = 24.0
+		
+		; other furniture
+		
+		elseIf (seqID == 1070)			; locker
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x0900DDDF
+				ssStruct.MAnimFormID = 0x0900DDE0
+				ssStruct.PositionOrigID = "BP70 Locker Sex 1"
+				ssStruct.PositionID = "DTSIX_1070_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x0900DDE1
+				ssStruct.MAnimFormID = 0x0900DDE2
+				ssStruct.PositionOrigID = "BP70 Locker Sex 2"
+				ssStruct.PositionID = "DTSIX_1070_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x0900DDE3
+				ssStruct.MAnimFormID = 0x0900DDE4
+				ssStruct.PositionOrigID = "BP70 Locker Sex 3"
+				ssStruct.PositionID = "DTSIX_1070_S3"
+			elseIf (stageNumber == 4)
+				ssStruct.FAnimFormID = 0x0900DDE5
+				ssStruct.MAnimFormID = 0x0900DDE6
+				ssStruct.PositionOrigID = "BP70 Locker Sex 4"
+				ssStruct.PositionID = "DTSIX_1070_S4"
+			elseIf (stageNumber == 5)
+				ssStruct.FAnimFormID = 0x0900DDE7
+				ssStruct.MAnimFormID = 0x0900DDE8
+				ssStruct.PositionOrigID = "BP70 Locker Sex 5"
+				ssStruct.PositionID = "DTSIX_1070_S5"
+			endIf
+			
+			
+		; MM floor/bed
+		elseIf (seqID == 1085) 					; doggy
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x09017D9C
+				ssStruct.MAnimFormID = 0x09015F1E
+				ssStruct.PositionOrigID = "BP70 Gay Prone Bone 01"
+				ssStruct.PositionID = "DTSIXMM_1090_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x09017D9D
+				ssStruct.MAnimFormID = 0x09017D93
+				ssStruct.PositionOrigID = "BP70 Gay Prone Bone 02"
+				ssStruct.PositionID = "DTSIXMM_1090_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x09017D9E
+				ssStruct.MAnimFormID = 0x09017D95
+				ssStruct.PositionOrigID = "BP70 Gay Prone Bone 03"
+				ssStruct.PositionID = "DTSIXMM_1090_S3"
+			elseIf (stageNumber == 4)
+				ssStruct.FAnimFormID = 0x09017D9F
+				ssStruct.MAnimFormID = 0x09017D97
+				ssStruct.PositionOrigID = "BP70 Gay Prone Bone 04"
+				ssStruct.PositionID = "DTSIXMM_1090_S4"
+			endIf
+			
+		; kiss, hug (97+)
+		elseIf (seqID == 1098)
+			ssStruct.FAnimFormID = 0x0900D642
+			ssStruct.MAnimFormID = 0x0900D643
+			ssStruct.PositionOrigID = "rxl_bp70_kissing"
+			ssStruct.PositionID = "DTSIX_1098_S1"
+			ssStruct.StageTime = 24.0
+		endIf
+				
+	elseIf (seqID >= 960 && seqID < 1000)
 		ssStruct.PluginName = "AAF_CreaturePack01.esp"
 		if (seqID == 962)
 			if (stageNumber == 1)
@@ -2296,7 +2879,7 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 					ssStruct.FAnimFormID = 0x050099DC
 					ssStruct.MAnimFormID = 0x050099DD
 					ssStruct.PositionID = "DTSIX_759_S1"
-					ssStruct.PositionOrigID = "FM-Bench01-01Tease"
+					ssStruct.PositionOrigID = "FM-Bench01-01Tease"		; seated kissing
 				elseIf (stageNumber == 2)
 					ssStruct.FAnimFormID = 0x0500550B
 					ssStruct.MAnimFormID = 0x0500550C
@@ -3207,7 +3790,7 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 						ssStruct.StageTime = 24.0
 					endIf
 					ssStruct.PositionID = "DTSIX_785_S1"
-					ssStruct.PositionOrigID = "SC-FM-Human-FederalistCouch02-03ReverseCowGirl"
+					ssStruct.PositionOrigID = "SC-FM-Human-FederalistCouch02-03ReverseCowGirl"      ; anal
 				elseIf (stageNumber == 2)
 					ssStruct.FAnimFormID = 0x0502B0B5
 					ssStruct.MAnimFormID = 0x0502B0B6
@@ -3613,7 +4196,7 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 			ssStruct.PositionOrigID = "DTSIXM_798_S1"
 			
 		elseIf (seqID == 799)
-			ssStruct.FAnimFormID = 0x0500CF43						; solo
+			ssStruct.FAnimFormID = 0x0500CF43						; solo double-bed
 			ssStruct.MAnimFormID = 0x0500CF44
 			ssStruct.StageTime = 32.0
 			ssStruct.PositionID = "DTSIXF_799_S1"
@@ -4114,6 +4697,7 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 				ssStruct.PositionID = "DTSIXSM_662_S1"
 				ssStruct.PositionOrigID = "Leito_SuperMutant_StandingSideways"
 			endIf
+			
 		; new Leito 2.1 chair scenes
 		elseIf (seqID == 682)
 			if (stageNumber == 1)
@@ -4716,6 +5300,114 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 			ssStruct.ArmorNudeAGun = 1
 			ssStruct.PositionOrigID = "Spooning"
 			ssStruct.PositionID = "DTSIX_599_S1"
+		endIf
+		
+	; CHAKpack
+	elseIf (seqID >= 400 && seqID < 500)						;  v3.0
+		ssStruct.PluginName = "AVilas_CHAKPack.esp"
+		ssStruct.ArmorNudeAGun = -1
+		ssStruct.StageTime = 20.0
+		
+		if (seqID >= 490)
+			if (seqID == 499)										; hug01
+				ssStruct.FAnimFormID = 0x01000F99
+				ssStruct.MAnimFormID = 0x01000F9A
+			elseIf (seqID == 498)									; standing kiss
+				ssStruct.FAnimFormID = 0x01009116
+				ssStruct.MAnimFormID = 0x01009117
+			elseIf (seqID == 497)									; hug02
+				ssStruct.FAnimFormID = 0x01001ECE
+				ssStruct.MAnimFormID = 0x01001ECF
+			elseIf (seqID == 496)									; cuddle01
+				ssStruct.FAnimFormID = 0x01002E04
+				ssStruct.MAnimFormID = 0x01002E05
+			elseIf (seqID == 495)									; slowDance01
+				ssStruct.FAnimFormID = 0x01009121
+				ssStruct.MAnimFormID = 0x01009122
+			elseIf (seqID == 494)									; slowDance02 plus dip
+				if (stageNumber == 1)
+					ssStruct.StageTime = 17.5
+					ssStruct.FAnimFormID = 0x0100912F
+					ssStruct.MAnimFormID = 0x0100912E
+				else
+					ssStruct.StageTime = 3.0						; dip
+					ssStruct.FAnimFormID = 0x01009130
+					ssStruct.MAnimFormID = 0x01009131
+				endIf
+			endIf
+		elseIf (seqID < 450)
+			if (seqID == 400)										; single bed cuddle
+				ssStruct.FAnimFormID = 0x01006AE0
+				ssStruct.MAnimFormID = 0x01006AE1
+			elseIf (seqID == 401)									; double-bed cuddle01
+				ssStruct.StageTime = 11.0
+				if (stageNumber == 1)
+					ssStruct.FAnimFormID = 0x0100911B
+					ssStruct.MAnimFormID = 0x0100911C
+				elseIf (stageNumber == 2)
+					ssStruct.FAnimFormID = 0x0100911F
+					ssStruct.MAnimFormID = 0x0100911D
+				else
+					ssStruct.FAnimFormID = 0x01009120
+					ssStruct.MAnimFormID = 0x0100911E
+				endIf
+			elseIf (seqID == 402)									; double-bed kiss
+				ssStruct.FAnimFormID = 0x01009123
+				ssStruct.MAnimFormID = 0x01009124
+			endIf
+		elseIf (seqID >= 450 && seqID < 490)
+			if (seqID == 450)										; couch cuddle A
+				ssStruct.StageTime = 16.0
+				if (stageNumber == 1)
+					ssStruct.FAnimFormID = 0x01005410
+					ssStruct.MAnimFormID = 0x01005411
+				else
+					ssStruct.FAnimFormID = 0x01007A17
+					ssStruct.MAnimFormID = 0x01007A16
+				endIf
+			elseIf (seqID == 451)									; couch cuddle B 
+				ssStruct.StageTime = 16.0
+				if (stageNumber == 1)
+					ssStruct.FAnimFormID = 0x0100727B
+					ssStruct.MAnimFormID = 0x0100727C
+				else
+					ssStruct.FAnimFormID = 0x010090ED
+					ssStruct.MAnimFormID = 0x010090EC
+				endIf
+			elseIf (seqID == 452)									; couch romance
+				ssStruct.StageTime = 11.0
+				if (stageNumber == 1)
+					ssStruct.FAnimFormID = 0x0100910D
+					ssStruct.MAnimFormID = 0x0100910E
+				elseIf (stageNumber == 2)
+					ssStruct.FAnimFormID = 0x01009111
+					ssStruct.MAnimFormID = 0x0100910F
+				else
+					ssStruct.FAnimFormID = 0x01009112
+					ssStruct.MAnimFormID = 0x01009110
+				endIf
+			elseIf (seqID == 460)									; stool kiss
+				ssStruct.StageTime = 16.0
+				if (stageNumber == 1)
+					ssStruct.FAnimFormID = 0x01009107
+					ssStruct.MAnimFormID = 0x01009108
+				else
+					ssStruct.FAnimFormID = 0x0100910A
+					ssStruct.MAnimFormID = 0x01009109
+				endIf
+			elseIf (seqID == 470)									; table (sits on edge)
+				ssStruct.StageTime = 11.0
+				if (stageNumber == 1)
+					ssStruct.FAnimFormID = 0x01009103
+					ssStruct.MAnimFormID = 0x01009104
+				elseIf (stageNumber == 2)
+					ssStruct.FAnimFormID = 0x01009105
+					ssStruct.MAnimFormID = 0x01009106
+				else
+					ssStruct.FAnimFormID = 0x0100910C
+					ssStruct.MAnimFormID = 0x0100910B
+				endIf
+			endIf
 		endIf
 	endIf
 	

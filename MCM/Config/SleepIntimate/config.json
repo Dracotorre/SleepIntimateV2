@@ -5,7 +5,7 @@
   "pluginRequirements": ["SleepIntimate.esp"], 
   "content": [
     {
-      "text": "Sleep Intimate R-X version 2 - immersive sleep and romance",
+      "text": "Sleep Intimate R-X version 3 - immersive sleep and romance",
       "align": "center",
       "type": "text"
     },
@@ -95,6 +95,28 @@
 	},
 	{
 	  "type": "hiddenSwitcher",
+	  "text": "Invisible switcher xoxo mods found",
+	  "groupControl": 19,
+	  "valueOptions": 
+	  {
+		"sourceType": "PropertyValueInt",
+		"sourceForm": "SleepIntimate.esp|A56A2",
+		"propertyName": "MCMEmbraceModsOn"
+	  }
+	},
+	{
+	  "type": "hiddenSwitcher",
+	  "text": "Invisible switcher xoxo mods not found",
+	  "groupControl": 18,
+	  "valueOptions": 
+	  {
+		"sourceType": "PropertyValueInt",
+		"sourceForm": "SleepIntimate.esp|A56A2",
+		"propertyName": "MCMEmbraceModsOff"
+	  }
+	},
+	{
+	  "type": "hiddenSwitcher",
 	  "text": "Invisible switcher AAF ready",
 	  "groupControl": 13,
 	  "valueOptions": 
@@ -127,7 +149,19 @@
 	  }
 	},
     {
-	  "text": "*** no animation packs available ***",
+	  "text": "*** Hug/Kiss/Cuddle animation packs ready ***",
+      "type": "text",
+	  "align": "center",
+	  "groupCondition": 19
+    },
+    {
+	  "text": "*** no Cuddle animation packs available -- using basic hug and kiss ***",
+      "type": "text",
+	  "align": "center",
+	  "groupCondition": 18
+    },
+    {
+	  "text": "*** no adult animation packs available ***",
       "type": "text",
 	  "align": "center",
 	  "groupCondition": 9
@@ -316,6 +350,28 @@
 			"sourceType": "PropertyValueInt",
 			"sourceForm": "SleepIntimate.esp|A56A2",
 			"propertyName": "MCMSoSActiveOff"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher NNES on",
+		  "groupControl": 16,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMNNESActiveOn"
+		  }
+		},
+		{
+		  "type": "hiddenSwitcher",
+		  "text": "Invisible switcher NNES off",
+		  "groupControl": 17,
+		  "valueOptions": 
+		  {
+			"sourceType": "PropertyValueInt",
+			"sourceForm": "SleepIntimate.esp|A56A2",
+			"propertyName": "MCMNNESActiveOff"
 		  }
 		},
 		{
@@ -594,6 +650,32 @@
 			"form": "SleepIntimate.esp|A56A2",
 			"scriptName": "DTSleep_MCMQuest",   
 			"function": "SleepOrSaveToggle",
+			"params": [1.0]
+		  }
+		},
+		{
+		  "text": "(~NNES-Bed-Reserver Disable for Rest~)",
+		  "type": "button",
+		  "help": "disable Bed-Reserver to show Rest on bed",
+		  "groupCondition": 16,
+		  "action": {
+			"type": "CallFunction",
+			"form": "SleepIntimate.esp|A56A2",
+			"scriptName": "DTSleep_MCMQuest",   
+			"function": "NNESToggle",
+			"params": [1.0]
+		  }
+		},
+		{
+		  "text": "(~NNES-Bed-Reserver Enable~)",
+		  "type": "button",
+		  "help": "enable Bed-Reserver which will hide Rest on bed",
+		  "groupCondition": 17,
+		  "action": {
+			"type": "CallFunction",
+			"form": "SleepIntimate.esp|A56A2",
+			"scriptName": "DTSleep_MCMQuest",   
+			"function": "NNESToggle",
 			"params": [1.0]
 		  }
 		},
@@ -2318,6 +2400,12 @@
           "text": "Hotkey to swap roles",
           "type": "hotkey",
           "help": "toggle role"
+        },
+		{
+          "id": "DTSI_NNESToggle",
+          "text": "Hotkey toggle NNES Bed Reserver",
+          "type": "hotkey",
+          "help": "toggle NNES Bed Reserver"
         }
       ]
     },

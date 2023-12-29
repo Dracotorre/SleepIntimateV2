@@ -40,6 +40,15 @@
         "function": "ToggleSwapRoles",
         "params": [1.0]
       }
+    },
+	{
+      "id": "DTSI_NNESToggle",
+      "desc": "Sleep Intimate toggle NNES Bed Reserver",
+      "action": {
+        "type": "CallFunction",
+        "form": "SleepIntimate.esp|A56A2",
+        "function": "NNESToggle",
+        "params": [1.0]
     }
   ]
 }

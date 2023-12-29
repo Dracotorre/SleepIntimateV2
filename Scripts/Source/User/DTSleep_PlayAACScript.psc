@@ -17,6 +17,9 @@ Scriptname DTSleep_PlayAACScript extends ActiveMagicEffect
 ;
 ; SceneData holds actors, sequence length
 ; 
+; default single-stage scene is 24 seconds (some are 32s--check AACat), default sequence stage is 11 seconds
+;
+; v2.90 -- single stage scene may be set to time-and-a-half using DTSleep_IntimateSceneLen set to 1
 ; 
 import DTSleep_AACcatScript
 
@@ -747,8 +750,10 @@ Function InitSceneAndPlay()
 		endIf
 	endIf
 	
-	if (SequenceID >= 500 && DTSConditionals.ImaPCMod)
-		seqStagesArray = DTSleep_AACcatScript.GetSeqCatArrayForSequenceID(SequenceID, longScene, genders, otherActor, forceEVB)
+	if (SequenceID >= 400)
+		if (SequenceID < 500 || DTSConditionals.ImaPCMod)
+			seqStagesArray = DTSleep_AACcatScript.GetSeqCatArrayForSequenceID(SequenceID, longScene, genders, otherActor, forceEVB)
+		endIf
 	endIf
 	
 	SceneRunning = 1
@@ -780,7 +785,7 @@ Function InitSceneAndPlay()
 	else
 		mainYOff = 0.0 - yOffM
 		mainAngleOff = angleOffset + angleF
-		if (SequenceID < 500)
+		if (SequenceID < 400)
 			mainZOff = -2.2					; v2.60 - reduce embrace shaking
 		elseIf (seqStagesArray.Length > 0 && seqStagesArray[0].MPosZOffset != 0.0)
 			mainZOff = 0.0 - seqStagesArray[0].MPosZOffset
@@ -838,7 +843,7 @@ Function InitSceneAndPlay()
 	
 	if (kissPrefVal >= 1)
 	
-		if (SequenceID == 99 && SecondActor != None && SceneData.RaceRestricted < 13)
+		if (SceneIsStandHug() && SecondActor != None && SceneData.RaceRestricted < 13)
 			; hug only but let's check preference
 			if (kissPrefVal == 1)
 				; correct scale if necessary to prepare for hug
@@ -852,7 +857,7 @@ Function InitSceneAndPlay()
 					endIf
 				endIf
 			endIf
-		elseIf (SequenceID >= 97 && SequenceID <= 98 && SecondActor != None)
+		elseIf (SceneIsStandKiss() && SecondActor != None)
 		
 			; kissing: do we need to modify second-actor scale?
 			
@@ -869,7 +874,7 @@ Function InitSceneAndPlay()
 				; player wants to keep modified scale
 				SecondActorScale = currentScale / baseScale	
 			else
-				Debug.Trace("[DTSleep_PlayAAC] !!!! (kissing) correcting scale for actor " + SecondActor + " to default scale with base-scale " + baseScale + " from in-game scale " + currentScale)
+				;Debug.Trace("[DTSleep_PlayAAC] !!!! (kissing) correcting scale for actor " + SecondActor + " to default scale with base-scale " + baseScale + " from in-game scale " + currentScale)
 				SecondActorScale = 1.0
 				currentScale = baseScale			; v2.84.1  update current for scale correction before checking range 
 			endIf
@@ -900,7 +905,7 @@ Function InitSceneAndPlay()
 					; cancel for no rescale at end - no alignment needed, because NPC is perfect size for animation
 					SecondActorScale = -1.5 					
 
-					;Debug.Trace("[DTSleep_PlayAAC] kiss no scale actor " + SecondActor + " already at target scale " + scaleTargetVal)
+					Debug.Trace("[DTSleep_PlayAAC] kiss no scale actor " + SecondActor + " already at target scale " + scaleTargetVal)
 				else
 					float scaleVal = scaleTargetVal / baseScale
 							
@@ -1010,7 +1015,7 @@ Function InitSceneAndPlay()
 		
 	; Play
 	if (SequenceID == 99 || SequenceID == 548)
-
+	
 		PlaySingleStage(SceneData.MaleRole, SceneData.FemaleRole, None, DTSleep_TRRGTEmbraceMIdle, DTSleep_TRRGTEmbraceFIdle, None, 18.0)
 		Utility.Wait(0.2)
 	
@@ -1018,6 +1023,7 @@ Function InitSceneAndPlay()
 		StopAnimationSequence()
 		
 	elseIf (SequenceID == 98)
+	
 	
 		PlaySingleStage(SceneData.MaleRole, SceneData.FemaleRole, None, DTSleep_TRRGTKissingMIdle, DTSleep_TRRGTKissingFIdle, None, 18.0)
 		Utility.Wait(0.2)
@@ -1031,6 +1037,10 @@ Function InitSceneAndPlay()
 		PlaySingleStage(SceneData.MaleRole, SceneData.FemaleRole, None, DTSleep_TRRGTKissingMIdle, DTSleep_TRRGTKissingFIdle, None, 12.0)
 		
 		PlaySingleStage(SceneData.MaleRole, SceneData.FemaleRole, None, DTSleep_TRRGTEmbraceMIdle, DTSleep_TRRGTEmbraceFIdle, None, 8.0)
+		
+		if (DTSleep_IntimateSceneLen.GetValueInt() >= 1)		; v2.90
+			PlaySingleStage(SceneData.MaleRole, SceneData.FemaleRole, None, DTSleep_TRRGTKissingMIdle, DTSleep_TRRGTKissingFIdle, None, 12.0)
+		endIf
 	
 		Utility.Wait(0.2)
 		SceneRunning = 0
@@ -1092,6 +1102,9 @@ Function PlaySequence(DTAACSceneStageStruct[] seqStagesArray)
 	
 	if (seqLen == 1)
 		waitSecs = 24.0
+		if (pingPongCount >= 0)				; set time-and-a-half v2.90
+			waitSecs = 36.0
+		endIf
 	endIf
 
 	if (seqLen <= 3)
@@ -1103,17 +1116,22 @@ Function PlaySequence(DTAACSceneStageStruct[] seqStagesArray)
 	int seqCount = 0
 	while (seqCount < seqLen && SceneData.Interrupted <= 0 && SceneRunning > 0)
 		; wait
-		if (seqCount == 0)
+		if (seqLen > 1 && seqCount == 0)
 			waitSecs = startSecs
-		elseIf (seqCount == seqLen - 1)
+		elseIf (seqLen > 1 && seqCount == seqLen - 1)
 			waitSecs = 8.33
 			if (seqStagesArray[seqCount].StageTime > 0.0)
 				waitSecs = seqStagesArray[seqCount].StageTime
 			endIf
 		else
-			waitSecs = SceneData.WaitSecs
+			if (SceneData.WaitSecs > 0.0)
+				waitSecs = SceneData.WaitSecs
+			endIf
 			if (seqStagesArray[seqCount].StageTime > 0.0)
 				waitSecs = seqStagesArray[seqCount].StageTime
+				if (seqLen == 1 && pingPongCount >= 0)				; v2.90 - one stage rule for longer scene
+					waitSecs = waitSecs + waitSecs * 0.5
+				endIf
 			endIf
 		endIf
 		; armor gun
@@ -1176,7 +1194,7 @@ Function PlayAnimAtStage(DTAACSceneStageStruct stage, Actor mActor, Actor fActor
 			endIf
 		endIf
 		
-		;Debug.Trace("[DTSleep_PlayAAC] stage " + stage.StageNum + ", waitSecs = " + waitSecs + ", " + stage.PositionID)
+		;Debug.Trace("[DTSleep_PlayAAC] stage " + stage.StageNum + ", waitSecs = " + waitSecs)
 		
 		Idle a2 = None
 		Idle a1 = Game.GetFormFromFile(stage.FAnimFormID, stage.PluginName) as Idle
@@ -1257,6 +1275,10 @@ endFunction
 Function PlaySingleStage(Actor mActor, Actor fActor, Actor oActor, Idle mIdle, Idle fIdle, Idle oIdle, float waitSecs)
 
 	if (mActor != None || fActor != None)
+	
+		if (waitSecs >= 1.0 && DTSleep_IntimateSceneLen.GetValueInt() >= 1)		; time-and-a-half  v2.90
+			waitSecs = waitSecs + waitSecs * 0.5
+		endIf
 	
 		;Debug.Trace("[DTSleep_PlayAAC] play idles " + mIdle + ", " + fIdle + " mActor: " + mActor + ", fActor: " + fActor)
 			
@@ -1355,6 +1377,26 @@ Function RemoveMorphs(Actor aActor)
 	;Debug.Trace("[DTSleep_PlayAAC] removing morphs from actor " + aActor)
 	BodyGen.RemoveMorphsByKeyword(aActor, false, DTSleep_MorphKeyword)
 	BodyGen.UpdateMorphs(aActor)
+endFunction
+
+bool Function SceneIsStandHug()
+	if (SequenceID == 99)
+		return true
+	elseIf (SequenceID == 499 || SequenceID == 497)
+		return true
+	endIf
+	
+	return false
+endFunction
+
+bool Function SceneIsStandKiss()
+	if (SequenceID >= 97 && SequenceID <= 98)
+		return true
+	elseIf (SequenceID == 498)
+		return true
+	endIf
+	
+	return false
 endFunction
 
 
@@ -1500,3 +1542,7 @@ Function WaitOnScene(float waitSecs)
 	endIf
 
 endFunction
+
+
+; -------------------------------------------------------------
+

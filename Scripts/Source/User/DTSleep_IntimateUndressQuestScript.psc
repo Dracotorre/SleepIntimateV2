@@ -190,6 +190,7 @@ bool property BodySwapCompanionEnabled = true auto hidden		; v2.60 - set false t
 bool property PlayerRedressEnabled = true auto hidden			; v2.60 - set false to prevent redress
 bool property KeepShoesEquipped = true auto hidden				; v2.80
 bool property KeepStockingsEquipped = true auto hidden			; v2.80
+Weapon property PlayerWeaponItem = None auto hidden				; v2.90 - to re-equip player's weapon if we removed it
 
 ; ********************************************
 ; ******           variables     ***********
@@ -559,6 +560,32 @@ bool Function StartForBedWake(bool includeClothing, ObjectReference mainBedRef, 
 	endIf
 	
 	if (PlayerBedRef != None || CompanionBedRef != None)
+	
+		if (!needInitEquipMon)
+			; check if already in sleep outfits   v3.0
+			bool inSleepClothes = false
+			if (IsActorWearingSleepwear(PlayerRef))
+				if (CompanionRef != None)
+					if (IsActorWearingSleepwear(CompanionRef))
+						inSleepClothes = true
+					endIf
+				else
+					inSleepClothes = true
+				endIf
+			endIf
+			if (inSleepClothes)
+				DTDebug(" starting BedWake already in sleep clothes...", 1)
+				StartForManualStopRespect(CompanionRef, true, true)
+				
+				RegisterForRemoteEvent(CompanionBedRef, "OnExitFurniture")
+				
+				DTSleep_IUndressStat.SetValueInt(0)   ; override respect
+				
+				return true
+			endIf
+		endIf
+		
+		
 		PlacedArmorObjRefArray = new ObjectReference[0]
 		
 		if (!indoors)
@@ -695,6 +722,8 @@ bool Function StartForCompanionSleepwear(Actor companionActorRef, bool companion
 	
 	CompanionSleepwearToRemoveSet = new SleepwearEquipSet
 	
+	DTDebug("Start for Companion " + companionActorRef + " in Sleepwear", 1)
+	
 	
 	if (companionActorRef != DressData.CompanionActor)
 		ResetCompanionDressData()
@@ -738,7 +767,7 @@ bool Function StartForGirlSexy(Actor companionActorRef, bool includeClothing, bo
 			playerGender = GetGenderForActor(PlayerRef)
 		endIf
 		
-		;DTDebug("StartForGirlSexy - includeClothing = " + includeClothing + ", remJacket = " + remJacket, 1) 
+		DTDebug("StartForGirlSexy - includeClothing = " + includeClothing + ", remJacket = " + remJacket, 1) 
 		
 		if (companionActorRef != None && !companionActorRef.WornHasKeyword(ArmorTypePower))
 			CompanionRef = companionActorRef
@@ -835,6 +864,8 @@ bool Function StartForManualStopRespect(Actor companionActorRef, bool includeHat
 		DTSleep_PlayerUndressed.SetValue(1.0)
 		
 		return true
+	else
+		DTDebug("Start for manual Respect --- player already undressed!", 1)
 	endIf
 
 	return false
@@ -872,13 +903,29 @@ bool Function StartForManualStopSleepwear(Actor companionActorRef, ObjectReferen
 	endIf
 	AltFemBodyEnabled = false
 	
-	if (IsActorWearingSleepwear(PlayerRef))
-		return true
+	DTDebug("StartForSleepwear playerIsNaked = " + playerIsNaked, 2)
+	
+	if (DTSleep_EquipMonInit.GetValueInt() >= 5)
+		if (playerIsNaked || IsActorWearingSleepwear(PlayerRef))
+			if (IsActorWearingSleepwear(companionActorRef))					; v3.0
+				if (!IsActorWearingJacket(PlayerRef) && DressData.PlayerEquippedBackpackItem == None && DressData.PlayerEquippedHat == None && DressData.CompanionEquippedBackpackItem == None && DressData.CompanionHat == None)
+					DTDebug("StartForSleepwear ... player and companion already dressed for bed -- no undress needed", 2)
+					
+					return true
+				else
+					; undress respect -- v3.0
+					DTDebug("StartForSleepwear ... player and companion already dressed for bed -- undress respect", 2)
+					
+					return StartForManualStopRespect(companionActorRef, true, true)
+				endIf
+			endIf
+		endIf
 	endIf
 	
 	CancelTimer(RecheckNudeSuitsTimerID)
 	
-	if (IsActorCarryingSleepwear(PlayerRef, bedRef))
+	; v2.90 allow player-naked even without sleepwear
+	if (playerIsNaked || IsActorCarryingSleepwear(PlayerRef, bedRef))
 		
 		if (companionActorRef != None && IsActorCarryingSleepwear(companionActorRef))
 		
@@ -891,6 +938,7 @@ bool Function StartForManualStopSleepwear(Actor companionActorRef, ObjectReferen
 			
 			; un-do since manual stop - 
 			if (PlayerBedRef != None)
+				Utility.Wait(0.1)
 				UnregisterForRemoteEvent(PlayerBedRef, "OnExitfurniture")
 			endIf
 			
@@ -2425,7 +2473,8 @@ bool Function IsActorCarryingSleepwear(Actor actorRef, ObjectReference bedContai
 	return false
 endFunction
 
-bool Function IsActorWearingSleepwear(Actor actorRef)
+; v3.0 - added exceptRobe
+bool Function IsActorWearingSleepwear(Actor actorRef, bool exceptRobe = false)
 	if (actorRef != None)
 		if (DTSleep_EquipMonInit.GetValueInt() > 0)
 			if (actorRef == PlayerRef)
@@ -2434,7 +2483,18 @@ bool Function IsActorWearingSleepwear(Actor actorRef)
 				elseIf (DressData.PlayerEquippedSlotFXIsSleepwear)
 					return true
 				endIf
-				return DressData.PlayerEquippedSleepwearItem as bool
+				if (DressData.PlayerEquippedSleepwearItem != None)
+					if (exceptRobe)
+						if (DressData.PlayerEquippedSleepwearItem.HasKeyWord(DTSleep_SleepwearKY))
+							return false
+						elseIf ((DressData.PlayerEquippedSleepwearItem as Form) == DTSleep_SleepAttireMale.GetAt(0))
+							return false
+						endIf
+					endIf
+					
+					return true
+				endIf
+				return false
 				
 			elseIf (actorRef == CompanionRef && DressData.CompanionActor && DressData.CompanionEquippedSleepwearItem)
 				if (DressData.CompanionDressValid || actorRef.IsEquipped(DressData.CompanionEquippedSleepwearItem))
@@ -3086,6 +3146,7 @@ Function RedressActor(Actor actorRef, Form[] equippedFormArray, bool slowly = tr
 	endIf
 	
 	if (actorRef == PlayerRef)
+		RedressPlayerWeapon()
 		UndressInputLayer.EnablePlayerControls()
 		UndressInputLayer.Delete()
 		UndressInputLayer = None
@@ -3129,6 +3190,20 @@ Function RedressCheckRecoverPipboy()
 		endIf
 	endIf
 EndFunction
+
+
+; v2.90 
+Function RedressPlayerWeapon()
+
+	if (DTSleep_SettingUndressWeapon.GetValueInt() >= 2)						; 2 or 3 for player
+		if (PlayerWeaponItem != None)
+			PlayerRef.EquipItem(PlayerWeaponItem, false, true)					; no prevent, hide notification
+		endIf
+	endIf
+	
+	PlayerWeaponItem = None
+EndFunction
+
 
 Function RemovePlacedItems()
 	if PlacedArmorObjRefArray
@@ -5692,6 +5767,10 @@ Function UndressActorWeapon(Actor actorRef)
 		
 		if (weapItem != None)
 			actorRef.UnequipItem(weapItem, false, true)
+			
+			if (actorRef == PlayerRef)							; v2.90 - keep track of player's weapon
+				PlayerWeaponItem = weapItem
+			endIf
 		endIf
 		weapItem = actorRef.GetEquippedWeapon(1)				; v2.71 secondary weapon
 		if (weapItem != None)
