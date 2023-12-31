@@ -2544,10 +2544,16 @@ Function CheckCompatibility()
 				endIf
 				
 				; BP70 - v3.0  TODO: test for issues -- restrict
-				if (DTSleep_AdultContentOn.GetValue() >= 3.0 && Game.IsPluginInstalled("rxl_bp70_animations.esp"))
-					(DTSConditionals as DTSleep_Conditionals).IsBP70Active = true
-				else
-					(DTSConditionals as DTSleep_Conditionals).IsBP70Active = false
+				if (SleepQuestScript.DTSleep_SettingTestMode.GetValueInt() >= 1 && SleepQuestScript.DTSleep_DebugMode.GetValueInt() == 2)
+					if (Game.IsPluginInstalled("rxl_bp70_animations.esp"))
+						(DTSConditionals as DTSleep_Conditionals).IsBP70Active = true
+					else
+						(DTSConditionals as DTSleep_Conditionals).IsBP70Active = false
+					endIf
+				elseIf ((DTSConditionals as DTSleep_Conditionals).IsBP70Active)
+					if (!Game.IsPluginInstalled("rxl_bp70_animations.esp"))
+						(DTSConditionals as DTSleep_Conditionals).IsBP70Active = false
+					endIf
 				endIf
 				
 				; FPFP Family Planning Enhanced  - v2.71

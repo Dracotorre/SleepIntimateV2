@@ -832,7 +832,7 @@ int Function GetFurnitureSupportSameGender(ObjectReference aFurnObjRef, Form bas
 			if (aFurnObjRef.HasKeyword(AnimFurnPicnickTableKY))
 				return 3
 			endIf
-		elseIf ((DTSConditionals as DTSleep_Conditionals).IsBP70Active)			
+		elseIf (DTSleep_SettingTestMode.GetValueInt() >= 1 && (DTSConditionals as DTSleep_Conditionals).IsBP70Active)		; TODO: test-mode v3.0	
 			if (aFurnObjRef.HasKeyword(AnimFurnPicnickTableKY))
 				return 3
 			endIf
@@ -1559,10 +1559,6 @@ bool Function PlayActionIntimateSoloSeq(int gender)
 		
 	;	sidArray.Add(250)
 	;endIf
-	
-	if (SleepBedRef != None && IsObjBed(SleepBedRef) && (DTSConditionals as DTSleep_Conditionals).IsBP70Active)			; v3.0
-		sidArray.Add(1060)
-	endIf
 	
 	
 	if (SleepBedRef != None && IsObjBed(SleepBedRef) && (DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive)
@@ -2776,7 +2772,7 @@ int Function HasFurnitureOralAnalChoiceInt(ObjectReference obj, Form baseBedForm
 			endIf
 			if ((DTSleep_IntimateBenchList.HasForm(baseBedForm)))
 				
-				if ((DTSConditionals as DTSleep_Conditionals).IsBP70Active && !GetIsOnIgnoreListSceneID(1030))
+				if (DTSleep_SettingTestMode.GetValueInt() >= 1 && (DTSConditionals as DTSleep_Conditionals).IsBP70Active && !GetIsOnIgnoreListSceneID(1030))
 					if (!GetIsOnIgnoreListSceneID(759))
 						return 4
 					else
@@ -2787,8 +2783,8 @@ int Function HasFurnitureOralAnalChoiceInt(ObjectReference obj, Form baseBedForm
 				return 3
 			endIf
 		endIf
-		; v3.0
-		if ((DTSConditionals as DTSleep_Conditionals).IsBP70Active)			
+		; v3.0 test-mode TODO: 
+		if (DTSleep_SettingTestMode.GetValueInt() >= 1 && (DTSConditionals as DTSleep_Conditionals).IsBP70Active)			
 			
 			if (obj.HasKeyword(AnimFurnCouchKY))
 				return 1

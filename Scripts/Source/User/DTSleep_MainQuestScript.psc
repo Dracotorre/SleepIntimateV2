@@ -7100,7 +7100,7 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 								endIf
 								
 								if (SceneData.MaleRoleGender == 1)
-									if (!toyScenesAvailable || !SceneData.HasToyEquipped)										; ---
+									if (!toyScenesAvailable || !SceneData.HasToyAvailable)										; 
 										if ((DTSConditionals as DTSleep_Conditionals).IsRufgtActive)
 											; all from FF-picker available
 											limitLevel = 6.0
@@ -8295,8 +8295,10 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 		if ((DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.27)
 			animPacks.Add(7)
 		endIf
-		if ((DTSConditionals as DTSleep_Conditionals).IsBP70Active)
-			animPacks.Add(10)
+		if (DTSleep_SettingTestMode.GetValueInt() >= 1)			; test-mode TODO: v3
+			if ((DTSConditionals as DTSleep_Conditionals).IsBP70Active)
+				animPacks.Add(10)
+			endIf
 		endIf
 		; no choices
 		if (kissOK)
@@ -8319,8 +8321,10 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 			if ((DTSConditionals as DTSleep_Conditionals).IsAtomicLustActive)
 				animPacks.Add(5)
 			endIf
-			if ((DTSConditionals as DTSleep_Conditionals).IsBP70Active)
-				animPacks.Add(10)
+			if (DTSleep_SettingTestMode.GetValueInt() >= 1)  ;test-mode v3.0  TODO:
+				if ((DTSConditionals as DTSleep_Conditionals).IsBP70Active)
+					animPacks.Add(10)
+				endIf
 			endIf
 		endIf
 		if (animPacks.Length == 0)
@@ -10670,9 +10674,12 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 				hasCrazyGunAnims = true
 				animSetCount += 1
 			endIf
-			if ((DTSConditionals as DTSleep_Conditionals).IsBP70Active)
-				hasBP70Anims = true
-				animSetCount += 1
+			if (DTSleep_SettingTestMode.GetValueInt() >= 1)
+				; BP70 for test-mode  v3.0 TODO:
+				if ((DTSConditionals as DTSleep_Conditionals).IsBP70Active)
+					hasBP70Anims = true
+					animSetCount += 1
+				endIf
 			endIf
 		
 			; AAF fails if power armor bug - restrict by powerArmorFlag
@@ -12442,8 +12449,8 @@ Function ModSetNNESToggle()
 	int val = DTSleep_IsNNESActive.GetValueInt()
 	perk nnesPerk = (DTSConditionals as DTSleep_Conditionals).ModNNESPerk
 	
-	if (nnesPerk != None)
-		if (val >= 2.0 && DTSleep_SettingModActive.GetValue() >= 0.0)
+	if (nnesPerk != None && DTSleep_SettingModActive.GetValue() >= 0.0)    
+		if (val >= 2.0 || PlayerRef.HasPerk(nnesPerk))                   ; fix on reload v3.004
 			if (PlayerRef.HasPerk(nnesPerk))
 				PlayerRef.RemovePerk(nnesPerk)
 			endIf
@@ -13487,7 +13494,9 @@ Function ProcessCompatibleMods(bool showMsg = true)
 		endIf
 	endIf
 	
-	if (DTSleep_IsNNESActive.GetValue() >= 3.0)
+	int nnesActiveVal = DTSleep_IsNNESActive.GetValueInt()
+	
+	if (nnesActiveVal >= 1.0)						; always toggle if initialized v3.004
 		Utility.WaitMenuMode(0.4)
 		ModSetNNESToggle()
 	endIf
