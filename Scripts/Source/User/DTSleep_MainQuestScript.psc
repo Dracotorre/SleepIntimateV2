@@ -232,6 +232,7 @@ GlobalVariable property DTSleep_HRLastSleepTime auto const
 GlobalVariable property DTSleep_SettingLover2 auto const
 { include 2nd lover in scenes }
 GlobalVariable property DTSleep_SexStyleLevel auto
+GlobalVariable property DTSleep_EmbraceLevel auto						; v3.01
 GlobalVariable property DTSleep_AdultOutfitOn auto
 GlobalVariable property DTSleep_PlayerEquipSleepGloveCount auto			; added v2.48
 GlobalVariable property DTSleep_SceneViewPrefCount auto					; added v2.70
@@ -428,7 +429,8 @@ Message property pPowerArmorNoActivate auto const Mandatory
 Message property DTSleep_StartedMessage auto const Mandatory
 Message property DTSleep_StartedExplicitMessage auto const
 Message property DTSleep_StartedSafeMessage auto const
-Message property DTSleep_StartedVRMessage auto const							; v3.0
+Message property DTSleep_StartedVRMessage auto const							; do not use
+Message property DTSleep_StartedVR2Message auto const                           ; v3.01
 Message property DTSleep_ShutdownMsg auto const
 Message property DTSleep_ShutdownConfirmMsg auto const
 Message property DTSleep_ConfirmRestoreDefMsg auto const
@@ -8224,11 +8226,13 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 	SceneData.SecondFemaleRole = None
 	SceneData.SecondMaleRole = None
 	DTSleep_SexStyleLevel.SetValue(0.5)				; v2.90 change to 0.5 for kiss inclusion
+	DTSleep_EmbraceLevel.SetValue(1.0)				; v3.01 - set to kiss
 	
 	
 	if ((DTSConditionals as DTSleep_Conditionals).IsVulpineRace != None && (DTSConditionals as DTSleep_Conditionals).IsVulpineRacePlayerActive)
 		kissOK = false
 		DTSleep_SexStyleLevel.SetValue(0.0)
+		DTSleep_EmbraceLevel.SetValue(0.0)
 	endIf
 	
 	if (hugsOnly)
@@ -8283,11 +8287,11 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 	elseIf (specialFurn == 105 && (DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
 		animPacks[0] = 7
 		; oral choice
-		if (kissOK)
-			DTSleep_SexStyleLevel.SetValue(9.5)
-		else
-			DTSleep_SexStyleLevel.SetValue(9.0)
-		endIf
+		;if (kissOK)
+		;	DTSleep_SexStyleLevel.SetValue(9.5)
+		;else
+		DTSleep_SexStyleLevel.SetValue(9.0)
+		;endIf
 	
 	elseIf (specialFurn == 106 && ((DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.27))
 		; v2.77 - locker
@@ -8301,11 +8305,11 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 			endIf
 		endIf
 		; no choices
-		if (kissOK)
-			DTSleep_SexStyleLevel.SetValue(0.5)
-		else
-			DTSleep_SexStyleLevel.SetValue(0.0)
-		endIf
+		;if (kissOK)
+		;	DTSleep_SexStyleLevel.SetValue(0.5)
+		;else
+		DTSleep_SexStyleLevel.SetValue(0.0)
+		;endIf
 		
 	elseIf (specialFurn > 0 && specialFurn != 103 && specialFurn != 104 && IsAdultAnimationChairAvailable())
 		; may be mutliple packs with chair support --- v2.73
@@ -8646,18 +8650,18 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 						if (specialFurn == 103 && DTSleep_CommonF.IsIntegerInArray(7, animPacks))
 							; pool table
 							; embrace or oral
-							if (kissOK)
-								DTSleep_SexStyleLevel.SetValue(9.5)
-							else
+							;if (kissOK)
+							;	DTSleep_SexStyleLevel.SetValue(9.5)
+							;else
 								DTSleep_SexStyleLevel.SetValue(9.0)
-							endIf
+							;endIf
 						elseIf (DTSleep_CommonF.IsIntegerInArray(1, animPacks) || DTSleep_CommonF.IsIntegerInArray(6, animPacks))
 							; embrace or oral
-							if (kissOK)
+							;if (kissOK)
 								DTSleep_SexStyleLevel.SetValue(9.5)
-							else
+							;else
 								DTSleep_SexStyleLevel.SetValue(9.0)
-							endIf
+							;endIf
 						endIf
 					endIf
 				elseIf (specialFurn == 102)
@@ -8666,11 +8670,11 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 						if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsObjSedan(akFurniture))
 							; any sedan post-war or pre-war support oral 
 							; embrace or oral
-							if (kissOK)
-								DTSleep_SexStyleLevel.SetValue(9.5)
-							else
+							;if (kissOK)
+							;	DTSleep_SexStyleLevel.SetValue(9.5)
+							;else
 								DTSleep_SexStyleLevel.SetValue(9.0)
-							endIf
+							;endIf
 						endIf
 					endIf
 				endIf
@@ -8715,11 +8719,11 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 								endIf
 							elseIf (DTSleep_AdultContentOn.GetValueInt() >= 2 && (DTSConditionals as DTSleep_Conditionals).IsRufgtActive)
 								; embrace or oral
-								if (kissOK)
-									DTSleep_SexStyleLevel.SetValue(9.5)
-								else
+								;if (kissOK)
+								;	DTSleep_SexStyleLevel.SetValue(9.5)
+								;else
 									DTSleep_SexStyleLevel.SetValue(9.0)
-								endIf
+								;endIf
 							endIf
 						elseIf (!(DTSConditionals as DTSleep_Conditionals).IsAtomicLustActive)
 							animPacks[0] = 0
@@ -9030,9 +9034,9 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 							val = 9.0			; allow any furniture
 						endIf
 						
-						if (kissOK && val < 10)
-							val += 0.5
-						endIf
+						;if (kissOK && val < 10)
+						;	val += 0.5
+						;endIf
 						
 						DTSleep_SexStyleLevel.SetValue(val)
 						
@@ -9137,11 +9141,11 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 				if (DTSleep_SexStyleLevel.GetValue() >= 1.0)
 					DTDebug(" ******************** REVERT SexStyle!!!! ***************", 1)
 				endIf
-				if (kissOK)
-					DTSleep_SexStyleLevel.SetValue(0.5)
-				else
+				;if (kissOK)
+				;	DTSleep_SexStyleLevel.SetValue(0.5)
+				;else
 					DTSleep_SexStyleLevel.SetValue(0.0)
-				endIf
+				;endIf
 			endIf 
 			
 			if (checkLoc)
@@ -10538,7 +10542,7 @@ Function InitSleepQuest(bool silent = false)
 		
 		if (!silent)
 			if (DTSleep_VR.GetValueInt() == 3)
-				DTSleep_StartedVRMessage.Show()					;v3.0
+				DTSleep_StartedVR2Message.Show()					;v3.0
 			elseIf (IsAdultAnimationAvailable())
 				DTSleep_StartedExplicitMessage.Show()
 			elseIf (adultOn >= 1.0 && adultOn <= 1.50)

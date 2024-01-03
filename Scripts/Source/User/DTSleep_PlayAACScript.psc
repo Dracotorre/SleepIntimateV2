@@ -750,11 +750,11 @@ Function InitSceneAndPlay()
 		endIf
 	endIf
 	
-	if (SequenceID >= 400)
-		if (SequenceID < 500 || DTSConditionals.ImaPCMod)
-			seqStagesArray = DTSleep_AACcatScript.GetSeqCatArrayForSequenceID(SequenceID, longScene, genders, otherActor, forceEVB)
-		endIf
+
+	if (SequenceID > 400 && DTSConditionals.ImaPCMod)
+		seqStagesArray = DTSleep_AACcatScript.GetSeqCatArrayForSequenceID(SequenceID, longScene, genders, otherActor, forceEVB)
 	endIf
+
 	
 	SceneRunning = 1
 	
@@ -1012,11 +1012,17 @@ Function InitSceneAndPlay()
 	
 	; fade-in
 	Game.FadeOutGame(false, true, 0.67, 2.1)
+	
+	float ssWaitSecs = 20.0
+	if (DTSleep_IntimateSceneLen.GetValueInt() >= 1)		; time-and-a-half  v2.90 -- moved here v3.01
+		ssWaitSecs = 30.0
+	endIf
 		
 	; Play
 	if (SequenceID == 99 || SequenceID == 548)
 	
-		PlaySingleStage(SceneData.MaleRole, SceneData.FemaleRole, None, DTSleep_TRRGTEmbraceMIdle, DTSleep_TRRGTEmbraceFIdle, None, 18.0)
+		
+		PlaySingleStage(SceneData.MaleRole, SceneData.FemaleRole, None, DTSleep_TRRGTEmbraceMIdle, DTSleep_TRRGTEmbraceFIdle, None, ssWaitSecs)
 		Utility.Wait(0.2)
 	
 		SceneRunning = 0
@@ -1025,7 +1031,7 @@ Function InitSceneAndPlay()
 	elseIf (SequenceID == 98)
 	
 	
-		PlaySingleStage(SceneData.MaleRole, SceneData.FemaleRole, None, DTSleep_TRRGTKissingMIdle, DTSleep_TRRGTKissingFIdle, None, 18.0)
+		PlaySingleStage(SceneData.MaleRole, SceneData.FemaleRole, None, DTSleep_TRRGTKissingMIdle, DTSleep_TRRGTKissingFIdle, None, ssWaitSecs)
 		Utility.Wait(0.2)
 	
 		SceneRunning = 0
@@ -1078,7 +1084,14 @@ endFunction
 
 Function PlaySequence(DTAACSceneStageStruct[] seqStagesArray)
 
+	; default 4-stage scene having SceneData.WaitSec = 11.0, middle 2 may repeat --
+	; first stage = 9.7 seconds
+	; 2nd + 3rd = 22.0 seconds
+	; last stage = 8.33 seconds
+	; total = 40 seconds, for SceneLen 2 = 62 seconds, for SceneLen 3 = 84 seconds, and 106 seconds
+
 	;Debug.Trace("[DTSleep_PlayAAC] playSequence " + SequenceID + " with " + MainActor + ", " + SecondActor) 
+	
 	if (MainActor == None || SceneData == None)
 		Debug.Trace("DTSleep_PlayAAC] missing main actor or scene data--stopping")
 		StopAnimationSequence()
@@ -1091,7 +1104,7 @@ Function PlaySequence(DTAACSceneStageStruct[] seqStagesArray)
 	
 	Armor gunArmor = None
 	int gunIndex = -1
-	float waitSecs = 11.0
+	float waitSecs = 11.0				; default
 	float startSecs = 9.7
 	
 	int seqLen = seqStagesArray.Length
@@ -1101,10 +1114,16 @@ Function PlaySequence(DTAACSceneStageStruct[] seqStagesArray)
 	endIf
 	
 	if (seqLen == 1)
+		; single-stage
 		waitSecs = 24.0
-		if (pingPongCount >= 0)				; set time-and-a-half v2.90
-			waitSecs = 36.0
+		if (startSecs > 19.0)
+			waitSecs = startSecs
 		endIf
+		
+		if (pingPongCount >= 0)				; set time-and-a-half v2.90
+			waitSecs = waitSecs + waitSecs * 0.5
+		endIf
+		startSecs = waitSecs
 	endIf
 
 	if (seqLen <= 3)
@@ -1116,9 +1135,9 @@ Function PlaySequence(DTAACSceneStageStruct[] seqStagesArray)
 	int seqCount = 0
 	while (seqCount < seqLen && SceneData.Interrupted <= 0 && SceneRunning > 0)
 		; wait
-		if (seqLen > 1 && seqCount == 0)
+		if (seqCount == 0)
 			waitSecs = startSecs
-		elseIf (seqLen > 1 && seqCount == seqLen - 1)
+		elseIf (seqCount == seqLen - 1)
 			waitSecs = 8.33
 			if (seqStagesArray[seqCount].StageTime > 0.0)
 				waitSecs = seqStagesArray[seqCount].StageTime
@@ -1129,7 +1148,7 @@ Function PlaySequence(DTAACSceneStageStruct[] seqStagesArray)
 			endIf
 			if (seqStagesArray[seqCount].StageTime > 0.0)
 				waitSecs = seqStagesArray[seqCount].StageTime
-				if (seqLen == 1 && pingPongCount >= 0)				; v2.90 - one stage rule for longer scene
+				if (seqLen == 1 && pingPongCount >= 1)				; v2.90 - one stage rule for longer scene -- v3.01 fix pingPong increaed by 1!
 					waitSecs = waitSecs + waitSecs * 0.5
 				endIf
 			endIf
@@ -1148,7 +1167,7 @@ Function PlaySequence(DTAACSceneStageStruct[] seqStagesArray)
 				extraActor = SceneData.SecondMaleRole
 			endIf
 		endIf
-		
+		;Debug.Trace("[DTSleep_PlayAAC] PlayAnimStage at index " + seqCount + " for secs " + waitSecs + " (ping-pong =  " + pingPongCount + ")")  ;TODO: remove
 		PlayAnimAtStage(seqStagesArray[seqCount], SceneData.MaleRole, SceneData.FemaleRole, extraActor, waitSecs)
 		
 		int pongLim = 2
@@ -1182,9 +1201,9 @@ Function PlayAnimAtStage(DTAACSceneStageStruct stage, Actor mActor, Actor fActor
 
 	if (stage.FAnimFormID > 0 && SceneRunning > 0)
 	
-		if (stage.StageTime > 0.0)
-			waitSecs = stage.StageTime
-		endIf
+		;if (stage.StageTime > 0.0)					; v3.01 not necessary since caller looked it up
+		;	waitSecs = stage.StageTime
+		;endIf
 		
 		if (SecondActor == None && mActor != None && fActor != None)
 			if (MainActor == mActor)
@@ -1276,9 +1295,7 @@ Function PlaySingleStage(Actor mActor, Actor fActor, Actor oActor, Idle mIdle, I
 
 	if (mActor != None || fActor != None)
 	
-		if (waitSecs >= 1.0 && DTSleep_IntimateSceneLen.GetValueInt() >= 1)		; time-and-a-half  v2.90
-			waitSecs = waitSecs + waitSecs * 0.5
-		endIf
+		; FIX v3.01 --- removed time-and-a-half waitSecs check from here and moved to caller
 	
 		;Debug.Trace("[DTSleep_PlayAAC] play idles " + mIdle + ", " + fIdle + " mActor: " + mActor + ", fActor: " + fActor)
 			

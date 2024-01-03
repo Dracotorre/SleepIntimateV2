@@ -858,6 +858,7 @@ Function CheckCompatibility()
 		Debug.Trace(myScriptName + "NNES has been removed")
 		DTSleep_IsNNESActive.SetValue(-1.0)
 		(DTSConditionals as DTSleep_Conditionals).ModNNESPerk = None
+	
 	endIf
 	
 	; See-You-Sleep

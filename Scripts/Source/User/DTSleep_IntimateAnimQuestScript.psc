@@ -2325,22 +2325,34 @@ endFunction
 
 float Function GetTimeForPlayID(int id)
 
-	;SceneData.WaitSecs = 11.2
-	float waitSecX2 = SceneData.WaitSecs + SceneData.WaitSecs
-	float waitSecX4 = waitSecX2 + waitSecX2
-	DTSleep_IntimateSceneLen.SetValueInt(0)
+	; remember 4-stage scene default timings is total = 
+	;       SceneLen 1 = 64 seconds (baseSec)
+	;       SceneLen 2 = 86 seconds
+	;       SceneLen 3 = 108 seconds
+	;                4 = 130 seconds
 	
-	; v2.90 -- single stage scene may be set to time-and-a-half using DTSleep_IntimateSceneLen set to 1
-	
-	if (id == 6001)
-		return 316.22
-	endIf
+	SceneData.WaitSecs = 11.0							; set to default
+	DTSleep_IntimateSceneLen.SetValueInt(0)				; v2.90 -- single stage scene may be set to time-and-a-half using DTSleep_IntimateSceneLen set to 1
 	
 	int endurance = PlayerEndurance						; check value obtained at start-up - v2.90
 	
 	if (MainActorRef != None && endurance < 3)
 		endurance = (MainActorRef.GetValue(EnduranceAV) as int) ; may be no clothing bonus if naked
+		PlayerEndurance = endurance
 	endIf
+	
+	if (endurance < 5)
+		SceneData.WaitSecs = 9.0
+	endIf
+	
+	float waitSecX2 = SceneData.WaitSecs + SceneData.WaitSecs
+	float waitSecX4 = waitSecX2 + waitSecX2
+	
+	if (id == 6001)
+		return 316.22
+	endIf
+	
+	
 
 	if (id <= 10)
 		return 2.5
@@ -2353,9 +2365,9 @@ float Function GetTimeForPlayID(int id)
 		
 		if (endurance >= 7)
 			DTSleep_IntimateSceneLen.SetValueInt(1)		; single-stage time-and-a-half v2.90
-			return 27.0
+			return 30.0
 		endIf
-		return 18.0
+		return 20.0
 		
 	elseIf (id >= 490 && id < 500)
 		; hug/kiss standing or slow-dance
@@ -2627,18 +2639,18 @@ float Function GetTimeForPlayID(int id)
 			
 			if (longOK && endurance >= 12 && enduRand > 10)
 				DTSleep_IntimateSceneLen.SetValueInt(4)
-				baseSec += (waitSecX4 + waitSecX2)
+				baseSec += (waitSecX4 + waitSecX2 + 4.0)
 				
 				; increment count reaching max length
 				int endCount = 1 + DTSleep_IntimateSceneMaxLenCount.GetValueInt()
 				DTSleep_IntimateSceneMaxLenCount.SetValueInt(endCount)
 				
-			elseIf (enduRand >= 9)														
+			elseIf (enduRand >= 12)														
 				DTSleep_IntimateSceneLen.SetValueInt(3)
-				baseSec += waitSecX4
+				baseSec += waitSecX4 + 3.0
 			else
 				DTSleep_IntimateSceneLen.SetValueInt(2)
-				baseSec += waitSecX2
+				baseSec += waitSecX2 + 3.5
 			endIf
 			
 		elseIf (endurance >= 6 && id != 547 && id != 546 && id != 791)					; v2.74 reduced endurance limit by 1
@@ -2647,11 +2659,11 @@ float Function GetTimeForPlayID(int id)
 			
 		elseIf (id < 700 && baseSec > 40.0 && endurance >= 3 && endurance <= 4 && Utility.RandomInt(-2, endurance) <= 0)		; v2.60 id limit
 			DTSleep_IntimateSceneLen.SetValueInt(0)
-			baseSec -= waitSecX2
+			baseSec -= waitSecX2 + 1.0
 			
 		elseIf (baseSec > 40.0 && endurance < 3 && id < 700)				; v2.60 id limit
 			DTSleep_IntimateSceneLen.SetValueInt(0)
-			baseSec -= waitSecX2
+			baseSec -= waitSecX2 + 1.0
 		else
 			DTSleep_IntimateSceneLen.SetValueInt(1)
 		endIf
@@ -3580,7 +3592,7 @@ bool Function PlayIntimateAACWithEndTimer(float timerSecs)
 	endIf
 	
 	if (DTSleep_SettingTestMode.GetValue() > 0.0 && DTSleep_DebugMode.GetValue() >= 1.0)
-		Debug.Trace(MyScriptName + " Play AAC Animation (" + DTSleep_IntimateIdleID.GetValueInt() + ") with timer: " + timerSecs)
+		Debug.Trace(MyScriptName + " Play AAC Animation (" + DTSleep_IntimateIdleID.GetValueInt() + ") with timer: " + timerSecs + ", and SceneLenVal = " + DTSleep_IntimateSceneLen.GetValueInt())
 	endIf
 	
 	; using a wait-for-ME so reduce timer a few to fade out early
@@ -7032,7 +7044,8 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 						if (playerPick && DoesMainActorPrefID(ScenePrefIsOral))
 							sidArray.Add(50)
 							sidArray.Add(51)
-						elseIf (!playerPick || DoesMainActorPrefID(ScenePrefIsCarry))
+						elseIf (!playerPick || DoesMainActorPrefID(ScenePrefIsCarry) || DoesMainActorPrefID(ScenePrefIsStand))
+							; added pref stand v3.01
 							sidArray.Add(54)
 						endIf 
 					endIf
@@ -7293,6 +7306,7 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 				;if (!mainActorIsMaleRole)
 				;	numToAdd = 2
 				;endIf
+				restricted = false
 				
 				if (SceneData.SameGender && SceneData.MaleRoleGender == 1)
 					
@@ -7397,12 +7411,14 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 					bool bedOK = true
 					if (MySleepBedFurnType == FurnTypeIsBunkBed)
 						bedOk = false
-						if (MainActorPositionByCaller || standOnly)
+						if (MainActorPositionByCaller || standOnly || DoesMainActorPrefID(ScenePrefIsStand))
+							; added pref-stand v3.01 fix
 							bedOk = true
 						endIf
-					elseIf (!playerPick && !MainActorPositionByCaller && !standOnly && !bedIsFloorBed && sidArray.Length > 1)
-						; skip stand scenes  - v2.73
-						bedOK = false
+					elseIf (MainActorPositionByCaller || bedIsFloorBed)
+						bedOK = true				; v3.01 -- fix for v2.73
+					else
+						bedOk = false
 					endIf
 					
 					if (bedOk)
@@ -7432,7 +7448,9 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 						if (!SceneData.FemaleRaceHasTail)
 							; stand doggy
 							okayAdd = true
-							if (playerPick && !DoesMainActorPrefID(ScenePrefIsDoggy))
+							if (playerpick && DoesMainActorPrefID(ScenePrefIsStand))			; v3.01 fix
+								okayAdd = true
+							elseIf (playerPick && !DoesMainActorPrefID(ScenePrefIsDoggy))
 								okayAdd = false
 							elseIf (DoesSecondActorHateID(ScenePrefIsDoggy))
 								okayAdd = false
@@ -7456,7 +7474,9 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 						endIf
 						if (!SceneData.SameGender && SceneData.MaleRoleGender == 0)
 							okayAdd = true
-							if (playerPick && !DoesMainActorPrefID(ScenePrefIsCarry))
+							if (playerpick && DoesMainActorPrefID(ScenePrefIsStand))
+								okayAdd = true
+							elseIf (playerPick && !DoesMainActorPrefID(ScenePrefIsCarry))
 								okayAdd = false
 							elseIf (DoesSecondActorHateID(ScenePrefIsCarry))
 								okayAdd = false
