@@ -38,14 +38,31 @@ GlobalVariable property DTSL_CamDef_VanModeMin auto const
 { default camera ini fVanityModeMinDist = 32.0 }
 GlobalVariable property DTSleep_VR auto	const
 { 3=VR-game, 2=VR-mode }
+GlobalVariable property DTSleep_SettingAACV auto const
 
 bool property ReverseCamXOffset auto hidden
 bool property IsMaleCamOffset auto hidden
 float property CamHeightOffset auto hidden
 
-Function GoSceneViewCamCustom(int lowCam = 1)
+Function GoSceneViewCamCustom(int lowCam = 1, bool forSleep = false)
 	; v2.60 - include -1 for embrace scenes
-	if (DTSleep_VR.GetValue() <= 1.0 && lowCam >= -1 && DTSL_CamCustomEnabled.GetValue() > 0.0 && DTSleep_SettingCamera.GetValue() > 0.0)
+	
+	; forSleep to override view settings v3.02
+	bool okayToAdjustView = true
+	int vrMode = DTSleep_VR.GetValueInt()
+	if (vrMode >= 3)
+		okayToAdjustView = false
+		
+	elseIf (!forSleep)
+		
+		if (vrMode == 2)
+			okayToAdjustView = false
+		elseIf (DTSleep_SettingAACV.GetValueInt() >= 3)
+			okayToAdjustView = false
+		endIf
+	endIf
+	
+	if (okayToAdjustView && lowCam >= -1 && DTSL_CamCustomEnabled.GetValue() > 0.0 && DTSleep_SettingCamera.GetValue() > 0.0)
 	; Utility.SetINIBool("bForceAutoVanityMode:Camera", false)
 	; Utility.SetINIFloat("fVanityModeMaxDist:Camera", 320.0)
 	; Utility.SetINIFloat("fVanityModeMinDist:Camera", 64.0)
@@ -128,8 +145,8 @@ Function GoSceneViewDone(bool goFirstOK)
 	
 endFunction
 
-; set useLowCam to 5 will override ForceThirdPerson
-Function GoSceneViewStart(int useLowCam = 1)
+; set useLowCam to -5 will override ForceThirdPerson
+Function GoSceneViewStart(int useLowCam = 1, bool forSleep = false)
 	
 	; this AnimationVariable sometimes misreports so always force ThirdPerson
 	; v2.11 - skip forcing FirstPerosn if cam disabled
@@ -149,9 +166,16 @@ Function GoSceneViewStart(int useLowCam = 1)
 		endIf
 	endIf
 	
-	if (useLowCam <= -5 || DTSleep_VR.GetValue() <= 1.0)		; v3.0
-		GoSceneViewCamCustom(useLowCam)  ; set custom cam before going third-person
-		Utility.Wait(0.06)
-		Game.ForceThirdPerson()
+	int vrMode = DTSleep_VR.GetValueInt()
+	
+	if (forSleep || DTSleep_SettingAACV.GetValueInt() < 3)
+		if (forSleep || useLowCam <= -5 || vrMode <= 1)		; v3.0
+			
+			GoSceneViewCamCustom(useLowCam, forSleep)  ; set custom cam before going third-person
+			if (vrMode < 3)
+				Utility.Wait(0.06)
+				Game.ForceThirdPerson()
+			endIf
+		endIf
 	endIf
 endFunction

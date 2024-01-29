@@ -708,7 +708,7 @@ bool Function PlaySequence()
 			;	endIf
 			;endIf
 			
-			if (SequenceID < 600)
+			if (SequenceID >= 500 && SequenceID < 600)
 				if (SequenceID >= 546 && SequenceID <= 549)
 					PlayAASequence()
 				else
@@ -724,10 +724,7 @@ bool Function PlaySequence()
 				if (MySeqStagesArray.Length == 1)
 					
 					string posID = MySeqStagesArray[0].PositionID
-					if (SequenceID >= 1000)
-						; No DTSIX-AAF files, use originals   - v3.0 TODO:
-						posID = MySeqStagesArray[0].PositionOrigID
-					endIf
+					
 					if (SecondActor == None)
 						if (SceneData.MaleRole != None && MainActor == SceneData.MaleRole)
 							posID = MySeqStagesArray[0].PositionOrigID
@@ -1286,10 +1283,7 @@ Function PlayAASequenceLists(Actor mActor, Actor fActor, Actor oActor)
 
 		aafSettings.duration = 10.0
 		aafSettings.position = MySeqStagesArray[0].PositionID
-		if (SequenceID >= 1000)
-			; No DTSIX-AAF files, use originals   - v3.0 TODO:
-			aafSettings.position = MySeqStagesArray[0].PositionOrigID
-		endIf
+		
 		if (SecondActor == None)
 			if (SceneData.MaleRole != None && MainActor == SceneData.MaleRole)
 				aafSettings.position = MySeqStagesArray[0].PositionOrigID
@@ -1317,8 +1311,8 @@ Function PlayAASequenceLists(Actor mActor, Actor fActor, Actor oActor)
 		endIf
 		
 		if (DTSleep_SettingTestMode.GetValue() > 0.0 && DTSleep_DebugMode.GetValue() >= 1.0)
-			;TODO remove
-			Debug.Trace("[DTSleep_PlayAAF_Seq] start AASeq position ID " + aafSettings.position + " at Loc " + aafSettings.locationObject + " with sceneLen " + DTSleep_IntimateSceneLen.GetValueInt() + " and scene count " + MySeqStagesArray.Length + " and actor count " + actors.Length)
+			
+			Debug.Trace("[DTSleep_PlayAAF_Seq] start AASeq position ID (" + aafSettings.position + ") at Loc " + aafSettings.locationObject + " with sceneLen " + DTSleep_IntimateSceneLen.GetValueInt() + " and scene count " + MySeqStagesArray.Length + " and actor count " + actors.Length)
 		endIf
 		RegisterForCustomEvent(AAF_API, "OnAnimationStart")
 		RegisterForCustomEvent(AAF_API, "OnAnimationStop")
@@ -1411,13 +1405,7 @@ Function PlayAAContinuedSequence(float waitSecs)
 		
 		if (seqCount > 0)
 			;PlayPosition(CreateSeqPositionStr(SequenceID, MySeqStagesArray[seqCount].StageNum), loopWaitSecs)
-			if (SequenceID < 1000)
-				; normal
-				PlayPosition(MySeqStagesArray[seqCount].PositionID, loopWaitSecs)
-			else
-				; No DTSIX-AAF files, use originals   - v3.0 TODO:
-				PlayPosition(MySeqStagesArray[seqCount].PositionOrigID, loopWaitSecs)
-			endIf
+			PlayPosition(MySeqStagesArray[seqCount].PositionID, loopWaitSecs)
 		endIf
 		
 		if (pingPongCount > 0 && seqCount == (seqLen - 2))

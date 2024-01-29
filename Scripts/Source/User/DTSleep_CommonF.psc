@@ -720,12 +720,20 @@ bool Function IsActorOnBed(Actor actorRef, ObjectReference bedRef, bool wideChec
 		endIf
 		Point3DOrient bedPoint = PointOfObject(bedRef)
 		Point3DOrient actorPoint = PointOfObject(actorRef)
-		if (actorPoint.Z > bedPoint.Z - 16.0 && actorPoint.Z < bedPoint.Z + 64.0)
-			if (actorPoint.X > bedPoint.X - dist && actorPoint.X < bedPoint.X + dist && actorPoint.Y > bedPoint.Y - dist && actorPoint.Y < bedPoint.Y + dist)
-				return true
-			endIf
+		IsActorPtOnBed(actorPoint, bedPoint, dist)
+	endIf
+	
+	return false
+EndFunction
+
+bool Function IsActorPtOnBed(Point3DOrient actorPoint, Point3DOrient bedPoint, float dist) global
+
+	if (actorPoint.Z > bedPoint.Z - 16.0 && actorPoint.Z < bedPoint.Z + 64.0)
+		if (actorPoint.X > bedPoint.X - dist && actorPoint.X < bedPoint.X + dist && actorPoint.Y > bedPoint.Y - dist && actorPoint.Y < bedPoint.Y + dist)
+			return true
 		endIf
 	endIf
+	
 	return false
 EndFunction
 

@@ -847,12 +847,22 @@ Function CheckCompatibility()
 	endIf
 	
 	; NpcsNeedToEatandSleep (NNES) or Companions Need to Eat and Sleep
+	; the Workshop Plus patch uses different plugin, same name
 	
-	if (DTSleep_IsNNESActive.GetValue() <= 0.0)
-		perk nnesPerk = IsPluginActive(0x01004CB4, "NpcsNeedtoEatandSleep.esp") as Perk
-		if (nnesPerk != None)
-			DTSleep_IsNNESActive.SetValue(3.0)		; init
-			(DTSConditionals as DTSleep_Conditionals).ModNNESPerk = nnesPerk
+	if (DTSleep_IsNNESActive.GetValue() <= 0.0 || (DTSConditionals as DTSleep_Conditionals).ModNNESPerk == None)
+		
+		if (Game.IsPluginInstalled("NpcsNeedtoEatandSleep.esp"))
+			; first check original NNES 
+			
+			perk nnesPerk = Game.GetFormFromFile(0x01004CB4, "NpcsNeedtoEatandSleep.esp") as Perk
+			if (nnesPerk == None)
+				; try other form for WSP-patch  v3.02
+				nnesPerk = Game.GetFormFromFile(0x0200084F, "NpcsNeedtoEatandSleep.esp") as Perk
+			endIf
+			if (nnesPerk != None)
+				DTSleep_IsNNESActive.SetValue(3.0)		; init
+				(DTSConditionals as DTSleep_Conditionals).ModNNESPerk = nnesPerk
+			endIf
 		endIf
 	elseIf (!Game.IsPluginInstalled("NpcsNeedtoEatandSleep.esp"))
 		Debug.Trace(myScriptName + "NNES has been removed")
@@ -2545,17 +2555,17 @@ Function CheckCompatibility()
 				endIf
 				
 				; BP70 - v3.0  TODO: test for issues -- restrict
-				if (SleepQuestScript.DTSleep_SettingTestMode.GetValueInt() >= 1 && SleepQuestScript.DTSleep_DebugMode.GetValueInt() == 2)
+				;if (SleepQuestScript.DTSleep_SettingTestMode.GetValueInt() >= 1 && SleepQuestScript.DTSleep_DebugMode.GetValueInt() == 2)
 					if (Game.IsPluginInstalled("rxl_bp70_animations.esp"))
 						(DTSConditionals as DTSleep_Conditionals).IsBP70Active = true
 					else
 						(DTSConditionals as DTSleep_Conditionals).IsBP70Active = false
 					endIf
-				elseIf ((DTSConditionals as DTSleep_Conditionals).IsBP70Active)
-					if (!Game.IsPluginInstalled("rxl_bp70_animations.esp"))
-						(DTSConditionals as DTSleep_Conditionals).IsBP70Active = false
-					endIf
-				endIf
+				;elseIf ((DTSConditionals as DTSleep_Conditionals).IsBP70Active)
+				;	if (!Game.IsPluginInstalled("rxl_bp70_animations.esp"))
+				;		(DTSConditionals as DTSleep_Conditionals).IsBP70Active = false
+				;	endIf
+				;endIf
 				
 				; FPFP Family Planning Enhanced  - v2.71
 				if ((DTSConditionals as DTSleep_Conditionals).ModFPFP_Married == None)

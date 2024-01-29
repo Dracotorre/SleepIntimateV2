@@ -1,0 +1,758 @@
+<meta title="SleepIntimateX_BP70_animationData.xml" version="3.02" dataSet="animation"/>
+<defaults source="rxl_bp70_animations.esp"/>
+
+<animation id="SIX_BP70_1001_S1" frames="300">
+	<actor gender="F">
+		<idle form="A85C"/>
+	</actor>
+	<actor gender="M">
+		<idle form="A85D"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1001_S2" frames="300">
+	<actor gender="F">
+		<idle form="A85E"/>
+	</actor>
+	<actor gender="M">
+		<idle form="A85F"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1001_S3" frames="300">
+	<actor gender="F">
+		<idle form="A860"/>
+	</actor>
+	<actor gender="M">
+		<idle form="A861"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1001_S4" frames="300">
+	<actor gender="F">
+		<idle form="A862"/>
+	</actor>
+	<actor gender="M">
+		<idle form="A863"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1001_S5" frames="300">
+	<actor gender="F">
+		<idle form="A864"/>
+	</actor>
+	<actor gender="M">
+		<idle form="A865"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1002_S1" frames="300">
+	<actor gender="F">
+		<idle form="15F1D"/>
+	</actor>
+	<actor gender="M">
+		<idle form="15F1E"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1002_S2" frames="300">
+	<actor gender="F">
+		<idle form="15F1F"/>
+	</actor>
+	<actor gender="M">
+		<idle form="15F20"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1002_S3" frames="300">
+	<actor gender="F">
+		<idle form="15F21"/>
+	</actor>
+	<actor gender="M">
+		<idle form="15F22"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1002_S4" frames="300">
+	<actor gender="F">
+		<idle form="15F23"/>
+	</actor>
+	<actor gender="M">
+		<idle form="15F24"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1003_S1" frames="300">
+	<actor gender="F">
+		<idle form="5454"/>
+	</actor>
+	<actor gender="M">
+		<idle form="5455"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1003_S2" frames="300">
+	<actor gender="F">
+		<idle form="5456"/>
+	</actor>
+	<actor gender="M">
+		<idle form="5457"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1003_S3" frames="300">
+	<actor gender="F">
+		<idle form="5458"/>
+	</actor>
+	<actor gender="M">
+		<idle form="5459"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1003_S4" frames="300">
+	<actor gender="F">
+		<idle form="545A"/>
+	</actor>
+	<actor gender="M">
+		<idle form="545B"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1003_S5" frames="300">
+	<actor gender="F">
+		<idle form="545C"/>
+	</actor>
+	<actor gender="M">
+		<idle form="545D"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1003_S6" frames="300">
+	<actor gender="F">
+		<idle form="545E"/>
+	</actor>
+	<actor gender="M">
+		<idle form="545F"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1003_S7" frames="300">
+	<actor gender="F">
+		<idle form="5460"/>
+	</actor>
+	<actor gender="M">
+		<idle form="5461"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1005_S1" frames="300">
+	<actor gender="F">
+		<idle form="800"/>
+	</actor>
+	<actor gender="M">
+		<idle form="801"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1006_S1" frames="300">
+	<actor gender="F">
+		<idle form="FAD"/>
+	</actor>
+	<actor gender="M">
+		<idle form="FAE"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1008_S1" frames="300">
+	<actor gender="F">
+		<idle form="174F"/>
+	</actor>
+	<actor gender="M">
+		<idle form="1750"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1008_S2" frames="300">
+	<actor gender="F">
+		<idle form="1751"/>
+	</actor>
+	<actor gender="M">
+		<idle form="1752"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1008_S3" frames="300">
+	<actor gender="F">
+		<idle form="1753"/>
+	</actor>
+	<actor gender="M">
+		<idle form="1754"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1008_S4" frames="300">
+	<actor gender="F">
+		<idle form="1755"/>
+	</actor>
+	<actor gender="M">
+		<idle form="1756"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1010_S1" frames="300">
+	<actor gender="F">
+		<idle form="FC66"/>
+	</actor>
+	<actor gender="M">
+		<idle form="FC67"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1010_S2" frames="300">
+	<actor gender="F">
+		<idle form="FC68"/>
+	</actor>
+	<actor gender="M">
+		<idle form="FC69"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1010_S3" frames="300">
+	<actor gender="F">
+		<idle form="FC6A"/>
+	</actor>
+	<actor gender="M">
+		<idle form="FC6B"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1010_S4" frames="300">
+	<actor gender="F">
+		<idle form="FC6C"/>
+	</actor>
+	<actor gender="M">
+		<idle form="FC6D"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1010_S5" frames="300">
+	<actor gender="F">
+		<idle form="FC6E"/>
+	</actor>
+	<actor gender="M">
+		<idle form="FC6F"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1012FF_S1" frames="300">
+	<actor gender="F">
+		<idle form="C6A4"/>
+	</actor>
+	<actor gender="F">
+		<idle form="C6A5"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1013FF_S1" frames="300">
+	<actor gender="F">
+		<idle form="C6A6"/>
+	</actor>
+	<actor gender="F">
+		<idle form="C6A7"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1014FF_S1" frames="300">
+	<actor gender="F">
+		<idle form="7A5E"/>
+	</actor>
+	<actor gender="F">
+		<idle form="7A5F"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1019_S1" frames="300">
+	<actor gender="F">
+		<idle form="5BDD"/>
+	</actor>
+	<actor gender="M">
+		<idle form="5BDE"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1020_S1" frames="300">
+	<actor gender="F">
+		<idle form="DD90"/>
+	</actor>
+	<actor gender="M">
+		<idle form="DD91"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1021_S1" frames="300">
+	<actor gender="F">
+		<idle form="1674F"/>
+	</actor>
+	<actor gender="M">
+		<idle form="16750"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1021_S2" frames="300">
+	<actor gender="F">
+		<idle form="16751"/>
+	</actor>
+	<actor gender="M">
+		<idle form="16752"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1021_S3" frames="300">
+	<actor gender="F">
+		<idle form="16753"/>
+	</actor>
+	<actor gender="M">
+		<idle form="16754"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1021_S4" frames="300">
+	<actor gender="F">
+		<idle form="16755"/>
+	</actor>
+	<actor gender="M">
+		<idle form="16756"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1030_S1" frames="300">
+	<actor gender="F">
+		<idle form="E52E"/>
+	</actor>
+	<actor gender="M">
+		<idle form="E52F"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1030_S2" frames="300">
+	<actor gender="F">
+		<idle form="E530"/>
+	</actor>
+	<actor gender="M">
+		<idle form="E531"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1030_S3" frames="300">
+	<actor gender="F">
+		<idle form="E532"/>
+	</actor>
+	<actor gender="M">
+		<idle form="E533"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1030_S4" frames="300">
+	<actor gender="F">
+		<idle form="CE50"/>
+	</actor>
+	<actor gender="M">
+		<idle form="CE51"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1030_S5" frames="300">
+	<actor gender="F">
+		<idle form="E534"/>
+	</actor>
+	<actor gender="M">
+		<idle form="E535"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1035_S1" frames="300">
+	<actor gender="F">
+		<idle form="543A"/>
+	</actor>
+	<actor gender="M">
+		<idle form="543B"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1036_S1" frames="300">
+	<actor gender="F">
+		<idle form="543C"/>
+	</actor>
+	<actor gender="M">
+		<idle form="543D"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1037_S1" frames="300">
+	<actor gender="F">
+		<idle form="547A"/>
+	</actor>
+	<actor gender="M">
+		<idle form="547C"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1037_S2" frames="300">
+	<actor gender="F">
+		<idle form="547D"/>
+	</actor>
+	<actor gender="M">
+		<idle form="547E"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1037_S3" frames="300">
+	<actor gender="F">
+		<idle form="547F"/>
+	</actor>
+	<actor gender="M">
+		<idle form="5480"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1037_S4" frames="300">
+	<actor gender="F">
+		<idle form="5481"/>
+	</actor>
+	<actor gender="M">
+		<idle form="5482"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1037_S5" frames="300">
+	<actor gender="F">
+		<idle form="5483"/>
+	</actor>
+	<actor gender="M">
+		<idle form="5484"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1039_S1" frames="300">
+	<actor gender="F">
+		<idle form="A07B"/>
+	</actor>
+	<actor gender="M">
+		<idle form="A07C"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1039_S2" frames="300">
+	<actor gender="F">
+		<idle form="A07D"/>
+	</actor>
+	<actor gender="M">
+		<idle form="A07E"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1039_S3" frames="300">
+	<actor gender="F">
+		<idle form="A07F"/>
+	</actor>
+	<actor gender="M">
+		<idle form="A080"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1039_S4" frames="300">
+	<actor gender="F">
+		<idle form="A081"/>
+	</actor>
+	<actor gender="M">
+		<idle form="A082"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1039_S5" frames="300">
+	<actor gender="F">
+		<idle form="A083"/>
+	</actor>
+	<actor gender="M">
+		<idle form="A084"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1040_S1" frames="300">
+	<actor gender="F">
+		<idle form="11B09"/>
+	</actor>
+	<actor gender="M">
+		<idle form="11B0A"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1040_S2" frames="300">
+	<actor gender="F">
+		<idle form="11B0B"/>
+	</actor>
+	<actor gender="M">
+		<idle form="11B0C"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1040_S3" frames="300">
+	<actor gender="F">
+		<idle form="11B0D"/>
+	</actor>
+	<actor gender="M">
+		<idle form="11B0E"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1040_S4" frames="300">
+	<actor gender="F">
+		<idle form="11B0F"/>
+	</actor>
+	<actor gender="M">
+		<idle form="11B10"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1040_S5" frames="300">
+	<actor gender="F">
+		<idle form="11B11"/>
+	</actor>
+	<actor gender="M">
+		<idle form="11B12"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1042_S1" frames="300">
+	<actor gender="F">
+		<idle form="35C4"/>
+	</actor>
+	<actor gender="M">
+		<idle form="35C5"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1042_S2" frames="300">
+	<actor gender="F">
+		<idle form="35C6"/>
+	</actor>
+	<actor gender="M">
+		<idle form="35C7"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1042_S3" frames="300">
+	<actor gender="F">
+		<idle form="35CA"/>
+	</actor>
+	<actor gender="M">
+		<idle form="35CB"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1042_S4" frames="300">
+	<actor gender="F">
+		<idle form="35CC"/>
+	</actor>
+	<actor gender="M">
+		<idle form="35CD"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1042_S5" frames="300">
+	<actor gender="F">
+		<idle form="35CE"/>
+	</actor>
+	<actor gender="M">
+		<idle form="35CF"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1047_S1" frames="300">
+	<actor gender="F">
+		<idle form="638B"/>
+	</actor>
+	<actor gender="M">
+		<idle form="638C"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1048_S1" frames="300">
+	<actor gender="F">
+		<idle form="7A63"/>
+	</actor>
+	<actor gender="M">
+		<idle form="7A64"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1049_S1" frames="300">
+	<actor gender="F">
+		<idle form="FB3"/>
+	</actor>
+	<actor gender="M">
+		<idle form="FB4"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1050_S1" frames="300">
+	<actor gender="F">
+		<idle form="6389"/>
+	</actor>
+	<actor gender="M">
+		<idle form="638A"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1051_S1" frames="300">
+	<actor gender="F">
+		<idle form="1038F"/>
+	</actor>
+	<actor gender="M">
+		<idle form="10390"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1054_S1" frames="300">
+	<actor gender="F">
+		<idle form="98D1"/>
+	</actor>
+	<actor gender="M">
+		<idle form="98D2"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1054_S2" frames="300">
+	<actor gender="F">
+		<idle form="98D3"/>
+	</actor>
+	<actor gender="M">
+		<idle form="98D4"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1054_S3" frames="300">
+	<actor gender="F">
+		<idle form="98D5"/>
+	</actor>
+	<actor gender="M">
+		<idle form="98D6"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1054_S4" frames="300">
+	<actor gender="F">
+		<idle form="98D7"/>
+	</actor>
+	<actor gender="M">
+		<idle form="98D8"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1060_S1" frames="300">
+	<actor gender="F">
+		<idle form="35E5"/>
+	</actor>
+	<actor gender="M">
+		<idle form="35E6"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1061_S1" frames="300">
+	<actor gender="F">
+		<idle form="12241"/>
+	</actor>
+	<actor gender="M">
+		<idle form="12242"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1070_S1" frames="300">
+	<actor gender="F">
+		<idle form="DDDF"/>
+	</actor>
+	<actor gender="M">
+		<idle form="DDE0"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1070_S2" frames="300">
+	<actor gender="F">
+		<idle form="DDE1"/>
+	</actor>
+	<actor gender="M">
+		<idle form="DDE2"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1070_S3" frames="300">
+	<actor gender="F">
+		<idle form="DDE3"/>
+	</actor>
+	<actor gender="M">
+		<idle form="DDE4"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1070_S4" frames="300">
+	<actor gender="F">
+		<idle form="DDE5"/>
+	</actor>
+	<actor gender="M">
+		<idle form="DDE6"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1070_S5" frames="300">
+	<actor gender="F">
+		<idle form="DDE7"/>
+	</actor>
+	<actor gender="M">
+		<idle form="DDE8"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1085MM_S1" frames="300">
+	<actor gender="M">
+		<idle form="17D9C"/>
+	</actor>
+	<actor gender="M">
+		<idle form="15F1E"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1085MM_S2" frames="300">
+	<actor gender="M">
+		<idle form="17D9D"/>
+	</actor>
+	<actor gender="M">
+		<idle form="17D93"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1085MM_S3" frames="300">
+	<actor gender="M">
+		<idle form="17D9E"/>
+	</actor>
+	<actor gender="M">
+		<idle form="17D95"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1085MM_S4" frames="300">
+	<actor gender="M">
+		<idle form="17D9F"/>
+	</actor>
+	<actor gender="M">
+		<idle form="17D97"/>
+	</actor>
+</animation>
+
+<animation id="SIX_BP70_1098_S1" frames="300">
+	<actor gender="F">
+		<idle form="D642"/>
+	</actor>
+	<actor gender="M">
+		<idle form="D643"/>
+	</actor>
+</animation>

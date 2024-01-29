@@ -602,6 +602,14 @@ pDTSleep_SettingScaleActorKiss.SetValue(0.0)
 EndFunction
 ;END FRAGMENT
 
+;BEGIN FRAGMENT Fragment_Terminal_73
+Function Fragment_Terminal_73(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingAACV.SetValue(1.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
 ;END FRAGMENT CODE - Do not edit anything between this and the begin comment
 
 GlobalVariable Property pDTSleep_SettingIntimate Auto Const Mandatory

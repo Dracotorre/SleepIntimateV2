@@ -1,0 +1,117 @@
+<meta title="SleepIntimateX_BP70_positionData.xml" version="3.02" dataSet="position"/>
+<!-- for use with rxl BP70 animations -->
+
+<position id="DTSIX_1001_S1" animation="SIX_BP70_1001_S1" isHidden="true"/>
+<position id="DTSIX_1001_S2" animation="SIX_BP70_1001_S2" isHidden="true"/>
+<position id="DTSIX_1001_S3" animation="SIX_BP70_1001_S3" isHidden="true"/>
+<position id="DTSIX_1001_S4" animation="SIX_BP70_1001_S4" isHidden="true"/>
+<position id="DTSIX_1001_S5" animation="SIX_BP70_1001_S5" isHidden="true"/>
+
+<position id="DTSIX_1002_S1" animation="SIX_BP70_1002_S1" isHidden="true"/>
+<position id="DTSIX_1002_S2" animation="SIX_BP70_1002_S2" isHidden="true"/>
+<position id="DTSIX_1002_S3" animation="SIX_BP70_1002_S3" isHidden="true"/>
+<position id="DTSIX_1002_S4" animation="SIX_BP70_1002_S4" isHidden="true"/>
+
+<position id="DTSIX_1003_S1" animation="SIX_BP70_1003_S1" isHidden="true"/>
+<position id="DTSIX_1003_S2" animation="SIX_BP70_1003_S2" isHidden="true"/>
+<position id="DTSIX_1003_S3" animation="SIX_BP70_1003_S3" isHidden="true"/>
+<position id="DTSIX_1003_S4" animation="SIX_BP70_1003_S4" isHidden="true"/>
+<position id="DTSIX_1003_S5" animation="SIX_BP70_1003_S5" isHidden="true"/>
+<position id="DTSIX_1003_S6" animation="SIX_BP70_1003_S6" isHidden="true"/>
+<position id="DTSIX_1003_S7" animation="SIX_BP70_1003_S7" isHidden="true"/>
+
+<position id="DTSIX_1005_S1" animation="SIX_BP70_1005_S1" isHidden="true"/>
+
+<position id="DTSIX_1006_S1" animation="SIX_BP70_1006_S1" isHidden="true"/>
+
+<position id="DTSIX_1008_S1" animation="SIX_BP70_1008_S1" isHidden="true"/>
+<position id="DTSIX_1008_S2" animation="SIX_BP70_1008_S2" isHidden="true"/>
+<position id="DTSIX_1008_S3" animation="SIX_BP70_1008_S3" isHidden="true"/>
+<position id="DTSIX_1008_S4" animation="SIX_BP70_1008_S4" isHidden="true"/>
+
+<position id="DTSIX_1010_S1" animation="SIX_BP70_1010_S1" isHidden="true"/>
+<position id="DTSIX_1010_S2" animation="SIX_BP70_1010_S2" isHidden="true"/>
+<position id="DTSIX_1010_S3" animation="SIX_BP70_1010_S3" isHidden="true"/>
+<position id="DTSIX_1010_S4" animation="SIX_BP70_1010_S4" isHidden="true"/>
+<position id="DTSIX_1010_S5" animation="SIX_BP70_1010_S5" isHidden="true"/>
+
+<position id="DTSIXFF_1012_S1" animation="SIX_BP70_1012FF_S1" isHidden="true"/>
+
+<position id="DTSIXFF_1013_S1" animation="SIX_BP70_1013FF_S1" isHidden="true"/>
+
+<position id="DTSIXFF_1014_S1" animation="SIX_BP70_1014FF_S1" isHidden="true"/>
+
+<position id="DTSIX_1019_S1" animation="SIX_BP70_1019_S1" isHidden="true"/>
+
+<position id="DTSIX_1020_S1" animation="SIX_BP70_1020_S1" isHidden="true"/>
+
+<position id="DTSIX_1021_S1" animation="SIX_BP70_1021_S1" isHidden="true"/>
+<position id="DTSIX_1021_S2" animation="SIX_BP70_1021_S2" isHidden="true"/>
+<position id="DTSIX_1021_S3" animation="SIX_BP70_1021_S3" isHidden="true"/>
+<position id="DTSIX_1021_S4" animation="SIX_BP70_1021_S4" isHidden="true"/>
+
+<position id="DTSIX_1030_S1" animation="SIX_BP70_1030_S1" isHidden="true"/>
+<position id="DTSIX_1030_S2" animation="SIX_BP70_1030_S2" isHidden="true"/>
+<position id="DTSIX_1030_S3" animation="SIX_BP70_1030_S3" isHidden="true"/>
+<position id="DTSIX_1030_S4" animation="SIX_BP70_1030_S4" isHidden="true"/>
+<position id="DTSIX_1030_S5" animation="SIX_BP70_1030_S5" isHidden="true"/>
+
+<position id="DTSIX_1035_S1" animation="SIX_BP70_1035_S1" isHidden="true"/>
+
+<position id="DTSIX_1036_S1" animation="SIX_BP70_1036_S1" isHidden="true"/>
+
+<position id="DTSIX_1037_S1" animation="SIX_BP70_1037_S1" isHidden="true"/>
+<position id="DTSIX_1037_S2" animation="SIX_BP70_1037_S2" isHidden="true"/>
+<position id="DTSIX_1037_S3" animation="SIX_BP70_1037_S3" isHidden="true"/>
+<position id="DTSIX_1037_S4" animation="SIX_BP70_1037_S4" isHidden="true"/>
+<position id="DTSIX_1037_S5" animation="SIX_BP70_1037_S5" isHidden="true"/>
+
+<position id="DTSIX_1039_S1" animation="SIX_BP70_1039_S1" isHidden="true"/>
+<position id="DTSIX_1039_S2" animation="SIX_BP70_1039_S2" isHidden="true"/>
+<position id="DTSIX_1039_S3" animation="SIX_BP70_1039_S3" isHidden="true"/>
+<position id="DTSIX_1039_S4" animation="SIX_BP70_1039_S4" isHidden="true"/>
+<position id="DTSIX_1039_S5" animation="SIX_BP70_1039_S5" isHidden="true"/>
+
+<position id="DTSIX_1040_S1" animation="SIX_BP70_1040_S1" isHidden="true"/>
+<position id="DTSIX_1040_S2" animation="SIX_BP70_1040_S2" isHidden="true"/>
+<position id="DTSIX_1040_S3" animation="SIX_BP70_1040_S3" isHidden="true"/>
+<position id="DTSIX_1040_S4" animation="SIX_BP70_1040_S4" isHidden="true"/>
+<position id="DTSIX_1040_S5" animation="SIX_BP70_1040_S5" isHidden="true"/>
+
+<position id="DTSIX_1042_S1" animation="SIX_BP70_1042_S1" isHidden="true"/>
+<position id="DTSIX_1042_S2" animation="SIX_BP70_1042_S2" isHidden="true"/>
+<position id="DTSIX_1042_S3" animation="SIX_BP70_1042_S3" isHidden="true"/>
+<position id="DTSIX_1042_S4" animation="SIX_BP70_1042_S4" isHidden="true"/>
+<position id="DTSIX_1042_S5" animation="SIX_BP70_1042_S5" isHidden="true"/>
+
+<position id="DTSIX_1047_S1" animation="SIX_BP70_1047_S1" isHidden="true"/>
+
+<position id="DTSIX_1048_S1" animation="SIX_BP70_1048_S1" isHidden="true"/>
+
+<position id="DTSIX_1049_S1" animation="SIX_BP70_1049_S1" isHidden="true"/>
+
+<position id="DTSIX_1050_S1" animation="SIX_BP70_1050_S1" isHidden="true"/>
+
+<position id="DTSIX_1051_S1" animation="SIX_BP70_1051_S1" isHidden="true"/>
+
+<position id="DTSIX_1054_S1" animation="SIX_BP70_1054_S1" isHidden="true"/>
+<position id="DTSIX_1054_S2" animation="SIX_BP70_1054_S2" isHidden="true"/>
+<position id="DTSIX_1054_S3" animation="SIX_BP70_1054_S3" isHidden="true"/>
+<position id="DTSIX_1054_S4" animation="SIX_BP70_1054_S4" isHidden="true"/>
+
+<position id="DTSIX_1060_S1" animation="SIX_BP70_1060_S1" isHidden="true"/>
+
+<position id="DTSIX_1061_S1" animation="SIX_BP70_1061_S1" isHidden="true"/>
+
+<position id="DTSIX_1070_S1" animation="SIX_BP70_1070_S1" isHidden="true"/>
+<position id="DTSIX_1070_S2" animation="SIX_BP70_1070_S2" isHidden="true"/>
+<position id="DTSIX_1070_S3" animation="SIX_BP70_1070_S3" isHidden="true"/>
+<position id="DTSIX_1070_S4" animation="SIX_BP70_1070_S4" isHidden="true"/>
+<position id="DTSIX_1070_S5" animation="SIX_BP70_1070_S5" isHidden="true"/>
+
+<position id="DTSIXMM_1085_S1" animation="SIX_BP70_1085MM_S1" isHidden="true"/>
+<position id="DTSIXMM_1085_S2" animation="SIX_BP70_1085MM_S2" isHidden="true"/>
+<position id="DTSIXMM_1085_S3" animation="SIX_BP70_1085MM_S3" isHidden="true"/>
+<position id="DTSIXMM_1085_S4" animation="SIX_BP70_1085MM_S4" isHidden="true"/>
+
+<position id="DTSIX_1098_S1" animation="SIX_BP70_1098_S1" isHidden="true"/>

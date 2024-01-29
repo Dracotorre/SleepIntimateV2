@@ -394,7 +394,7 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 	if (seqID >= 1000)
 		ssStruct.PluginName = "rxl_bp70_animations.esp"
 		
-		if (seqID >= 1000 && seqID <= 1001)
+		if (seqID >= 1000 && seqID <= 1001)							; reviewed
 			if (stageNumber == 1)
 				ssStruct.FAnimFormID = 0x0900A85C
 				ssStruct.MAnimFormID = 0x0900A85D
@@ -421,7 +421,7 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 				ssStruct.PositionOrigID = "BP70 Bed Romantic Missionary 5 (Single Bed)"
 				ssStruct.PositionID = "DTSIX_1001_S5"
 			endIf
-		elseIf (seqID == 1002)
+		elseIf (seqID == 1002)									; reviewed
 			if (stageNumber == 1)
 				ssStruct.FAnimFormID = 0x09015F1D
 				ssStruct.MAnimFormID = 0x09015F1E
@@ -444,7 +444,7 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 				ssStruct.PositionID = "DTSIX_1002_S4"
 			endIf
 		
-		elseIf (seqID == 1003)
+		elseIf (seqID == 1003)							; reviewed
 			stageNumber += 1
 			if (stageNumber == 1)
 				ssStruct.FAnimFormID = 0x09005454
@@ -482,19 +482,19 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 				ssStruct.PositionOrigID = "BP70 Pit Doggy 07"
 				ssStruct.PositionID = "DTSIX_1003_S7"
 			endIf
-		elseIf (seqID == 1004)
+		elseIf (seqID == 1004)									; poor alignment
 			ssStruct.FAnimFormID = 0x09000808
 			ssStruct.MAnimFormID = 0x09000809
 			ssStruct.PositionOrigID = "rBP70 Lotus"
 			ssStruct.PositionID = "DTSIX_1004_S1"
 			ssStruct.StageTime = 24.0
-		elseIf (seqID == 1005)
+		elseIf (seqID == 1005)								; reviewed
 			ssStruct.FAnimFormID = 0x09000800
 			ssStruct.MAnimFormID = 0x09000801
 			ssStruct.PositionOrigID = "BP70 Cowgirl"
 			ssStruct.PositionID = "DTSIX_1005_S1"
 			ssStruct.StageTime = 24.0
-		elseIf (seqID == 1006)
+		elseIf (seqID == 1006)								; reviewed
 			ssStruct.FAnimFormID = 0x09000FAD
 			ssStruct.MAnimFormID = 0x09000FAE
 			ssStruct.PositionOrigID = "BP70 Romantic Cowgirl"
@@ -502,30 +502,35 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 			ssStruct.StageTime = 24.0
 			ssStruct.ArmorNudeAGun = 1
 			
-		elseIf (seqID == 1008)
+		elseIf (seqID == 1008)							
+						; best without repeat stages
 			if (stageNumber == 1)
-				ssStruct.FAnimFormID = 0x0900174F
+				ssStruct.FAnimFormID = 0x0900174F			; manual
 				ssStruct.MAnimFormID = 0x09001750
 				ssStruct.PositionOrigID = "BP70 Mistress 1"
 				ssStruct.PositionID = "DTSIX_1008_S1"
+				ssStruct.StageTime = 12.0
 			elseIf (stageNumber == 2)
-				ssStruct.FAnimFormID = 0x09001751
+				ssStruct.FAnimFormID = 0x09001751			; step on face
 				ssStruct.MAnimFormID = 0x09001752
 				ssStruct.PositionOrigID = "BP70 Mistress 2"
 				ssStruct.PositionID = "DTSIX_1008_S2"
+				ssStruct.StageTime = 9.0
 			elseIf (stageNumber == 3)
-				ssStruct.FAnimFormID = 0x09001753
+				ssStruct.FAnimFormID = 0x09001753			; sit on face
 				ssStruct.MAnimFormID = 0x09001754
 				ssStruct.PositionOrigID = "BP70 Mistress 3"
 				ssStruct.PositionID = "DTSIX_1008_S3"
+				; use custom time
 			elseIf (stageNumber == 4)
-				ssStruct.FAnimFormID = 0x09001755
+				ssStruct.FAnimFormID = 0x09001755		; cowgirl 
 				ssStruct.MAnimFormID = 0x09001756
 				ssStruct.PositionOrigID = "BP70 Mistress 4"
 				ssStruct.PositionID = "DTSIX_1008_S4"
+				ssStruct.StageTime = 12.0
 			endIf
 		; spoon
-		elseIf (seqID == 1010)	
+		elseIf (seqID == 1010)					; reviewed bed
 			if (stageNumber == 1)
 				ssStruct.FAnimFormID = 0x0900FC66
 				ssStruct.MAnimFormID = 0x0900FC67
@@ -560,7 +565,7 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 			ssStruct.PositionID = "DTSIXFF_1012_S1"
 			ssStruct.StageTime = 24.0
 			
-		elseIf (seqID == 1013)
+		elseIf (seqID == 1013)						; reviewed single-bed
 			ssStruct.FAnimFormID = 0x0900C6A6
 			ssStruct.MAnimFormID = 0x0900C6A7
 			ssStruct.PositionOrigID = "BP70 Lesbian Scissor"
@@ -574,20 +579,20 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 			ssStruct.StageTime = 24.0
 			
 		; require bed
-		elseIf (seqID == 1019)
+		elseIf (seqID == 1019)											; reviewed
 			ssStruct.FAnimFormID = 0x09005BDD
 			ssStruct.MAnimFormID = 0x09005BDE
 			ssStruct.PositionOrigID = "BP70 Pre-War Bed After Sex Relax"		; double bed cuddle
 			ssStruct.PositionID = "DTSIX_1019_S1"
 			ssStruct.StageTime = 24.0
-		elseIf (seqID == 1020)
+		elseIf (seqID == 1020)												; spanking - reviewed
 			ssStruct.FAnimFormID = 0x0900DD90
 			ssStruct.MAnimFormID = 0x0900DD91
-			ssStruct.PositionOrigID = "BP70 Bed Female Body Worship"		; single bed, tease
+			ssStruct.PositionOrigID = "BP70 Bed Female Body Worship"	
 			ssStruct.PositionID = "DTSIX_1020_S1"
 			ssStruct.StageTime = 24.0
 			ssStruct.MPosYOffset = -12.0
-		elseIf (seqID == 1021)
+		elseIf (seqID == 1021)												; reviewed
 			if (stageNumber == 1)
 				ssStruct.FAnimFormID = 0x0901674F
 				ssStruct.MAnimFormID = 0x09016750
@@ -682,7 +687,7 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 				ssStruct.PositionID = "DTSIX_1037_S5"
 			endIf
 		
-		elseIf (seqID == 1039)							; couch blowjob
+		elseIf (seqID == 1039)							; couch blowjob  - reviewed
 			if (stageNumber == 1)
 				ssStruct.FAnimFormID = 0x0900A07B
 				ssStruct.MAnimFormID = 0x0900A07C
@@ -709,7 +714,7 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 				ssStruct.PositionOrigID = "BP70 Couch Blowjob Orgasm (Loop)"
 				ssStruct.PositionID = "DTSIX_1039_S5"
 			endIf
-		elseIf (seqID == 1040)							; couch cowgirl
+		elseIf (seqID == 1040)							; couch cowgirl -reviewed
 			if (stageNumber == 1)
 				ssStruct.FAnimFormID = 0x09011B09
 				ssStruct.MAnimFormID = 0x09011B0A
@@ -763,7 +768,7 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 				ssStruct.PositionOrigID = "BP70 Couch Doggy 5"
 				ssStruct.PositionID = "DTSIX_1041_S5"
 			endIf
-		elseIf (seqID == 1042)							; couch missionary
+		elseIf (seqID == 1042)							; couch (long) missionary  - reviewed
 			if (stageNumber == 1)
 				ssStruct.FAnimFormID = 0x090035C4
 				ssStruct.MAnimFormID = 0x090035C5
@@ -792,19 +797,19 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 			endIf
 			
 			; oral/manual bed/floor
-		elseIf (seqID == 1047)
+		elseIf (seqID == 1047)						; FF-OK reviewed double-bed, picnick table, single(foot hangs over)
 			ssStruct.FAnimFormID = 0x0900638B
 			ssStruct.MAnimFormID = 0x0900638C
 			ssStruct.PositionOrigID = "BP70 Leg Wrap Cunnilingus"
 			ssStruct.PositionID = "DTSIX_1047_S1"
 			ssStruct.StageTime = 24.0
-		elseIf (seqID == 1048)
+		elseIf (seqID == 1048)						; reviewed double-bed
 			ssStruct.FAnimFormID = 0x09007A63
 			ssStruct.MAnimFormID = 0x09007A64
 			ssStruct.PositionOrigID = "BP70 Laying Blowjob"
 			ssStruct.PositionID = "DTSIX_1048_S1"
 			ssStruct.StageTime = 24.0
-		elseIf (seqID == 1049)
+		elseIf (seqID == 1049)							; MF-only reviwed double-bed
 			ssStruct.FAnimFormID = 0x09000FB3
 			ssStruct.MAnimFormID = 0x09000FB4
 			ssStruct.PositionOrigID = "BP70 Cunnilingus"
@@ -820,7 +825,7 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 			ssStruct.PositionID = "DTSIX_1050_S1"
 			ssStruct.StageTime = 24.0
 			ssStruct.FAngleOffset = 180.0
-		elseIf (seqID == 1051)
+		elseIf (seqID == 1051)							; shakes on floor bed
 			ssStruct.FAnimFormID = 0x0901038F
 			ssStruct.MAnimFormID = 0x09010390
 			ssStruct.PositionOrigID = "BP70 Standing 69"
@@ -829,7 +834,7 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 			ssStruct.FAngleOffset = 180.0
 
 		; standing doggy (52-53), standing carry (54-55)
-		elseIf (seqID == 1054)
+		elseIf (seqID == 1054)										; reviewed
 			if (stageNumber == 1)
 				ssStruct.FAnimFormID = 0x090098D1
 				ssStruct.MAnimFormID = 0x090098D2
@@ -925,6 +930,7 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 		elseIf (seqID == 1098)
 			ssStruct.FAnimFormID = 0x0900D642
 			ssStruct.MAnimFormID = 0x0900D643
+			ssStruct.ArmorNudeAGun = -2
 			ssStruct.PositionOrigID = "rxl_bp70_kissing"
 			ssStruct.PositionID = "DTSIX_1098_S1"
 			ssStruct.StageTime = 24.0
@@ -5309,21 +5315,12 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 		ssStruct.StageTime = 20.0
 		
 		if (seqID >= 490)
-			if (seqID == 499)										; hug01
-				ssStruct.FAnimFormID = 0x01000F99
-				ssStruct.MAnimFormID = 0x01000F9A
-			elseIf (seqID == 498)									; standing kiss
-				ssStruct.FAnimFormID = 0x01009116
-				ssStruct.MAnimFormID = 0x01009117
-			elseIf (seqID == 497)									; hug02
+			if (seqID == 497)									; hug02
 				ssStruct.FAnimFormID = 0x01001ECE
 				ssStruct.MAnimFormID = 0x01001ECF
 			elseIf (seqID == 496)									; cuddle01
 				ssStruct.FAnimFormID = 0x01002E04
 				ssStruct.MAnimFormID = 0x01002E05
-			elseIf (seqID == 495)									; slowDance01
-				ssStruct.FAnimFormID = 0x01009121
-				ssStruct.MAnimFormID = 0x01009122
 			elseIf (seqID == 494)									; slowDance02 plus dip
 				if (stageNumber == 1)
 					ssStruct.StageTime = 17.5
@@ -5356,13 +5353,13 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 				ssStruct.MAnimFormID = 0x01009124
 			endIf
 		elseIf (seqID >= 450 && seqID < 490)
-			if (seqID == 450)										; couch cuddle A
+			if (seqID == 450)										; couch cuddle A 
 				ssStruct.StageTime = 16.0
 				if (stageNumber == 1)
 					ssStruct.FAnimFormID = 0x01005410
 					ssStruct.MAnimFormID = 0x01005411
 				else
-					ssStruct.FAnimFormID = 0x01007A17
+					ssStruct.FAnimFormID = 0x01007A17	; kiss
 					ssStruct.MAnimFormID = 0x01007A16
 				endIf
 			elseIf (seqID == 451)									; couch cuddle B 

@@ -2,9 +2,11 @@ Scriptname DTSleep_PlayAACScript extends ActiveMagicEffect
 
 ; *********************
 ; script by DracoTorre
-; Sleep Intimate
+; Sleep Intimate  v3 (2024)
 ; https://www.dracotorre.com/mods/sleepintimate/
 ; https://github.com/Dracotorre/SleepIntimateV2
+;
+; Hug, Kiss, Dance idle animations provided by TheRealRufgt and AVilas with permisson.
 ;
 ; positions actors and plays singles or sequences of paired animated idles where each actor is positioned at origin--no offset between actors
 ; 
@@ -59,10 +61,16 @@ Keyword property DTSleep_MorphKeyword auto const
 EndGroup
 
 Group C_Idles
-Idle property DTSleep_TRRGTEmbraceFIdle auto const
+Idle property DTSleep_TRRGTEmbraceFIdle auto const			; thanks TheRealRufgt
 Idle property DTSleep_TRRGTEmbraceMIdle auto const
 Idle property DTSleep_TRRGTKissingFIdle auto const
 Idle property DTSleep_TRRGTKissingMIdle auto const
+Idle property DTSleep_AVilasHug1FIdle auto const			; thanks AVilas   v3
+Idle property DTSleep_AVilasHug1MIdle auto const
+Idle property DTSleep_AVilasStandKissNFIdle auto const
+Idle property DTSleep_AVilasStandKissNMIdle auto const
+Idle property DTSleep_AVilasDanceSlow1FIdle auto const
+Idle property DTSleep_AVilasDanceSlow1MIdle auto const
 Idle property LooseIdleStop auto const Mandatory
 EndGroup
 
@@ -423,7 +431,9 @@ EndFunction
 Armor Function GetArmorNudeGun(int kind)
 
 	Armor gun = None
-	if (kind < 0 || SequenceID == 780)
+	if (kind < 0 || SequenceID == 780 || SequenceID == 1098 || SequenceID == 535)
+		return None
+	elseIf (SequenceID >= 400 && SequenceID < 500)
 		return None
 	endIf
 	if (!Debug.GetPlatformName() as bool)
@@ -1037,7 +1047,7 @@ Function InitSceneAndPlay()
 		SceneRunning = 0
 		StopAnimationSequence()
 		
-	elseIf (SequenceID <= 97 || SequenceID == 549)
+	elseIf (SequenceID == 97 || SequenceID == 549)
 		PlaySingleStage(SceneData.MaleRole, SceneData.FemaleRole, None, DTSleep_TRRGTEmbraceMIdle, DTSleep_TRRGTEmbraceFIdle, None, 8.0)
 		
 		PlaySingleStage(SceneData.MaleRole, SceneData.FemaleRole, None, DTSleep_TRRGTKissingMIdle, DTSleep_TRRGTKissingFIdle, None, 12.0)
@@ -1049,6 +1059,30 @@ Function InitSceneAndPlay()
 		endIf
 	
 		Utility.Wait(0.2)
+		SceneRunning = 0
+		StopAnimationSequence()
+		
+	elseIf (SequenceID == 95)
+		; v3 hug
+		PlaySingleStage(SceneData.MaleRole, SceneData.FemaleRole, None, DTSleep_AVilasHug1MIdle, DTSleep_AVilasHug1FIdle, None, ssWaitSecs)
+		Utility.Wait(0.2)
+	
+		SceneRunning = 0
+		StopAnimationSequence()
+		
+	elseIf (SequenceID == 94)
+		; v3 kiss
+		PlaySingleStage(SceneData.MaleRole, SceneData.FemaleRole, None, DTSleep_AVilasStandKissNMIdle, DTSleep_AVilasStandKissNFIdle, None, ssWaitSecs)
+		Utility.Wait(0.2)
+	
+		SceneRunning = 0
+		StopAnimationSequence()
+		
+	elseIf (SequenceID == 91)
+		; v3 romantic dance
+		PlaySingleStage(SceneData.MaleRole, SceneData.FemaleRole, None, DTSleep_AVilasDanceSlow1MIdle, DTSleep_AVilasDanceSlow1FIdle, None, ssWaitSecs)
+		Utility.Wait(0.2)
+	
 		SceneRunning = 0
 		StopAnimationSequence()
 	else
@@ -1167,7 +1201,7 @@ Function PlaySequence(DTAACSceneStageStruct[] seqStagesArray)
 				extraActor = SceneData.SecondMaleRole
 			endIf
 		endIf
-		;Debug.Trace("[DTSleep_PlayAAC] PlayAnimStage at index " + seqCount + " for secs " + waitSecs + " (ping-pong =  " + pingPongCount + ")")  ;TODO: remove
+		;Debug.Trace("[DTSleep_PlayAAC] PlayAnimStage at index " + seqCount + " for secs " + waitSecs + " (ping-pong =  " + pingPongCount + ")") 
 		PlayAnimAtStage(seqStagesArray[seqCount], SceneData.MaleRole, SceneData.FemaleRole, extraActor, waitSecs)
 		
 		int pongLim = 2
