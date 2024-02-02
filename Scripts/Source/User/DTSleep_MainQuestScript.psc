@@ -782,6 +782,7 @@ int CheckCustomArmorsTimerID = 16 const
 int BedEncounterTimerID = 17 const
 int RadiationDamageTimerID = 19 const
 int DogmeatSetWaitTimerID = 21 const
+int ExitSeatHandleTimerID = 22 const			; v3.03
 int LoverBonusAddTimerID = 45 const
 int LoverAffinityCheckTimerID = 46 const
 int LoverPerkGameTimerID = 101 const
@@ -982,6 +983,8 @@ Event OnTimer(int aiTimerID)
 		
 	elseIf (aiTimerID == ExitBedHandleTimerID)
 		HandleExitBed()
+	elseIf (aiTimerID == ExitSeatHandleTimerID)
+		HandleExitSeat()
 		
 	elseIf (aiTimerID == DogmeatSetWaitTimerID)
 		SetDogmeatWait()
@@ -6328,6 +6331,9 @@ Function GoThirdPerson(bool override)
 	endIf
 EndFunction
 
+;------------------
+; in v3.03 now only bed -- seat uses its own
+;
 Function HandleExitBed()
 	
 	PlayerSleepPerkRemove()		; hide until out
@@ -6423,6 +6429,32 @@ Function HandleExitBed()
 			endIf
 		endIf
 	endIf
+
+EndFunction
+
+;------------
+; not bed -- seat or other furniture  v3.03
+;
+Function HandleExitSeat()
+	
+	PlayerSleepPerkRemove()		; hide until out
+	Utility.Wait(1.0)
+	
+	MainQSceneScriptP.GoSceneViewDone(false)
+	Utility.Wait(0.1)
+	
+	if ((DTSConditionals as DTSleep_Conditionals).IsPlayerCommentsActive)
+		ModPlayerCommentsEnable()
+	endIf
+
+	EnablePlayerControlsSleep()
+	
+	Location currentLoc = (SleepPlayerAlias as DTSleep_PlayerAliasScript).CurrentLocation
+	CheckMessages(currentLoc)
+	
+	
+	StartTimer(3.0, PlayerSleepPerkTimerID) 
+	
 
 EndFunction
 
@@ -6531,12 +6563,27 @@ Function HandleOnExitFurniture(ObjectReference bedRef)
 	RegisterForMenuOpenCloseEvent("WorkshopMenu")
 	;DTDebug(" OnExitFurniture - " + bedRef, 2)
 	
+	bool isBed = true		; v3.03 - tell difference between seat and bed
+	
 	float timeToWait = 5.4
-	if (bedRef != None && bedRef.HasKeyword(AnimFurnFloorBedAnims))  ; what about slow-side exit?
-		timeToWait += 1.90
+	
+	if (bedRef != None && (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsObjBed(bedRef))
+	
+	
+		if (bedRef.HasKeyword(AnimFurnFloorBedAnims))  ; what about slow-side exit?	
+			timeToWait += 1.90
+		endIf
+	else
+		isBed = false
 	endIf
+	
 
-	StartTimer(timeToWait, ExitBedHandleTimerID)
+	if (isBed)
+
+		StartTimer(timeToWait, ExitBedHandleTimerID)
+	else
+		StartTimer(timeToWait, ExitSeatHandleTimerID)	; v3.03 handle differently from bed
+	endIf
 endFunction
 
 Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool isSpecialAnimBed)
@@ -7078,6 +7125,7 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 					
 					if (!SceneData.IsUsingCreature)
 						if (!bedIsBunk && !bedIsCoffin)
+							
 							if ((DTSConditionals as DTSleep_Conditionals).IsLeitoActive && DTSleep_IsLeitoActive.GetValue() >= 1.0)
 								limitLevel = 7.0
 							elseIf ((DTSConditionals as DTSleep_Conditionals).IsLeitoAAFActive && DTSleep_IsLeitoActive.GetValue() >= 1.0)
@@ -16147,7 +16195,7 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 	elseIf (seqID < 100 || mainActorIsPositioned || (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SceneIDAtPlayerPosition(seqID))
 		; check VR-mode v3.0 
 		camLevel = 0
-		if (DTSleep_VR.GetValueInt() == 2 && (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SceneOkayLookViewSit(seqID) < 0)
+		if (DTSleep_VR.GetValueInt() == 2 && (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SceneOkayLookViewSit(seqID, bedRef) < 0)
 			
 			camLevel = -5   ; override to force third-person camera
 		endIf
@@ -17458,7 +17506,6 @@ Function TestModeOutput()
 		Debug.Trace(myScriptName + "    promptVal:  " + DTSleep_SettingShowIntimateCheck.GetValue())
 		Debug.Trace(myScriptName + " AdultLeitoEVB: " + DTSleep_IsLeitoActive.GetValue())
 		Debug.Trace(myScriptName + "     Scene AAC: " + (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).DTSleep_SettingAACV.GetValueInt())
-		Debug.Trace(myScriptName + "       VR-mode: " + DTSleep_VR.GetValue())
 		Debug.Trace(myScriptName + "        AAF on: " + DTSleep_SettingAAF.GetValue())
 		Debug.Trace(myScriptName + "   SeeYouSleep: " + DTSleep_IsSYSCWActive.GetValue() + " / " + DTSleep_SettingPrefSYSC.GetValue())
 		Debug.Trace(myScriptName + "          NNES: " + DTSleep_IsNNESActive.GetValue())

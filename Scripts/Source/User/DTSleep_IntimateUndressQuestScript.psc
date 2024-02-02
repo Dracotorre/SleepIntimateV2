@@ -3868,13 +3868,14 @@ Function UndressActorRespect(Actor actorRef, bool isIndoors, bool remHatsOutside
 	
 	; v2.25 - moved for all year
 	; v2.80 changed false to respectOnly to force search
-	if (!IsActorWearingArmorAllException(actorRef, respectOnly))	
-		bool skipUpper = true
-		if (jacketRemoved || !hasJacket)
-			skipUpper = false
-		endIf
-		UndressActorArmorOutSlots(actorRef, skipUpper, respectOnly)
-	endIf
+	; v3.03 skip this 
+	;if (!IsActorWearingArmorAllException(actorRef, respectOnly))	
+	;	bool skipUpper = true
+	;	if (jacketRemoved || !hasJacket)
+	;		skipUpper = false
+	;	endIf
+	;	UndressActorArmorOutSlots(actorRef, skipUpper, respectOnly)
+	;endIf
 	
 	if (DTSleep_SettingUndressGlasses.GetValueInt() >= 2)
 		UndressActorArmorGlasses(actorRef)

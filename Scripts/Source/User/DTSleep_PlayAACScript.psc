@@ -761,7 +761,7 @@ Function InitSceneAndPlay()
 	endIf
 	
 
-	if (SequenceID > 400 && DTSConditionals.ImaPCMod)
+	if (SequenceID >= 400 && DTSConditionals.ImaPCMod)			; fix -- no 400  v3.03 >=
 		seqStagesArray = DTSleep_AACcatScript.GetSeqCatArrayForSequenceID(SequenceID, longScene, genders, otherActor, forceEVB)
 	endIf
 

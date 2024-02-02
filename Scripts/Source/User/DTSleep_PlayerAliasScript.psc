@@ -3211,6 +3211,19 @@ int Function CheckCustomPlayerHomes()
 		AddToBedsList(Game.GetFormFromFile(0x0900000E, "PsBoss Beds.esp"), true)
 	endIf
 	
+	; AlootHomePlate v3.03
+	; bunk beds have ladders and main bed is a double bed
+	Form pBunkForm = IsPluginActive(0x0900098C, "AlootHomePlate.esp")
+	if (pBunkForm != None)
+		if (!DTSleep_BedNoIntimateList.HasForm(pBunkForm))
+			modCount += 1
+		
+			DTSleep_BedNoIntimateList.AddForm(pBedForm)
+			DTSleep_BedNoIntimateList.AddForm(Game.GetFormFromFile(0x09000895, "AlootHomePlate.esp"))
+			AddToBedsList(Game.GetFormFromFile(0x0900089E, "AlootHomePlate.esp"), true)
+		endIf
+	endIf
+	
 	; BasementLiving handled in regular section
 	
 	Debug.Trace(myScriptName + " ================= End Custom Home/Location check ====================")
@@ -3854,7 +3867,7 @@ int Function CheckCustomArmorsAndBackpacks()
 		endIf
 		bool modCountIncremented = false
 		
-		if (!DTSleep_ArmorSlotULegList.HasForm(extraArmor as Form) || !DTSleep_ArmorStockingsList.HasForm(extraArmor as Form))
+		if (!DTSleep_ArmorStockingsList.HasForm(extraArmor as Form))
 			modCount += 1
 			modCountIncremented = true
 			AddToSocksList(extraArmor as Form)
@@ -4732,7 +4745,7 @@ int Function CheckCustomArmorsAndBackpacks()
 	
 	; DX Naughty Secretary  - v2.88
 	extraForm = IsPluginActive(0x0902B93A, "DX_NaughtySecretary.esp")						; socks
-	if (extraForm != None && !DTSleep_ArmorGlassesList.HasForm(extraForm))
+	if (extraForm != None && !DTSleep_ArmorExtraClothingList.HasForm(extraForm))
 		modCount += 1
 		DTSleep_ArmorExtraClothingList.AddForm(extraForm)
 		DTSleep_ArmorGlassesList.AddForm(Game.GetFormFromFile(0x0902DF3A, "DX_NaughtySecretary.esp"))

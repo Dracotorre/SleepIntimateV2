@@ -210,6 +210,7 @@ int property MSceneChangedAAFSetting = -1 auto hidden
 bool property PlayAAFEnabled = true auto hidden
 int property MySleepBedFurnType = -1 auto hidden			; see FurnType* constants below
 int property PlayerEndurance = -1 auto hidden  ; v2.90
+bool property SleepBedIsHidden = false auto hidden 		; v3.03
 
 
 
@@ -1266,7 +1267,7 @@ bool Function PlayActionHugs(bool seatIsSpecial = false)
 		Debug.Trace(myScriptName + " -------------------------------------------------- ")
 	endIf
 	
-	if (SceneIDAtPlayerPosition(sid))
+	if (SceneIDAtPlayerPosition(sid) && DTSleep_VR.GetValueInt() < 2 && DTSleep_SettingAACV.GetValueInt() < 3)
 		MainActorPositionByCaller = true
 	endIf
 
@@ -1351,7 +1352,7 @@ bool Function PlayActionKiss(int intimateSettingVal, bool seatIsSpecial = false)
 	
 	LastSceneKissID = sid
 	
-	if (SceneIDAtPlayerPosition(sid))
+	if (SceneIDAtPlayerPosition(sid) && DTSleep_VR.GetValueInt() < 2 && DTSleep_SettingAACV.GetValueInt() < 3)
 		MainActorPositionByCaller = true
 	endIf
 
@@ -1539,7 +1540,7 @@ bool Function PlayActionXOXO(bool seatisSpecial = false)
 	endIf
 	
 	
-	if (SceneIDAtPlayerPosition(id))
+	if (SceneIDAtPlayerPosition(id) && DTSleep_VR.GetValueInt() < 2 && DTSleep_SettingAACV.GetValueInt() < 3)
 		MainActorPositionByCaller = true
 	endIf
 
@@ -1908,7 +1909,7 @@ Function FadeAndPlay(int id, bool mainActorIsMaleRole = true)
 		SleepBedRef.SetDestroyed(true)
 	endIf
 	
-	int okSit = SceneOkayLookViewSit(id)		; 0=clone/stand; 1=clone/sit; 2=no-clone/sit
+	int okSit = SceneOkayLookViewSit(id, SleepBedRef)		; 0=clone/stand; 1=clone/sit; 2=no-clone/sit
 	int vrMode = DTSleep_VR.GetValueInt()
 	bool vrOkay = false
 	if (vrMode >= 3 || DTSleep_SettingTestMode.GetValueInt() >= 1)
@@ -1938,33 +1939,82 @@ Function FadeAndPlay(int id, bool mainActorIsMaleRole = true)
 	
 				Game.ForceFirstPerson()
 				Utility.Wait(0.2)
+				
 				if (okSit == 0)
-					; place between player and chair or at an angle
-					float dist = 54.0
+					; place between player and chair or in front of chair or at angle
+					float dist = 58.0	; from player - min activation distance is 80
 					float offAngle = 0.0
+					float zOffset = 0.0
 					bool isLarge = false
+					float furnDistCheck = 90.0
+					ObjectReference originRef = MainActorRef
+					
+					; note: for standing hug/kiss we force MainActorPositionByCaller true
 					
 					if (MainActorPositionByCaller && !SceneIDIsCuddle(id))
+						; custom animation and player chose pick-spot
 						dist = 72.0
-						
-					elseIf (IsObjBed(SleepBedRef) || MySleepBedFurnType == FurnTypeIsTablePicnic || MySleepBedFurnType == FurnTypeIsTablePool)
-						dist = 60.0
-						if (!MainActorPositionByCaller)
-							offAngle = 49.0
+					
+					elseIf (IsObjBed(SleepBedRef))
+						if (SleepBedRef.HasKeyword(AnimFurnFloorBedAnimKY))
+							; player may stand on bed, so place in front
+							dist = 64.0
+							zOffset = 2.0
+						else
+							dist = 52.0
+							offAngle = 32.0
+							isLarge = true
 						endIf
+						
+					elseIf (MySleepBedFurnType == FurnTypeIsSeatSofa)
 						isLarge = true
+						dist = 44.0
+						offAngle = -1.0
+						originRef = SleepBedRef
+						
+					elseIf (MySleepBedFurnType == FurnTypeIsTablePicnic || MySleepBedFurnType == FurnTypeIsTablePool)
+						dist = 0.0
+						zOffset = 18.8 + DTSleep_CommonF.GetBedHeight()
+						originRef = SleepBedRef
+						
+					elseIf (MySleepBedFurnType == FurnTypeIsMotorcycle || MySleepBedFurnType == FurnTypeIsSedanPostWar || MySleepBedFurnType == FurnTypeIsSedanPreWar)
+						dist = 44.0
+						offAngle = 24.0
 					endIf
+					
+					Debug.Trace(MyScriptName + " VR-P ..... ** distance " + dist + ", main-actor-positioned? " + MainActorPositionByCaller)
+					
 					SceneData.MaleMarker = DTSleep_CommonF.PlaceFormAtObjectRef(DTSleep_MainNode, MainActorCloneRef, false, true, true)
 					Point3DOrient ptOrig = DTSleep_CommonF.PointOfObject(MainActorRef)
-					Point3DOrient ptTargetNode = new Point3DOrient
-					ptTargetNode = DTSleep_CommonF.GetPointDistOnHeading(ptOrig, dist, offAngle)
 					Point3DOrient ptBed = DTSleep_CommonF.PointOfObject(SleepBedRef)
-					if (isLarge && DTSleep_CommonF.IsActorPtOnBed(ptTargetNode, ptBed, 102.0))
-						; place directly behind player
-						ptTargetNode = DTSleep_CommonF.GetPointDistOnHeading(ptOrig, dist, 180.0)
-						TurnActorAtAngle(MainActorRef, 180.0)
+					Point3DOrient ptTargetNode = new Point3DOrient
+					if (offAngle == -1.0)
+						; try in front of or on furniture
+						ptTargetNode = DTSleep_CommonF.GetPointDistOnHeading(ptBed, dist, 0.0)
+					else
+						; half-way between player and chair
+						ptTargetNode = DTSleep_CommonF.GetPointDistOnHeading(ptOrig, dist, offAngle)
 					endIf
-					SceneData.MaleMarker.MoveTo(MainActorRef, ptTargetNode.X, ptTargetNode.Y, 0.0, true)
+					
+					if (isLarge && DTSleep_CommonF.IsActorPtOnBed(ptTargetNode, ptBed, furnDistCheck))
+						; make furniture disappear
+						SleepBedRef.MoveTo(SleepBedRef, 0.0, 0.0, -700.0, true)
+						SleepBedIsHidden = true
+						Debug.Trace(MyScriptName + " VR-P ..... ** hiding furniture " + SleepBedRef)
+					endIf
+					
+					SceneData.MaleMarker.MoveTo(originRef, ptTargetNode.X, ptTargetNode.Y, zOffset, true)
+					
+					; is marker too close to player?
+					float distMarkerToPlayer = SceneData.MaleMarker.GetDistance(MainActorRef)
+					if (originRef == MainActorRef && !SleepBedIsHidden && distMarkerToPlayer < 44.0)
+						; make furniture disappear and move to furniture
+						SceneData.MaleMarker.MoveTo(SleepBedRef, 0.0, 0.0, 0.0, false)
+						SleepBedRef.MoveTo(SleepBedRef, 0.0, 0.0, -700.0, true)
+						SleepBedIsHidden = true
+						Debug.Trace(MyScriptName + " ..... ** hiding furniture2 " + SleepBedRef)
+					endIf
+					
 					float orientation = Utility.RandomFloat(12.0, 32.0)
 					if (Utility.RandomInt(0,8) > 4)
 						orientation += 180.0
@@ -2241,6 +2291,11 @@ Function FinalizeAndSendFinish(bool seqStartedOK = true, int errCount = 0)
 	;endIf
 	
 	SleepBedShiftedDown = 0.0
+	
+	if (SleepBedIsHidden)
+		SleepBedRef.MoveTo(SleepBedRef, 0.0, 0.0, 700.0, true)
+	endIf
+	SleepBedIsHidden = false
 
 	;Game.StopDialogueCamera()
 	
@@ -6222,9 +6277,9 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 						
 						if (!MainActorPositionByCaller && (DTSConditionals as DTSleep_Conditionals).IsCHAKPackActive && DTSleep_AdultContentOn.GetValue() >= 1.0)
 							if (MySleepBedFurnType == FurnTypeIsBedSingle)
-								sidArray.Add(400)
+								sidArray.Add(400, 2)
 							elseIf (MySleepBedFurnType == FurnTypeIsDoubleBed)
-								sidArray.Add(401)
+								sidArray.Add(401, 2)
 							endIf
 						endIf
 						if (!cuddlesOnly && packID <= 0)
@@ -8338,19 +8393,27 @@ bool Function SceneOkayToClonePlayer(int sid)
 	return true
 endFunction
 
-; allow viewing from chair of scene? 
+; allow viewing from chair of scene?
 ; return -1 = no, 0 = no-sit/stand-OK, 1 = clone/sit, 2 = no-clone/sit
-int Function SceneOkayLookViewSit(int id)
+int Function SceneOkayLookViewSit(int id, ObjectReference furnRef)
 
-	if (SleepBedRef == None)
+	if (furnRef == None)
 		return -1
 	endIf
 	
 	; player likely looking at bed/chair and we want to put clone between
+	; note: for standing hug/kiss we force MainActorPositionByCaller true so check last
 	
-	float dist = MainActorRef.GetDistance(SleepBedRef)
+	float dist = MainActorRef.GetDistance(furnRef)
+	bool isSeat = false
+	bool isFloorBed = false
 	
-	if (IsObjSeat(SleepBedRef))
+	if (furnRef.HasKeyword(AnimFurnFloorBedAnimKY))
+		isFloorBed = true
+	
+	elseIf (IsObjSeat(furnRef))
+	
+		isSeat = true
 		; can player sit for scene? 
 		; --- note: seated player shows HUD even disabled, so use TestMode for now
 		if (id == 739 && MainActorRef == SceneData.MaleRole && DTSleep_SettingTestMode.GetValueInt() >= 1)
@@ -8359,15 +8422,21 @@ int Function SceneOkayLookViewSit(int id)
 	endIf
 	
 	if (id < 100)
-		if (dist > 80.0)
+		if (isSeat && dist > 80.0)
+			return 0
+		elseIf (isFloorBed)
 			return 0
 		endIf
-	elseIf (id >= 490 && id < 500)
-		if (dist > 80.0)
+	elseIf (id >= 490 && id < 500 && isSeat)
+		if (isSeat && dist > 80.0)
+			return 0
+		elseIf (isFloorBed)
 			return 0
 		endIf
 	elseIf (id == 1098)
-		if (dist > 80.0)
+		if (isSeat && dist > 80.0)
+			return 0
+		elseIf (isFloorBed)
 			return 0
 		endIf
 	
