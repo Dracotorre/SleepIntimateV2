@@ -1314,7 +1314,7 @@ bool Function PlayActionKiss(int intimateSettingVal, bool seatIsSpecial = false)
 	if (!seatIsSpecial)
 		siDArray.Add(98)
 		sidArray.Add(94)
-		if (intimateSettingVal < 3)
+		if (DTSleep_AdultContentOn.GetValueInt() >= 2 && intimateSettingVal < 3)  ;v3.04 make sure R-only
 			sidArray.Add(97)
 		endIf
 	endIf
@@ -1475,11 +1475,14 @@ bool Function PlayActionXOXO(bool seatisSpecial = false)
 	endIf
 	
 	bool hasExtraHugs = HasEmbracePacks()					; v3.0
-	int[] sidArray = new int[3]
+	int[] sidArray = new int[2]
 	
 	sidArray[0] = 97
-	sidArray[1] = 98
-	sidArray[2] = 94
+	sidArray[1] = 94
+	
+	if (!seatIsSpecial && !hasExtraHugs)
+		siDArray.Add(98)
+	endIf
 	
 	
 	SceneData.AnimationSet = 0
@@ -6277,9 +6280,9 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 						
 						if (!MainActorPositionByCaller && (DTSConditionals as DTSleep_Conditionals).IsCHAKPackActive && DTSleep_AdultContentOn.GetValue() >= 1.0)
 							if (MySleepBedFurnType == FurnTypeIsBedSingle)
-								sidArray.Add(400, 2)
+								sidArray.Add(400, 3)
 							elseIf (MySleepBedFurnType == FurnTypeIsDoubleBed)
-								sidArray.Add(401, 2)
+								sidArray.Add(401, 3)
 							endIf
 						endIf
 						if (!cuddlesOnly && packID <= 0)
@@ -6292,13 +6295,13 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 						
 						if (!MainActorPositionByCaller && (DTSConditionals as DTSleep_Conditionals).IsCHAKPackActive && DTSleep_AdultContentOn.GetValue() >= 1.0)
 							if (MySleepBedFurnType == FurnTypeIsDoubleBed)
-								sidArray.Add(402)
+								sidArray.Add(402, 3)
 							endIf
 						endIf
 						if (!cuddlesOnly && packID <= 0)
 							sidArray.Add(97)
 							if (!SceneData.SameGender)
-								sidArray.Add(94)			; height mismatch
+								sidArray.Add(94)
 							endIf
 						endIf
 					endIf

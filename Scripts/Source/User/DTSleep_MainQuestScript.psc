@@ -1441,8 +1441,9 @@ Event DTSleep_IntimateAnimQuestScript.IntimateSequenceDoneEvent(DTSleep_Intimate
 			endIf
 			
 			if (bedRef == None)
-				if (sceneID < 100 || (sceneID >= 739 && sceneID <= 741) || sceneID == 780)
+				if (sceneID < 100 || (sceneID >= 739 && sceneID <= 741) || sceneID == 780 || (sceneID >= 400 && sceneID < 500) || sceneID == 1098)
 					; no bonus for hugs at chairs or sexy dance -- v2.83 added 780 -- or diner-booth embrace
+					; v3.04 -- added CHAK and BP70-kiss
 					self.SleepLoverBonusOnSleepID = -2
 					if (sceneID == 741 || sceneID < 90)
 						; do we need to restore SceneData?

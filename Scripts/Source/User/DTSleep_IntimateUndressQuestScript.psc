@@ -3781,10 +3781,6 @@ Function UndressActorRespect(Actor actorRef, bool isIndoors, bool remHatsOutside
 	endIf
 	int remWeaponVal = DTSleep_SettingUndressWeapon.GetValueInt()						;v2.71 (1=companion, 2=player, 3=both)
 	
-	; for hats and jackets also observe footwear    v2.83
-	if (remHatsOutside && remJacket)
-		UndressActorArmorFootwear(actorRef)
-	endIf
 	
 	if (actorRef == PlayerRef)
 		PlayerEquippedArrayUpdated = false
@@ -3822,6 +3818,12 @@ Function UndressActorRespect(Actor actorRef, bool isIndoors, bool remHatsOutside
 	endIf
 	UndressActorArmorMask(actorRef)
 	Utility.WaitMenuMode(0.15)
+	
+	; v3.04 -- moved down from above so that shoes redress
+	; for hats and jackets also observe footwear    v2.83
+	if (remHatsOutside && remJacket)
+		UndressActorArmorFootwear(actorRef)
+	endIf
 	
 	if (actorRef == PlayerRef)
 		bool placeOnGround = true
