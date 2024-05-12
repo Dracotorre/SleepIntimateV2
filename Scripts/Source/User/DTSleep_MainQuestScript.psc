@@ -14200,7 +14200,7 @@ int Function RestoreSettingsDefault()
 			DTSleep_SettingDogRestrain.SetValue(1.0)
 			DTSleep_SettingFadeEndScene.SetValue(1.0)
 			(DTSleep_HealthRecoverQuestP as DTSleep_HealthRecoverQuestScript).DTSleep_SettingFastSleepEffect.SetValue(1.0)
-			;DTSleep_SettingFastTime
+			(DTSleep_HealthRecoverQuestP as DTSleep_HealthRecoverQuestScript).DTSleep_SettingFastTime.SetValueInt(0)
 			;DTSleep_SettingGenderPref
 			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).DTSleep_SettingIncludeExtSlots.SetValue(1.0)
 			DTSleep_SettingIntimate.SetValue(1.0)
@@ -14217,6 +14217,10 @@ int Function RestoreSettingsDefault()
 			; SetModDef below may change this
 			if (Game.GetDifficulty() == 6)
 				DTSleep_SettingNapOnly.SetValue(2.0)
+				; v3.07 - check dynamic time-scale
+				if (Game.IsPluginInstalled("Elzee Dynamic Timescale.esp"))
+					DTSleep_SettingNapOnly.SetValue(3.0)
+				endIf
 			else
 				DTSleep_SettingNapOnly.SetValue(0.0)
 			endIf
@@ -14441,6 +14445,16 @@ int Function RestoreTestSettings(float oldVersion = 0.0)
 		; kiss-align on-update patcher fix
 
 		count += FixKissAlignScaleBug()	
+	endIf
+	
+	if (oldVersion < 3.07)
+		; v3.07 - check dynamic time-scale
+		if (Game.IsPluginInstalled("Elzee Dynamic Timescale.esp"))
+			if (DTSleep_SettingNapOnly.GetValueInt() > 0)
+				DTSleep_SettingNapOnly.SetValue(3.0)
+			endIf
+			(DTSleep_HealthRecoverQuestP as DTSleep_HealthRecoverQuestScript).DTSleep_SettingFastTime.SetValueInt(0)
+		endIf
 	endIf
 	
 	return count
@@ -14892,6 +14906,11 @@ Function SetModDefaultSettingsForGame()
 	if (Game.GetDifficulty() < 6)
 		; not hardcore survival so switch to simple
 		DTSleep_SettingNapOnly.SetValue(0.0)
+	else
+		; v3.07 - check dynamic time-scale
+		if (Game.IsPluginInstalled("Elzee Dynamic Timescale.esp"))
+			DTSleep_SettingNapOnly.SetValue(3.0)
+		endIf
 	endIf
 	if (Game.IsPluginInstalled("AdvancedNeeds2.esp"))
 		; set preference to needs for sleep handling and recovery

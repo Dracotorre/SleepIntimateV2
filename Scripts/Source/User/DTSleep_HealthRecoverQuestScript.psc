@@ -154,7 +154,10 @@ Event OnQuestInit()
 	LastGameTimeNapRec = LastGameTimeHourUpdate
 	
 	StartTimer(55.0, SleepNapTimeScaleTimerID)			; check after minute --player committed to sleep
-	StartTimerGameTime(0.356, SleepNapRecGameTimerID)
+	
+	;v3.07- player may have lower or dynamic time-scale, so remove this timer and put first call in above timer
+	; ------------StartTimerGameTime(0.356, SleepNapRecGameTimerID)
+	
 	StartTimerGameTime(0.987, SleepNapFatGameTimerID)	; first hour a bit short; 59m
 EndEvent
 
@@ -162,6 +165,11 @@ Event OnTimer(int aiTimerID)
 	if (aiTimerID == SleepNapTimeScaleTimerID)
 		CheckPrepareSleep()
 		CheckTimeScale()
+		
+		; v3.07 now do first check
+		Utility.Wait(1.3)
+		PlayerNapRecover(CalcFractionalHealthRecoverRate())
+		
 	elseIf (aiTimerID == SleepNapRecRealTimerID)
 		PlayerNapRecover(CalcFractionalHealthRecoverRate())		; v2.79
 		
@@ -311,6 +319,8 @@ endFunction
 ; - avoids skipping over day-change to allow game to handle updates and record stats
 ; v2.35 update to handle different remaining game-time for half-hour
 ;
+; v3.07 -- changed to not force low time-scale up to 20, so avoid using skip-time
+;
 ; hourToNext - send total game-hour time between events; default is for 3 skips per hour with 6 game-minute (18 real seconds) wait between
 ; returns real-time seconds remaining (for timers) and actual timeSkip hours
 ;
@@ -322,13 +332,27 @@ float[] Function AdvanceTime(float hourToNext = 0.33330)
 													
 	float beforeMidnightHourSet = 23.9833			; 3 real-time seconds (20 time-scale) before day change
 	float[] result = new float[2]
+	
+	; prior to v3.07 for nap pref >= 3 we forced time-scale up to 20 -- no longer
+	; so, adjust timeRemainInRealSec for low time-scale
+	; v3.07
+	if (TimeScale.GetValueInt() <= 10)
+		; shorten real-time until next advanced to shorten total sleep
+		;  then calculate timeSkip below
+		timeRemainInRealSec = 12.00
+	endIf
 		
 	if (hourToNext == 0.500)
-		; short wait = 0.3367 game-time minutes
-		if (TimeScaleVal == 20.0)
+		; short wait = 0.3367 game-time minutes  
+		; --- happens when caller does fade-to-black skip-time -- prefer time-scale >=20
+		if (timeScaleVal == 20.0)
 			timeRemainInRealSec = 1.25
-		else
+		elseIf (timeScaleVal > 10 && timeScaleVal < 80)			; v3.07 limit range
 			timeRemainInRealSec = 25.0 / timeScaleVal
+		else
+			; not recommended
+			timeRemainInRealSec = 2.0
+			
 		endIf
 	elseIf (hourToNext > 0.490)
 		hourToNext = 0.490
@@ -345,6 +369,7 @@ float[] Function AdvanceTime(float hourToNext = 0.33330)
 			elseIf (timeScaleVal == 20.0 && hourToNext == 0.250)
 				timeRemainInRealSec = 13.50
 				timeSkip = 0.1750
+
 			elseIf (hourToNext <= 0.9)
 				; calculate skip
 				float multi = 60.0 / timeScaleVal
@@ -497,6 +522,9 @@ endFunction
 
 Function CheckTimeScale()
 	
+	; 2 = fast-time timescale default
+	; 3 = fast-wait-time 
+	; 4 = fast-wait-skip
 	int napSpeed = DTSleep_SettingNapOnly.GetValueInt()
 	
 	; v1.61 - no scale if player over-encumbered
@@ -506,10 +534,14 @@ Function CheckTimeScale()
 		float hoursSinceStart = GetHoursDifference(RestStartedTime, curTime)
 		if (hoursSinceStart < 1.50)				; v2.16 - prevent time-scale change if skipped time
 			if (napSpeed >= 3)
-				int curVal = TimeScale.GetValueInt()			; get current - may have changed since original recorded
-				if (curVal < 20)
-					; speed up for players using longer hours so final hour reduced to 3 minutes real-time
-					IncreaseTimeScale(20)
+			
+				; v3.07 - added SettingFastTime for no time-scale increased to 20 by default, but may override
+				if (DTSleep_SettingFastTime.GetValueInt() >= 1)
+					int curVal = TimeScale.GetValueInt()			; get current - may have changed since original recorded
+					if (curVal < 20)
+						; speed up for players using longer hours so final hour reduced to 3 minutes real-time
+						IncreaseTimeScale(20)
+					endIf
 				endIf
 			elseIf (napSpeed == 2)
 				; TimeScale adjust
@@ -527,7 +559,6 @@ Function CheckTimeScale()
 							timeScaleVal = 60
 						elseIf (timeScaleSettingVal >= 3)
 							timeScaleVal = 76					; v2.33
-							; risky?
 						endIf
 					endIf
 					IncreaseTimeScale(timeScaleVal)
@@ -893,7 +924,9 @@ Function PlayerNapRecoverFatigue()
 	int hourIncCount = CheckGameHourIncrement()	; always increment HourCount  - v2.16 changed from bool to int hour-increment
 	
 	; v2.35 skip mid-sleep preference fast-wait-skip before recover
-	if (SleepStarted && DTSleep_SettingNapOnly.GetValueint() == 4 && HourCount >= 1 && HourCount <= 2 && HoursOversleep >= 4)	
+	if (SleepStarted && DTSleep_SettingNapOnly.GetValueint() == 4 && HourCount >= 1 && HourCount <= 2 && HoursOversleep >= 4 && TimeScale.GetValueInt() >= 20)	
+	
+		; v3.07 only works when time-scale at least 20 !!!! so no skip for low time-scale
 	
 		; ----stop NapRecover until finished advancing
 		int waitCnt = 0
