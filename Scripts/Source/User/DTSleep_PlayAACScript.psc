@@ -1024,8 +1024,10 @@ Function InitSceneAndPlay()
 	Game.FadeOutGame(false, true, 0.67, 2.1)
 	
 	float ssWaitSecs = 20.0
-	if (DTSleep_IntimateSceneLen.GetValueInt() >= 1)		; time-and-a-half  v2.90 -- moved here v3.01
-		ssWaitSecs = 30.0
+	int scLen = DTSleep_IntimateSceneLen.GetValueInt()
+	
+	if (scLen >= 1)		; time-and-a-half  v2.90 -- moved here v3.01
+		ssWaitSecs += (10.0 * scLen)		; extra time per len-level  v3.08
 	endIf
 		
 	; Play

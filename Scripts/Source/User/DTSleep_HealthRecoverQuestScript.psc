@@ -333,13 +333,20 @@ float[] Function AdvanceTime(float hourToNext = 0.33330)
 	float beforeMidnightHourSet = 23.9833			; 3 real-time seconds (20 time-scale) before day change
 	float[] result = new float[2]
 	
+	
+	
 	; prior to v3.07 for nap pref >= 3 we forced time-scale up to 20 -- no longer
 	; so, adjust timeRemainInRealSec for low time-scale
 	; v3.07
-	if (TimeScale.GetValueInt() <= 10)
+	if (timeScaleVal <= 10)
 		; shorten real-time until next advanced to shorten total sleep
 		;  then calculate timeSkip below
 		timeRemainInRealSec = 12.00
+		
+		; v3.10
+		if (timeScaleVal < 5.0)
+			beforeMidnightHourSet = 23.994
+		endIf
 	endIf
 		
 	if (hourToNext == 0.500)
@@ -852,6 +859,9 @@ Function PlayerNapRecover(float fractionVal = 0.03333, float nextTimerHours = 0.
 		
 		if (BedType == SleepBedOwnID)
 			hourLimit = 6
+			if (TimeScale.GetValue() <= 6.0)			; v3.08
+				hourLimit = 7
+			endIf
 		endIf
 		
 		; v2.35 continue fast-wait-time 2 rounds after hourLimit

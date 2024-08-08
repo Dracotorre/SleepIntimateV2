@@ -49,6 +49,8 @@ ActorBase property DTSleep_PlayerClone auto const
 ReferenceAlias property DTSleep_UndressPAlias auto
 Armor property DTSleep_NudeRing auto const
 Armor property DTSleep_AltFemBody auto const
+GlobalVariable property TimeScale auto const						; added v3.08
+GlobalVariable property GameHour auto								; added v3.08
 
 Actor property CompStrongRef auto const
 ActorValue property EnduranceAV auto const
@@ -211,6 +213,7 @@ bool property PlayAAFEnabled = true auto hidden
 int property MySleepBedFurnType = -1 auto hidden			; see FurnType* constants below
 int property PlayerEndurance = -1 auto hidden  ; v2.90
 bool property SleepBedIsHidden = false auto hidden 		; v3.03
+float property SceneStartGameTime = 0.0 auto hidden		; ensure intimate scene lasts 20 minutes -- v3.08
 
 
 
@@ -1086,6 +1089,8 @@ bool Function PlayActionIntimateSeq(int seqID)
 		return false
 	endIf
 	
+	SceneStartGameTime = Utility.GetCurrentGameTime()    	; to check if scene lasts long enough -- v3.08
+	
 	
 	if (SceneData.MaleRole != None && SceneData.FemaleRole != None)
 
@@ -1167,6 +1172,7 @@ bool Function PlayActionDancing(bool isRomantic = false)
 	endIf
 	
 	SceneData.IntimateSceneIsDanceHug = 2
+	SceneStartGameTime = Utility.GetCurrentGameTime()		; to check dance lasted long enough -v3.08
 	
 	if (isRomantic && FadeEnable && (DTSConditionals as DTSleep_Conditionals).IsCHAKPackActive)			; v3.0
 		if (Utility.RandomInt(1,10) > 5)
@@ -1227,6 +1233,7 @@ bool Function PlayActionHugs(bool seatIsSpecial = false)
 	
 	SceneData.AnimationSet = 0
 	SceneData.IntimateSceneIsDanceHug = 3
+	SceneStartGameTime = -1.0			; do not check time for hug -- v3.08
 	ClearSecondActors()
 	
 	if (SceneData.ToyArmor != None)
@@ -1294,6 +1301,7 @@ bool Function PlayActionKiss(int intimateSettingVal, bool seatIsSpecial = false)
 	
 	SceneData.AnimationSet = 0
 	SceneData.IntimateSceneIsDanceHug = 3
+	SceneStartGameTime = -2.0						; do not check time for kiss -- v3.08
 	ClearSecondActors()
 	
 	if (SceneData.ToyArmor != None)
@@ -1383,6 +1391,7 @@ bool Function PlayActionDancePole()
 	
 	SceneData.AnimationSet = 7
 	SceneData.IntimateSceneIsDanceHug = 1				; v2.48
+	SceneStartGameTime = -1.0					; do not check pole-dance time -- v3.08
 	ClearSecondActors()
 	
 	if (SceneData.ToyArmor != None)
@@ -1436,6 +1445,7 @@ bool Function PlayActionDanceSexy()
 	
 	SceneData.AnimationSet = 7
 	SceneData.IntimateSceneIsDanceHug = 1				; v2.48
+	SceneStartGameTime = Utility.GetCurrentGameTime()               ; to check if scene lasts long enough -- v3.08
 	ClearSecondActors()
 	
 	CheckRemoveToys(false, true)
@@ -1487,6 +1497,7 @@ bool Function PlayActionXOXO(bool seatisSpecial = false)
 	
 	SceneData.AnimationSet = 0
 	SceneData.IntimateSceneIsDanceHug = 0    ; v2.48 imagination sex -- not considered a hug
+	SceneStartGameTime = Utility.GetCurrentGameTime()      ; to check if scene lasts long enough -- v3.08
 	ClearSecondActors()
 	if (SceneData.ToyArmor != None)
 		CheckRemoveToys(false, true)
@@ -2449,6 +2460,53 @@ Function FinalizeAndSendFinish(bool seqStartedOK = true, int errCount = 0)
 	
 	ClearSecondActors(true)
 	
+	; Did scene last long enough in game-time?    - v3.08
+	; if not, Wait 20 minutes for shorter scenes and 60 minutes for long scenes
+	;
+	int scLen = DTSleep_IntimateSceneLen.GetValueInt()
+	
+	; only consider scene-length of at least 1
+	if (scLen > 0)
+	
+		; don't count if interrupted or never started
+		if (SceneStartGameTime > 0.0 && seqStartedOK && errCount == 0 && SceneData.Interrupted <= 0)
+			float hourTarget = 0.33333  ; 20 minutes for short scene
+			if (SceneData.IntimateSceneIsDanceHug >= 3)
+				hourTarget = 0.1333		; 8 minutes for hug/kiss -- currently not setting StartTime - not checking
+			elseIf (SceneData.IntimateSceneIsDanceHug > 0)
+				hourTarget = 0.20		; 12 minutes for dance
+			elseIf (scLen >= 4)
+				hourTarget = 1.00001
+			elseIf (scLen == 3)
+				hourTarget = 0.5001
+			endIf
+			float currentGameTime = Utility.GetCurrentGameTime()
+			float hourDiff = GetHoursDifference(currentGameTime, SceneStartGameTime)
+			if (hourDiff < hourTarget)
+				float hoursShort = hourTarget - hourDiff
+				float gHourSet = GameHour.GetValue() + hoursShort
+				
+				if (gHourSet >= 24.0)
+					float overT = gHourSet - 24.0
+					gHourSet = 23.98
+					hoursShort = 23.98 - GameHour.GetValue()
+					hourTarget -= overT
+				endIf
+				
+				if (DTSleep_SettingTestMode.GetValueInt() > 0)
+					Debug.Trace(MyScriptName + " EndScene add Wait of " + hoursShort + " hours; updating GameHour to " + gHourSet)
+				endIf
+				GameHour.SetValue(gHourSet)
+				if (hourTarget >= 0.85)
+					Game.IncrementStat("Hours Waiting", 1)
+					if (DTSleep_SettingTestMode.GetValueInt() > 0)
+						Debug.Trace(MyScriptName + " Updated Wait-Stat by 1")
+					endIf
+				endIf
+			endIf
+		endIf
+	endIf
+	
 	
 	; unlock controls
 	if (DTSleepIAQInputLayer != None)
@@ -2493,6 +2551,8 @@ endFunction
 
 float Function GetTimeForPlayID(int id)
 
+	; single-stage and special scenes go first followed by multi-stage scenes
+	;
 	; remember 4-stage scene default timings is total = 
 	;       SceneLen 1 = 64 seconds (baseSec)
 	;       SceneLen 2 = 86 seconds
@@ -2501,8 +2561,10 @@ float Function GetTimeForPlayID(int id)
 	
 	SceneData.WaitSecs = 11.0							; set to default
 	DTSleep_IntimateSceneLen.SetValueInt(0)				; v2.90 -- single stage scene may be set to time-and-a-half using DTSleep_IntimateSceneLen set to 1
-	
+	int timeScaleVal = TimeScale.GetValueInt()			; v3.08 -- for low time-scale increase scene length
+	float tm = 20.0										; expected total time for scene
 	int endurance = PlayerEndurance						; check value obtained at start-up - v2.90
+	int scL = 0											; scene length 
 	
 	if (MainActorRef != None && endurance < 3)
 		endurance = (MainActorRef.GetValue(EnduranceAV) as int) ; may be no clothing bonus if naked
@@ -2520,7 +2582,12 @@ float Function GetTimeForPlayID(int id)
 		return 316.22
 	endIf
 	
-	
+	if (timeScaleVal <= 5)
+		scL = 1
+		DTSleep_IntimateSceneLen.SetValueInt(scL)		; v3.08
+		tm += 11.0
+	endIf
+
 
 	if (id <= 10)
 		return 2.5
@@ -2531,90 +2598,125 @@ float Function GetTimeForPlayID(int id)
 		
 	elseIf (id >= 98 && id <= 99)		; hug, kiss
 		
-		if (endurance >= 7)
-			DTSleep_IntimateSceneLen.SetValueInt(1)		; single-stage time-and-a-half v2.90
-			return 30.0
+		if (SceneData.IntimateSceneIsDanceHug <= 0)				; v3.08
+			; XOXO bed scene
+			scL += 2
+			tm += 22.0
 		endIf
-		return 20.0
+		if (endurance >= 7)
+			scL += 1
+			tm += 10.0
+		endIf
+		DTSleep_IntimateSceneLen.SetValueInt(scL)
+		
+		return tm
 		
 	elseIf (id >= 490 && id < 500)
 		; hug/kiss standing or slow-dance
-		if (endurance >= 7)
-			DTSleep_IntimateSceneLen.SetValueInt(1)		; single-stage time-and-a-half
-			return 30.0
+		if (SceneData.IntimateSceneIsDanceHug <= 0)				; v3.08
+			; XOXO bed scene
+			scL += 2
+			tm += 22.0
 		endIf
-		return 20.0
+		if (endurance >= 7)
+			scL += 1
+			tm += 10.0
+			
+			if (id == 494)
+			 	scL += 1
+			 	tm += 10.0
+			endIf
+		endIf
+		return tm
 		
 	elseIf (id >= 400 && id < 490)
 		if (id == 402)
-			return 20.0
+			return tm
 		else
-			return 33.0
+			return tm + 13.0
 		endIf
+		
 	elseIf (id == 548)					; hug
-		return 18.0
+		return tm - 2.0
 		
 	elseIf (id >= 90 && id < 98)		; hug and kiss and dance
-		
-		if (endurance >= 7)
-			DTSleep_IntimateSceneLen.SetValueInt(1)
-			return 40.0
+		if (SceneData.IntimateSceneIsDanceHug <= 0)				; v3.08
+			; XOXO bed scene
+			scL += 2
+			tm += 22.0
 		endIf
-		return 28.0
+		if (id == 91)
+			scL += 1
+			tm += 19.0
+		endIf
+		if (endurance >= 7)
+			scL += 1		; single-stage time-and-a-half v2.90
+			tm += 12.0
+		endIf
+		if (timeScaleVal <= 5)
+			scL += 1
+			tm += 10.0
+		endIf
+		
+		DTSleep_IntimateSceneLen.SetValueInt(scL)
+		
+		return tm
+		
 	elseIf (id == 1098)				
 		if (endurance >= 7)
-			DTSleep_IntimateSceneLen.SetValueInt(1)
-			return 28.0
+			scL += 1
+			tm += 10.0
 		endIf
-		return 18.0
+		return tm - 2.0
 		
 	elseIf (id == 549)					; hug and kiss
-		return 28.0
+		return tm + 8.0
 	elseIf (id == 535)
-		DTSleep_IntimateSceneLen.SetValueInt(1)
-		return 22.0						; couch cuddle  TODO: ?????
+		DTSleep_IntimateSceneLen.SetValueInt(scL + 1)
+		return tm + 2.0						; couch cuddle  TODO: ?????
 		
 	elseIf (id == 780)					; booth flirt
 		if (endurance > 8)
-			DTSleep_IntimateSceneLen.SetValueInt(1)
-			return 42.0
+			DTSleep_IntimateSceneLen.SetValueInt(scL + 1)
+			return tm + 36.0
 		endIf
-		return 28.0
+		return tm + 22.0
 		
 	elseIf (id == 1008)
 		; best to slow each stage and without repeat stages
 		DTSleep_IntimateSceneLen.SetValueInt(0)
 		SceneData.WaitSecs = 12.0 + (endurance as float)		; for mid-stage -- others have set times
 		
-		return 33.0 + SceneData.WaitSecs
-		
+		return tm + 13.0 + SceneData.WaitSecs
+	
 	elseIf (id >= 100)
-		float baseSec = 59.5
+		float baseSec = 59.5				; base time for multi-stage scenes
 		
 		if (SceneData.AnimationSet == 5 && id != 547 && id != 546)	
-			DTSleep_IntimateSceneLen.SetValueInt(0)
+			DTSleep_IntimateSceneLen.SetValueInt(scL)
 			
 			if (id >= 505 && id <= 510)
-				return 33.5
+				return tm + 13.5
 			elseIf (id >= 551 && id < 552)
-				return 36.0
+				return tm + 16.0
 			endIf
 			
-			return 28.0
+			return tm + 8.0
+			
 		elseIf (SceneData.AnimationSet == 10)
 			if ((id >= 1004 && id <= 1006) || (id >= 1012 && id <= 1020) || (id >= 1035 && id <= 1036) || (id >= 1047 && id <= 1051) || (id >= 1060 && id <= 1061))
-				DTSleep_IntimateSceneLen.SetValueInt(0)
+				DTSleep_IntimateSceneLen.SetValueInt(scL)
 				if (endurance > 8)
-					DTSleep_IntimateSceneLen.SetValueInt(1)
-					return 36.0
+					DTSleep_IntimateSceneLen.SetValueInt(scL + 1)
+					return tm + 16.0
 				endIf
-				return 24.0
+				return tm + 4.0
 			endIf
 			
 		elseIf (id >= 200 && id < 600 && id != 547 && id != 546)
-			DTSleep_IntimateSceneLen.SetValueInt(0)
+			DTSleep_IntimateSceneLen.SetValueInt(scL)
 			
-			baseSec = 29.4
+			baseSec = tm + 9.0
 			
 		elseIf (id >= 764 && id <= 765)
 		
@@ -2622,69 +2724,78 @@ float Function GetTimeForPlayID(int id)
 			return 78.0
 			
 		elseIf (id == 766)
-			DTSleep_IntimateSceneLen.SetValueInt(1)
+			DTSleep_IntimateSceneLen.SetValueInt(scL + 1)
 			if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.22)
-				return 92.0
+				return tm + 72.0
 			endIf
-			return 82.5
+			return tm + 62.5
 			
 		elseIf (SceneData.CompanionInPowerArmor || SceneData.IsCreatureType == 3)
-			DTSleep_IntimateSceneLen.SetValueInt(0)
+			DTSleep_IntimateSceneLen.SetValueInt(scL)
 			
-			return 26.4
+			return tm + 6.4
 			
 		elseIf (id >= 700 && id < 800)
 			if (id >= 798)
-				DTSleep_IntimateSceneLen.SetValueInt(0)
+				DTSleep_IntimateSceneLen.SetValueInt(scL)
 				if (endurance > 8)
-					DTSleep_IntimateSceneLen.SetValueInt(1)			; v2.90
-					return 46.0
+					DTSleep_IntimateSceneLen.SetValueInt(scL + 1)			; v2.90
+					return tm + 26.0
 				endIf
-				return 31.0
+				return tm + 11.0
+				
 			elseIf (id == 797)
-				; no ping-pong for 8-stage scene
-				DTSleep_IntimateSceneLen.SetValueInt(1)
-				return 86.0
+				; 8-stage scene, no ping-pong unless for low time-scale   v3.08
+				DTSleep_IntimateSceneLen.SetValueInt(scL + 1)
+				return 86.0 + (waitSecX2 * scL)
 				
 			elseIf (id == 700 && SceneData.SecondFemaleRole != None)
-				; no ping-pong for 8-stage scene
-				DTSleep_IntimateSceneLen.SetValueInt(1)
-				return 86.0
+				; 8-stage scene, no ping-pong unless for low time-scale   v3.08
+				DTSleep_IntimateSceneLen.SetValueInt(scL + 1)
+				return 86.0 + (waitSecX2 * scL)
 			
 			elseIf (id == 794)
 				; v2.84 fall-through for 1.29
 				if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers < 1.290)
-					DTSleep_IntimateSceneLen.SetValueInt(0)
-					return 28.0
+					DTSleep_IntimateSceneLen.SetValueInt(scL + 1)
+					return tm + 8.0
 				endIf
 				
 			elseIf (id == 781)
-				DTSleep_IntimateSceneLen.SetValueInt(0)
+				DTSleep_IntimateSceneLen.SetValueInt(scL)
 				
-				return 26.0
+				return tm + 6.0
+				
 			elseIf (id == 706 || id == 739 || id == 749)				; v2.70.1 - removed 707, it's down below
+				tm = 30.7
 				if (endurance > 8)
-					DTSleep_IntimateSceneLen.SetValueInt(1)
-				
-					return 45.2
+					scL += 1
 				endIf
-				DTSleep_IntimateSceneLen.SetValueInt(0)
 				
-				return 30.7
+				; v3.08
+				if (timeScaleVal <= 5)
+					tm += waitSecX2
+					scL += 1   				; +2 included at top
+				endIf
+				
+				DTSleep_IntimateSceneLen.SetValueInt(scL)
+				
+				return tm
 				
 			elseIf (id == 709)
-				; no ping-pong for 8-stage scene
-				DTSleep_IntimateSceneLen.SetValueInt(1)
-				return 86.0
+				; 8-stage scene, no ping-pong unless for low time-scale   v3.08
+				DTSleep_IntimateSceneLen.SetValueInt(scL + 1)
+				return 86.0 + (waitSecX2 * scL)
 				
 			elseIf (id == 769)
-				DTSleep_IntimateSceneLen.SetValueInt(0)
-				if (endurance > 7)
-					DTSleep_IntimateSceneLen.SetValueInt(1)		; v2.90
-					return 36.0
-				endIf
 				
-				return 23.5
+				if (endurance > 7)
+					scL += 1		; v2.90
+					tm += 13.0
+				endIf
+				DTSleep_IntimateSceneLen.SetValueInt(scL)
+				
+				return tm + 3.0
 			
 			elseIf (id == 748 && SceneData.SecondMaleRole != None)
 				DTSleep_IntimateSceneLen.SetValueInt(0)
@@ -2693,15 +2804,14 @@ float Function GetTimeForPlayID(int id)
 			elseIf (id == 741)
 				if (endurance >= 5 && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.230)
 					; has enough endurance for longer scene - v2.90
-					DTSleep_IntimateSceneLen.SetValueInt(1)
-					return 120.0
+					scL += 1
 				endIf
-				DTSleep_IntimateSceneLen.SetValueInt(0)
-				return 60.0
+				DTSleep_IntimateSceneLen.SetValueInt(scL)
+				return 60.0 * (scL + 1)
 				
 			elseIf (id >= 743 && id <= 745)
-				DTSleep_IntimateSceneLen.SetValueInt(0)
-				return 36.0
+				DTSleep_IntimateSceneLen.SetValueInt(scL)
+				return tm + 16.0
 			elseIf (id == 746)
 				DTSleep_IntimateSceneLen.SetValueInt(0)	
 				if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20 && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers <= 1.21)
@@ -2711,33 +2821,34 @@ float Function GetTimeForPlayID(int id)
 				; else fall through to regular length
 				endIf
 			elseIf (id == 732)
-				DTSleep_IntimateSceneLen.SetValueInt(0)
-				return 48.0
+				DTSleep_IntimateSceneLen.SetValueInt(scL)
+				return 24.0 * (scL + 1)
+				
 			elseIf (id >= 713 && id <= 714)
-				DTSleep_IntimateSceneLen.SetValueInt(0)
-				return 32.0
+				DTSleep_IntimateSceneLen.SetValueInt(scL)
+				return tm + 12.0
 			elseIf (id == 715 && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers <= 1.24)		; v2.88
-				DTSleep_IntimateSceneLen.SetValueInt(0)
-				return 32.0
+				DTSleep_IntimateSceneLen.SetValueInt(scL)
+				return tm + 12.0
 			elseIf (SceneData.SecondMaleRole != None && id == 707)
-				DTSleep_IntimateSceneLen.SetValueInt(0)
-				return 32.0
+				DTSleep_IntimateSceneLen.SetValueInt(scL)
+				return tm + 12.0
 			elseIf (id == 701 && SceneData.SecondMaleRole != None)
 				if (endurance > 8)
 					; v2.90
-					DTSleep_IntimateSceneLen.SetValueInt(1)
-					return 45.0
+					scL += 1
 				endIf
-				DTSleep_IntimateSceneLen.SetValueInt(0)
-				return 30.0
+				DTSleep_IntimateSceneLen.SetValueInt(scL)
+				return 15.0 * (scL + 2)
+				
 			elseIf (SceneData.SecondFemaleRole != None && id == 702)
 				if (endurance > 8)
 					; v2.90
-					DTSleep_IntimateSceneLen.SetValueInt(1)
-					return 45.0
+					scL += 1
 				endIf
 				DTSleep_IntimateSceneLen.SetValueInt(0)
-				return 32.0
+				return 15.0 * (scL + 2) + 2.0
+				
 			elseIf (SceneData.SecondMaleRole != None && id == 761)
 				DTSleep_IntimateSceneLen.SetValueInt(0)
 				return 32.0
@@ -2759,6 +2870,7 @@ float Function GetTimeForPlayID(int id)
 				; no ping-pong allowed
 				DTSleep_IntimateSceneLen.SetValueInt(1)
 				return 80.0
+				
 			elseIf (id >= 764 && id <= 766)
 				; no ping-pong
 				DTSleep_IntimateSceneLen.SetValueInt(1)
@@ -2766,10 +2878,11 @@ float Function GetTimeForPlayID(int id)
 					return 86.0
 				endIf
 				return 73.0
+				
 			elseIf (id == 773)
-				; no ping-pong for 8-stage scene
-				DTSleep_IntimateSceneLen.SetValueInt(1)
-				return 86.0
+				; no ping-pong for 8-stage scene unless low time-scale v3.08
+				DTSleep_IntimateSceneLen.SetValueInt(scL + 1)
+				return 86.0 + (waitSecX2 * scL)
 				
 			elseIf (id == 781)
 				; v2.84 - fall through for 1.28
@@ -2801,6 +2914,11 @@ float Function GetTimeForPlayID(int id)
 			endIf
 		endIf
 		
+		; -----------
+		;  multi-stage scenes usually 4-to-6 stages using baseSec and waitSecX2 for ping-pong looping
+		;
+		tm = 0.0			; not needed; using baseSec
+		scL = 0				; reset since these are different
 			
 		if (endurance >= 8 && id != 547 && id != 546 && id != 791)						
 			;int enduRand = Utility.RandomInt(5, endurance)
@@ -2847,6 +2965,16 @@ float Function GetTimeForPlayID(int id)
 			DTSleep_IntimateSceneLen.SetValueInt(1)
 		endIf
 		
+		; -------------------
+		; v3.08 - increase length for low time-scale
+		;
+		if (timeScaleVal <= 5)
+			scL = DTSleep_IntimateSceneLen.GetValueInt() + 2
+			DTSleep_IntimateSceneLen.SetValueInt(scL)
+			baseSec += waitSecX4 + 3.0
+		endIf
+		;-------------------
+		
 		if (id >= 100 && id < 102)
 			return baseSec - 0.4
 		elseIf (id == 103)
@@ -2870,6 +2998,8 @@ float Function GetTimeForPlayID(int id)
 				return baseSec + 9.0
 			elseIf (id == 738)
 				return baseSec + 8.8
+			elseIf (id == 742 || id == 746 || id == 753)
+				return baseSec + 11.0
 			elseIf (id == 756)
 				return baseSec + 20.0
 			
@@ -8450,6 +8580,19 @@ int Function SceneOkayLookViewSit(int id, ObjectReference furnRef)
 	endIf
 
 	return -1
+endFunction
+
+float Function GetHoursDifference(float time1, float time2)
+	float result = 0.0
+	if (time2 == time1)
+		return 0.0
+	elseIf (time2 > time1)
+		result = time2 - time1
+	else
+		result = time1 - time2
+	endIf
+	result *= 24.0
+	return result
 endFunction
 
 bool Function IsFurnTypeBed(int furnType)
