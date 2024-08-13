@@ -3811,6 +3811,42 @@ IntimateLocationHourSet Function ChanceForIntimateSceneByLocationHour(ObjectRefe
 					checkActorByLocChance = LocActorChanceOwned   ; 10- set to determine distance check and limit penalty
 					result.BedOwned = true
 					
+				; v3.09 make the same as Undress-Safe and moved up for priority
+				elseIf (currentLoc.HasKeyword(LocTypeWorkshopSettlementKY))
+					; faster than using bed-workshop-check below and workshop may be locked which is okay here
+					
+					
+					locName = "undress-safe"
+					if (creatureType == CreatureTypeStrong)
+						locChance = 19
+						if (bedRef != None && bedRef.HasKeyword((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).DTSleep_SMBed02KY))
+							locChance + 15
+						endIf
+					else
+						locChance = 30
+					endIf
+					
+					indoors = PlayerRef.IsInInterior()
+					if (!SceneData.IsUsingCreature && bedRef != None && !bedRef.HasKeyword(AnimFurnFloorBedAnims))
+						result.BedOwned = IsBedOwnedByPlayer(bedRef, companionRef)
+					endIf
+					indoors = PlayerRef.IsInInterior()			;v2.40 indoor workshop may be custom home
+					if (indoors)
+						if (IsObjBelongPlayerWorkshop(bedRef))		; slow
+							DTDebug(" indoor unlocked settlement not on private list... assume custom home", 1)
+							locChance += 18			; workshop unlocked, but bed not owned
+						else
+							locChance += 9
+						endIf
+					endIf
+					
+					checkActorByLocChance = LocActorChanceSettled
+					locName = "settlement"
+					
+					if (bedIsPillory)
+						locChance -= 20
+					endIf
+					
 				elseIf (DTSleep_TownLocationList != None && DTSleep_TownLocationList.HasForm(currentLoc as Form))
 					; towns include some settlements, raider forts
 
@@ -3843,38 +3879,6 @@ IntimateLocationHourSet Function ChanceForIntimateSceneByLocationHour(ObjectRefe
 					locName = "companion-bed"
 					result.BedOwned = true
 					
-				elseIf (currentLoc.HasKeyword(LocTypeWorkshopSettlementKY))
-					; faster than using bed-workshop-check below and workshop may be locked which is okay here
-					if (creatureType == CreatureTypeStrong || creatureType == CreatureTypeBehemoth)
-						locChance = -8
-					elseIf (creatureType == CreatureTypeDog)
-						locChance = -3
-					elseIf (creatureType == CreatureTypeHandy)
-						locChance = 16
-					elseIf (romanticQuestFin)
-						; in addition to bonus below
-						locChance = 20
-					elseIf (forHugs)
-						locChance = 18
-					else
-						locChance = 10
-					endIf
-					indoors = PlayerRef.IsInInterior()			;v2.40 indoor workshop may be custom home
-					if (indoors)
-						if (IsObjBelongPlayerWorkshop(bedRef))		; slow
-							DTDebug(" indoor unlocked settlement not on private list... assume custom home", 1)
-							locChance += 18			; workshop unlocked, but bed not owned
-						else
-							locChance += 9
-						endIf
-					endIf
-					
-					checkActorByLocChance = LocActorChanceSettled
-					locName = "settlement"
-					
-					if (bedIsPillory)
-						locChance -= 20
-					endIf
 					
 				elseIf (PlayerRef.IsInInterior())
 					if (creatureType == CreatureTypeStrong)

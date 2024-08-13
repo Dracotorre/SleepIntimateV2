@@ -213,7 +213,8 @@ bool property PlayAAFEnabled = true auto hidden
 int property MySleepBedFurnType = -1 auto hidden			; see FurnType* constants below
 int property PlayerEndurance = -1 auto hidden  ; v2.90
 bool property SleepBedIsHidden = false auto hidden 		; v3.03
-float property SceneStartGameTime = 0.0 auto hidden		; ensure intimate scene lasts 20 minutes -- v3.08
+float property SceneStartGameTime = 0.0 auto hidden		; ensure intimate scene lasts enough game-time -- v3.08
+float property SceneWaitDuration = 0.0 auto hidden		; keep track of partial hours to update Wait stat -- v3.09
 
 
 
@@ -2466,18 +2467,18 @@ Function FinalizeAndSendFinish(bool seqStartedOK = true, int errCount = 0)
 	int scLen = DTSleep_IntimateSceneLen.GetValueInt()
 	
 	; only consider scene-length of at least 1
-	if (scLen > 0)
+	if (scLen > 0 && TimeScale.GetValueInt() < 20.0)			; limit to less than default TimeScale v3.09
 	
 		; don't count if interrupted or never started
 		if (SceneStartGameTime > 0.0 && seqStartedOK && errCount == 0 && SceneData.Interrupted <= 0)
 			float hourTarget = 0.33333  ; 20 minutes for short scene
 			if (SceneData.IntimateSceneIsDanceHug >= 3)
-				hourTarget = 0.1333		; 8 minutes for hug/kiss -- currently not setting StartTime - not checking
+				hourTarget = 0.05		; 3 minutes for hug/kiss -- currently not setting StartTime - not checking
 			elseIf (SceneData.IntimateSceneIsDanceHug > 0)
-				hourTarget = 0.20		; 12 minutes for dance
-			elseIf (scLen >= 4)
+				hourTarget = 0.1333		; 8 minutes for dance
+			elseIf (scLen >= 4 && PlayerEndurance > 11)			; scLen may be increased for low time-scale or endurance, so ensure has endurance
 				hourTarget = 1.00001
-			elseIf (scLen == 3)
+			elseIf (scLen >= 3)
 				hourTarget = 0.5001
 			endIf
 			float currentGameTime = Utility.GetCurrentGameTime()
@@ -2493,15 +2494,23 @@ Function FinalizeAndSendFinish(bool seqStartedOK = true, int errCount = 0)
 					hourTarget -= overT
 				endIf
 				
-				if (DTSleep_SettingTestMode.GetValueInt() > 0)
-					Debug.Trace(MyScriptName + " EndScene add Wait of " + hoursShort + " hours; updating GameHour to " + gHourSet)
+				if (hoursShort > 0.01)						; v3.09 ensure need to adjust time
+					SceneWaitDuration += hoursShort
+					
+					if (DTSleep_SettingTestMode.GetValueInt() > 0)
+						Debug.Trace(MyScriptName + " EndScene add at time " + GameHour.GetValue() + " with Wait of " + hoursShort + " hours; updating GameHour to " + gHourSet)
+					endIf
+					
+					GameHour.SetValue(gHourSet)
 				endIf
-				GameHour.SetValue(gHourSet)
-				if (hourTarget >= 0.85)
+				
+				if (SceneWaitDuration >= 1.0)										; v3.09 changed to use our variable
 					Game.IncrementStat("Hours Waiting", 1)
 					if (DTSleep_SettingTestMode.GetValueInt() > 0)
 						Debug.Trace(MyScriptName + " Updated Wait-Stat by 1")
 					endIf
+					
+					SceneWaitDuration = 0.0				; reset for next
 				endIf
 			endIf
 		endIf
@@ -2627,6 +2636,16 @@ float Function GetTimeForPlayID(int id)
 			 	tm += 10.0
 			endIf
 		endIf
+		
+		; dance should be longer for low time-scale  ; v3.09
+		if (id == 494 && timeScaleVal <= 5)
+			scL += 1
+			
+			tm += 20.0
+		endIf
+		
+		DTSleep_IntimateSceneLen.SetValueInt(scL)
+		
 		return tm
 		
 	elseIf (id >= 400 && id < 490)
@@ -2656,6 +2675,9 @@ float Function GetTimeForPlayID(int id)
 		if (timeScaleVal <= 5)
 			scL += 1
 			tm += 10.0
+			if (id == 91)
+			  tm += 10.0
+			endIf
 		endIf
 		
 		DTSleep_IntimateSceneLen.SetValueInt(scL)
