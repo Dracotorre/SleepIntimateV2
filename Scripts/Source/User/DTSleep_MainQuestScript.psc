@@ -7356,6 +7356,12 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 										if (chanceForScene.Chance < 5)
 											chanceForScene.Chance = 5
 										endIf
+										if (SceneData.IsCreatureType == CreatureTypeStrong)
+											; some styles missing animations for bed v3.10
+											if (pickStyle == 4)
+												pickSpotSelected = true
+											endIf
+										endIf
 									endIf
 								endIf
 								
@@ -8465,6 +8471,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 			; Strong force pick-spot for chairs except for SMBed, v2.70 and also sofa if have SC 1.2.6
 			
 			kissOK = false    ; no kiss Strong or robot   v2.90
+			DTSleep_EmbraceLevel.SetValue(-1.0)			; no kiss/hug   v3.10
 			
 			if (!isPillory && specialFurn != 4 && specialFurn < 102)
 				companionCompatible = true

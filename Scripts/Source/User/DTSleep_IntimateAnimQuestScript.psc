@@ -7156,6 +7156,19 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 					elseIf (DoesMainActorPrefID(ScenePrefIsCowgirl) && packID == 7 && MySleepBedFurnType == FurnTypeIsDoubleBed && !MainActorPositionByCaller)
 						; cowgirl 
 						sidArray.Add(66)
+					elseIf (MainActorPositionByCaller || bedIsFloorBed)
+						; V3.10 - added picked stand
+						sidArray.Add(60)
+						if (!SceneData.FemaleRaceHasTail)
+							sidArray.Add(61)
+							sidArray.Add(63)
+						endIf
+						if (packID != 7)						; skip SC hand-job v2.73
+							sidArray.Add(62)
+						endIf
+						if (packID == 7 && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
+							sidArray.Add(69)
+						endIf
 					endIf
 				
 				elseIf (MySleepBedFurnType != FurnTypeIsDoubleBed || MainActorPositionByCaller)
@@ -7167,20 +7180,21 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 					if (packID != 7)						; skip SC hand-job v2.73
 						sidArray.Add(62)
 					endIf
-					if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
+					if (packID == 7 && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20)
 						sidArray.Add(69)
 					endIf
 				endIf
 				if (!playerPick && packID == 7 && MySleepBedFurnType == FurnTypeIsDoubleBed && !MainActorPositionByCaller)
 					
-					if (bedDoubleIsInstitute)					; v2.70
-						sidArray.Add(709)
-					else
+					; v3.10 - don't believe this belongs here
+					;if (bedDoubleIsInstitute)					; v2.70
+					;sidArray.Add(09)
+					;else
 						if (!SceneData.FemaleRaceHasTail)
 							sidArray.Add(65)
 						endIf
 						sidArray.Add(66)
-					endIf
+					;endIf
 				endIf
 			elseIf (packID == 5)
 				if (playerPick && DoesMainActorPrefID(ScenePrefIsOral))
