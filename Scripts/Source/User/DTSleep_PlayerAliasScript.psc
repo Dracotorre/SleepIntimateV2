@@ -1366,15 +1366,23 @@ Function CheckCompatibility()
 	
 	; companion Insane Ivy
 	if (DTSleep_AdultContentOn.GetValue() >= 1.0 && (DTSConditionals as DTSleep_Conditionals).ImaPCMod)
-		if (Game.IsPluginInstalled("CompanionIvy.esp"))
+		; Ivy v6 uses an ESM file   v3.11
+		string ivyPluginName = "CompanionIvy.esp"
+		int ivyRef = 0x2108598C
+		if (!Game.IsPluginInstalled(ivyPluginName))
+			ivyPluginName = "CompanionIvy.esm"
+			ivyRef = 0x21029720
+		endIf
+		
+		if (Game.IsPluginInstalled(ivyPluginName))
 			if ((DTSConditionals as DTSleep_Conditionals).InsaneIvyRef == None)
-				(DTSConditionals as DTSleep_Conditionals).InsaneIvyRef = Game.GetFormFromFile(0x2108598C, "CompanionIvy.esp") as Actor
+				(DTSConditionals as DTSleep_Conditionals).InsaneIvyRef = Game.GetFormFromFile(ivyRef, ivyPluginName) as Actor
 			endIf
 			
 			; Ivy's custom/unique body - v2.86
 			if ((DTSConditionals as DTSleep_Conditionals).ModCompanionBodyInsaneIvyIndex < 0)
 
-				Armor bodyNakedArmor = Game.GetFormFromFile(0x020558D9, "CompanionIvy.esp") as Armor
+				Armor bodyNakedArmor = Game.GetFormFromFile(0x020558D9, ivyPluginName) as Armor   ; same FormID both versions
 				if (bodyNakedArmor != None && !DTSleep_ModCompanionBodiesLst.HasForm(bodyNakedArmor))
 					DTSleep_ModCompanionBodiesLst.AddForm(bodyNakedArmor)
 					

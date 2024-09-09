@@ -3115,7 +3115,7 @@ int Function ChanceForIntimateCompanionAdj(Actor companionRef)
 				result = 40
 			endIf
 		elseIf ((DTSConditionals as DTSleep_Conditionals).InsaneIvyRef != None && companionRef == (DTSConditionals as DTSleep_Conditionals).InsaneIvyRef)
-			result = 86							; v3.0 increased by 10 to be similar to Nora-spouse
+			result = 106					; v3.0 increased by 10 to be similar to Nora-spouse; v3.11 increase another 20
 		elseIf (companionRef == CurieRef)
 			result = 16
 		elseIf (companionRef == CompanionDanseRef)
