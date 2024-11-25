@@ -59,6 +59,8 @@ int property IntimateSceneIsDanceHug = 0 auto conditional hidden ; 0=no, 1 = sex
 ; 0 = unknown, 1 = clone-forced, 2 = never-clone, 3 = cloned, 4 = not-cloned, 5 = cloned-by-pref, 6 = not-cloned-by-pref, 10 = AAF 
 int property IntimateSceneViewType = 0 auto conditional hidden
 
+int property SceneIsTest = 0 auto conditional hidden		; player using test-mode for free scene  v3.15
+
 
 ; -------------------------- backup data if need to restore after reset ---------
 

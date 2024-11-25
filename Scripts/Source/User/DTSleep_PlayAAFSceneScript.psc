@@ -109,10 +109,12 @@ int ShowTestSceneNumTimerID = 102 const
 int ChangeSettingsAndStopTimerID = 103 const
 int ShowAAFEquipTipTimerID = 104 const
 int CheckSceneStartTimerID = 9 const
+int MaxSID = 1099 const
 int AAFCheckStartCount = 0
 int MyMaleRoleGender = -1
 int SecondRoleGender = -1
 float CurrentSingleDuration = -1.0
+
 
 AAF:AAF_API AAF_API
 
@@ -270,10 +272,10 @@ Event AAF:AAF_API.OnAnimationStop(AAF:AAF_API akSender, Var[] akArgs)
 		if (MySceneStatus < 2)
 			SceneData.Interrupted = 1
 		endIf
+
 		MySceneStatus = 3
 		StopAnimationSequence()
 	endIf
-
 EndEvent
 
 ; ********************************************
@@ -729,6 +731,9 @@ bool Function PlaySequence()
 						if (SceneData.MaleRole != None && MainActor == SceneData.MaleRole)
 							posID = MySeqStagesArray[0].PositionOrigID
 						endIf
+					elseIf (SequenceID > MaxSID)
+						; use original
+						posID = MySeqStagesArray[0].PositionOrigID
 					endIf
 					
 					Armor armGunA = None
@@ -794,11 +799,17 @@ Function StopAnimationSequence(bool canceledScene = false, bool startedOK = true
 	endIf
 	if (MySceneStatus < 0)
 		; never started
-		
+		if (DTSleep_SettingTestMode.GetValue() > 0.0 && DTSleep_DebugMode.GetValue() >= 2.0) ;TODO remove
+			Debug.Trace("[DTSleep_PlayAAF] StopAnimationSequence --- never started!  ")
+		endIf
 		SceneData.Interrupted = 50
 		Utility.Wait(0.23)
 	elseIf (!canceledScene && MySceneStatus == 1 && SceneData.Interrupted <= 0)
 		; started - let finish
+		if (DTSleep_SettingTestMode.GetValue() > 0.0 && DTSleep_DebugMode.GetValue() >= 2.0) ;TODO remove
+			Debug.Trace("[DTSleep_PlayAAF] StopAnimationSequence --- started, let finish...  ")
+		endIf
+		
 		return
 	endIf
 	
@@ -855,10 +866,10 @@ Function StopAnimationSequence(bool canceledScene = false, bool startedOK = true
 			
 		endIf
 		
-		; check gender
-		if (SceneData.MaleRole.HasKeyword(AAF_API.AAF_GenderOverride_Male))
-			SceneData.MaleRole.RemoveKeyword(AAF_API.AAF_GenderOverride_Male)
-		endIf
+		; check gender  v3.12 - NAF Bridge doesn't include this property, and we didn't add it anyway
+		;if (SceneData.MaleRole.HasKeyword(AAF_API.AAF_GenderOverride_Male))
+		;	SceneData.MaleRole.RemoveKeyword(AAF_API.AAF_GenderOverride_Male)
+		;endIf
 	endIf
 	
 	; this must go before marking scene done (5)
@@ -1283,9 +1294,17 @@ Function PlayAASequenceLists(Actor mActor, Actor fActor, Actor oActor)
 
 		aafSettings.duration = 10.0
 		aafSettings.position = MySeqStagesArray[0].PositionID
+		if (SequenceID > MaxSID)
+			; use original pack v3.16
+			aafSettings.position = MySeqStagesArray[0].PositionOrigID
+		endIf
 		
 		if (SecondActor == None)
 			if (SceneData.MaleRole != None && MainActor == SceneData.MaleRole)
+				aafSettings.position = MySeqStagesArray[0].PositionOrigID
+				
+			elseIf (SequenceID > MaxSID)				;v3.16 
+				; use original pack 
 				aafSettings.position = MySeqStagesArray[0].PositionOrigID
 			endIf
 		endIf
@@ -1351,7 +1370,7 @@ Function PlayAAContinuedSequence(float waitSecs)
 	int armGunLastIndex = MySeqStagesArray[0].ArmorNudeAGun
 	int armGunM2LastIndex = MySeqStagesArray[0].ArmorNudeBGun
 	
-	;Debug.Trace("[DTSleep_PlayAAF] play AAContinued; Interrupted? " + SceneData.Interrupted)
+	Debug.Trace("[DTSleep_PlayAAF] play AAContinued; Interrupted? " + SceneData.Interrupted)
 	
 	Utility.Wait(startSecs - 0.8)
 	
@@ -1405,7 +1424,12 @@ Function PlayAAContinuedSequence(float waitSecs)
 		
 		if (seqCount > 0)
 			;PlayPosition(CreateSeqPositionStr(SequenceID, MySeqStagesArray[seqCount].StageNum), loopWaitSecs)
-			PlayPosition(MySeqStagesArray[seqCount].PositionID, loopWaitSecs)
+			if (SequenceID > MaxSID)
+				; use original pack v3.16
+				PlayPosition(MySeqStagesArray[seqCount].PositionOrigID, loopWaitSecs)
+			else
+				PlayPosition(MySeqStagesArray[seqCount].PositionID, loopWaitSecs)
+			endIf
 		endIf
 		
 		if (pingPongCount > 0 && seqCount == (seqLen - 2))

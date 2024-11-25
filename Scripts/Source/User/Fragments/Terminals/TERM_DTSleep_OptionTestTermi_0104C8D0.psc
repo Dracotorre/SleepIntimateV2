@@ -176,6 +176,62 @@ pDTSleep_VR.SetValue(val)
 EndFunction
 ;END FRAGMENT
 
+;BEGIN FRAGMENT Fragment_Terminal_22
+Function Fragment_Terminal_22(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingPackPick.SetValue(5.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_23
+Function Fragment_Terminal_23(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingPackPick.SetValue(6.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_24
+Function Fragment_Terminal_24(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingPackPick.SetValue(7.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_25
+Function Fragment_Terminal_25(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingPackPick.SetValue(9.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_26
+Function Fragment_Terminal_26(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingPackPick.SetValue(10.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_27
+Function Fragment_Terminal_27(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingPackPick.SetValue(11.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_28
+Function Fragment_Terminal_28(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingPackPick.SetValue(0.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
 ;END FRAGMENT CODE - Do not edit anything between this and the begin comment
 
 Quest Property pDTSleep_MainQuest Auto Const Mandatory
@@ -191,3 +247,5 @@ GlobalVariable Property pDTSleep_SettingAACV Auto Const Mandatory
 GlobalVariable Property pDTSleep_SettingSynthHuman Auto Const Mandatory
 
 GlobalVariable Property pDTSleep_VR Auto Const Mandatory
+
+GlobalVariable Property pDTSleep_SettingPackPick Auto Const Mandatory

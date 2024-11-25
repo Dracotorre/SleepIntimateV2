@@ -119,6 +119,8 @@ FormList property DTSleep_IntimateLockerList auto const				; added v2.77
 FormList property DTSleep_IntimateLockerAdjList auto const			; 
 FormList property DTSleep_ArmorStockingsList auto const				; v2.80
 FormList property DTSleep_ArmorShoesList auto const 				; v2.80
+FormList property DTSleep_IntimateBenchNoBackList auto const		; v3.13
+FormList property DTSleep_IntimateBenchShortList auto const			; v3.13
 Message property DTSleep_VersionMsg auto const
 Message property DTSleep_VersionDowngradeMsg auto const				; v2.60
 Message property DTSleep_VersionExplicitMsg auto const
@@ -712,8 +714,10 @@ Function CheckCompatibility()
 			; v1.65 chairs and benches
 			DTSleep_IntimateKitchenSeatList.AddForm(Game.GetFormFromFile(0x05005337, "DLCWorkshop03.esm"))
 			DTSleep_IntimateKitchenSeatList.AddForm(Game.GetFormFromFile(0x05005340, "DLCWorkshop03.esm"))
-			DTSleep_IntimateBenchList.AddForm(Game.GetFormFromFile(0x050049F4, "DLCWorkshop03.esm"))
-			DTSleep_IntimateBenchList.AddForm(Game.GetFormFromFile(0x05004984, "DLCWorkshop03.esm"))
+			DTSleep_IntimateBenchList.AddForm(Game.GetFormFromFile(0x050049F4, "DLCWorkshop03.esm"))		; diner booth
+			Form benchForm = Game.GetFormFromFile(0x05004984, "DLCWorkshop03.esm")							; no backrest
+			DTSleep_IntimateBenchList.AddForm(benchForm)
+			DTSleep_IntimateBenchNoBackList.AddForm(benchForm)		; v3.13
 			DTSleep_IntimateKitchenSeatList.AddForm(Game.GetFormFromFile(0x05005343, "DLCWorkshop03.esm"))
 			DTSleep_IntimateKitchenSeatList.AddForm(Game.GetFormFromFile(0x05005344, "DLCWorkshop03.esm"))
 			DTSleep_IntimateKitchenSeatList.AddForm(Game.GetFormFromFile(0x05005345, "DLCWorkshop03.esm"))
@@ -748,6 +752,12 @@ Function CheckCompatibility()
 			Form lockerForm = Game.GetFormFromFile(0x05004988, "DLCWorkshop03.esm")
 			DTSleep_IntimateLockerList.AddForm(lockerForm)
 			DTSleep_IntimateLockerAdjList.AddForm(lockerForm)
+			
+			; v3.13 -
+			benchForm = Game.GetFormFromFile(0x05004983, "DLCWorkshop03.esm")							; short bench
+			DTSleep_IntimateBenchList.AddForm(benchForm)
+			DTSleep_intimateBenchShortList.AddForm(benchForm)
+			DTSleep_IntimateBenchNoBackList.AddForm(benchForm)
 		endIf
 	endIf
 	
@@ -2464,7 +2474,7 @@ Function CheckCompatibility()
 							RevertLeitoLists()
 							LoadLeitoAnimForms(fo4LeitoPluginName)
 							LoadLeitoCreatureAnimForms(fo4LeitoPluginName)
-							DTSleep_IsLeitoActive.SetValue(2.0)  ; best-fit and dog -- v1.44
+							DTSleep_IsLeitoActive.SetValue(2.0)  ; best-fit -- v1.44
 						else
 							; check for missing idles
 
@@ -2480,7 +2490,7 @@ Function CheckCompatibility()
 								LoadLeitoCreatureAnimForms(fo4LeitoPluginName)
 							endIf
 							
-							DTSleep_IsLeitoActive.SetValue(2.0)  ; best-fit and dog -- v1.44
+							DTSleep_IsLeitoActive.SetValue(2.0)  ; best-fit -- v1.44
 						endIf
 				
 					elseIf (leitoForm != None)
@@ -2586,6 +2596,13 @@ Function CheckCompatibility()
 					
 				endIf
 				
+				; RSex    - v3.13
+				if (Game.IsPluginInstalled("RZSex.esp"))
+					(DTSConditionals as DTSleep_Conditionals).IsRZSexActive = true
+				else
+					(DTSConditionals as DTSleep_Conditionals).IsRZSexActive = false
+				endIf
+				
 				; ------------------------chair animations check ------------------------------------------------
 				;
 				; v2.73 moved this block down to here after we checked all animation packs
@@ -2612,6 +2629,10 @@ Function CheckCompatibility()
 				;	DTSleep_ActivFlagpole.SetValue(-1.0)
 				;	DTSleep_ActivChairs.SetValue(1.60)  ;-- kitchen seat, chair high/low, couch, bench
 				elseIf ((DTSConditionals as DTSleep_Conditionals).LeitoAnimVers >= 2.1)				; v2.73 allow only having Leito chairs
+					DTSleep_ActivFlagpole.SetValue(-1.0)
+					DTSleep_ActivChairs.SetValue(1.60)		; set to more restrictive list of seats for perk to mark as Relax+
+					
+				elseIf ((DTSConditionals as DTSleep_Conditionals).IsRZSexActive)		; v3.13 allow some chairs
 					DTSleep_ActivFlagpole.SetValue(-1.0)
 					DTSleep_ActivChairs.SetValue(1.60)		; set to more restrictive list of seats for perk to mark as Relax+
 				else
@@ -2786,9 +2807,11 @@ int Function CheckCustomPlayerHomes()
 			endIf
 		endIf
 		
+		bool isCounted = false
 		bedForm = Game.GetFormFromFile(0x0900099A, "Homemaker.esm")
 		if (!DTSleep_BedList.HasForm(bedForm))
 			modCount += 1
+			isCounted = true
 			
 			DTSleep_BedList.AddForm(bedForm)
 			DTSleep_BedsBigList.AddForm(bedForm)
@@ -2803,6 +2826,25 @@ int Function CheckCustomPlayerHomes()
 			DTSleep_BedList.AddForm(Game.GetFormFromFile(0x09001D96, "Homemaker.esm"))
 			DTSleep_BedList.AddForm(Game.GetFormFromFile(0x09001D97, "Homemaker.esm"))
 			DTSleep_BedList.AddForm(Game.GetFormFromFile(0x09001D98, "Homemaker.esm"))
+		endIf
+		
+		; more furniture  v3.15
+		bedForm = Game.GetFormFromFile(0x09001DB2, "Homemaker.esm")
+		if (!DTSleep_BedList.HasForm(bedForm))
+			if (!isCounted)
+				modCount += 1
+			endIf
+			
+			DTSleep_BedList.AddForm(bedForm)
+			DTSleep_BedsBunkList.AddForm(Game.GetFormFromFile(0x09001D92, "Homemaker.esm"))
+			DTSleep_BedsBunkList.AddForm(Game.GetFormFromFile(0x09001D94, "Homemaker.esm"))
+			bedForm = Game.GetFormFromFile(0x09001D9A, "Homemaker.esm")
+			DTSleep_BedList.AddForm(bedForm)
+			DTSleep_BedsLimitedSpaceLst.AddForm(bedForm)
+			DTSleep_IntimateCouchList.AddForm(Game.GetFormFromFile(0x09001DCB, "Homemaker.esm"))
+			DTSleep_IntimateCouchList.AddForm(Game.GetFormFromFile(0x09001DCC, "Homemaker.esm"))
+			DTSleep_IntimateBenchList.AddForm(Game.GetFormFromFile(0x0904E4D5, "Homemaker.esm"))
+			
 		endIf
 	endIf
 	
@@ -3226,7 +3268,7 @@ int Function CheckCustomPlayerHomes()
 		if (!DTSleep_BedNoIntimateList.HasForm(pBunkForm))
 			modCount += 1
 		
-			DTSleep_BedNoIntimateList.AddForm(pBedForm)
+			DTSleep_BedNoIntimateList.AddForm(pBunkForm)			; v3.16 fix wrong form
 			DTSleep_BedNoIntimateList.AddForm(Game.GetFormFromFile(0x09000895, "AlootHomePlate.esp"))
 			AddToBedsList(Game.GetFormFromFile(0x0900089E, "AlootHomePlate.esp"), true)
 		endIf
@@ -5658,6 +5700,19 @@ Function UpgradeToVersion()
 		if (lastVers < 2.83)  ;v2.83
 			if ((DTSConditionals as DTSleep_Conditionals).IsDXAtomGirlActive)
 				DTSleep_ArmorShoesList.AddForm(Game.GetFormFromFile(0x02000953, "DX_Atom_Girl_Outfit.esp"))			; boots 
+			endIf
+		endIf
+		
+		if (lastVers < 3.13)		;v3.13
+			
+			if ((DTSConditionals as DTSleep_Conditionals).IsWorkShop03DLCActive)
+				
+				Form benchForm = Game.GetFormFromFile(0x05004984, "DLCWorkshop03.esm")							; no backrest
+				DTSleep_IntimateBenchNoBackList.AddForm(benchForm)
+				benchForm = Game.GetFormFromFile(0x05004983, "DLCWorkshop03.esm")							; short bench
+				DTSleep_IntimateBenchList.AddForm(benchForm)
+				DTSleep_IntimateBenchNoBackList.AddForm(benchForm)
+				DTSleep_IntimateBenchShortList.AddForm(benchForm)
 			endIf
 		endIf
 		

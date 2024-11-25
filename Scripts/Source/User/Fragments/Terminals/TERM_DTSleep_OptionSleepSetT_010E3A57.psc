@@ -420,6 +420,30 @@ pDTSleep_SettingSave.SetValue(0.0)
 EndFunction
 ;END FRAGMENT
 
+;BEGIN FRAGMENT Fragment_Terminal_54
+Function Fragment_Terminal_54(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingShowBedAssignPrompt.SetValue(0.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_55
+Function Fragment_Terminal_55(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingShowBedAssignPrompt.SetValue(1.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_56
+Function Fragment_Terminal_56(ObjectReference akTerminalRef)
+;BEGIN CODE
+(pDTSleep_MainQuest as DTSleep_MainQuestScript).ClearBedsIgnoreList()
+;END CODE
+EndFunction
+;END FRAGMENT
+
 ;END FRAGMENT CODE - Do not edit anything between this and the begin comment
 
 GlobalVariable Property pDTSleep_SettingNapOnly Auto Const Mandatory
@@ -455,3 +479,5 @@ GlobalVariable Property pDTSleep_SettingUndressPipboy Auto Const Mandatory
 GlobalVariable Property pDTSleep_SettingUndressWeapon Auto Const Mandatory
 
 GlobalVariable Property pDTSleep_SettingRadCheck Auto Const Mandatory
+
+GlobalVariable Property pDTSleep_SettingShowBedAssignPrompt Auto Const Mandatory

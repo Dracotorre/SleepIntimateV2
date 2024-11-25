@@ -19,6 +19,7 @@ ScriptName DTSleep_AACcatScript Hidden
 ; ZaZOut4 (800s) - 4 scenes (2 broken into shorter scenes)
 ; Gray (900s)
 ; BP70 (1000s)
+; Rohzima (1100s)
 
 ; **********************  Structs **************
 ;
@@ -71,7 +72,31 @@ endFunction
 int Function GetStageCountForSequenceID(int seqID, int longScene = 0, int other = 0) global
 	int result = 4   ; most of them
 	
-	if (seqID >= 400 && seqID < 500)
+	if (seqID >= 1100)
+		result = 6
+		if (seqID == 1102 || seqID == 1106)
+			result = 4
+		elseIf (seqID == 1120)
+			result = 4
+		elseIf (seqID >= 1130 && seqID <= 1131)
+			result = 4
+		elseIf (seqID == 1135)
+			result = 2
+		;elseIf (seqID == 1134)
+		;	result = 4
+		elseIf (seqID == 1148)
+			result = 1
+		elseIf (seqID >= 1149 && seqID <= 1150)
+			result = 4
+		elseIf (seqID == 1153)
+			result = 4
+		elseIf (seqID == 1162)
+			result = 4
+		elseIf (seqID == 1193 && other > 0)
+			result = 8
+		endIf
+		
+	elseIf (seqID >= 400 && seqID < 500)
 		result = 1
 		if (seqID == 401 || seqID == 451 || seqID == 460)
 			result = 2
@@ -391,7 +416,834 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 		return ssStruct
 	endIf
 	
-	if (seqID >= 1000)
+	if (seqID >= 1100)
+		ssStruct.PluginName = "RZSex.esp"					; added v3.15 -- 25 scenes
+		
+		if (seqID == 1100)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x090091BC
+				ssStruct.MAnimFormID = 0x090091BD
+				ssStruct.PositionOrigID = "RZ_MissionaryGroundRough01"
+				ssStruct.PositionID = "DTSIX_1100_S1"
+				ssStruct.MAngleOffset = 180.0
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x090091BE
+				ssStruct.MAnimFormID = 0x090091BF
+				ssStruct.PositionOrigID = "RZ_MissionaryGroundRough02"
+				ssStruct.PositionID = "DTSIX_1100_S2"
+				ssStruct.MAngleOffset = 180.0
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x090091C0
+				ssStruct.MAnimFormID = 0x090091C1
+				ssStruct.PositionOrigID = "RZ_MissionaryGroundRough03"
+				ssStruct.PositionID = "DTSIX_1100_S3"
+				ssStruct.MAngleOffset = 180.0
+			elseIf (stageNumber == 4)
+				ssStruct.FAnimFormID = 0x090091C2
+				ssStruct.MAnimFormID = 0x090091C3
+				ssStruct.PositionOrigID = "RZ_MissionaryGroundRough04"
+				ssStruct.PositionID = "DTSIX_1100_S4"
+				ssStruct.MAngleOffset = 180.0
+			else
+				ssStruct.FAnimFormID = 0x090091C4
+				ssStruct.MAnimFormID = 0x090091C5
+				ssStruct.PositionOrigID = "RZ_MissionaryGroundRough05"
+				ssStruct.PositionID = "DTSIX_1100_S5"
+				ssStruct.MAngleOffset = 180.0
+			endIf
+		
+		elseIf (seqID == 1101)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x09001EED
+				ssStruct.MAnimFormID = 0x09001EEE
+				ssStruct.PositionOrigID = "RZ_MissionaryGroundTender01"
+				ssStruct.PositionID = "DTSIX_1101_S1"
+				ssStruct.MAngleOffset = 180.0
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x09001EEF
+				ssStruct.MAnimFormID = 0x09001EF0
+				ssStruct.PositionOrigID = "RZ_MissionaryGroundTender02"
+				ssStruct.PositionID = "DTSIX_1101_S2"
+				ssStruct.MAngleOffset = 180.0
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x09001EF1
+				ssStruct.MAnimFormID = 0x09001EF2
+				ssStruct.PositionOrigID = "RZ_MissionaryGroundTender03"
+				ssStruct.PositionID = "DTSIX_1101_S3"
+				ssStruct.MAngleOffset = 180.0
+			elseIf (stageNumber == 4)
+				ssStruct.FAnimFormID = 0x09001EF3
+				ssStruct.MAnimFormID = 0x09001EF4
+				ssStruct.PositionOrigID = "RZ_MissionaryGroundTender04"
+				ssStruct.PositionID = "DTSIX_1101_S4"
+				ssStruct.MAngleOffset = 180.0
+			elseIf (stageNumber == 5)
+				ssStruct.FAnimFormID = 0x09001EF5
+				ssStruct.MAnimFormID = 0x09001EF6
+				ssStruct.PositionOrigID = "RZ_MissionaryGroundTender05"
+				ssStruct.PositionID = "DTSIX_1101_S5"
+				ssStruct.MAngleOffset = 180.0
+			else
+				ssStruct.FAnimFormID = 0x09001EF7
+				ssStruct.MAnimFormID = 0x09001EF8
+				ssStruct.PositionOrigID = "RZ_MissionaryGroundTender06"
+				ssStruct.PositionID = "DTSIX_1101_S6"
+				ssStruct.MAngleOffset = 180.0
+			endIf
+		elseIf (seqID == 1102)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x0900FCCC				
+				ssStruct.MAnimFormID = 0x0900FCCD
+				ssStruct.PositionOrigID = "RZ_DoggyGroundRough01"
+				ssStruct.PositionID = "DTSIX_1102_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x0900FCD2				
+				ssStruct.MAnimFormID = 0x0900FCD3
+				ssStruct.PositionOrigID = "RZ_DoggyGroundRough04"
+				ssStruct.PositionID = "DTSIX_1102_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x0900FCD4				
+				ssStruct.MAnimFormID = 0x0900FCD5
+				ssStruct.PositionOrigID = "RZ_DoggyGroundRough05"
+				ssStruct.PositionID = "DTSIX_1102_S3"
+			else
+				ssStruct.FAnimFormID = 0x0900FCD6				
+				ssStruct.MAnimFormID = 0x0900FCD7
+				ssStruct.PositionOrigID = "RZ_DoggyGroundRough06"
+				ssStruct.PositionID = "DTSIX_1102_S4"
+			endIf
+		
+		elseIf (seqID == 1103)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x09000F99				; start on side -- floor or double-bed only
+				ssStruct.MAnimFormID = 0x09000F9A
+				ssStruct.PositionOrigID = "RZ_DoggyGroundTender01"
+				ssStruct.PositionID = "DTSIX_1103_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x09000F9B
+				ssStruct.MAnimFormID = 0x09000F9C
+				ssStruct.PositionOrigID = "RZ_DoggyGroundTender02"
+				ssStruct.PositionID = "DTSIX_1103_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x09000F9D
+				ssStruct.MAnimFormID = 0x09000F9E
+				ssStruct.PositionOrigID = "RZ_DoggyGroundTender03"
+				ssStruct.PositionID = "DTSIX_1103_S3"
+			elseIf (stageNumber == 4)
+				ssStruct.FAnimFormID = 0x09000F9F
+				ssStruct.MAnimFormID = 0x09000FA0
+				ssStruct.PositionOrigID = "RZ_DoggyGroundTender04"
+				ssStruct.PositionID = "DTSIX_1103_S4"
+			elseIf (stageNumber == 5)
+				ssStruct.FAnimFormID = 0x09000FA1
+				ssStruct.MAnimFormID = 0x09000FA4
+				ssStruct.PositionOrigID = "RZ_DoggyGroundTender05"
+				ssStruct.PositionID = "DTSIX_1103_S5"
+			else
+				ssStruct.FAnimFormID = 0x09000FA2
+				ssStruct.MAnimFormID = 0x09000FA3
+				ssStruct.PositionOrigID = "RZ_DoggyGroundTender06"
+				ssStruct.PositionID = "DTSIX_1103_S6"
+			endIf
+		elseIf (seqID == 1104)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x09001EE1					; sit on torso, manual
+				ssStruct.MAnimFormID = 0x09001EE2
+				ssStruct.PositionOrigID = "RZ_CowgirlGroundTender01"
+				ssStruct.PositionID = "DTSIX_1104_S1"
+				ssStruct.MAngleOffset = 180.0
+				;ssStruct.MPosYOffset = -3.4							; position appears off
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x09001EE3					; cowgirl rev
+				ssStruct.MAnimFormID = 0x09001EE4
+				ssStruct.PositionOrigID = "RZ_CowgirlGroundTender02"
+				ssStruct.PositionID = "DTSIX_1104_S2"
+				ssStruct.MAngleOffset = 180.0
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x09001EE6
+				ssStruct.MAnimFormID = 0x09001EE5
+				ssStruct.PositionOrigID = "RZ_CowgirlGroundTender03"
+				ssStruct.PositionID = "DTSIX_1104_S3"
+				ssStruct.MAngleOffset = 180.0
+			elseIf (stageNumber == 4)
+				ssStruct.FAnimFormID = 0x09001EE7
+				ssStruct.MAnimFormID = 0x09001EE8
+				ssStruct.PositionOrigID = "RZ_CowgirlGroundTender04"
+				ssStruct.PositionID = "DTSIX_1104_S4"
+				ssStruct.MAngleOffset = 180.0
+			elseIf (stageNumber == 5)
+				ssStruct.FAnimFormID = 0x09001EE9
+				ssStruct.MAnimFormID = 0x09001EEA
+				ssStruct.PositionOrigID = "RZ_CowgirlGroundTender05"
+				ssStruct.PositionID = "DTSIX_1104_S5"
+				ssStruct.MAngleOffset = 180.0
+			else
+				ssStruct.FAnimFormID = 0x09001EEB
+				ssStruct.MAnimFormID = 0x09001EEC
+				ssStruct.PositionOrigID = "RZ_CowgirlGroundTender06"
+				ssStruct.PositionID = "DTSIX_1104_S6"
+				ssStruct.MAngleOffset = 180.0
+			endIf
+			
+		elseIf (seqID == 1106)
+			if (stageNumber == 0)
+				ssStruct.FAnimFormID = 0x090026A6					; sit on face rev
+				ssStruct.MAnimFormID = 0x090026AB
+				ssStruct.PositionOrigID = "RZ_RevCowgirlGroundTender01"
+				ssStruct.PositionID = "DTSIX_1106_S0"
+			elseIf (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x090026A7					; rev-cowgirl
+				ssStruct.MAnimFormID = 0x090026AC
+				ssStruct.PositionOrigID = "RZ_RevCowgirlGroundTender02"
+				ssStruct.PositionID = "DTSIX_1106_S2"
+				
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x090026A8
+				ssStruct.MAnimFormID = 0x090026AD
+				ssStruct.PositionOrigID = "RZ_RevCowgirlGroundTender03"
+				ssStruct.PositionID = "DTSIX_1106_S3"
+				
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x090026A9
+				ssStruct.MAnimFormID = 0x090026AE
+				ssStruct.PositionOrigID = "RZ_RevCowgirlGroundTender04"
+				ssStruct.PositionID = "DTSIX_1106_S4"
+				
+			else
+				ssStruct.FAnimFormID = 0x090026AA
+				ssStruct.MAnimFormID = 0x090026AF
+				ssStruct.PositionOrigID = "RZ_RevCowgirlGroundTender05"
+				ssStruct.PositionID = "DTSIX_1106_S5"
+				ssStruct.ArmorNudeAGun = 2
+			endIf
+		elseIf (seqID == 1116)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x09001EF9								
+				ssStruct.MAnimFormID = 0x09001EFA								
+				ssStruct.PositionOrigID = "RZ_ProneGroundTender01"
+				ssStruct.PositionID = "DTSIX_1116_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x09001EFB								
+				ssStruct.MAnimFormID = 0x09001EFC								
+				ssStruct.PositionOrigID = "RZ_ProneGroundTender02"
+				ssStruct.PositionID = "DTSIX_1116_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x09001EFD								
+				ssStruct.MAnimFormID = 0x09001EFE								
+				ssStruct.PositionOrigID = "RZ_ProneGroundTender03"
+				ssStruct.PositionID = "DTSIX_1116_S3"
+			elseIf (stageNumber == 4)
+				ssStruct.FAnimFormID = 0x09001EFF								
+				ssStruct.MAnimFormID = 0x09001F00								
+				ssStruct.PositionOrigID = "RZ_ProneGroundTender04"
+				ssStruct.PositionID = "DTSIX_1116_S4"
+			else
+				ssStruct.FAnimFormID = 0x09001F01								
+				ssStruct.MAnimFormID = 0x09001F02								
+				ssStruct.PositionOrigID = "RZ_ProneGroundTender05"
+				ssStruct.PositionID = "DTSIX_1116_S5"
+			endIf
+		
+		elseIf (seqID == 1121)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x0900FCC2								; stand posing
+				ssStruct.MAnimFormID = 0x0900FCC3								; self-pleasure
+				ssStruct.PositionOrigID = "RZ_ButtWorshipGroundTender01"
+				ssStruct.PositionID = "DTSIX_1121_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x0900FCC4
+				ssStruct.MAnimFormID = 0x0900FCC5
+				ssStruct.PositionOrigID = "RZ_ButtWorshipGroundTender02"
+				ssStruct.PositionID = "DTSIX_1121_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x0900FCC6
+				ssStruct.MAnimFormID = 0x0900FCC7
+				ssStruct.PositionOrigID = "RZ_ButtWorshipGroundTender03"
+				ssStruct.PositionID = "DTSIX_1121_S3"
+			elseIf (stageNumber == 4)
+				ssStruct.FAnimFormID = 0x0900FCC8
+				ssStruct.MAnimFormID = 0x0900FCC9
+				ssStruct.PositionOrigID = "RZ_ButtWorshipGroundTender04"
+				ssStruct.PositionID = "DTSIX_1121_S4"
+			else
+				ssStruct.FAnimFormID = 0x0900FCCA
+				ssStruct.MAnimFormID = 0x0900FCCB
+				ssStruct.PositionOrigID = "RZ_ButtWorshipGroundTender05"
+				ssStruct.PositionID = "DTSIX_1121_S5"
+			endIf
+		elseIf (seqID == 1130)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x0900E5B9
+				ssStruct.MAnimFormID = 0x0900E5BA
+				ssStruct.PositionOrigID = "RZ_SpankingChairTender02"
+				ssStruct.PositionID = "DTSIX_1130_S1"
+				ssStruct.FAngleOffset = 270.0
+				ssStruct.ArmorNudeAGun = -1
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x0900E5BB
+				ssStruct.MAnimFormID = 0x0900E5BC
+				ssStruct.PositionOrigID = "RZ_SpankingChairTender03"
+				ssStruct.PositionID = "DTSIX_1130_S2"
+				ssStruct.FAngleOffset = 270.0
+				ssStruct.ArmorNudeAGun = -1
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x0900E5BD
+				ssStruct.MAnimFormID = 0x0900E5BE
+				ssStruct.PositionOrigID = "RZ_SpankingChairTender04"
+				ssStruct.PositionID = "DTSIX_1130_S3"
+				ssStruct.FAngleOffset = 270.0
+				ssStruct.ArmorNudeAGun = -1
+			else
+				ssStruct.FAnimFormID = 0x0900E5BF
+				ssStruct.MAnimFormID = 0x0900E5C0
+				ssStruct.PositionOrigID = "RZ_SpankingChairTender05"
+				ssStruct.PositionID = "DTSIX_1130_S4"
+				ssStruct.FAngleOffset = 270.0
+				ssStruct.ArmorNudeAGun = -1
+			;else
+			;	ssStruct.FAnimFormID = 0x0900E5C1
+			;	ssStruct.MAnimFormID = 0x0900E5C2
+			;	ssStruct.PositionOrigID = "RZ_SpankingChairTender06"
+			;	ssStruct.PositionID = "DTSIX_1120_S5"
+			;	ssStruct.FAngleOffset = 270.0
+			endIf
+		
+		elseIf (seqID == 1131)
+			if (stageNumber == 0)								; FAngle changes not supported, so skip first 2 stages
+				ssStruct.FAnimFormID = 0x0900DE14
+				ssStruct.MAnimFormID = 0x0900DE15
+				ssStruct.PositionOrigID = "RZ_SexCouchTender01"
+				ssStruct.PositionID = "DTSIX_1131_S1"
+				ssStruct.FAngleOffset = 180.0
+			;elseIf (stageNumber == 2)
+			;	ssStruct.FAnimFormID = 0x0900DE16
+			;	ssStruct.MAnimFormID = 0x0900DE17
+			;	ssStruct.PositionOrigID = "RZ_SexCouchTender02"
+			;	ssStruct.PositionID = "DTSIX_1131_S2"
+			;	ssStruct.FAngleOffset = 180.0
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x0900DE18
+				ssStruct.MAnimFormID = 0x0900DE19
+				ssStruct.PositionOrigID = "RZ_SexCouchTender03"
+				ssStruct.PositionID = "DTSIX_1131_S3"
+			elseIf (stageNumber == 4)
+				ssStruct.FAnimFormID = 0x0900DE1A
+				ssStruct.MAnimFormID = 0x0900DE1B
+				ssStruct.PositionOrigID = "RZ_SexCouchTender04"
+				ssStruct.PositionID = "DTSIX_1131_S4"
+			else
+				ssStruct.FAnimFormID = 0x0900DE1C
+				ssStruct.MAnimFormID = 0x0900DE1D
+				ssStruct.PositionOrigID = "RZ_SexCouchTender05"
+				ssStruct.PositionID = "DTSIX_1131_S5"
+			endIf
+		elseIf (seqID == 1132)								; rotate 180, Z+  ?? seems only fits memory lounge couch?
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x09006B67
+				ssStruct.MAnimFormID = 0x09006B68
+				ssStruct.PositionOrigID = "RZ_DoggyCouchTender01"
+				ssStruct.PositionID = "DTSIX_1132_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x09006B69
+				ssStruct.MAnimFormID = 0x09006B6A
+				ssStruct.PositionOrigID = "RZ_DoggyCouchTender02"
+				ssStruct.PositionID = "DTSIX_1132_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x09006B6B
+				ssStruct.MAnimFormID = 0x09006B6C
+				ssStruct.PositionOrigID = "RZ_DoggyCouchTender03"
+				ssStruct.PositionID = "DTSIX_1132_S3"
+			elseIf (stageNumber == 4)
+				ssStruct.FAnimFormID = 0x09006B6D
+				ssStruct.MAnimFormID = 0x09006B6E
+				ssStruct.PositionOrigID = "RZ_DoggyCouchTender04"
+				ssStruct.PositionID = "DTSIX_1132_S4"
+			else
+				ssStruct.FAnimFormID = 0x09006B6f
+				ssStruct.MAnimFormID = 0x09006B70
+				ssStruct.PositionOrigID = "RZ_DoggyCouchTender05"
+				ssStruct.PositionID = "DTSIX_1132_S5"
+			endIf
+		elseIf (seqID == 1133)					; AnimFurnCouch KY only					
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x0900DE0A
+				ssStruct.MAnimFormID = 0x0900DE0B
+				ssStruct.PositionOrigID = "RZ_BlowjobCouchTender01"
+				ssStruct.PositionID = "DTSIX_1133_S1"
+				ssStruct.FAngleOffset = 180.0
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x0900DE0C
+				ssStruct.MAnimFormID = 0x0900DE0D
+				ssStruct.PositionOrigID = "RZ_BlowjobCouchTender02"
+				ssStruct.PositionID = "DTSIX_1133_S2"
+				ssStruct.FAngleOffset = 180.0
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x0900DE0E
+				ssStruct.MAnimFormID = 0x0900DE0F
+				ssStruct.PositionOrigID = "RZ_BlowjobCouchTender03"
+				ssStruct.PositionID = "DTSIX_1133_S3"
+				ssStruct.FAngleOffset = 180.0
+			elseIf (stageNumber == 4)
+				ssStruct.FAnimFormID = 0x0900DE10
+				ssStruct.MAnimFormID = 0x0900DE11
+				ssStruct.PositionOrigID = "RZ_BlowjobCouchTender04"
+				ssStruct.PositionID = "DTSIX_1133_S4"
+				ssStruct.FAngleOffset = 180.0
+			else
+				ssStruct.FAnimFormID = 0x0900DE12
+				ssStruct.MAnimFormID = 0x0900DE13
+				ssStruct.PositionOrigID = "RZ_BlowjobCouchTender05"
+				ssStruct.PositionID = "DTSIX_1133_S5"
+				ssStruct.FAngleOffset = 180.0
+			endIf
+		elseIf (seqID == 1134)												; use bench without back
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x0900ED70
+				ssStruct.MAnimFormID = 0x0900ED71
+				ssStruct.PositionOrigID = "RZ_CowgirlCouchTender01"
+				ssStruct.PositionID = "DTSIX_1134_S1"
+				ssStruct.FAngleOffset = 180.0
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x0900ED72
+				ssStruct.MAnimFormID = 0x0900ED73
+				ssStruct.PositionOrigID = "RZ_CowgirlCouchTender02"
+				ssStruct.PositionID = "DTSIX_1134_S2"
+				ssStruct.FAngleOffset = 180.0
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x0900ED74
+				ssStruct.MAnimFormID = 0x0900ED75
+				ssStruct.PositionOrigID = "RZ_CowgirlCouchTender03"
+				ssStruct.PositionID = "DTSIX_1134_S3"
+				ssStruct.FAngleOffset = 180.0
+			elseIf (stageNumber == 4)
+				ssStruct.FAnimFormID = 0x0900ED76
+				ssStruct.MAnimFormID = 0x0900ED77
+				ssStruct.PositionOrigID = "RZ_CowgirlCouchTender04"			; feet out -- chair without back
+				ssStruct.PositionID = "DTSIX_1134_S4"
+				ssStruct.FAngleOffset = 180.0
+			else
+				ssStruct.FAnimFormID = 0x0900ED78
+				ssStruct.MAnimFormID = 0x0900ED79
+				ssStruct.PositionOrigID = "RZ_CowgirlCouchTender05"			; feet out -- chair without back
+				ssStruct.PositionID = "DTSIX_1134_S5"
+				ssStruct.FAngleOffset = 180.0
+			endIf
+		elseIf (seqID == 1135)								; oral/manual -- FAngle changes, not supported, use 2 stages
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x0900ED66
+				ssStruct.MAnimFormID = 0x0900ED67
+				ssStruct.PositionOrigID = "RZ_DomGirlCouchTender01"
+				ssStruct.PositionID = "DTSIX_1135_S1"
+				ssStruct.FAngleOffset = 180.0
+				ssStruct.StageTime = 10.0
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x0900ED68
+				ssStruct.MAnimFormID = 0x0900ED69
+				ssStruct.PositionOrigID = "RZ_DomGirlCouchTender02"
+				ssStruct.PositionID = "DTSIX_1135_S2"
+				ssStruct.FAngleOffset = 180.0
+				ssStruct.StageTime = 12.0
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x0900ED6A
+				ssStruct.MAnimFormID = 0x0900ED6B
+				ssStruct.PositionOrigID = "RZ_DomGirlCouchTender03"
+				ssStruct.PositionID = "DTSIX_1135_S3"
+				ssStruct.FAngleOffset = 270.0
+			elseIf (stageNumber == 4)
+				ssStruct.FAnimFormID = 0x0900ED6C
+				ssStruct.MAnimFormID = 0x0900ED6D
+				ssStruct.PositionOrigID = "RZ_DomGirlCouchTender04"
+				ssStruct.PositionID = "DTSIX_1135_S4"
+			else
+				ssStruct.FAnimFormID = 0x0900ED6E
+				ssStruct.MAnimFormID = 0x0900ED6F
+				ssStruct.PositionOrigID = "RZ_DomGirlCouchTender05"
+				ssStruct.PositionID = "DTSIX_1135_S5"
+			endIf
+		elseIf (seqID == 1136)								; need to rotation 180 on positioning
+			if (stageNumber == 0)							; skip first due to rotation change
+				ssStruct.FAnimFormID = 0x09008276
+				ssStruct.MAnimFormID = 0x09008277
+				ssStruct.PositionOrigID = "RZ_DoggyChairTender01"
+				ssStruct.PositionID = "DTSIX_1136_S1"
+				ssStruct.MAngleOffset = 90.0
+			elseIf (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x09008278
+				ssStruct.MAnimFormID = 0x09008279
+				ssStruct.PositionOrigID = "RZ_DoggyChairTender02"
+				ssStruct.PositionID = "DTSIX_1136_S2"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x0900827A
+				ssStruct.MAnimFormID = 0x0900827B
+				ssStruct.PositionOrigID = "RZ_DoggyChairTender03"
+				ssStruct.PositionID = "DTSIX_1136_S3"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x0900827C
+				ssStruct.MAnimFormID = 0x0900827D
+				ssStruct.PositionOrigID = "RZ_DoggyChairTender04"
+				ssStruct.PositionID = "DTSIX_1136_S4"
+			else
+				ssStruct.FAnimFormID = 0x0900827E
+				ssStruct.MAnimFormID = 0x0900827F
+				ssStruct.PositionOrigID = "RZ_DoggyChairTender05"
+				ssStruct.PositionID = "DTSIX_1136_S5"
+			endIf
+		elseIf (seqID == 1137)									; seated, no arms or wide
+			if (stageNumber == 1)							
+				ssStruct.FAnimFormID = 0x090035E2
+				ssStruct.MAnimFormID = 0x090035E3
+				ssStruct.PositionOrigID = "RZ_SexBehindChairTender01"
+				ssStruct.PositionID = "DTSIX_1137_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x09003D7D
+				ssStruct.MAnimFormID = 0x09003D7E
+				ssStruct.PositionOrigID = "RZ_SexBehindChairTender02"
+				ssStruct.PositionID = "DTSIX_1137_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x09003D7F
+				ssStruct.MAnimFormID = 0x09003D80
+				ssStruct.PositionOrigID = "RZ_SexBehindChairTender03"
+				ssStruct.PositionID = "DTSIX_1137_S3"
+			elseIf (stageNumber == 4)
+				ssStruct.FAnimFormID = 0x09003D81
+				ssStruct.MAnimFormID = 0x09003D82
+				ssStruct.PositionOrigID = "RZ_SexBehindChairTender04"
+				ssStruct.PositionID = "DTSIX_1137_S4"
+			elseIf (stageNumber == 5)
+				ssStruct.FAnimFormID = 0x09003D81
+				ssStruct.MAnimFormID = 0x09003D82
+				ssStruct.PositionOrigID = "RZ_SexBehindChairTender05"
+				ssStruct.PositionID = "DTSIX_1137_S5"
+			else
+				ssStruct.FAnimFormID = 0x09003D83
+				ssStruct.MAnimFormID = 0x09003D84
+				ssStruct.PositionOrigID = "RZ_SexBehindChairTender05"
+				ssStruct.PositionID = "DTSIX_1137_S5"
+			endIf
+		elseIf (seqID == 1148)
+			
+			ssStruct.FAnimFormID = 0x090026A6					; sit on face rev
+			ssStruct.MAnimFormID = 0x090026AB
+			ssStruct.PositionOrigID = "RZ_RevCowgirlGroundTender01"
+			ssStruct.PositionID = "DTSIX_1106_S0"
+			ssStruct.StageTime = 24.0
+			
+		elseIf (seqID == 1149)
+			if (stageNumber == 0)					; skip female standing
+				ssStruct.FAnimFormID = 0x0900269C
+				ssStruct.MAnimFormID = 0x090026A1
+				ssStruct.PositionOrigID = "RZ_FaceSittingTender01"
+				ssStruct.PositionID = "DTSIX_1149_S1"
+				ssStruct.MAngleOffset = 180.0
+			elseIf (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x0900269D
+				ssStruct.MAnimFormID = 0x090026A2
+				ssStruct.PositionOrigID = "RZ_FaceSittingTender02"
+				ssStruct.PositionID = "DTSIX_1149_S2"
+				ssStruct.MAngleOffset = 180.0
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x0900269E
+				ssStruct.MAnimFormID = 0x090026A3
+				ssStruct.PositionOrigID = "RZ_FaceSittingTender03"
+				ssStruct.PositionID = "DTSIX_1149_S3"
+				ssStruct.MAngleOffset = 180.0
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x0900269F
+				ssStruct.MAnimFormID = 0x090026A4
+				ssStruct.PositionOrigID = "RZ_FaceSittingTender04"
+				ssStruct.PositionID = "DTSIX_1149_S4"
+				ssStruct.MAngleOffset = 180.0
+			else
+				ssStruct.FAnimFormID = 0x090026A0
+				ssStruct.MAnimFormID = 0x090026A5
+				ssStruct.PositionOrigID = "RZ_FaceSittingTender05"
+				ssStruct.PositionID = "DTSIX_1149_S5"
+				ssStruct.MAngleOffset = 180.0
+			endIf
+		elseIf (seqID == 1150)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x09001ED7
+				ssStruct.MAnimFormID = 0x09001ED8
+				ssStruct.PositionOrigID = "RZ_BJGroundTender01"
+				ssStruct.PositionID = "DTSIX_1150_S1"
+				ssStruct.MAngleOffset = 180.0
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x09001ED9
+				ssStruct.MAnimFormID = 0x09001EDA
+				ssStruct.PositionOrigID = "RZ_BJGroundTender02"
+				ssStruct.PositionID = "DTSIX_1150_S2"
+				ssStruct.MAngleOffset = 180.0
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x09001EDB
+				ssStruct.MAnimFormID = 0x09001EDC
+				ssStruct.PositionOrigID = "RZ_BJGroundTender03"
+				ssStruct.PositionID = "DTSIX_1150_S3"
+				ssStruct.MAngleOffset = 180.0
+			elseIf (stageNumber == 4)
+				ssStruct.FAnimFormID = 0x09001EDD
+				ssStruct.MAnimFormID = 0x09001EDE
+				ssStruct.PositionOrigID = "RZ_BJGroundTender04"
+				ssStruct.PositionID = "DTSIX_1150_S4"
+				ssStruct.MAngleOffset = 180.0
+			else
+				ssStruct.FAnimFormID = 0x09001EDF
+				ssStruct.MAnimFormID = 0x09001EE0
+				ssStruct.PositionOrigID = "RZ_BJGroundTender05"
+				ssStruct.PositionID = "DTSIX_1150_S5"
+				ssStruct.MAngleOffset = 180.0
+			endIf
+		elseIf (seqID == 1152)								; no repeat stages
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x0900F51D
+				ssStruct.MAnimFormID = 0x0900F51E
+				ssStruct.PositionOrigID = "RZ_MedicalGroundTender01"
+				ssStruct.PositionID = "DTSIX_1152_S1"
+				ssStruct.MAngleOffset = 180.0
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x0900F51F
+				ssStruct.MAnimFormID = 0x0900F520
+				ssStruct.PositionOrigID = "RZ_MedicalGroundTender02"
+				ssStruct.PositionID = "DTSIX_1152_S2"
+				ssStruct.MAngleOffset = 180.0
+				ssStruct.StageTime = 9.0
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x0900F521
+				ssStruct.MAnimFormID = 0x0900F522
+				ssStruct.PositionOrigID = "RZ_MedicalGroundTender03"
+				ssStruct.PositionID = "DTSIX_1152_S3"
+				ssStruct.MAngleOffset = 180.0
+			else
+				ssStruct.FAnimFormID = 0x0900F523		; fingering
+				ssStruct.MAnimFormID = 0x0900F524
+				ssStruct.PositionOrigID = "RZ_MedicalGroundTender04"
+				ssStruct.PositionID = "DTSIX_1152_S4"
+				ssStruct.MAngleOffset = 180.0
+				ssStruct.StageTime = 15.0
+			endIf
+		elseIf (seqID == 1153)								; do not repeat stages
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x09006B71
+				ssStruct.MAnimFormID = 0x09006B72
+				ssStruct.PositionOrigID = "RZ_SecSearchGroundTender01"
+				ssStruct.PositionID = "DTSIX_1153_S1"
+				ssStruct.MAngleOffset = 180.0
+				ssStruct.ArmorNudeAGun = -1
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x09006B73			; open mouth??? works okay without
+				ssStruct.MAnimFormID = 0x09006B74
+				ssStruct.PositionOrigID = "RZ_SecSearchGroundTender02"
+				ssStruct.PositionID = "DTSIX_1153_S2"
+				ssStruct.MAngleOffset = 180.0
+				ssStruct.ArmorNudeAGun = -1
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x09006B75			
+				ssStruct.MAnimFormID = 0x09006B76
+				ssStruct.PositionOrigID = "RZ_SecSearchGroundTender03"
+				ssStruct.PositionID = "DTSIX_1153_S3"
+				ssStruct.MAngleOffset = 180.0
+				ssStruct.ArmorNudeAGun = -1
+			else
+				ssStruct.FAnimFormID = 0x09006B7B			
+				ssStruct.MAnimFormID = 0x09006B7C
+				ssStruct.PositionOrigID = "RZ_SecSearchGroundTender06"
+				ssStruct.PositionID = "DTSIX_1153_S4"
+				ssStruct.MAngleOffset = 180.0
+				ssStruct.ArmorNudeAGun = -1
+			endIf
+		elseIf (seqID == 1154)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x0900F513
+				ssStruct.MAnimFormID = 0x0900F514
+				ssStruct.PositionOrigID = "RZ_GropeGroundTender01"
+				ssStruct.PositionID = "DTSIX_1154_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x0900F515
+				ssStruct.MAnimFormID = 0x0900F516
+				ssStruct.PositionOrigID = "RZ_GropeGroundTender02"
+				ssStruct.PositionID = "DTSIX_1154_S2"
+			else
+				ssStruct.FAnimFormID = 0x0900F519
+				ssStruct.MAnimFormID = 0x0900F51A
+				ssStruct.PositionOrigID = "RZ_GropeGroundTender04"
+				ssStruct.PositionID = "DTSIX_1154_S3"
+			endIf
+		
+		elseIf (seqID == 1155)
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x09005452
+				ssStruct.MAnimFormID = 0x09005453
+				ssStruct.PositionOrigID = "RZ_StandingGroundTender01"
+				ssStruct.PositionID = "DTSIX_1155_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x09005454
+				ssStruct.MAnimFormID = 0x09005455
+				ssStruct.PositionOrigID = "RZ_StandingGroundTender02"
+				ssStruct.PositionID = "DTSIX_1155_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x09005456
+				ssStruct.MAnimFormID = 0x09005457
+				ssStruct.PositionOrigID = "RZ_StandingGroundTender03"
+				ssStruct.PositionID = "DTSIX_1155_S3"
+			elseIf (stageNumber == 4)
+				ssStruct.FAnimFormID = 0x09005458
+				ssStruct.MAnimFormID = 0x09005459
+				ssStruct.PositionOrigID = "RZ_StandingGroundTender04"
+				ssStruct.PositionID = "DTSIX_1155_S4"
+			else
+				ssStruct.FAnimFormID = 0x0900545A
+				ssStruct.MAnimFormID = 0x0900545B
+				ssStruct.PositionOrigID = "RZ_StandingGroundTender05"
+				ssStruct.PositionID = "DTSIX_1155_S5"
+			endIf
+		elseIf (seqID == 1162)									; manual & oral  -- do not repeat mid-stages!
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x09007328
+				ssStruct.MAnimFormID = 0x09007329
+				ssStruct.PositionOrigID = "RZ_SexDeskTender01"
+				ssStruct.PositionID = "DTSIX_1162_S1"
+				ssStruct.MAngleOffset = 180.0
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x0900732A
+				ssStruct.MAnimFormID = 0x0900732B
+				ssStruct.PositionOrigID = "RZ_SexDeskTender02"
+				ssStruct.PositionID = "DTSIX_1162_S2"
+				ssStruct.MAngleOffset = 180.0
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x0900732C
+				ssStruct.MAnimFormID = 0x0900732D
+				ssStruct.PositionOrigID = "RZ_SexDeskTender03"
+				ssStruct.PositionID = "DTSIX_1162_S3"
+				ssStruct.MAngleOffset = 180.0
+			else
+				ssStruct.FAnimFormID = 0x0900732E				; cun
+				ssStruct.MAnimFormID = 0x0900732F
+				ssStruct.PositionOrigID = "RZ_SexDeskTender04"
+				ssStruct.PositionID = "DTSIX_1162_S4"
+				ssStruct.StageTime = 12.0
+				ssStruct.MAngleOffset = 180.0
+			endIf
+		elseIf (seqID == 1185)										; kitchen cabinet/counter
+			if (stageNumber == 0)									; after stage male slides closer, so skip
+				ssStruct.FAnimFormID = 0x09010471
+				ssStruct.MAnimFormID = 0x09010472
+				ssStruct.PositionOrigID = "RZ_DoggyCounterTender01"
+				ssStruct.PositionID = "DTSIX_1185_S1"
+			elseIf (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x09010473
+				ssStruct.MAnimFormID = 0x09010474
+				ssStruct.PositionOrigID = "RZ_DoggyCounterTender02"
+				ssStruct.PositionID = "DTSIX_1185_S2"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x09010475
+				ssStruct.MAnimFormID = 0x09010476
+				ssStruct.PositionOrigID = "RZ_DoggyCounterTender03"
+				ssStruct.PositionID = "DTSIX_1185_S3"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x09010477
+				ssStruct.MAnimFormID = 0x09010478
+				ssStruct.PositionOrigID = "RZ_DoggyCounterTender04"
+				ssStruct.PositionID = "DTSIX_1185_S4"
+			elseIf (stageNumber == 4)
+				ssStruct.FAnimFormID = 0x09010479
+				ssStruct.MAnimFormID = 0x0901047A
+				ssStruct.PositionOrigID = "RZ_DoggyCounterTender05"
+				ssStruct.PositionID = "DTSIX_1185_S5"
+			else
+				ssStruct.FAnimFormID = 0x0901047B
+				ssStruct.MAnimFormID = 0x0901047C
+				ssStruct.PositionOrigID = "RZ_DoggyCounterTender06"
+				ssStruct.PositionID = "DTSIX_1185_S6"
+			endIf
+			
+		elseIf (seqID == 1193)
+			if (other > 0)
+				; male actors slide around
+				ssStruct.ArmorNudeBGun = 1
+				
+				if (stageNumber == 1)
+					ssStruct.FAnimFormID = 0x0900BF6E
+					ssStruct.MAnimFormID = 0x0900BF6F
+					ssStruct.OAnimFormID = 0x0900BF70
+					ssStruct.PositionOrigID = "RZ_Doggy3MWorkbenchTender01"
+					ssStruct.PositionID = "DTSIXFMM_1193_S1"
+				elseIf (stageNumber == 2)
+					ssStruct.FAnimFormID = 0x0900BF72
+					ssStruct.MAnimFormID = 0x0900BF73
+					ssStruct.OAnimFormID = 0x0900BF74
+					ssStruct.PositionOrigID = "RZ_Doggy3MWorkbenchTender02"
+					ssStruct.PositionID = "DTSIXFMM_1193_S2"
+				elseIf (stageNumber == 3)
+					ssStruct.FAnimFormID = 0x0900BF76
+					ssStruct.MAnimFormID = 0x0900BF77
+					ssStruct.OAnimFormID = 0x0900BF78
+					ssStruct.PositionOrigID = "RZ_Doggy3MWorkbenchTender03"
+					ssStruct.PositionID = "DTSIXFMM_1193_S3"
+				elseIf (stageNumber == 4)
+					ssStruct.FAnimFormID = 0x0900BF7A
+					ssStruct.MAnimFormID = 0x0900BF7B
+					ssStruct.OAnimFormID = 0x0900BF7C
+					ssStruct.PositionOrigID = "RZ_Doggy3MWorkbenchTender04"
+					ssStruct.PositionID = "DTSIXFMM_1193_S4"
+				elseIf (stageNumber == 5)
+					ssStruct.FAnimFormID = 0x0900CEB0
+					ssStruct.MAnimFormID = 0x0900CEB1
+					ssStruct.OAnimFormID = 0x0900CEB2
+					ssStruct.PositionOrigID = "RZ_Doggy3MWorkbenchTender05"
+					ssStruct.PositionID = "DTSIXFMM_1193_S5"
+				elseIf (stageNumber == 6)
+					ssStruct.FAnimFormID = 0x0900CEB4
+					ssStruct.MAnimFormID = 0x0900CEB5
+					ssStruct.OAnimFormID = 0x0900CEB6
+					ssStruct.PositionOrigID = "RZ_Doggy3MWorkbenchTender06"
+					ssStruct.PositionID = "DTSIXFMM_1193_S6"
+				elseIf (stageNumber == 7)
+					ssStruct.FAnimFormID = 0x0900CEB8
+					ssStruct.MAnimFormID = 0x0900CEB9
+					ssStruct.OAnimFormID = 0x0900CEBA
+					ssStruct.PositionOrigID = "RZ_Doggy3MWorkbenchTender07"
+					ssStruct.PositionID = "DTSIXFMM_1193_S7"
+				else
+					ssStruct.FAnimFormID = 0x0900CEBC
+					ssStruct.MAnimFormID = 0x0900CEBD
+					ssStruct.OAnimFormID = 0x0900CEBE
+					ssStruct.PositionOrigID = "RZ_Doggy3MWorkbenchTender08"
+					ssStruct.PositionID = "DTSIXFMM_1193_S8"
+				endIf
+			elseIf (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x09007318
+				ssStruct.MAnimFormID = 0x09007319
+				ssStruct.PositionOrigID = "RZ_DoggyWorkbenchTender01"
+				ssStruct.PositionID = "DTSIX_1193_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x0900731A
+				ssStruct.MAnimFormID = 0x0900731B
+				ssStruct.PositionOrigID = "RZ_DoggyWorkbenchTender02"
+				ssStruct.PositionID = "DTSIX_1193_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x0900731C
+				ssStruct.MAnimFormID = 0x0900731D
+				ssStruct.PositionOrigID = "RZ_DoggyWorkbenchTender03"
+				ssStruct.PositionID = "DTSIX_1193_S3"
+			elseIf (stageNumber == 4)
+				ssStruct.FAnimFormID = 0x0900731E
+				ssStruct.MAnimFormID = 0x0900731F
+				ssStruct.PositionOrigID = "RZ_DoggyWorkbenchTender04"
+				ssStruct.PositionID = "DTSIX_1193_S4"
+			elseIf (stageNumber == 5)
+				ssStruct.FAnimFormID = 0x09007320
+				ssStruct.MAnimFormID = 0x09007321
+				ssStruct.PositionOrigID = "RZ_DoggyWorkbenchTender05"
+				ssStruct.PositionID = "DTSIX_1193_S5"
+			else
+				ssStruct.FAnimFormID = 0x09007322
+				ssStruct.MAnimFormID = 0x09007323
+				ssStruct.PositionOrigID = "RZ_DoggyWorkbenchTender06"
+				ssStruct.PositionID = "DTSIX_1193_S6"
+			endIf
+		endIf
+		
+		
+	elseIf (seqID >= 1000)
 		ssStruct.PluginName = "rxl_bp70_animations.esp"
 		
 		if (seqID >= 1000 && seqID <= 1001)							; reviewed
@@ -2663,6 +3515,7 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 					ssStruct.PositionOrigID = "FM-ChairHigh01-03Doggy"
 				else
 					; additional stages SC 1.2.8 - v2.79
+					; some stages male holds arm of armchair
 					if (stageNumber == 1)	
 						ssStruct.FAnimFormID = 0x05032D42
 						ssStruct.MAnimFormID = 0x05032D43
@@ -3796,7 +4649,7 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 						ssStruct.StageTime = 24.0
 					endIf
 					ssStruct.PositionID = "DTSIX_785_S1"
-					ssStruct.PositionOrigID = "SC-FM-Human-FederalistCouch02-03ReverseCowGirl"      ; anal
+					ssStruct.PositionOrigID = "SC-FM-Human-FederalistCouch02-03ReverseCowGirl" 
 				elseIf (stageNumber == 2)
 					ssStruct.FAnimFormID = 0x0502B0B5
 					ssStruct.MAnimFormID = 0x0502B0B6
@@ -4456,7 +5309,7 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 				ssStruct.FAnimFormID = 0x0100732F								
 				ssStruct.MAnimFormID = 0x01007333
 				ssStruct.ArmorNudeAGun = 1
-				ssStruct.MorphAngleA = 1.4
+				ssStruct.MorphAngleA = 1.6
 				ssStruct.PositionID = "DTSIX_609_S2"
 				ssStruct.PositionOrigID = "Leito_ReverseCowgirl_2_S2"
 			elseIf (stageNumber == 3)
@@ -4569,7 +5422,7 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 			
 			if (sNum == 1)
 				ssStruct.FAnimFormID = 0x01007AD9									
-				ssStruct.MAnimFormID = 0x01007ADD		
+				ssStruct.MAnimFormID = 0x01007ADD
 				ssStruct.PositionID = "DTSIX_652_S1"
 				ssStruct.PositionOrigID = "Leito_StandingDoggy_2_S1"
 			elseIf (sNum == 2)
@@ -4691,14 +5544,14 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 			elseIf (sNum == 3)
 				ssStruct.FAnimFormID = 0x0100542B								
 				ssStruct.MAnimFormID = 0x0100542E
-				ssStruct.ArmorNudeAGun = 1
+				ssStruct.ArmorNudeAGun = 0					; fix v3.16
 				ssStruct.MorphAngleA = 0.12
 				ssStruct.PositionID = "DTSIXSM_661_S1"
 				ssStruct.PositionOrigID = "Leito_SuperMutant_StandingDoggy"
 			else
 				ssStruct.FAnimFormID = 0x0100542C								
 				ssStruct.MAnimFormID = 0x0100542F
-				ssStruct.ArmorNudeAGun = 2
+				ssStruct.ArmorNudeAGun = 0					; fix v3.16
 				ssStruct.MorphAngleA = 0.16
 				ssStruct.PositionID = "DTSIXSM_662_S1"
 				ssStruct.PositionOrigID = "Leito_SuperMutant_StandingSideways"
@@ -5180,44 +6033,46 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 				ssStruct.PositionID = "Holding Kissing"
 				;ssStruct.PositionID = "DTSIX_546_S6"
 			endIf
-		elseIf (seqID == 547)							;Atomic spanking
+		elseIf (seqID == 547)							;Atomic spanking  ; v3.16--adjusted timings and moved spank stage up for repeats
 			ssStruct.ArmorNudeAGun = -1
 			if (stageNumber == 1)
 				ssStruct.FAnimFormID = 0x0201C0F4
 				ssStruct.MAnimFormID = 0x0201C0F5
-				ssStruct.StageTime = 9.5
+				ssStruct.StageTime = 6.0
 				ssStruct.PositionOrigID = "Atomic Spanking S1"
 				ssStruct.PositionID = "DTSIX_547_S1"
 			elseIf (stageNumber == 2)
 				ssStruct.FAnimFormID = 0x0201C88F
 				ssStruct.MAnimFormID = 0x0201C890
-				ssStruct.StageTime = 3.0
+				ssStruct.StageTime = 2.0
 				ssStruct.PositionOrigID = "Atomic Spanking S1 Tran"
 				ssStruct.PositionID = "DTSIX_547_S2"
-			elseIf (stageNumber == 3)
-				ssStruct.FAnimFormID = 0x0201D7C5
-				ssStruct.MAnimFormID = 0x0201D02B
-				ssStruct.StageTime = 11.5
-				ssStruct.PositionOrigID = "Atomic Spanking S2"
-				ssStruct.PositionID = "DTSIX_547_S3"
-			elseIf (stageNumber == 4)
-				ssStruct.FAnimFormID = 0x0201DF5F
-				ssStruct.MAnimFormID = 0x0201DF60
-				ssStruct.StageTime = 3.0
-				ssStruct.PositionOrigID = "Atomic Spanking S2 Tran"
-				ssStruct.PositionID = "DTSIX_547_S4"
-			elseIf (stageNumber == 5)
+			;elseIf (stageNumber == 3)
+			;	ssStruct.FAnimFormID = 0x0201D7C5
+			;	ssStruct.MAnimFormID = 0x0201D02B
+			;	ssStruct.StageTime = 3.0
+			;	ssStruct.PositionOrigID = "Atomic Spanking S2"
+			;	ssStruct.PositionID = "DTSIX_547_S3"
+			;elseIf (stageNumber == 4)
+			;	ssStruct.FAnimFormID = 0x0201DF5F
+			;	ssStruct.MAnimFormID = 0x0201DF60
+			;	ssStruct.StageTime = 1.0
+			;	ssStruct.PositionOrigID = "Atomic Spanking S2 Tran"
+			;	ssStruct.PositionID = "DTSIX_547_S4"
+				
+			elseIf (stageNumber == 5 || stageNumber == 3)
 				ssStruct.FAnimFormID = 0x0201EE93
-				ssStruct.MAnimFormID = 0x0201EE94
-				ssStruct.StageTime = 10.5
+				ssStruct.MAnimFormID = 0x0201EE94				
+				ssStruct.StageTime = 2.5
 				ssStruct.PositionOrigID = "Atomic Spanking S3"
 				ssStruct.PositionID = "DTSIX_547_S5"
-			else
-				ssStruct.FAnimFormID = 0x0201F62E
-				ssStruct.MAnimFormID = 0x0201F62F
-				ssStruct.StageTime = 6.5
+			else	
+				ssStruct.FAnimFormID = 0x0201F62E				
+				ssStruct.MAnimFormID = 0x0201F62F				
+				ssStruct.StageTime = 2.5
 				ssStruct.PositionOrigID = "Atomic Spanking S3 Spank"
 				ssStruct.PositionID = "DTSIX_547_S6"
+				
 			endIf
 		elseIf (seqID == 550)						; Atomic Blow Job - AL2.7, v2.86
 			ssStruct.FAnimFormID = 0x0204E055

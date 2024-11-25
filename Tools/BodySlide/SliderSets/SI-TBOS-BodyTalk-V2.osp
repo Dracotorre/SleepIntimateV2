@@ -114,7 +114,7 @@
         <Slider name="Penis Width" invert="false" default="0">
             <Data name="BaseMaleBody:0Penis Width" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0Penis Width</Data>
         </Slider>
-        <Slider name="Penis Length" invert="false" default="-16">
+        <Slider name="Penis Length" invert="false" default="-24">
             <Data name="BaseMaleBody:0Penis Length" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0Penis Length</Data>
         </Slider>
         <Slider name="TipShape" invert="false" default="0">
@@ -271,7 +271,7 @@
         <Slider name="Penis Width" invert="false" default="0">
             <Data name="BaseMaleBody:0Penis Width" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0Penis Width</Data>
         </Slider>
-        <Slider name="Penis Length" invert="false" default="-10">
+        <Slider name="Penis Length" invert="false" default="-24">
             <Data name="BaseMaleBody:0Penis Length" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0Penis Length</Data>
         </Slider>
         <Slider name="TipShape" invert="false" default="0">
@@ -428,7 +428,7 @@
         <Slider name="Penis Width" invert="false" default="0">
             <Data name="BaseMaleBody:0Penis Width" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0Penis Width</Data>
         </Slider>
-        <Slider name="Penis Length" invert="false" default="-16">
+        <Slider name="Penis Length" invert="false" default="-24">
             <Data name="BaseMaleBody:0Penis Length" target="BaseMaleBody:0" local="true">TBOS-BodyTalk-V2.osd\BaseMaleBody:0Penis Length</Data>
         </Slider>
         <Slider name="TipShape" invert="false" default="0">

@@ -759,7 +759,10 @@ bool Function StartForCompanionSleepwear(Actor companionActorRef, bool companion
 endFunction
 
 ; v2.82 update to include setting playerGender to override actual gender where playerGender==1 undresses player completely
-bool Function StartForGirlSexy(Actor companionActorRef, bool includeClothing, bool includePipBoy, bool remJacket = false, int playerGender = -1)
+bool Function StartForGirlSexy(Actor companionActorRef, bool includeClothing, bool includePipBoy, bool remJacket = false, int playerGender = -1, bool useSleepClothes = false)
+
+	; v3.16 if includeClothing, female role gets naked unless useSleepClothes and sleep clothes equipped other than robe
+	;                     male role stays dressed unless useSleepClothes
 
 	if (DTSleep_PlayerUndressed.GetValue() <= 0.0)
 		CancelTimer(RecheckNudeSuitsTimerID)
@@ -767,7 +770,7 @@ bool Function StartForGirlSexy(Actor companionActorRef, bool includeClothing, bo
 			playerGender = GetGenderForActor(PlayerRef)
 		endIf
 		
-		DTDebug("StartForGirlSexy - includeClothing = " + includeClothing + ", remJacket = " + remJacket, 1) 
+		DTDebug("StartForGirlSexy - includeClothing = " + includeClothing + ", remJacket = " + remJacket + ", useSleepClothes = " + useSleepClothes, 1) 
 		
 		if (companionActorRef != None && !companionActorRef.WornHasKeyword(ArmorTypePower))
 			CompanionRef = companionActorRef
@@ -787,18 +790,60 @@ bool Function StartForGirlSexy(Actor companionActorRef, bool includeClothing, bo
 		
 		if (CompanionRef != None && DTSleep_EquipMonInit.GetValue() >= 5.0)
 			if (playerGender == 1)
-				UndressActorRespect(CompanionRef, true, true, !includeClothing, remJacket)		; includClothing = not respectOnly to force all
+				; player in female role, so decide undress companion
+				; set !includClothing for respectOnly parameter to force all
+
+				if (useSleepClothes && DressData.CompanionEquippedSleepwearItem != None)
+					; companion already in sleep outfit   v3.16 
+				elseIf (useSleepClothes && includeClothing && IsActorCarryingSleepwear(CompanionRef))
+					; put on sleep outfit v3.16
+					UndressActor(CompanionRef, 0, includeClothing, includeClothing, false)
+					Utility.WaitMenuMode(0.1)
+					SleepWearEquipForActor(CompanionRef)
+				else
+					; v3.15 added includeClothing for remGloves parameter
+					UndressActorRespect(CompanionRef, true, true, !includeClothing, remJacket, includeClothing)
+				endIf
 				Utility.WaitMenuMode(0.1)
+				
 			elseIf (includeClothing)
 				UndressActor(CompanionRef, 0, includeClothing, includeClothing, false)
 			else
-				UndressActorRespect(CompanionRef, true, true, false, remJacket)
+				; v3.15 added includeClothing for remGloves parameter
+				UndressActorRespect(CompanionRef, true, true, false, remJacket, includeClothing)	
 			endIf
 		endIf
+		
+		; -------------------
+		; now undress player
+		
 		if (playerGender == 1 && includeClothing)
-			UndressActor(PlayerRef, 0, true, true, includePipBoy)
+			if (useSleepClothes && IsActorWearingSleepwear(PlayerRef, true))
+				; already in sleep outfit other than robe
+				if (remJacket)
+					UndressActorRespect(PlayerRef, true, true, false, remJacket, includeClothing)
+				endIf
+			else
+				UndressActor(PlayerRef, 0, true, true, includePipBoy)
+			endIf
+			
 		elseIf (DTSleep_EquipMonInit.GetValue() >= 5.0)
-			UndressActorRespect(PlayerRef, true, true, false, remJacket)				; not respectOnly
+			
+			; decide if put on sleep outfit  v3.16
+			if (useSleepClothes && playerGender == 0 && DressData.PlayerEquippedSleepwearItem != None)
+				; already in sleep outfit
+				if (remJacket)
+					UndressActorRespect(PlayerRef, true, true, false, remJacket, includeClothing)
+				endIf
+				
+			elseIf (useSleepClothes && playerGender == 0 && includeClothing && IsActorCarryingSleepwear(PlayerRef))
+				; put on sleep outfit
+				UndressActor(PlayerRef, 0, includeClothing, includeClothing, false)
+				Utility.WaitMenuMode(0.1)
+				SleepWearEquipForActor(PlayerRef)
+			else
+				UndressActorRespect(PlayerRef, true, true, false, remJacket)				; not respectOnly
+			endIf
 		endIf
 		
 		if (includeClothing)
@@ -3769,7 +3814,7 @@ EndFunction
 ;   - hats, glasses, masks, jacket, backpack
 ;   - outer-armors only if known items
 ;
-Function UndressActorRespect(Actor actorRef, bool isIndoors, bool remHatsOutside = true, bool respectOnly = true, bool remJacket = false)
+Function UndressActorRespect(Actor actorRef, bool isIndoors, bool remHatsOutside = true, bool respectOnly = true, bool remJacket = false, bool remGloves = false)
 
 	; limited undress - avoid items that knock off entire outfit since we cannot know for certain
 	; if outfit covers many slots
@@ -3823,6 +3868,16 @@ Function UndressActorRespect(Actor actorRef, bool isIndoors, bool remHatsOutside
 	; for hats and jackets also observe footwear    v2.83
 	if (remHatsOutside && remJacket)
 		UndressActorArmorFootwear(actorRef)
+		
+		; ------------ not using glove remove; could remove inner outfit leaving outer armors equipped
+		; no gloves - no list or keyword - cannot be certain by slot since may knock off entire outfit
+		;if (remGloves && !respectOnly)
+		;	;v3.15 try removing gloves -- okay if get naked
+		;	if (!IsActorWearingSleepClothesHandsException(actorRef))
+		;		actorRef.UnequipItemSlot(4) 	; 34 - left hand 
+		;		actorRef.UnequipItemSlot(5)
+		;	endIf 
+		;endIf
 	endIf
 	
 	if (actorRef == PlayerRef)
@@ -3862,9 +3917,7 @@ Function UndressActorRespect(Actor actorRef, bool isIndoors, bool remHatsOutside
 	if (hasJacket)
 		if (isIndoors || remJacket || summer)
 			; jackets and armor together since some jackets go with armor (like Neiro's MojaveManhunter), and it's hot in summer
-			jacketRemoved = UndressJacketForActor(actorRef)
-			
-			; no gloves - no list or keyword - cannot be certain by slot since may knock off entire outfit 
+			jacketRemoved = UndressJacketForActor(actorRef) 
 		endIf
 	endIf
 	
@@ -3890,11 +3943,11 @@ Function UndressActorRespect(Actor actorRef, bool isIndoors, bool remHatsOutside
 		
 		if (PlayerReEquipArmorArray.Length > 0)
 
-			Armor itemCheckArmor = PlayerReEquipArmorArray[0]
+			Armor itemCheckArmor = PlayerReEquipArmorArray[PlayerReEquipArmorArray.Length - 1]			; v3.15 changed to last item for checking
 			equipCount = UndressActorArmorRequip(PlayerRef, PlayerReEquipArmorArray)
 			; delay necessary for events to process and our lists get updated
 			
-			Utility.WaitMenuMode(0.3)
+			Utility.WaitMenuMode(0.35)
 			; check equipped to wait extra time 
 			int waitCnt = 5
 			while (waitCnt > 0 && itemCheckArmor != None && !actorRef.IsEquipped(itemCheckArmor))
@@ -4344,14 +4397,14 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 	float timerSecs = DTSleep_SettingUndressTimer.GetValue() + 0.25
 	
 	; ---------------------------------------------------------
-	;   Re-Equip check   - v2.83 moved up before sleep clothes check in case footwear knocks off sleeep outfit
+	;   Re-Equip check   - v2.83 moved up before sleep clothes check in case footwear knocks off sleep outfit
 	; ---------------
 	if (actorRef == PlayerRef)
 		; --------------------- v2.80 - do we have any items to re-equip?   
 		int equipCount = 0
 		if (PlayerReEquipArmorArray.Length > 0)
 
-			Armor itemCheckArmor = PlayerReEquipArmorArray[0]
+			Armor itemCheckArmor = PlayerReEquipArmorArray[PlayerReEquipArmorArray.Length - 1]			; v3.15 changed to last item
 			equipCount = UndressActorArmorRequip(PlayerRef, PlayerReEquipArmorArray)
 			; delay necessary for events to process and our lists get updated
 			timerSecs += 1.25
@@ -4362,7 +4415,7 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 			endIf
 			Utility.WaitMenuMode(waitTmp)
 			; check equipped to wait extra time  - v2.83
-			int waitCnt = 5
+			int waitCnt = 6
 			while (waitCnt > 0 && itemCheckArmor != None && !actorRef.IsEquipped(itemCheckArmor))
 				Utility.WaitMenuMode(0.25)
 				waitCnt -= 1
@@ -5125,6 +5178,7 @@ int Function UndressActorArmorRequip(Actor actorRef, Armor[] armorArray)
 		if (armorItem != None)
 			actorRef.EquipItem(armorItem, false, true)
 			count += 1
+			Utility.WaitMenuMode(0.1)   ; v3.15
 		endIf
 		index += 1
 	endWhile

@@ -15,7 +15,7 @@
       "type": "text"
     },
 	{
-      "text": "hug and kiss animations by TheRealRufgt used with permission",
+      "text": "hug, kiss, dance animations by AVilas and TheRealRufgt used with permission",
       "align": "center",
       "type": "text"
     },
@@ -628,6 +628,18 @@
 			}
 		},
 		{
+			"id": "MCM_SettingShowBedAssignPromtp:Rest",
+			"text": "Unknown Bed Assignment Prompt",
+			"type": "dropdown",
+			"help": "show prompt to set unrecognized bed as single, double, cot...",
+			"valueOptions": {
+				"options": ["Disabled", "Enabled"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|13084",
+				"propertyName": "DTSleep_SettingShowBedAssignPrompt"
+			}
+		},
+		{
 		  "text": "(~Sleep-or-Save Disable for Rest~)",
 		  "type": "button",
 		  "help": "disable Sleep-or-Save to show Rest on bed",
@@ -889,7 +901,7 @@
 				"options": ["Solid", "Ghost"],
 				"sourceType": "GlobalValue",
 				"sourceForm": "SleepIntimate.esp|1BA641",
-				"propertyName": "DTSleep_SettingCollsion"
+				"propertyName": "DTSleep_SettingCollision"
 			}
 		},
 		{
@@ -2299,6 +2311,18 @@
 				"sourceType": "GlobalValue",
 				"sourceForm": "SleepIntimate.esp|10D73C",
 				"propertyName": "DTSleep_SettingAACV"
+			}
+		},
+		{
+			"id": "MCM_SettingPackPick:Test",
+			"text": "Animations Pack Pick",
+			"type": "dropdown",
+			"help": "limit scenes to single pack, but if none fitting situation will pick one from any available pack",
+			"valueOptions": {
+				"options": ["All", "1-Leito", "2-All", "3-All", "4-All", "5-Rufgt/Atomic", "6-Leito", "7-Savage", "8-All", "9-Gray", "10-BP70", "11-Rohzima" ],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|FB4B",
+				"propertyName": "DTSleep_SettingPackPick"
 			}
 		},
 		{

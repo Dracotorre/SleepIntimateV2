@@ -114,7 +114,7 @@
         <Slider name="Penis Width" invert="false" default="0">
             <Data name="BaseMaleBody:0Penis Width" target="BaseMaleBody:0" local="true">BodyTalk3-Nude.osd\BaseMaleBody:0Penis Width</Data>
         </Slider>
-        <Slider name="Penis Length" invert="false" default="-16">
+        <Slider name="Penis Length" invert="false" default="-24">
             <Data name="BaseMaleBody:0Penis Length" target="BaseMaleBody:0" local="true">BodyTalk3-Nude.osd\BaseMaleBody:0Penis Length</Data>
         </Slider>
         <Slider name="TipShape" invert="false" default="0">
@@ -271,13 +271,13 @@
         <Slider name="Penis Width" invert="false" default="0">
             <Data name="BaseMaleBody:0Penis Width" target="BaseMaleBody:0" local="true">BodyTalk3-Nude.osd\BaseMaleBody:0Penis Width</Data>
         </Slider>
-        <Slider name="Penis Length" invert="false" default="-10">
+        <Slider name="Penis Length" invert="false" default="-24">
             <Data name="BaseMaleBody:0Penis Length" target="BaseMaleBody:0" local="true">BodyTalk3-Nude.osd\BaseMaleBody:0Penis Length</Data>
         </Slider>
         <Slider name="TipShape" invert="false" default="0">
             <Data name="BaseMaleBody:0TipShape" target="BaseMaleBody:0" local="true">BodyTalk3-Nude.osd\BaseMaleBody:0TipShape</Data>
         </Slider>
-        <Slider name="Erection Down" invert="false" default="112">
+        <Slider name="Erection Down" invert="false" default="110">
             <Data name="BaseMaleBody:0Erection Down" target="BaseMaleBody:0" local="true">BodyTalk3-Nude.osd\BaseMaleBody:0Erection Down</Data>
         </Slider>
         <Slider name="Erection Up" invert="false" default="0">
@@ -422,13 +422,13 @@
         <Slider name="BTKneeAdust" invert="false" default="0">
             <Data name="BaseMaleBody:0BTKneeAdust" target="BaseMaleBody:0" local="true">BodyTalk3-Nude.osd\BaseMaleBody:0BTKneeAdust</Data>
         </Slider>
-        <Slider name="Erection" invert="false" default="100">
+        <Slider name="Erection" invert="false" default="95">
             <Data name="BaseMaleBody:0Erection" target="BaseMaleBody:0" local="true">BodyTalk3-Nude.osd\BaseMaleBody:0Erection</Data>
         </Slider>
         <Slider name="Penis Width" invert="false" default="0">
             <Data name="BaseMaleBody:0Penis Width" target="BaseMaleBody:0" local="true">BodyTalk3-Nude.osd\BaseMaleBody:0Penis Width</Data>
         </Slider>
-        <Slider name="Penis Length" invert="false" default="-16">
+        <Slider name="Penis Length" invert="false" default="-24">
             <Data name="BaseMaleBody:0Penis Length" target="BaseMaleBody:0" local="true">BodyTalk3-Nude.osd\BaseMaleBody:0Penis Length</Data>
         </Slider>
         <Slider name="TipShape" invert="false" default="0">
@@ -437,7 +437,7 @@
         <Slider name="Erection Down" invert="false" default="0">
             <Data name="BaseMaleBody:0Erection Down" target="BaseMaleBody:0" local="true">BodyTalk3-Nude.osd\BaseMaleBody:0Erection Down</Data>
         </Slider>
-        <Slider name="Erection Up" invert="false" default="120">
+        <Slider name="Erection Up" invert="false" default="140">
             <Data name="BaseMaleBody:0Erection Up" target="BaseMaleBody:0" local="true">BodyTalk3-Nude.osd\BaseMaleBody:0Erection Up</Data>
         </Slider>
         <Slider name="AryaydaMuscleSlider" invert="false" default="0">

@@ -229,9 +229,8 @@ GlobalVariable property DTSleep_Version auto const
 GlobalVariable property DTSleep_IntimateLocCount auto const
 GlobalVariable property DTSleep_RestCount auto const
 GlobalVariable property DTSleep_HRLastSleepTime auto const
-GlobalVariable property DTSleep_SettingLover2 auto const
-{ include 2nd lover in scenes }
 GlobalVariable property DTSleep_SexStyleLevel auto
+GlobalVariable property DTSleep_SexStyleExtra auto						; for spank, solo-show at bed v3.15
 GlobalVariable property DTSleep_EmbraceLevel auto						; v3.01
 GlobalVariable property DTSleep_SexStyleFemHasTail auto					; v3.02
 GlobalVariable property DTSleep_AdultOutfitOn auto
@@ -242,6 +241,7 @@ GlobalVariable property DTSleep_CaptureShoeEnable auto					; v2.80
 GlobalVariable property DTSleep_CaptureStockingsEnable auto				; v2.80
 GlobalVariable property DTSleep_RomDanceEnable auto						; v3.0
 GlobalVariable property DTSleep_SceneFFMissionEnable Auto				; v3.0
+GlobalVariable property DTSleep_PropStyleLevel auto					; v3.15
 EndGroup
 
 Group BC_Globals_Settings
@@ -282,6 +282,8 @@ GlobalVariable property DTSleep_SettingSynthHuman auto
 { set to 1 to force Valentine or other Gen-2 synths to be like Gen-3 human body }
 GlobalVariable property DTSleep_SettingMenuStyle auto
 GlobalVariable property DTSleep_SettingChemCraft auto
+GlobalVariable property DTSleep_SettingLover2 auto const
+{ include 2nd lover in scenes }
 GlobalVariable property DTSleep_SettingProps auto const					; v2.40
 GlobalVariable property DTSleep_SettingRadCheck auto const				; v2.48.1
 GlobalVariable property DTSleep_SettingScaleActorKiss auto const		; v2.64 - to reset to default
@@ -290,6 +292,8 @@ GlobalVariable property DTSleep_SettingUndressShoes auto const			; v2.80
 GlobalVariable property DTSleep_SettingUndressStockings auto const		; v2.80	
 { 0=always, 1 = bed-only, 2=never }
 GlobalVariable property DTSleep_SettingSwapRoles auto const				; v2.82 - usually same gender swap positions
+GlobalVariable property DTSleep_SettingPackPick auto const			; limit scenes to a pack  v3.16
+GlobalVariable property DTSleep_SettingShowBedAssignPrompt auto const		; show prompt to assign unknown bed v3.16
 EndGroup
 
 Group C_GameData
@@ -366,6 +370,7 @@ FormList property SettlementLocationList auto const
 FormList property DTSleep_PrivateLocationList auto const
 FormList property DTSleep_BedNoIntimateList auto const
 FormList property DTSleep_BedsLimitedSpaceLst auto const
+FormList property DTSleep_BedsIgnoreList auto const					; v3.16 -- player wants to ignore unknown bed
 FormList property DTSleep_BedChildList auto const
 FormList property DTSleep_BedsBigDoubleList auto const
 FormList property DTSleep_BedPlacedNoRestList auto const
@@ -552,6 +557,7 @@ Message property DTSleep_SceneCancelReplayPAMsg auto const			; v2.70
 Message property DTSleep_PrefSceneIgnoreMsg auto const				; v2.73  player may add scene to ignore list
 Message property DTSleep_PersuadePAFlagHelpMsg auto const			; v2.75 ask player to adjust AAF setting
 Message property DTSleep_PatchKissFixMessage auto const				; v2.84 patch
+Message property DTSleep_BedAssignMessage auto const				; v3.16 -- prompt to assign unknown bed
 EndGroup
 
 Group E_PromptsHuman
@@ -1369,6 +1375,11 @@ Event DTSleep_IntimateAnimQuestScript.IntimateSequenceDoneEvent(DTSleep_Intimate
 			endIf
 		endIf
 		
+		if (SceneData.SceneIsTest > 0)
+			; no bonus for test  v3.15
+			self.SleepLoverBonusOnSleepID = -3
+		endIf
+		
 		
 		if (mainActor != None && mainActor == PlayerRef)
 		
@@ -1399,7 +1410,9 @@ Event DTSleep_IntimateAnimQuestScript.IntimateSequenceDoneEvent(DTSleep_Intimate
 				endIf
 				
 				if (IntimateCompanionRef == StrongCompanionRef)
-					self.SleepLoverBonusOnSleepID = 3
+					if (SceneData.SceneIsTest < 1)
+						self.SleepLoverBonusOnSleepID = 3		; only normal play v3.16
+					endIf
 					SceneData.IsCreatureType = CreatureTypeStrong
 					Utility.Wait(0.1)
 					IntimateCompanionRef = None
@@ -1414,19 +1427,17 @@ Event DTSleep_IntimateAnimQuestScript.IntimateSequenceDoneEvent(DTSleep_Intimate
 					self.SleepLoverBonusOnSleepID = -2	; no bonus for robots
 					RestoreSceneData()
 					IntimateCompanionRef = None
+				
+				elseIf ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SceneIDIsSpanking(sceneID))
+					self.SleepLoverBonusOnSleepID = -2	; no bonus v3.15
+					
+				elseIf ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SceneIDIsShowFlirt(sceneID))
+					self.SleepLoverBonusOnSleepID = -2	; no bonus v3.15
 					
 				elseIf ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SceneIDIsSolo(sceneID))
 					; no bonus for solo
 					self.SleepLoverBonusOnSleepID = -2
 				
-				;elseIf (PlayerHasActiveDogmeatCompanion.GetValue() >= 1.0 && DogmeatCompanionAlias != None)
-				;	Actor dogRef = DogmeatCompanionAlias.GetActorReference()
-				;	
-				;	if (dogRef != None && dogRef == IntimateCompanionRef)
-				;		self.SleepLoverBonusOnSleepID = 2
-				;		Utility.Wait(0.1)
-				;		IntimateCompanionRef = None
-				;	endIf
 				endIf
 				
 			elseIf ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SceneIDIsSolo(sceneID))
@@ -3470,6 +3481,7 @@ IntimateChancePair Function ChanceForIntimateScene(IntimateCompanionSet companio
 		Debug.Trace(myScriptName + "     intimate chance calculation ")
 		Debug.Trace(myScriptName + "     Game Time: " + gameTime)
 		Debug.Trace(myScriptName + "      bed type: " + bedFurnitureType + " hugs? " + forHugs)
+		Debug.Trace(myScriptName + "       is Test: " + SceneData.SceneIsTest)
 		Debug.Trace(myScriptName + " -------------------------------------------------- ")
 		Debug.Trace(myScriptName + " starting base       : " + baseChance)
 		Debug.Trace(myScriptName + " Sex Appeal score    : " + sexAppealScore)
@@ -3672,7 +3684,7 @@ IntimateLocationHourSet Function ChanceForIntimateSceneByLocationHour(ObjectRefe
 	
 	;v2.35 reset SceneData location
 	SceneData.IntimateLocationType = 0
-	
+
 	Location currentLoc = (SleepPlayerAlias as DTSleep_PlayerAliasScript).CurrentLocation
 	if (currentLoc == None)
 		if (DTSleep_SettingTestMode.GetValueInt() > 0 && DTSleep_DebugMode.GetValue() >= 2.0)
@@ -4779,6 +4791,11 @@ Function CheckSwapSceneRolesForSameGender()
 	else
 		DTDebug(" can't check swap scene roles - missing companions", 1)
 	endIf
+endFunction
+
+; v3.16
+Function ClearBedsIgnoreList()
+	DTSleep_BedsIgnoreList.Revert()
 endFunction
 
 Function ClearIntimateSecondCompanion()
@@ -6628,6 +6645,8 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 	SceneData.SecondFemaleRole = None
 	SceneData.SecondMaleRole = None
 	
+	SceneData.SceneIsTest = 0   ;  reset v3.15
+	
 	;  note: specialAnims bed with relax keyword should be blocked so other NPCs don't use during intimate scene
 	;
 	; only 1 case - nothing to do here
@@ -6733,6 +6752,8 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 		
 		playerIntimateOK = PlayerIntimateCompatible()
 		
+		
+		
 		if (bedCompatible)												; v2.60 - now allow embrace --- check race later
 		
 			if ((gameTime - IntimateCheckLastFailTime) < 0.047)
@@ -6769,6 +6790,64 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 					DTSleep_DogBedIntimateAlias.Clear()
 				endIf
 			endIf
+			
+			; -----------
+			; check if bed-type is unknown and set    v3.16
+			; allow XOXO players even though type does not matter so can add to bed-list for partner sleep
+			;
+			if (readyVal > 0 && DTSleep_SettingShowBedAssignPrompt.GetValueInt() >= 1)
+			
+				bool bedCheckOK = true
+				
+				if (!targetRef.HasKeyword(AnimFurnFloorBedAnims) && !targetRef.HasKeyword(DTSleep_OutfitContainerKY) && !targetRef.HasKeyword((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).AnimFurnLayDownUtilityBoxKY))
+					bedCheckOK = false
+					
+					if (baseBedForm == None)
+						basebedForm = (targetRef.GetBaseObject() as Form)
+					endIf
+					
+					if (DTSleep_BedList.HasForm(baseBedForm))
+						bedCheckOk = true
+						
+					elseIf (DTSleep_BedsIgnoreList.HasForm(basebedForm))
+						; ignore this bed
+						bedCheckOK = true
+						readyVal = -100
+						bedCompatible = false
+						cancledScene = true
+						noPreBedAnim = true
+					endIf
+					
+					if (!bedCheckOK)
+						int bedType = DTSleep_BedAssignMessage.Show()
+						if (bedType >= 1 && bedType <= 4)
+							; add to bed lists
+							DTSleep_BedList.AddForm(baseBedForm)
+							
+							if (bedType == 2)
+								DTSleep_BedsBigDoubleList.AddForm(baseBedForm)
+							elseIf (bedType == 3)
+								(SleepPlayerAlias as DTSleep_PlayerAliasScript).DTSleep_BedsBunkList.AddForm(basebedForm)
+							elseIf (bedType == 4)
+								DTSleep_BedsLimitedSpaceLst.AddForm(baseBedForm)
+							endIf
+						elseIf (bedType == 5)
+							; chose to ignore this bed
+							DTSleep_BedsIgnoreList.AddForm(basebedForm)
+							readyVal = -101
+							bedCompatible = false
+							cancledScene = true
+							noPreBedAnim = true
+						elseIf (bedType == 6)
+							; disable this prompt
+							DTSleep_SettingShowBedAssignPrompt.SetValue(0.0)
+						endIf
+						Utility.Wait(0.2)
+					endIf
+				endIf
+				
+			endIf
+			; ------------
 		
 			if (readyVal > 0)
 		
@@ -6778,7 +6857,9 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 					if (targetRef.HasKeyword(AnimFurnFloorBedAnims) || targetRef.IsActivationBlocked())
 						bedOkay = true
 					elseIf (DTSleep_AdultContentOn.GetValue() >= 2.0 && (DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive)
-						basebedForm = (targetRef.GetBaseObject() as Form)
+						if (baseBedForm == None)
+							basebedForm = (targetRef.GetBaseObject() as Form)
+						endIf
 						if (baseBedForm != None && DTSleep_BedsBigDoubleList.HasForm(baseBedForm))
 							bedOkay = true
 						endIf
@@ -7094,6 +7175,9 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 				;      	6 = Doggy
 				;      	7 = Cowgirl			-limitlevel = 6
 				;      	8 = Spoon			-limitlevel = 7
+				;       9 = not used
+				;		10 = spank			-DTSleep_SexStyleExtra = 1 or 3 (added v3.15)
+				;		11 = solo-show		-DTSleep_SexStyleExtra = 2 or 3 (added v3.15)
 				;
 				;  ---------FF SexStyle level found on DTSleep_IntimateScenePickFFMessage ------  v3 
 				;
@@ -7105,7 +7189,10 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 				;      	5 = Oral
 				;      	6 = 69
 				;      	7 = scissors		-limitlevel = 6
-				;      	8 = spoon  -not used     
+				;      	8 = spoon  -not used   
+				;	9 = not used
+				;		10 = spank			-DTSleep_SexStyleExtra = 1 or 3 (added v3.15)
+				;		11 = solo-show		-DTSleep_SexStyleExtra = 2 or 3 (added v3.15)
 				;
 				; -------------
 				;  ---------MM SexStyle level found on DTSleep_IntimateScenePickMMMessage ------  v3 
@@ -7119,12 +7206,15 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 				;      	6 = 69
 				;      	7 = cowboy 			-limitlevel = 6
 				;      	8 = spoon  - not used
-				
+				;	9 = not used
+				;		10 = spank			-DTSleep_SexStyleExtra = 1 or 3 (added v3.15)
+				;		11 = solo-show		-DTSleep_SexStyleExtra = 2 or 3 (added v3.15)
 				
 				if (adultScenesAvailable && !dogmeatScene && !SceneData.CompanionInPowerArmor && sleepSafe && bedIntimateGood)
 					
 					
 					float limitLevel = 2.0
+					int extraLev = 0
 					DTSleep_SceneFFMissionEnable.SetValueInt(0)
 					
 					
@@ -7148,11 +7238,30 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 								limitLevel = 6.0
 							elseIf ((DTSConditionals as DTSleep_Conditionals).IsRufgtActive)
 								limitLevel = 4.0
+							elseIf ((DTSConditionals as DTSleep_Conditionals).IsRZSexActive)			; v3.15
+								limitLevel = 4.0
 							endIf
 							
 							if (limitLevel >= 7.0 && SceneData.SameGender)
 								; spoon no good  v3.0
 								limitLevel = 6.0
+							endIf
+							
+							; check for extra pick-scene choices  v3.15
+							;
+							; spank okay for any bed
+							if ((DTSConditionals as DTSleep_Conditionals).IsAtomicLustActive)
+								extraLev = 1	; spank 
+							endIf
+							;
+							; limit these to floor beds due to size and actor rotations preventing pick-spot
+							;
+							if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsFloorBed(targetRef))	
+								
+								if ((DTSConditionals as DTSleep_Conditionals).IsRZSexActive)
+									DTDebug("   set style-extra for solo-show", 2)
+									extraLev += 2	; solo-show
+								endIf
 							endIf
 						endIf
 						
@@ -7219,10 +7328,12 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 					endIf
 					
 					DTSleep_SexStyleLevel.SetValue(limitLevel)
+					DTSleep_SexStyleExtra.SetValueInt(extraLev)			; v3.15
 					
 					
 				else
 					DTSleep_SexStyleLevel.SetValue(1.0)
+					DTSleep_SexStyleExtra.SetValueInt(0)
 				endIf
 				
 				if (SceneData.FemaleRaceHasTail)
@@ -7231,7 +7342,7 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 					DTSleep_SexStyleFemHasTail.SetValue(0.0)
 				endIf
 				
-				;DTDebug(" Pick-Scene SexStyleLevel " + DTSleep_SexStyleLevel.GetValue(), 2)
+				DTDebug(" Pick-Scene SexStyleLevel " + DTSleep_SexStyleLevel.GetValue() + " extraLev = "  + DTSleep_SexStyleExtra.GetValue(), 2)
 				
 				;---------------------- check prompt
 				
@@ -7278,7 +7389,7 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 					; ------------- prompt for sex
 					
 					sexAppealScore = PlayerSexAppeal(isNaked, companionGender, creatureType)
-					int checkVal = 10
+					int checkVal = 12
 					
 					bool locCheck = true
 					if (IntimateCheckAreaScore != None && IntimateCheckAreaScore.LocChecked == currentLoc)
@@ -7325,7 +7436,7 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 								if (pickStyle <= 0)						; allow cancel v3.0
 									; return to previous menu (nevermind)
 									pickStyle = -2
-									checkVal = 10    ; re-display original prompt
+									checkVal = 12    ; re-display original prompt
 									Utility.WaitMenuMode(0.1)
 								else
 									; old way before cancel v2
@@ -7347,6 +7458,12 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 									if (pickStyle == 1)			; no longer include 0
 										; this will set player's choice based on companion
 										chanceForScene.Chance += 15
+										if (chanceForScene.Chance > 100)
+											chanceForScene.Chance = 100
+										endIf
+									elseIf (pickStyle >= 10)
+										; player picked extra -- spank or show -- adjust chance  v3.15
+										chanceForScene.Chance += 45
 										if (chanceForScene.Chance > 100)
 											chanceForScene.Chance = 100
 										endIf
@@ -7373,9 +7490,10 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 							elseIf (bedIsBunk && adultScenesAvailable && !(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).BunkBedAdultScenesAvailable(SceneData.SameGender))
 								pickSpotSelected = true
 								
-							elseIf (pickStyle == 3 && adultScenesAvailable)  ; incremented for v3.0
+							elseIf (pickStyle == 3 && adultScenesAvailable)  ; incremented pickStyle for v3.0
 								; v2.17 - some beds have no room on bed so force pickspot
 								pickSpotSelected = true
+								
 							endIf
 							
 						elseIf (checkVal == 2)
@@ -7443,6 +7561,7 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 				
 				bool luckRoll = false
 				bool testDemoEnabled = false
+				SceneData.SceneIsTest = 0		; reset
 				
 				if (!cancledScene)
 					testDemoEnabled = TestIntSceneEnabled(targetRef)
@@ -7450,8 +7569,11 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 					
 				if (testDemoEnabled)
 					randomChance = 1
+					SceneData.SceneIsTest = 1			; marking as test-scene   v3.15
+					
 				elseIf (doggySafe)
 					randomChance = (DT_RandomQuestP as DT_RandomQuestScript).GetNextHundredPackIntPublic()
+					SceneData.SceneIsTest = -1
 				endIf
 				
 				; if chance is low and luck high and failed then try again
@@ -7880,7 +8002,7 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 			endIf
 			
 		endIf
-	endIf
+	endIf			; end bed-compatible ...
 	
 	if (IntimateCompanionRef != None)
 		; if no-scene then remove invalid intimate companions, otherwise will remove on flipside
@@ -8062,6 +8184,8 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 		return
 	endIf
 	
+	SceneData.PreferStandOnly = false  	; reset    v3.15 -- fix when using limited-space bed before a chair
+	
 	IntimateCompanionRef = None
 	Form furnBaseForm = None
 	;ObjectReference akPillory = None
@@ -8088,6 +8212,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 	bool chairActuallyInUse = false
 	bool lapDanceOkay = false
 	bool companionFound = false
+	bool strongSeatHasAnims = false				; flag if seat has specific animations for strong so we know if require pick-spot or not v3.16
 	int creatureVal = 0
 	int rIdx = -1
 	int readyVal = 0
@@ -8309,6 +8434,8 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 	SceneData.SecondMaleRole = None
 	DTSleep_SexStyleLevel.SetValue(0.5)				; v2.90 change to 0.5 for kiss inclusion -- now uses EmbraceLevel v3
 	DTSleep_EmbraceLevel.SetValue(1.0)				; v3.01 - set to kiss
+	DTSleep_SexStyleExtra.SetValueInt(0)				; reset v3.15
+	DTSleep_PropStyleLevel.SetValue(0.0)				; reset   v3.15
 	
 	
 	if ((DTSConditionals as DTSleep_Conditionals).IsVulpineRace != None && (DTSConditionals as DTSleep_Conditionals).IsVulpineRacePlayerActive)
@@ -8387,6 +8514,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 		endIf
 		
 		DTSleep_SexStyleLevel.SetValue(0.0)
+		DTSleep_PropStyleLevel.SetValue(0.0)			; reset   v3.15
 		
 	elseIf (specialFurn > 0 && specialFurn != 103 && specialFurn != 104 && IsAdultAnimationChairAvailable())
 		; may be mutliple packs with chair support --- v2.73
@@ -8394,7 +8522,15 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 		if ((DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive)
 			animPacks.Add(7)
 		endIf
-		if (specialFurn == 2)
+		if (specialFurn == 5)
+			if ((DTSConditionals as DTSleep_Conditionals).IsRZSexActive)				; v3.15
+				animPacks.Add(11)
+			endIf
+		elseIf (specialFurn == 3)
+			if ((DTSConditionals as DTSleep_Conditionals).IsRZSexActive)				; v3.15
+				animPacks.Add(11)
+			endIf
+		elseIf (specialFurn == 2)
 			float leitoVal = DTSleep_IsLeitoActive.GetValue()					
 			if (leitoVal >= 2.10 && leitoVal <= 2.9)
 				animPacks.Add(6)								; if same-gender, no-toy may need to remove this pack
@@ -8405,6 +8541,10 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 
 			if ((DTSConditionals as DTSleep_Conditionals).IsBP70Active)
 				animPacks.Add(10)
+			endIf
+			
+			if ((DTSConditionals as DTSleep_Conditionals).IsRZSexActive)				; v3.15
+				animPacks.Add(11)
 			endIf
 
 		endIf
@@ -8488,10 +8628,13 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 						if (akFurniture.HasKeyword((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).DTSleep_SMBed02KY))
 							DTSleep_SexStyleLevel.SetValueInt(6)
 							setPickSpot = false
+							strongSeatHasAnims = true		;v3.16
+							
 						elseIf (akFurniture.HasKeyword((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).AnimFurnCouchKY))
 							if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.26)
 								DTSleep_SexStyleLevel.SetValueInt(6)
 								setPickSpot = false
+								strongSeatHasAnims = true		;v3.16
 							endIf
 						elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.26)
 							; try other sofas
@@ -8501,6 +8644,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 							if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).DTSleep_IntimateCouchList.HasForm(furnBaseForm))
 								DTSleep_SexStyleLevel.SetValueInt(6)
 								setPickSpot = false
+								strongSeatHasAnims = true		;v3.16
 							endIf
 						endIf
 					endIf
@@ -8511,6 +8655,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 							animPacks.Add(6)
 							DTSleep_SexStyleLevel.SetValueInt(6)
 							setPickSpot = false
+							strongSeatHasAnims = true		;v3.16
 						endIf
 					endIf
 					
@@ -8824,6 +8969,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 					elseIf (!doOtherProp)
 						if (specialFurn == 2 && IsSexyDanceCompatibleFurn(akFurniture, furnBaseForm, true))
 							lapDanceOkay = true
+						
 						elseIf (specialFurn == 2 && SceneData.MaleRoleGender == 0 && DTSleep_SettingLover2.GetValue() >= 1.0 && DTSleep_AdultContentOn.GetValueInt() >= 2)
 							; v2.51 - hold off to allow pick of female lover
 							secondLoverCheckPreferHugs = true
@@ -8911,7 +9057,9 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 			furnBaseForm = akFurniture.GetBaseObject()
 		endIf
 		
+		; ***************************************************
 		; ---------------- check for extra partner --------
+		; ***************************************************
 		;   all multiple-partner scenes for SceneData assume primary male and female plus one 2nd lover (FMM or FMF)
 		;   so if primary lover is same gender need to swap roles for scene to include 2nd lover,
 		;   but swap after passing check!
@@ -8982,18 +9130,39 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 				elseIf ((DTSConditionals as DTSleep_Conditionals).IsLeitoAAFActive)
 					animPacks.Add(6)
 				endIf
+				if (SceneData.HasToyAvailable && (DTSConditionals as DTSleep_Conditionals).IsRZSexActive)
+					; allow spank and toy animations   v3.16
+					animPacks.Add(11)
+				endIf
 			endIf
 			if ((DTSConditionals as DTSleep_Conditionals).IsAtomicLustActive || (DTSConditionals as DTSleep_Conditionals).IsRufgtActive)
 				animPacks.Add(5)
 			endIf
+			
+			; what about spank?
+			bool hasSpank = false
+			if (animPacks.Length == 0 && SceneData.SameGender && !SceneData.HasToyAvailable)
+				if ((DTSConditionals as DTSleep_Conditionals).IsRZSexActive)
+					if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).HasFurnitureSpankChoice(akFurniture, furnBaseForm))
+						hasSpank = true
+						animPacks.Add(11)
+					endIf
+				endIf
+			endIf
+			
 			if (animPacks.Length == 0)
 				animPacks.Add(0)
 				hugsOnly = true
-				DTDebug("sameGender pickSpot false--hugsOnly", 2)
+				DTDebug("seat sameGender pickSpot false--hugsOnly", 2)
+				
+			elseIf (hasSpank && animPacks.Length == 1)
+				; no pick-spot since no other packs v3.16
+				DTSleep_SexStyleLevel.SetValueInt(23)		; spank
+				DTDebug("seat sameGender pickSpot false, seat has spank", 2)
 			else
 				pickSpot = true
 				DTSleep_SexStyleLevel.SetValueInt(6)
-				DTDebug("sameGender pickSpot true", 2)
+				DTDebug("seat sameGender pickSpot true", 2)
 			endIf
 		endIf
 		
@@ -9035,15 +9204,27 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 				endIf
 			endIf
 			
-			; check props or sexstyle level for menu
-			if (specialFurn == 2 && !hugsOnly && DTSleep_AdultContentOn.GetValue() >= 2.0 && TestVersion == -2)
+			; check props or sexstyle level for menu  --- v3.15 added desks okay to check
+			if (specialFurn >= 2 && specialFurn <= 3 && !hugsOnly && DTSleep_AdultContentOn.GetValue() >= 2.0 && TestVersion == -2)
 				
 				if (SceneData.IsUsingCreature && SceneData.IsCreatureType == CreatureTypeStrong)
 					
-					if (SceneData.SecondMaleRole == None && DTSleep_SexStyleLevel.GetValueInt() != 6)			; SexStyle may previously be set for SMBbed
+					; only chair, not desk
+					if (specialFurn == 2 && SceneData.SecondMaleRole == None)			
+						; SexStyle=6 may previously be set for SMBbed, bench, couch...
+						
 						if ((DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive || (DTSConditionals as DTSleep_Conditionals).IsMutatedLustActive)
 							; has oral option
-							DTSleep_SexStyleLevel.SetValue(19.0)			; strong oral value to avoid including embrace
+							; avoid SMBed and couch having specific animations  v3.16
+							if (!strongSeatHasAnims)
+								if (DTSleep_SexStyleLevel.GetValueInt() == 6)
+									DTSleep_SexStyleLevel.SetValue(42.0)			; strong pick-spot and oral   v3.16
+								else
+									DTSleep_SexStyleLevel.SetValue(19.0)			; strong oral value 
+									; below check this value to set pick-spot prompt
+								endIf
+							endIf
+							
 							if ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.29 && DTSleep_SettingProps.GetValueInt() >= 1)
 								
 								; is there a patio table nearby?   v2.88
@@ -9059,14 +9240,14 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 								endIf
 							endIf
 						else
-							DTSleep_SexStyleLevel.SetValueInt(6)			; hide Embrace and show Pick-Spot
+							DTSleep_SexStyleLevel.SetValueInt(6)			; show Pick-Spot
 						endIf
 					else
-						DTSleep_SexStyleLevel.SetValueInt(6)			; hide Embrace and show Pick-Spot
+						DTSleep_SexStyleLevel.SetValueInt(6)			; show Pick-Spot
 					endIf
 					
-				elseIf (lapDanceOkay || IsSexyDanceCompatibleFurn(akFurniture, furnBaseForm, SceneData.SameGender))
-					; lap dance
+				elseIf (specialFurn == 2 && (lapDanceOkay || IsSexyDanceCompatibleFurn(akFurniture, furnBaseForm, SceneData.SameGender)))
+					; lap dance at chair
 					
 					if (DTSleep_SettingUndress.GetValueInt() <= 0)
 						DTSleep_SexStyleLevel.SetValue(25.0)	; only lap dance for no-undress   v3.0
@@ -9083,41 +9264,68 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 					endIf
 					
 				elseIf (!doOtherProp)					;; same-gender okay--check below-- v3.0
-				
+					; chair or desk
+					
 					int seatOralOrAnalVal = -1
+					bool seatSpank = false				; does seat have spank animation?  v3.15
+					   ;   --StyleLevel 21 (+oral) or 23   
 					
 					if (SceneData.SecondFemaleRole == None && SceneData.SecondMaleRole == None)
+						seatSpank = (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).HasFurnitureSpankChoice(akFurniture, furnBaseForm)
+						
 						seatOralOrAnalVal = (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).HasFurnitureOralAnalChoiceInt(akFurniture, furnBaseForm)
+					
+						DTDebug(" --------seatSpank = " + seatSpank + ", seatOralOrAnalVal = " + seatOralOrAnalVal, 2)			; TODO: remove??
 					endIf
 					
+					; v3.15 now return 5 for female recipient which may be FM or FF 
 					if (seatOralOrAnalVal > 0)
 						; set oral / manual option on prompt
 						float val = 0.0
 						
 						if (!SceneData.SameGender)
-							val = 9.0
+							val = 9.0	; 1,2, or 5			
 						
 							if (seatOralOrAnalVal == 3)
-								val = 18.0
+								val = 18.0		; anal-only
 							elseIf (seatOralOrAnalVal == 4)
 								val = 17.0		; both
+								
 							endIf
-						elseIf (seatOralOrAnalVal == 2 && SceneData.SameGender && SceneData.MaleRoleGender == 1)
-							val = 9.0
-							oralSameGenderOK = true
+						elseIf (SceneData.SameGender && SceneData.MaleRoleGender == 1)
+							; FF - check if 2 or 5  v3.15
+							if (seatOralOrAnalVal == 2 || seatOralOrAnalVal == 5)
+								val = 9.0
+								oralSameGenderOK = true
+							endIf
 
 						elseIf (seatOralOrAnalVal == 1 && SceneData.MaleRoleGender == 0)
 							val = 9.0			; allow any furniture
+							
 						endIf
 						
-						;if (kissOK && val < 10)
-						;	val += 0.5
-						;endIf
+						if (seatSpank)
+							DTDebug(" seatOralOrAnalVal = " + seatOralOrAnalVal + " and seatSpank true", 2)
+							if (val < 9.0)
+								val = 23.0
+							elseIf (val == 9.0 || val == 17.0)
+								val = 21.0
+							elseIf (val == 18.0)
+								val = 23.0		; replace with spank
+							endIf
+						endIf
 						
 						DTSleep_SexStyleLevel.SetValue(val)
 						
-					elseIf (DTSleep_SettingProps.GetValueInt() >= 1 && (DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive)
-						; search for nearby tables and other props
+					elseIf (seatSpank)
+						DTSleep_SexStyleLevel.SetValue(23.0)			; v3.15
+					endIf
+					
+					; ------
+					; v3.15 change props from using SexStyle to PropStyle so show for any chair no matter if have other options
+					;
+					if (specialFurn == 2 && DTSleep_SettingProps.GetValueInt() >= 1 && (DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive)
+						; search for nearby tables and other props   -- only when activating a chair 
 						; v2.53 fix to include true to ignore floors above and below
 						propObjRef = DTSleep_CommonF.FindNearestObjectInListFromObjRef(DTSleep_IntimatePropList, akFurniture, 600.0, true)	
 						
@@ -9127,21 +9335,26 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 							DTDebug(" ----- found prop base-form " + propBaseForm, 2)
 							
 							if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).DTSleep_IntimateMotorcycleList.HasForm(propBaseForm))
-								DTSleep_SexStyleLevel.SetValue(3.0)
+								DTSleep_PropStyleLevel.SetValue(3.0)
 							elseIf ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).DTSleep_IntimatePoolTableList.HasForm(propBaseForm))
-								DTSleep_SexStyleLevel.SetValue(2.0)
+								DTSleep_PropStyleLevel.SetValue(2.0)
 							
 							elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.10 && (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).DTSleep_IntimateShowerList.HasForm(propBaseForm))
 								;DTDebug(" prop on shower list", 2)
-								DTSleep_SexStyleLevel.SetValue(4.0)
+								DTSleep_PropStyleLevel.SetValue(4.0)
 								
 							elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.20 && (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).DTSleep_IntimateKitchenCounterList.HasForm(propBaseForm))
-								DTSleep_SexStyleLevel.SetValue(8.0)
+								DTSleep_PropStyleLevel.SetValue(8.0)
+								
+							elseIf ((DTSConditionals as DTSleep_Conditionals).IsRZSexActive && (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).DTSleep_IntimateKitchenCabinetList.HasForm(propBaseForm))
+								; kitchen cabinets on different list, but mostly the same as counters     v3.15
+								DTSleep_PropStyleLevel.SetValue(8.0)
+								
 							elseIf ((DTSConditionals as DTSleep_Conditionals).SavageCabbageVers >= 1.26 && (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).DTSleep_IntimatePierRailingList.HasForm(propBaseForm))
 								; v2.70 railings for SC 1.2.6
 								; make sure seat far enough away from the railing
 								if (propObjRef.GetDistance(akFurniture) > 126.0)
-									DTSleep_SexStyleLevel.SetValue(10.0)
+									DTSleep_PropStyleLevel.SetValue(10.0)
 								else
 									propObjRef = None
 								endIf
@@ -9155,7 +9368,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 								float angleX = propObjRef.GetAngleX()
 								float angleY = propObjRef.GetAngleY()
 								if (angleX < 10.0 && angleX > -10.0 &&  angleY < 10.0 && angleY > -10.0)
-									DTSleep_SexStyleLevel.SetValue(1.0)
+									DTSleep_PropStyleLevel.SetValue(1.0)
 								else
 									propObjRef = None
 								endIf
@@ -9163,7 +9376,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 							elseIf (akFurniture.HasKeyword((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).DTSleep_SMBed02KY))
 								; TODO: these may be stacked or facing a wall
 								propObjRef = None
-								;DTSleep_SexStyleLevel.SetValueInt(6)	; pick-spot
+								
 							endIf
 						endIf
 					endIf
@@ -9221,6 +9434,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 				;	DTSleep_SexStyleLevel.SetValue(0.5)
 				;else
 					DTSleep_SexStyleLevel.SetValue(0.0)
+					DTSleep_SexStyleExtra.SetValueInt(0) ;v3.15
 				;endIf
 			endIf 
 			
@@ -9230,7 +9444,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 				IntimateCheckAreaScore = locHourChance
 			endIf
 			
-			DTDebug("   ------   chair/prop SexStyleLevel = " + DTSleep_SexStyleLevel.GetValue(), 2)
+			DTDebug("   ------   chair SexStyleLevel = " + DTSleep_SexStyleLevel.GetValue() + ", PropStyleLevel = " + DTSleep_PropStyleLevel.GetValue(), 2)
 			
 			while (checkVal >= 2)
 				
@@ -9292,14 +9506,17 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 				;  for v3.0, increment another 1 since added Dance at 6
 				; ------------------------------
 					
-				if (checkVal == 12)					
+				; added spanking at 8, so increment greater v3.15
+				;
+				if (checkVal == 13)					
 					; chose Lap dance
 					checkVal = 0
 					doDance = false
 					doSexyDance = true
 					pickSpot = false
 					hugsOnly = true
-				elseIf (checkVal == 13)
+					
+				elseIf (checkVal == 14)
 					; pick-spot
 					checkVal = 0
 					pickSpot = true
@@ -9348,38 +9565,52 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 					checkVal = 0
 					playerPickedStyle = 5				; v3 incremented by 1 due to including a cancel at bed
 					doDance = false
-					if (!oralSameGenderOK && SceneData.SameGender && specialFurn == 2)		
+					pickSpot = false
+					int sexSV = DTSleep_SexStyleLevel.GetValueInt()
+					if (sexSV == 19 || sexSV == 42)
+						; Strong at chair must be stand/pick-spot   v3.16
+						pickSpot = true
+						
+					elseIf (!oralSameGenderOK && SceneData.SameGender && specialFurn == 2)		
 						; v2.60 - lack chair animations, so must stand
 						pickSpot = true
 						hugsOnly = false
 					endIf
 					
 				elseIf (checkVal == 6)
-					; chose dance / romance dance
+					; chose romance dance
 					checkVal = 0
 					doDance = true
 					chanceForScene.Chance = 100
 					doSexyDance = false
 					hugsOnly = true
+					pickSpot = false
 					
 				elseIf (checkVal == 7)
 					; chose anal
 					checkVal = 0
 					playerPickedStyle = 9
+					pickSpot = false
 					
-				elseIf (checkVal >= 8)
+				elseIf (checkVal == 8)
+					; chose spanking  v3.15
+					checkVal = 0
+					playerPickedStyle = 10
+					pickSpot = false
+					
+				elseIf (checkVal >= 9)
 					; picked a table or other prop
 					checkVal = 0
 					if (propObjRef != None)
 						furnToPlayObj = propObjRef
 					endIf
 					pickSpot = false
-					int sexStyleVal = DTSleep_SexStyleLevel.GetValueInt()
-					if (sexStyleVal == 4)
+					int propStyleVal = DTSleep_PropStyleLevel.GetValueInt()
+					if (propStyleVal == 4)
 						pickedOtherFurniture = 4				; shower needs special message
-					elseIf (sexStyleVal == 9)
+					elseIf (propStyleVal == 9)
 						pickedOtherFurniture = 8				; kitchen counter needs message
-					elseIf (sexStyleVal == 11)
+					elseIf (propStyleVal == 11)
 						pickedOtherFurniture = 10				; railing needs message v2.70
 					else
 						pickedOtherFurniture = 1
@@ -9393,7 +9624,8 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 					if (!doDance && chanceForScene.Chance == 0)
 						chanceForScene = ChanceForIntimateScene(nearCompanion, akFurniture, furnBaseForm, gameTime, companionGender, locHourChance, true, sexAppealScore, sameLover, isNaked, hugsOnly)
 						
-						if (hugsOnly)
+						if (hugsOnly || playerPickedStyle == 10)
+							; or spanking   v3.15
 							chanceForScene.Chance = ChanceForHugSceneAdjChair(chanceForScene.Chance, nearCompanion.RelationRank)
 						elseIf (specialFurn < 100)
 							chanceForScene.Chance = ChanceForIntimateSceneAdjChair(chanceForScene.Chance)
@@ -9412,7 +9644,8 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 					
 					chanceForScene = ChanceForIntimateScene(nearCompanion, akFurniture, furnBaseForm, gameTime, companionGender, locHourChance, true, sexAppealScore, sameLover, isNaked, hugsOnly)
 					
-					if (hugsOnly)
+					if (hugsOnly || playerPickedStyle == 10)
+						; or spanking   v3.15
 						chanceForScene.Chance = ChanceForHugSceneAdjChair(chanceForScene.Chance, nearCompanion.RelationRank)
 					elseIf (specialFurn < 100)
 						chanceForScene.Chance = ChanceForIntimateSceneAdjChair(chanceForScene.Chance)
@@ -9469,6 +9702,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 		int randomChance = 101
 		bool luckRoll = false
 		testPassEnabled = false
+		SceneData.SceneIsTest = 0    ; reset
 		
 		if (!cancledScene)
 		
@@ -9487,9 +9721,11 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 
 		elseIf (testPassEnabled)
 			randomChance = 1
+			SceneData.SceneIsTest = 1		; mark test-scene v3.15
 		else
 		
 			randomChance = (DT_RandomQuestP as DT_RandomQuestScript).GetNextHundredPackIntPublic()
+			SceneData.SceneIsTest = -1
 		endIf
 		
 		; if chance is low and luck high and failed then try again
@@ -9580,7 +9816,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 				
 				PlayPickSpotTimer(pickedOtherFurniture)
 				
-			elseIf (animPacks[0] >= 7 && animPacks[0] < 10 && !IsAAFReady() && PlayerRef.GetDistance(akFurniture) < 90.0)
+			elseIf (animPacks[0] >= 6 && animPacks[0] < 12 && !IsAAFReady() && PlayerRef.GetDistance(akFurniture) < 90.0)
 				; step back
 				PlayPickSpotTimer(2)
 			endIf
@@ -10670,6 +10906,7 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 	;	8 = ZaZOut4
 	;   9 = AAF_GrayAnimations & AAF_CreaturePack
 	;  10 = BP70
+	;  11 = RZSex
 	
 	; v2.26 - ignore powerArmorFlag here --- later before scene start will disable AnimQuestScript.PlayAAFEnabled
 	powerArmorFlag = false 
@@ -10683,6 +10920,7 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 	bool hasLeitoV2Anims = false	; compatible with AAF, but cannot have old X_Anims patch due to shared file locations
 	bool hasBP70Anims = false
 	bool hasCHAKAnims = false		; only for bed and table
+	bool hasRZSexAnims = false 		; v3.15
 	int animSetCount = 0
 	int animSetFailCount = 0
 	int multiLoverGender = -1
@@ -10708,7 +10946,7 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 	
 	if (adultScenesAvailable)
 	
-		DTDebug("IntimateAnimPacksPick powerArmorFlag?" + powerArmorFlag + " inPowerArmor? " + SceneData.CompanionInPowerArmor + " stylePicked? " + stylePicked, 2)
+		DTDebug("IntimateAnimPacksPick - inPowerArmor? " + SceneData.CompanionInPowerArmor + " stylePicked? " + stylePicked + ", Pack Pick? " + DTSleep_SettingPackPick.GetValueInt(), 1)
 		
 		if (SceneData.CompanionInPowerArmor || SceneData.IsCreatureType == CreatureTypeSynth)	; v2.17 - added synth condition
 			; intended for Danse in power armor or synth
@@ -10773,9 +11011,14 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 				hasBP70Anims = true
 				animSetCount += 1
 			endIf
+			
+			if ((DTSConditionals as DTSleep_Conditionals).IsRZSexActive)		; v3.15
+				hasRZSexAnims = true
+				animSetCount += 1
+			endIf
 
 		
-			; AAF fails if power armor bug - restrict by powerArmorFlag
+			; AAF fails if power armor bug - restrict by powerArmorFlag  (always false here as of v2.26 to check later)
 			
 			if ((DTSConditionals as DTSleep_Conditionals).IsLeitoAAFActive)
 				if (aafEnabled && powerArmorFlag && DTSleep_IsLeitoActive.GetValueInt() <= 2)
@@ -10847,15 +11090,20 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 			; Pool Table or picnic table
 			bool getMore = true
 			bool getSC = true
-			if (DressData.PlayerGender == 0 && (hasLeitoAnims || hasLeitoV2Anims) && Utility.RandomInt(5, 15) < 12)
-				getSC = false		; favor female player character
+			if (DTSleep_SettingPackPick.GetValueInt() <= 0)		;v3.16
+				if (DressData.PlayerGender == 0 && (hasLeitoAnims || hasLeitoV2Anims) && Utility.RandomInt(5, 15) < 12)
+					getSC = false		; favor female player character
+				endIf
 			endIf
 			
 			if (hasSavageCabbageAnims && !SceneData.SameGender && getSC)
 				animSets.Add(7)
-				; v2.53 - picnic table always needs to include Leito for oral/manual choice
+				; v2.53 - picnic table always needs to include Leito for oral/manual choice, but pool table prefer SC
 				if (!furnObjRef.HasKeyword((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).AnimFurnPicnickTableKY) && Utility.RandomInt(2,9) > 4)
-					getMore = false
+					if (DTSleep_SettingPackPick.GetValueInt() > 0)  ;v3.16
+						; pool table oral chosen so force SC
+						getMore = false
+					endIf
 				endIf
 			endIf
 			if (getMore)
@@ -10871,6 +11119,11 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 				endIf
 				if (hasBP70Anims)
 					animSets.Add(10)
+				endIf
+				if (!SceneData.SameGender || (playerSex == 1 && SceneData.HasToyAvailable))
+					if (hasRZSexAnims)						; v3.15
+						animSets.Add(11)
+					endIf
 				endIf
 			endIf
 			
@@ -10929,7 +11182,7 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 				animSets.Add(7)
 			endIf
 			
-		;elseIf (SceneData.IsUsingCreature && baseBedForm.HasKeyword(AnimFurnFloorBedAnims))
+		;elseIf (SceneData.IsUsingCreature && furnObjRef.HasKeyword(AnimFurnFloorBedAnims))
 		;	if (hasLeitoAnims)
 		;		SceneData.PreferStandOnly = true
 		;		animSets.Add(1)
@@ -10960,7 +11213,7 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 		elseIf (playerSex == 0 && SceneData.SameGender)
 		
 			if (hasLeitoAnims)
-				animSets.Add(0)
+				animSets.Add(1)
 			elseIf (hasLeitoV2Anims)
 				animSets.Add(6)
 			endIf
@@ -10983,6 +11236,10 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 				animSets.Add(10)
 			endIf
 			
+			if (hasRZSexAnims && stylePicked >= 10)		; may pick show  -v3.16
+				animSets.Add(11)
+			endIf
+		
 			if (hasAtomicLustAnims)
 
 				if ((DTSConditionals as DTSleep_Conditionals).AtomicLustVers >= 2.43)
@@ -10993,7 +11250,7 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 				if (animSets.Length == 0)
 					SceneData.AnimationSet = 2
 				endIf
-				SceneData.PreferStandOnly = true
+				;SceneData.PreferStandOnly = true			; v3.15 disabled 
 				animSets.Add(SceneData.AnimationSet)
 				
 			elseIf (animSets.Length == 0)
@@ -11030,26 +11287,42 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 				endIf
 				
 				bool getLeito = true				; v2.60 - female favor SC so limit Leito
-				if (hasSavageCabbageAnims)			
+				
+				; v3.16 - check pack-limit preference
+				if (hasSavageCabbageAnims)		
 					animSets[index] = 7
 					index += 1
 					; v2.64 - fix added no-same-gender restriction
-					if (stylePicked <= 0 && !SceneData.SameGender && playerSex == 1 && !limitedSpace && !furnObjRef.HasKeyword(AnimFurnFloorBedAnims))
-						if (Utility.RandomInt(10, 26) > 15)
-							getLeito = false
+					
+					if (stylePicked <= 0 && !SceneData.SameGender && playerSex == 1 && DTSleep_SettingPackPick.GetValueInt() <= 0)
+						; does bed have SC animations?    - v3.16
+						
+						if (!limitedSpace && !furnObjRef.HasKeyword(AnimFurnFloorBedAnims))
+							if (baseBedForm != None && DTSleep_BedsBigDoubleList.HasForm(baseBedForm))
+								
+								if (Utility.RandomInt(10, 26) > 16)
+									getLeito = false
+								endIf
+							endIf
 						endIf
 					endIf
 				endIf
 				
-				if (getLeito)
-					if (hasLeitoAnims)
+				if (hasLeitoAnims)
+					if (getLeito)
 						animSets[index] = 1
-						index += 1
-					endIf
-					if (hasLeitoV2Anims)
+					else
+						animSets[index] = 7
+					endif
+					index += 1
+				endIf
+				if (hasLeitoV2Anims)
+					if (getLeito)
 						animSets[index] = 6
-						index += 1
+					else
+						animSets[index] = 7
 					endIf
+					index += 1
 				endIf
 				
 				if (hasGrayAnims)
@@ -11059,6 +11332,11 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 				
 				if (hasBP70Anims)				
 					animSets[index] = 10
+					index += 1
+				endIf
+				
+				if (hasRZSexAnims)						 ; v3.15
+					animSets[index] = 11
 					index += 1
 				endIf
 			else
@@ -11138,6 +11416,9 @@ bool Function IsAdultAnimationAvailable(int gender = -1)
 			endIf
 		endIf
 		if ((DTSConditionals as DTSleep_Conditionals).IsBP70Active)				
+			return true
+		endIf
+		if ((DTSConditionals as DTSleep_Conditionals).IsRZSexActive)				; v3.15
 			return true
 		endIf
 		
@@ -11839,6 +12120,8 @@ int Function IsCompanionActorReadyForScene(IntimateCompanionSet intimateActor, b
 					if (DTSleep_IsLeitoActive.GetValue() > 0.0 && (DTSConditionals as DTSleep_Conditionals).IsLeitoActive)
 						requireStrapOn = true
 					elseIf ((DTSConditionals as DTSleep_Conditionals).IsLeitoAAFActive)
+						requireStrapOn = true
+					elseIf ((DTSConditionals as DTSleep_Conditionals).IsRZSexActive)				;v3.15
 						requireStrapOn = true
 					elseIf ((DTSConditionals as DTSleep_Conditionals).IsCrazyAnimGunActive)
 						requireStrapOn = true
@@ -14275,7 +14558,14 @@ int Function RestoreSettingsDefault()
 			DTSleep_SettingScaleActorKiss.SetValueInt(0)
 			
 			(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).DTSleep_SettingCollision.SetValueInt(1)			; v2.70
+			
+			; more v3.16
+			DTSleep_SettingShowBedAssignPrompt.SetValue(1.0)
+			DTSleep_SettingProps.SetValue(1.0)
+			DTSleep_SettingPackPick.SetValue(0.0)
+			;-----
 		
+			; mods
 			; may overide based on game settings
 			SetModDefaultSettingsForGame()
 			ProcessCompatibleMods()
@@ -16132,6 +16422,8 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 		if (!lowCam && seqID >= 100 && !isTable)
 			if (seqID >= 590 && seqID < 650)
 				lowCam = true
+			elseIf (seqID == 547)
+				lowCam = true				; v3.16
 			elseIf (seqID >= 900)
 				lowCam = true
 			elseIf (seqID < 600)
@@ -16219,35 +16511,40 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 	; ---------------------------------
 	; ** 6. ** set camera
 	;
-	if (seqID >= 536 && seqID <= 537)
-		; PA repair station  - v2.70
-		MainQSceneScriptP.CamHeightOffset = 18.0
-	
-	elseIf (seqID < 100 || mainActorIsPositioned || (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SceneIDAtPlayerPosition(seqID))
-		; check VR-mode v3.0 
-		camLevel = 0
-		if (DTSleep_VR.GetValueInt() == 2 && (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SceneOkayLookViewSit(seqID, bedRef) < 0)
-			
-			camLevel = -5   ; override to force third-person camera
-		endIf
-	elseIf (seqID == 683)
-		; override for doggy at seat  v2.73
-		camLevel = 2
-	elseIf (lowCam)
-		if (bedRef != None && bedRef.HasKeyword(AnimFurnFloorBedAnims))
-			MainQSceneScriptP.CamHeightOffset = -18.0
-		endIf
-		if (isDogmeatScene)
+	if (camLevel >= 0)
+		if (seqID >= 536 && seqID <= 537)
+			; PA repair station  - v2.70
+			MainQSceneScriptP.CamHeightOffset = 18.0
+		
+		elseIf (seqID < 100 || mainActorIsPositioned || (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SceneIDAtPlayerPosition(seqID))
+			; check VR-mode v3.0 
+			camLevel = 0
+			if (lowCam && seqID >= 500)
+				camlevel = 1
+			endIf
+			if (DTSleep_VR.GetValueInt() == 2 && (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SceneOkayLookViewSit(seqID, bedRef) < 0)
+				
+				camLevel = -5   ; override to force third-person camera
+			endIf
+		elseIf (seqID == 683)
+			; override for doggy at seat  v2.73
 			camLevel = 2
-		else
-			camLevel = 1
+		elseIf (lowCam)
+			if (bedRef != None && bedRef.HasKeyword(AnimFurnFloorBedAnims))
+				MainQSceneScriptP.CamHeightOffset = -18.0
+			endIf
+			if (isDogmeatScene)
+				camLevel = 2
+			else
+				camLevel = 1
+			endIf
+		elseIf (camLevel >= 0)
+			MainQSceneScriptP.CamHeightOffset = -12.0
 		endIf
-	elseIf (camLevel >= 0)
-		MainQSceneScriptP.CamHeightOffset = -12.0
+		
+		;Debug.Trace(myScriptName + " SetUndressFade lowCam: " + camLevel + " / " + lowCam + " (AnimationSet: " + SceneData.AnimationSet + ")") 
+		MainQSceneScriptP.GoSceneViewStart(camLevel)
 	endIf
-	
-	;Debug.Trace(myScriptName + " SetUndressFade lowCam: " + camLevel + " / " + lowCam + " (AnimationSet: " + SceneData.AnimationSet + ")") 
-	MainQSceneScriptP.GoSceneViewStart(camLevel)
 
 	; -------------------------------------------------------------------------------------------
 	; --------------scene setup done, now undress if undressing
@@ -16422,6 +16719,12 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 			doPlaceSleepOutfit = false
 		endIf
 		
+		int undressPrefLev = DTSleep_SettingUndress.GetValueInt()				; v3.16
+		if (undressPrefLev >= 3)
+			; not concerned with redress (3 or 4) so simplify checks 
+			undressPrefLev -= 2
+		endIf
+		
 		; first check respect
 		if (fadeUndressLevel >= 0 && fadeUndressLevel <= 4 && fadeUndressLevel != 2)
 			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).DropSleepClothes = false
@@ -16485,13 +16788,20 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 		elseIf (SceneData.CompanionInPowerArmor || SceneData.IsCreatureType == CreatureTypeSynth)		; v2.17 - added synth; v3.0 added scenePick
 		
 			SetUndressForManualStop(includeClothing, None, false, false, bedRef, includePipboy)
+		
+		elseIf (seqID == 1153 && undressPrefLev == 1 && (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsObjBed(bedRef))				
+			; v3.16 show-scene at bed with situational undress, follow bed undress sleep clothes if have them
+			; allow 1153 not at bed fall-thru
 			
-				
-		elseIf (seqID >= 536 && seqID <= 537)
-			; v2.25 -- PA Station - only female get naked 
+			SetUndressForBed(bedRef, companionRef, None, false, false, isNaked)
+			
+		elseIf (((seqID >= 536 && seqID <= 537) || playerScenePick == 10 || seqID == 1153) && undressPrefLev == 1)		; v3.15 added undress preference check -- 2 is always undress (we adjusted)
+			; situational undress at PA, spank, or show-flirt-1153-not-at-bed
+			; v2.25 -- PA Station - only female get naked
+			; v3.15 -- spanking scene-pick or show scene-pick-1153 --- only female-role get naked
 			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).CompanionSecondRef = None
 			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).DropSleepClothes = doPlaceSleepOutfit
-			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).PlaceBackpackOkay = doPlacePack
+			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).PlaceBackpackOkay = false				; v3.15 -- changed to no-place
 			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).EnableCarryBonus = true
 			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).SuspendEquipStore = false
 			SetUndressFootwearVals(0)			; undress shoes and socks?   v2.80
@@ -16508,8 +16818,31 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 			else
 				playerGender = 0
 			endIf
+			
+			; decide if should put on sleep clothes v3.16
+			;  (female-role gets naked unless already in sleep/intimate outfit)
+			bool useSleepOutfit = false
+			if (undressPrefLev == 1)
+				; situational
+				
+				if (seqID == 1153)
+					useSleepOutfit = true
+					
+				elseIf (playerScenePick == 10)
+					; is bed nearby?
+					if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsObjBed(bedRef))
+						useSleepOutfit = true
+					else
+						ObjectReference closeBedRef = DTSleep_CommonF.FindNearestAnyBedFromObject(bedRef, DTSleep_BedList, bedRef, 800.0)
+						if (closeBedRef != None)
+							
+							useSleepOutfit = true
+						endIf
+					endIf
+				endIf
+			endIf
 		
-			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).StartForGirlSexy(companionRef, true, includePipBoy, true, playerGender)
+			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).StartForGirlSexy(companionRef, true, includePipBoy, true, playerGender, useSleepOutfit)
 		else
 			
 			; normal undress for sex
@@ -16518,6 +16851,8 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 			if (seqID == 1030)
 				DTDebug("no-shoes for Scene ID " + seqID, 2)
 				footwearOK = false
+			elseIf (seqID == 1130)				; only happens here user preference UndressAll, so let's disable pack-place which gets in way  v3.15
+				doPlacePack = false
 			endIf
 			; bool undressAll, Actor companionActor, bool observeWinter, bool companionReqNudeSuit, ObjectReference optionalBedRef = None, bool includePipBoy = false, bool dropSleepGear = true, bool carryBonus = true, bool placeBackPack = true, bool isDance = false, bool footwearOK = true)
 			; FIX doPlacePack in wrong spot   - v2.90
@@ -17563,15 +17898,15 @@ Function TestModeOutput()
 		Debug.Trace(myScriptName + "SynthGen2-to-3: " + DTSleep_SettingSynthHuman.GetValue())
 		Debug.Trace(myScriptName + "Sleep RadCheck: " + DTSleep_SettingRadCheck.GetValue())
 		Debug.Trace(myScriptName + "    Kiss Align: " + DTSleep_SettingScaleActorKiss.GetValue())
+		Debug.Trace(myScriptName + "     Pack Pick: " + DTSleep_SettingPackPick.GetValueInt())
 		
 		
 		if (DTSleep_AdultContentOn.GetValueInt() >= 2)
 			Debug.Trace(myScriptName + " =====================================================================")
 			Debug.Trace(myScriptName + "         ----- TEST MODE ---- Animation Packs -------")
+			Debug.Trace(myScriptName + "           AAF: " + (DTSConditionals as DTSleep_Conditionals).IsAAFActive)
 			Debug.Trace(myScriptName + "     LeFO4Anim: " + (DTSConditionals as DTSleep_Conditionals).IsLeitoActive)
 			Debug.Trace(myScriptName + "      CrazyGun: " + (DTSConditionals as DTSleep_Conditionals).IsCrazyAnimGunActive)
-			Debug.Trace(myScriptName + "     Leito AAF: " + (DTSConditionals as DTSleep_Conditionals).IsAAFActive)
-			Debug.Trace(myScriptName + "     Leito ver: " + (DTSConditionals as DTSleep_Conditionals).LeitoAnimVers)
 			Debug.Trace(myScriptName + "      CHAKPack: " + (DTSConditionals as DTSleep_Conditionals).IsCHAKPackActive)
 			Debug.Trace(myScriptName + "   Atomic Lust: " + (DTSConditionals as DTSleep_Conditionals).IsAtomicLustActive)
 			Debug.Trace(myScriptName + "   Atomic vers: " + (DTSConditionals as DTSleep_Conditionals).AtomicLustVers)
@@ -17579,12 +17914,14 @@ Function TestModeOutput()
 			Debug.Trace(myScriptName + "     old Rufgt: " + (DTSConditionals as DTSleep_Conditionals).IsRufgtActive)
 			Debug.Trace(myScriptName + "   RaidMyHeart: " + (DTSConditionals as DTSleep_Conditionals).IsRufgtRaidHeartActive)
 			Debug.Trace(myScriptName + " LeFO4Anim AAF: " + (DTSConditionals as DTSleep_Conditionals).IsLeitoAAFActive)
+			Debug.Trace(myScriptName + "     Leito ver: " + (DTSConditionals as DTSleep_Conditionals).LeitoAnimVers)
 			Debug.Trace(myScriptName + " SavageCabbage: " + (DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive)
 			Debug.Trace(myScriptName + "  SavageC vers: " + (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers)
 			Debug.Trace(myScriptName + "       ZaZOut4: " + (SleepPlayerAlias as DTSleep_PlayerAliasScript).DTSleep_IsZaZOut.GetValue())
 			Debug.Trace(myScriptName + "       GrayMod: " + (DTSConditionals as DTSleep_Conditionals).IsGrayAnimsActive)
 			Debug.Trace(myScriptName + "  GrayCreature: " + (DTSConditionals as DTSleep_Conditionals).IsGrayCreatureActive)
 			Debug.Trace(myScriptName + "          BP70: " + (DTSConditionals as DTSleep_Conditionals).IsBP70Active)
+			Debug.Trace(myScriptName + "         RZSex: " + (DTSConditionals as DTSleep_Conditionals).IsRZSexActive)
 		endIf
 		
 		Debug.Trace(myScriptName + "         ----- TEST MODE ---- conditionals ----------")
@@ -17665,6 +18002,8 @@ Function UpdateIntimateAnimPreferences(int playerChoice)
 	; 7 - Cowboy OR scissors
 	; 8 - Spoon
 	; 9 - anal
+	; 10- spanking    v3.15
+	; 11- solo-show   v3.15
 	; ---------------------------
 
 	; playerChoice -- see DTSleep_IntimateScenePickMessage for index
@@ -17683,13 +18022,13 @@ Function UpdateIntimateAnimPreferences(int playerChoice)
 	elseIf (playerChoice == 5)
 		(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePlayerPrefOral()
 	elseIf (playerChoice == 6)
-		if (SceneData.SameGender)
+		if (SceneData.SameGender && !SceneData.HasToyAvailable)				; v3.16 ensure toy
 			(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePlayerPrefSixNine()
 		else
 			(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePlayerPrefDoggy()
 		endIf
 	elseIf (playerChoice == 7)
-		if (SceneData.SameGender && SceneData.MaleRoleGender == 1)
+		if (SceneData.SameGender && SceneData.MaleRoleGender == 1 && !SceneData.HasToyAvailable)	;v3.16 ensure toy
 			(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePlayerPrefScissors()
 		else
 			(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePlayerPrefCowgirl()
@@ -17698,6 +18037,10 @@ Function UpdateIntimateAnimPreferences(int playerChoice)
 		(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePlayerPrefSpoon()
 	elseIf (playerChoice == 9)
 		(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePlayerPrefAnal()
+	elseIf (playerChoice == 10)
+		(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePlayerPrefSpanking()
+	elseIf (playerChoice == 11)
+		(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePlayerPrefSoloShow()
 	endIf
 
 	if (IntimateCompanionRef != None)

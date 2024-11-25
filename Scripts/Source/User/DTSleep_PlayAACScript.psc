@@ -820,6 +820,7 @@ Function InitSceneAndPlay()
 		Utility.Wait(0.2)
 	endIf
 	
+
 	; in other file for easy access
 	(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).MoveActorsToAACPositions(MainActor, SecondActor, ThirdActor, mainYOff, mainAngleOff, secondAngleOff, mainZOff)
 
@@ -1124,7 +1125,7 @@ Function PlaySequence(DTAACSceneStageStruct[] seqStagesArray)
 	; first stage = 9.7 seconds
 	; 2nd + 3rd = 22.0 seconds
 	; last stage = 8.33 seconds
-	; total = 40 seconds, for SceneLen 2 = 62 seconds, for SceneLen 3 = 84 seconds, and 106 seconds
+	; total = 40 seconds, for SceneLen 1 = 64 seconds, for SceneLen 2 = 86 seconds, for SceneLen 3 = 108 seconds
 
 	;Debug.Trace("[DTSleep_PlayAAC] playSequence " + SequenceID + " with " + MainActor + ", " + SecondActor) 
 	
@@ -1142,15 +1143,31 @@ Function PlaySequence(DTAACSceneStageStruct[] seqStagesArray)
 	int gunIndex = -1
 	float waitSecs = 11.0				; default
 	float startSecs = 9.7
+	float extraWaitSecs = 0.0			; for when no ping-pong repeat stages allowed  v3.15
 	
 	int seqLen = seqStagesArray.Length
-	int pingPongCount = DTSleep_IntimateSceneLen.GetValueInt() - 1
+	int pingPongCount = 0
+	if (SceneRepeatStageOkay())							; v3.15
+		pingPongCount = DTSleep_IntimateSceneLen.GetValueInt() - 1
+	else
+		; calculate extra seconds per stage   v3.15
+		pingPongCount = -1
+		float multiSecs = 9.6
+		if (seqLen > 4)
+			multiSecs = 4.8
+		endIf
+		extraWaitSecs = DTSleep_IntimateSceneLen.GetValue() * multiSecs
+		if (extraWaitSecs < 0.0)
+			extraWaitSecs = 0.0
+		endIf
+	endIf
 	if (seqStagesArray[0].StageTime > 0.0)
 		startSecs = seqStagesArray[0].StageTime
 	endIf
 	
-	if (seqLen == 1)
-		; single-stage
+	
+	if (seqLen >= 1 && seqLen <= 2)
+		; single-stage or two-stage check for time-and-a-half
 		waitSecs = 24.0
 		if (startSecs > 19.0)
 			waitSecs = startSecs
@@ -1161,11 +1178,13 @@ Function PlaySequence(DTAACSceneStageStruct[] seqStagesArray)
 		endIf
 		startSecs = waitSecs
 	endIf
-
-	if (seqLen <= 3)
-		pingPongCount = 0
-	elseIf (seqLen > 2 && startSecs <= 13.0 && waitSecs < 13.0 && seqLen <= 5)
-		pingPongCount += 1
+	
+	if (pingPongCount >= 0)
+		if (seqLen <= 3)
+			pingPongCount = 0
+		elseIf (seqLen > 2 && startSecs <= 13.0 && (waitSecs + extraWaitSecs) < 13.0 && seqLen <= 5)
+			pingPongCount += 1
+		endIf
 	endIf
 	
 	int seqCount = 0
@@ -1203,7 +1222,15 @@ Function PlaySequence(DTAACSceneStageStruct[] seqStagesArray)
 				extraActor = SceneData.SecondMaleRole
 			endIf
 		endIf
-		;Debug.Trace("[DTSleep_PlayAAC] PlayAnimStage at index " + seqCount + " for secs " + waitSecs + " (ping-pong =  " + pingPongCount + ")") 
+		
+		if (seqCount > 0 && seqCount < (seqLen - 1))
+			waitSecs += extraWaitSecs			; v3.15
+		elseIf (seqCount == (seqLen -1))
+			waitSecs += (extraWaitSecs / 3.0)
+		endIf
+		
+		;Debug.Trace("[DTSleep_PlayAAC] PlayAnimStage " + SequenceID + " at index " + seqCount + " for secs " + waitSecs + " (ping-pong =  " + pingPongCount + ")") 
+		
 		PlayAnimAtStage(seqStagesArray[seqCount], SceneData.MaleRole, SceneData.FemaleRole, extraActor, waitSecs)
 		
 		int pongLim = 2
@@ -1211,6 +1238,7 @@ Function PlaySequence(DTAACSceneStageStruct[] seqStagesArray)
 		if (pingPongCount > 0 && seqCount == (seqLen - pongLim))
 			pingPongCount -= 1
 			seqCount = seqLen - 4
+			
 		endIf
 		
 		if (SceneData.IsCreatureType == 2 && SecondActor != None && seqCount < (seqLen - 1))
@@ -1265,8 +1293,9 @@ Function PlayAnimAtStage(DTAACSceneStageStruct stage, Actor mActor, Actor fActor
 		if (a1 != None)
 		
 			int ngValA = stage.ArmorNudeAGun
-			if (ngValA != 0 && stage.MorphAngleA > 0.0 && stage.MorphAngleA < 0.27)
+			if (ngValA != 0 && MaleBodyMorphEnabled && stage.MorphAngleA > 0.0 && stage.MorphAngleA < 0.27)
 				; use forward if minor morph   v2.73
+				; v3.16 - only when MorphEnabled
 				ngValA = 0
 			endIf
 				
@@ -1450,6 +1479,15 @@ bool Function SceneIsStandKiss()
 	endIf
 	
 	return false
+endFunction
+
+bool Function SceneRepeatStageOkay()
+	if (SequenceID == 1162 || SequenceID == 1152 || SequenceID == 1153)
+		Debug.Trace("[DTSleep_PlayAAC] no-repeat stages for " + SequenceID)
+		return false
+	endIf
+	
+	return true
 endFunction
 
 
