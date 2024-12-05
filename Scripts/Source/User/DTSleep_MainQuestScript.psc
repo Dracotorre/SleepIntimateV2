@@ -6638,6 +6638,8 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 	bool companionRaceOK = true   	; v2.60
 	int scenePickerType = 0       ; 0 = default, 1 = FF, 2 = MM     v3.0
 	
+	Armor playerIntimateArmor = None				;v3.17
+	
 	; v2.35 moved to top to ensure check once for regular sleep or intimacy
 	bool sleepTime = (DTSleep_HealthRecoverQuestP as DTSleep_HealthRecoverQuestScript).IsSleepTimePublic(gameTime)
 	int sleepNapPrefVal = DTSleep_SettingNapOnly.GetValueInt()
@@ -7843,6 +7845,13 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 				; sets up the scene player, companion preferences, clears 2nd lovers if not needed, and also undress according to undressLevel and pickStyle
 				; 
 				sequenceID = SetUndressAndFadeForIntimateScene(IntimateCompanionRef, targetRef, undressLevel, playerPositioned, playSlowMo, dogmeatScene, useLowSceneCam, animPacks, isNaked, twinBedRef, pickStyle, nearCompanion.PowerArmorFlag)
+				
+				; and set intimate outfit
+				if (sequenceID >= 100 && DTSleep_AdultContentOn.GetValue() >= 2.0 && DTSleep_SettingIntimate.GetValueInt() < 3)
+					if (DressData.PlayerHasSexyOutfitEquipped && DressData.PlayerEquippedIntimateAttireItem != None)
+						playerIntimateArmor = DressData.PlayerEquippedIntimateAttireItem 
+					endIf
+				endIf
 				; ---------------
 				
 				bool playerNakedOrPJ = isNaked
@@ -7896,7 +7905,7 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 			
 			if (doScene && SceneData.AnimationSet > 0 && sequenceID >= 100 && (DTSConditionals as DTSleep_Conditionals).ImaPCMod && TestVersion == -2)
 								
-				if (SceneData.AnimationSet < 20 && (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlayActionIntimateSeq(sequenceID))
+				if (SceneData.AnimationSet < 20 && (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlayActionIntimateSeq(sequenceID, playerIntimateArmor))	;v3.17
 					noPreBedAnim = false
 					RegisterForRemoteEvent(targetRef, "OnActivate")			; watch for NPC activate
 					RegisterForCustomEvent((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript), "IntimateSequenceDoneEvent")
@@ -9974,7 +9983,13 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 					
 					if (sequenceID >= 100 && SceneData.AnimationSet > 0)
 					
-						if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlayActionIntimateSeq(sequenceID))
+						; v3.17
+						Armor playerIntimateArmor = None
+						if (DressData.PlayerHasSexyOutfitEquipped && DressData.PlayerEquippedIntimateAttireItem != None)
+							playerIntimateArmor = DressData.PlayerEquippedIntimateAttireItem 
+						endIf
+					
+						if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlayActionIntimateSeq(sequenceID, playerIntimateArmor))
 							noPreBedAnim = false
 							if (specialFurn < 100)
 								RegisterForRemoteEvent(furnToPlayObj, "OnActivate")			; watch for NPC activate
@@ -16203,6 +16218,11 @@ int Function SetUndressPlaySexyDance(ObjectReference furnToPlayObj, bool playerI
 			endIf
 			
 			; do scene
+			Armor playerIntimateOutfit = None
+			if (DressData.PlayerHasSexyOutfitEquipped && DressData.PlayerEquippedIntimateAttireItem != None)
+				playerIntimateOutfit = DressData.PlayerEquippedIntimateAttireItem 
+			endIf
+
 			
 			if (furnIsPole && (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlayActionDancePole())
 			
@@ -16212,7 +16232,7 @@ int Function SetUndressPlaySexyDance(ObjectReference furnToPlayObj, bool playerI
 				endIf
 				
 				return 1
-			elseIf (!furnIsPole && adultReady && (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlayActionDanceSexy())
+			elseIf (!furnIsPole && adultReady && (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlayActionDanceSexy(playerIntimateOutfit))
 				if (SceneData.MaleRole != PlayerRef)
 					RegisterForRemoteEvent(furnToPlayObj, "OnActivate")			; watch for NPC activate
 				endIf
@@ -16889,6 +16909,7 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 				SceneData.ToyFromContainer = false
 			endIf
 		endIf
+		
 	elseIf (undressPrefVal > 0)
 		DTDebug(" ?? SetUndressAndFadeForIntimateScene  - no undress situation (fadeUndressLevel = " + fadeUndressLevel + ") -- do hats", 1)
 		if (SceneData.AnimationSet == 0 || (SceneData.AnimationSet >= 4 && SceneData.AnimationSet <= 5))

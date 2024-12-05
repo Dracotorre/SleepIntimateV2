@@ -197,6 +197,7 @@ ObjectReference property SleepBedTempRef auto hidden
 ObjectReference property SleepBedAltRef auto hidden
 ObjectReference property MainActorOriginMarkRef auto hidden
 ObjectReference property SecondActorOriginMarkRef auto hidden
+Armor property PlayerIntimateArmor auto hidden				; v3.17
 Location property SleepBedLocation auto hidden				; v2.40
 bool property SleepBedIsPillowBed = false auto hidden
 int property SecondActorScenePref auto hidden		
@@ -481,6 +482,8 @@ bool Function StartForActorsAndBed(Actor mainActor, Actor secondActor, ObjectRef
 	MSceneChangedAAFSetting = -1
 	MySleepBedFurnType = -2
 	
+	PlayerIntimateArmor = None			;v3.17
+	
 	
 	if (PlayerPrefSceneCloneInit <= 0)
 		InitPlayerPrefSceneArrays()
@@ -570,6 +573,8 @@ int Function SetAnimationPacksAndGetSceneID(int[] animSetsArray, bool hugsOnly =
 	if (hugsOnly)
 		includeHugs = 2
 	endIf
+	
+	PlayerIntimateArmor = None
 	
 	SceneData.IntimateSceneIsDanceHug = 0
 	
@@ -674,6 +679,8 @@ Function StopAll(bool fadeIn = false)
 	SleepBedAltRef = None
 	PlayAAFEnabled = true
 	PlayerEndurance = -2					; reset v2.90
+	
+	PlayerIntimateArmor = None				; reset v3.17
 	
 	UnregisterForMenuOpenCloseEvent("PipboyMenu")
 	UnregisterForMenuOpenCloseEvent("WorkshopMenu")
@@ -1146,8 +1153,10 @@ endFunction
 
 ; *****************Play Functions **************
 
-bool Function PlayActionIntimateSeq(int seqID)
+bool Function PlayActionIntimateSeq(int seqID, Armor playerIntimateOutfit = None)				; v3.17 added optional armor to set
 	HasToyEquipped = false  ; only flag (CheckActors) if equip toy to remove at end
+	
+	PlayerIntimateArmor = playerIntimateOutfit
 
 	if (MainActorRef == None)
 		return false
@@ -1241,6 +1250,8 @@ bool Function PlayActionDancing(bool isRomantic = false)
 		return false
 	endIf
 	
+	PlayerIntimateArmor = None
+	
 	if (SceneData.ToyArmor != None)
 		CheckRemoveToys(false, true)
 	endIf
@@ -1300,6 +1311,8 @@ bool Function PlayActionHugs(bool seatIsSpecial = false)
 	elseIf (SceneData.IsUsingCreature && SceneData.IsCreatureType < 3)
 		return false
 	endIf
+	
+	PlayerIntimateArmor = None
 	
 	bool hasExtraHugs = HasEmbracePacks()					; v3.0
 	int sid = 99
@@ -1375,6 +1388,8 @@ bool Function PlayActionKiss(int intimateSettingVal, bool seatIsSpecial = false)
 	elseIf (SceneData.IsUsingCreature && SceneData.IsCreatureType < 3)
 		return false
 	endIf
+	
+	PlayerIntimateArmor = None
 	
 	bool hasExtraHugs = HasEmbracePacks()					; v3.0
 	
@@ -1468,6 +1483,8 @@ bool Function PlayActionDancePole()
 		return false
 	endIf
 	
+	PlayerIntimateArmor = None
+	
 	SceneData.AnimationSet = 7
 	SceneData.IntimateSceneIsDanceHug = 1				; v2.48
 	SceneStartGameTime = -1.0					; do not check pole-dance time -- v3.08
@@ -1495,7 +1512,7 @@ bool Function PlayActionDancePole()
 	return false
 endFunction
 
-bool Function PlayActionDanceSexy()
+bool Function PlayActionDanceSexy(Armor playerIntimateOutfit = None)				; v3.17 added optional armor
 
 	if (MainActorRef == None || SleepBedRef == None || (DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive == false)
 		return false
@@ -1521,6 +1538,8 @@ bool Function PlayActionDanceSexy()
 	if (!(DTSConditionals as DTSleep_Conditionals).ImaPCMod)
 		return false
 	endIf
+	
+	PlayerIntimateArmor = playerIntimateOutfit
 	
 	SceneData.AnimationSet = 7
 	SceneData.IntimateSceneIsDanceHug = 1				; v2.48
@@ -1562,6 +1581,8 @@ bool Function PlayActionXOXO(bool seatisSpecial = false)
 			SceneData.MaleRole = MainActorRef
 		endIf
 	endIf
+	
+	PlayerIntimateArmor = None
 	
 	bool hasExtraHugs = HasEmbracePacks()					; v3.0
 	int[] sidArray = new int[2]
@@ -6435,18 +6456,25 @@ bool Function ProcessMainActorClone()
 							; only copy as Armor to avoid mod-armor
 							
 							bool okayToCopy = true
+							bool doOverride = false		; normally we only copy unique items, but override for sexy gear  -v3.17
 							
 							if (SceneData.ToyArmor != None && item == SceneData.ToyArmor)
 								foundToyArmor = true
-								if (!SceneData.HasToyEquipped)
+								if (SceneData.HasToyEquipped)
+									doOverride = true		; v3.17
+								else
 									; toy not needed
 									okayToCopy = false
 								endIf
+								
+							elseIf (PlayerIntimateArmor != None && item == PlayerIntimateArmor)			;v3.17
+							
+								doOverride = true
 							endIf
 							
 							if (okayToCopy && MainActorRef.IsEquipped(item))
 								
-								if (ProcessCopyEquipItemActors(item, MainActorRef, MainActorCloneRef, true))
+								if (ProcessCopyEquipItemActors(item, MainActorRef, MainActorCloneRef, true, doOverride))
 									
 									MainActorOutfitArray.Add(gearList[i])
 								endIf
@@ -6457,6 +6485,9 @@ bool Function ProcessMainActorClone()
 					endWhile
 				endIf
 				
+				; -----------
+				; double-check
+				;
 				if (SceneData.ToyArmor != None && SceneData.HasToyEquipped && SceneData.MaleRole == MainActorRef && SceneData.MaleRoleGender == 1)
 					
 					if (foundToyArmor)
@@ -6483,6 +6514,7 @@ bool Function ProcessMainActorClone()
 						endIf
 					endIf
 				endIf
+		
 			
 				if (SceneData.MaleRole == MainActorRef)
 					SceneData.MaleRole = MainActorCloneRef
