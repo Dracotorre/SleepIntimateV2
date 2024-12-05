@@ -6369,12 +6369,15 @@ float Function PositionMarkerOnBedZAdjustForSceneID(int id)
 endFunction
 
 
-bool Function ProcessCopyEquipItemActors(Armor armorItem, Actor actorFrom, Actor actorTo, bool forceEquip = false)
+bool Function ProcessCopyEquipItemActors(Armor armorItem, Actor actorFrom, Actor actorTo, bool forceEquip = false, bool overrideCountLimit = false)
 
 	if (armorItem != None)
 		; limit to if only 1 to avoid equip wrong item
+		; v3.17 -- allow caller to override limit
 		
-		if (actorFrom.GetItemCount(armorItem) == 1)
+		int cnt = actorFrom.GetItemCount(armorItem)
+		
+		if (cnt == 1 || (overrideCountLimit && cnt > 1))
 			actorFrom.UnequipItem(armorItem, false, true)
 			Utility.Wait(0.1)
 			actorFrom.RemoveItem(armorItem, 1, true, actorTo)
@@ -6455,14 +6458,25 @@ bool Function ProcessMainActorClone()
 				endIf
 				
 				if (SceneData.ToyArmor != None && SceneData.HasToyEquipped && SceneData.MaleRole == MainActorRef && SceneData.MaleRoleGender == 1)
-					; v2.35 check clone
+					
+					if (foundToyArmor)
+						; ensure clone has toy equipped -- may not copy if player had 2 of same item inventoried -- v3.17
+						if (MainActorCloneRef.IsEquipped(SceneData.ToyArmor) == false)
+							Debug.Trace(myScriptName + " clone needed ToyArmor, but not equipped... reset and check again")
+							foundToyArmor = false
+						endIf
+					endIf
+					
 					if (!foundToyArmor)
+						; v2.35 check clone 
 						; may happen if this script equipped and EquipMonitor still processing when retrieved gearList
+						;      or when 2 or more inventoried
 						if (DTSleep_SettingTestMode.GetValue() > 0.0 && DTSleep_DebugMode.GetValue() >= 2.0)
 							Debug.Trace(myScriptName + " clone needed ToyArmor, but did not find during equip copy... check now")
 						endIf
 						if (MainActorRef.GetItemCount(SceneData.ToyArmor) > 0)
-							if (ProcessCopyEquipItemActors(SceneData.ToyArmor, MainActorRef, MainActorCloneRef, true))
+							; override count-limit v3.17
+							if (ProcessCopyEquipItemActors(SceneData.ToyArmor, MainActorRef, MainActorCloneRef, true, true))
 								foundToyArmor = true
 								MainActorOutfitArray.Add(SceneData.ToyArmor)
 							endIf
