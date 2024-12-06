@@ -197,7 +197,6 @@ ObjectReference property SleepBedTempRef auto hidden
 ObjectReference property SleepBedAltRef auto hidden
 ObjectReference property MainActorOriginMarkRef auto hidden
 ObjectReference property SecondActorOriginMarkRef auto hidden
-Armor property PlayerIntimateArmor auto hidden				; v3.17
 Location property SleepBedLocation auto hidden				; v2.40
 bool property SleepBedIsPillowBed = false auto hidden
 int property SecondActorScenePref auto hidden		
@@ -470,7 +469,7 @@ bool Function StartForActorsAndBed(Actor mainActor, Actor secondActor, ObjectRef
 	SecondActorSceneHate = -1
 	SecondActorScenePrefArray = new int[0]
 	SecondActorSceneHateArray = new int[0]
-	HasToyEquipped = false
+	self.HasToyEquipped = false
 	MainActorOriginMarkRef = None
 	MainActorPositionByCaller = mainActorPositioned
 	PlaySlowTime = slowTime
@@ -481,8 +480,6 @@ bool Function StartForActorsAndBed(Actor mainActor, Actor secondActor, ObjectRef
 	RestrictScenesToErectAngle = -1
 	MSceneChangedAAFSetting = -1
 	MySleepBedFurnType = -2
-	
-	PlayerIntimateArmor = None			;v3.17
 	
 	
 	if (PlayerPrefSceneCloneInit <= 0)
@@ -573,8 +570,6 @@ int Function SetAnimationPacksAndGetSceneID(int[] animSetsArray, bool hugsOnly =
 	if (hugsOnly)
 		includeHugs = 2
 	endIf
-	
-	PlayerIntimateArmor = None
 	
 	SceneData.IntimateSceneIsDanceHug = 0
 	
@@ -679,8 +674,6 @@ Function StopAll(bool fadeIn = false)
 	SleepBedAltRef = None
 	PlayAAFEnabled = true
 	PlayerEndurance = -2					; reset v2.90
-	
-	PlayerIntimateArmor = None				; reset v3.17
 	
 	UnregisterForMenuOpenCloseEvent("PipboyMenu")
 	UnregisterForMenuOpenCloseEvent("WorkshopMenu")
@@ -1153,10 +1146,8 @@ endFunction
 
 ; *****************Play Functions **************
 
-bool Function PlayActionIntimateSeq(int seqID, Armor playerIntimateOutfit = None)				; v3.17 added optional armor to set
-	HasToyEquipped = false  ; only flag (CheckActors) if equip toy to remove at end
-	
-	PlayerIntimateArmor = playerIntimateOutfit
+bool Function PlayActionIntimateSeq(int seqID)
+	self.HasToyEquipped = false  ; only flag (CheckActors) if equip toy to remove at end
 
 	if (MainActorRef == None)
 		return false
@@ -1250,8 +1241,6 @@ bool Function PlayActionDancing(bool isRomantic = false)
 		return false
 	endIf
 	
-	PlayerIntimateArmor = None
-	
 	if (SceneData.ToyArmor != None)
 		CheckRemoveToys(false, true)
 	endIf
@@ -1311,8 +1300,6 @@ bool Function PlayActionHugs(bool seatIsSpecial = false)
 	elseIf (SceneData.IsUsingCreature && SceneData.IsCreatureType < 3)
 		return false
 	endIf
-	
-	PlayerIntimateArmor = None
 	
 	bool hasExtraHugs = HasEmbracePacks()					; v3.0
 	int sid = 99
@@ -1388,8 +1375,6 @@ bool Function PlayActionKiss(int intimateSettingVal, bool seatIsSpecial = false)
 	elseIf (SceneData.IsUsingCreature && SceneData.IsCreatureType < 3)
 		return false
 	endIf
-	
-	PlayerIntimateArmor = None
 	
 	bool hasExtraHugs = HasEmbracePacks()					; v3.0
 	
@@ -1483,8 +1468,6 @@ bool Function PlayActionDancePole()
 		return false
 	endIf
 	
-	PlayerIntimateArmor = None
-	
 	SceneData.AnimationSet = 7
 	SceneData.IntimateSceneIsDanceHug = 1				; v2.48
 	SceneStartGameTime = -1.0					; do not check pole-dance time -- v3.08
@@ -1512,7 +1495,7 @@ bool Function PlayActionDancePole()
 	return false
 endFunction
 
-bool Function PlayActionDanceSexy(Armor playerIntimateOutfit = None)				; v3.17 added optional armor
+bool Function PlayActionDanceSexy()
 
 	if (MainActorRef == None || SleepBedRef == None || (DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive == false)
 		return false
@@ -1538,8 +1521,6 @@ bool Function PlayActionDanceSexy(Armor playerIntimateOutfit = None)				; v3.17 
 	if (!(DTSConditionals as DTSleep_Conditionals).ImaPCMod)
 		return false
 	endIf
-	
-	PlayerIntimateArmor = playerIntimateOutfit
 	
 	SceneData.AnimationSet = 7
 	SceneData.IntimateSceneIsDanceHug = 1				; v2.48
@@ -1581,8 +1562,6 @@ bool Function PlayActionXOXO(bool seatisSpecial = false)
 			SceneData.MaleRole = MainActorRef
 		endIf
 	endIf
-	
-	PlayerIntimateArmor = None
 	
 	bool hasExtraHugs = HasEmbracePacks()					; v3.0
 	int[] sidArray = new int[2]
@@ -1840,7 +1819,7 @@ bool Function CheckActorsIntimateCompatible(int seqID)
 					
 						if (!SceneData.HasToyEquipped)
 							; assumed MaleRole has item in inventory else this adds an item
-							SceneData.MaleRole.EquipItem(SceneData.ToyArmor, true, true)
+							SceneData.MaleRole.EquipItem(SceneData.ToyArmor, false, true)				; v3.17 changed Prevent-to-false
 							
 							SceneData.HasToyEquipped = true
 							if (DTSleep_SettingTestMode.GetValue() > 0.0 && DTSleep_DebugMode.GetValue() >= 2.0)
@@ -1848,7 +1827,7 @@ bool Function CheckActorsIntimateCompatible(int seqID)
 							endIf
 							Utility.WaitMenuMode(0.1)
 							
-							HasToyEquipped = true  ; flag so we can remove later
+							self.HasToyEquipped = true  ; flag so we can remove later
 						endIf
 						
 						return true
@@ -1870,7 +1849,7 @@ bool Function CheckActorsIntimateCompatible(int seqID)
 endFunction
 
 Function CheckRemoveToys(bool allowRetry = true, bool forceRem = false)
-	if (HasToyEquipped || forceRem)
+	if (self.HasToyEquipped || forceRem)
 		int index = 0
 		bool searchList = false
 		
@@ -1882,10 +1861,10 @@ Function CheckRemoveToys(bool allowRetry = true, bool forceRem = false)
 				endIf
 
 				if (toyActor.GetItemCount(SceneData.ToyArmor) > 0)
+					
 					toyActor.UnequipItem(SceneData.ToyArmor, false, true)
-					SceneData.HasToyEquipped = false   ; remove flag from Scene since we applied
-					HasToyEquipped = false
-					Utility.Wait(0.1)
+					self.HasToyEquipped = false
+					SceneData.HasToyEquipped = false
 					
 				elseIf (allowRetry && SceneData.AnimationSet > 4 && CheckRemoveToysCount < 5)
 					; likely not copied back yet from AAF
@@ -1898,7 +1877,7 @@ Function CheckRemoveToys(bool allowRetry = true, bool forceRem = false)
 					return
 				endIf
 			else
-				HasToyEquipped = false
+				self.HasToyEquipped = false
 			endIf
 		else
 			searchList = true
@@ -1913,14 +1892,14 @@ Function CheckRemoveToys(bool allowRetry = true, bool forceRem = false)
 						MainActorRef.UnequipItem(toyArmor, false, true)
 						index = len
 						SceneData.HasToyEquipped = false   ; remove flag from Scene since we applied
-						HasToyEquipped = false
+						self.HasToyEquipped = false
 					endIf
 				elseIf (MainActorRef != None && !SceneData.SameGender && MainActorRef == SceneData.FemaleRole)
 					if (MainActorRef.IsEquipped(toyArmor))
 						MainActorRef.UnequipItem(toyArmor, false, true)
 						index = len
 						SceneData.HasToyEquipped = false   ; remove flag from Scene since we applied
-						HasToyEquipped = false
+						self.HasToyEquipped = false
 					endIf
 				endIf
 				if (SecondActorRef && SecondActorRef == SceneData.MaleRole)
@@ -1928,7 +1907,7 @@ Function CheckRemoveToys(bool allowRetry = true, bool forceRem = false)
 						SecondActorRef.UnequipItem(toyArmor, false, true)
 						index = len
 						SceneData.HasToyEquipped = false   ; remove flag from Scene since we applied
-						HasToyEquipped = false
+						self.HasToyEquipped = false
 					endIf
 				endIf
 				index += 1
@@ -2627,6 +2606,8 @@ Function FinalizeAndSendFinish(bool seqStartedOK = true, int errCount = 0)
 	DTSleepIAQInputLayer = None
 	
 	Utility.Wait(0.2)
+	
+	Debug.Trace(myScriptName + " Finalize And Finish --- check toys")  ;TODO: remove
 	
 	CheckRemoveToys()
 	
@@ -6402,6 +6383,7 @@ bool Function ProcessCopyEquipItemActors(Armor armorItem, Actor actorFrom, Actor
 			actorFrom.UnequipItem(armorItem, false, true)
 			Utility.Wait(0.1)
 			actorFrom.RemoveItem(armorItem, 1, true, actorTo)
+
 			actorTo.EquipItem(armorItem, forceEquip, true)
 			Utility.WaitMenuMode(0.08)
 			
@@ -6466,10 +6448,7 @@ bool Function ProcessMainActorClone()
 									; toy not needed
 									okayToCopy = false
 								endIf
-								
-							elseIf (PlayerIntimateArmor != None && item == PlayerIntimateArmor)			;v3.17
 							
-								doOverride = true
 							endIf
 							
 							if (okayToCopy && MainActorRef.IsEquipped(item))

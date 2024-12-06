@@ -191,6 +191,8 @@ bool property PlayerRedressEnabled = true auto hidden			; v2.60 - set false to p
 bool property KeepShoesEquipped = true auto hidden				; v2.80
 bool property KeepStockingsEquipped = true auto hidden			; v2.80
 Weapon property PlayerWeaponItem = None auto hidden				; v2.90 - to re-equip player's weapon if we removed it
+bool property PlayerHasToyEquip = false auto hidden				; v3.17
+bool property CompanionHasToyEquip = false auto hidden			; v3.17
 
 ; ********************************************
 ; ******           variables     ***********
@@ -1279,6 +1281,9 @@ Function DoneStopAll()
 	; do not clear CompanionRef or CompanionSecondRef so CheckNudeSuitsRemoved may check
 	PlayerBedRef = None
 	CompanionBedRef = None
+	PlayerHasToyEquip = false
+	CompanionHasToyEquip = false
+	
 	if (DTSleep_AdultContentOn.GetValue() >= 2.0)
 		AltFemBodyEnabled = true
 	else
@@ -3088,8 +3093,30 @@ Function RedressActor(Actor actorRef, Form[] equippedFormArray, bool slowly = tr
 			
 			DTDebug(" item to equip: " + item + " for " + actorRef, 3)
 			
+			; check toys first -- only equip of was equipped during undress -- v3.17
+			;    this is due to may have been equipped for scene and our equip-monitor caught it
+			;
+			if (actorRef == PlayerRef && item == DressData.PlayerEquippedStrapOnItem)
+				if (PlayerHasToyEquip)
+					; equip it
+					actorRef.EquipItem(item, false, true)
+					equipOK = true
+				else
+					DTDebug(" skip item " + item + " actor did not have toy equipped", 3)
+				endIf
+			
+			elseIf (actorRef == CompanionRef && item == DressData.CompanionEquippedStrapOnItem)
+				if (CompanionHasToyEquip)
+					; equip it
+					actorRef.EquipItem(item, false, true)
+					equipOK = true
+				else
+					DTDebug(" skip item " + item + " actor did not have toy equipped", 3)
+				endIf
+				
+				
 			; if nude-suit knocked off into list, remove without un-equip
-			if (item == DTSleep_PlayerNudeRing)
+			elseIf (item == DTSleep_PlayerNudeRing)
 				RedressActorRemoveNudeSuits(actorRef, DTSleep_PlayerNudeRing, " player nude-ring", false)
 			elseIf (item == DTSleep_NudeRing)
 				RedressActorRemoveNudeSuits(actorRef, DTSleep_NudeRing, " nude ring ", false)
@@ -4005,6 +4032,12 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 	int pipPadSlotIndex = (DTSConditionals as DTSleep_Conditionals).PipPadSlotIndex
 	int remWeaponVal = DTSleep_SettingUndressWeapon.GetValueInt()						;v2.47 (1=companion, 2=player, 3=both)
 	
+	if (actorRef == PlayerRef)
+		PlayerHasToyEquip = false
+	elseIf (actorRef == CompanionRef)
+		CompanionHasToyEquip = false
+	endIf
+	
 	if (DTSleep_ExtraArmorsEnabled.GetValueInt() > 0)
 		extraArmorosEnabled = true
 	endIf
@@ -4069,10 +4102,17 @@ Function UndressActor(Actor actorRef, int bedLevel, bool includeClothing = false
 					actorWearingIntimateItem = false
 				endIf
 			endIf
+			
 			if (actorRef == PlayerRef)
 				toyCheckRef = DressData.PlayerEquippedStrapOnItem
+				if (DressData.PlayerEquippedStrapOnItem != None)
+					PlayerHasToyEquip = true
+				endIf
 			elseIf (actorRef == CompanionRef)
 				toyCheckRef = DressData.CompanionEquippedStrapOnItem
+				if (DressData.CompanionEquippedStrapOnItem != None)
+					CompanionHasToyEquip = true
+				endIf
 			elseIf (GetGenderForActor(actorRef) == 1)
 				toyCheckRef = GetStrapOnForActor(actorRef, false, None, true)
 			endIf
@@ -4891,7 +4931,7 @@ Function UndressActorArmorExtendedSlots(Actor actorRef, bool forBed, bool includ
 			bool isStrapOn = false
 			bool isException = false
 
-			if (DressData.PlayerEquippedStrapOnItem)
+			if (DressData.PlayerEquippedStrapOnItem != None)
 				if (DTSleep_ArmorSlot55List.HasForm(DressData.PlayerEquippedStrapOnItem as Form))
 					isStrapOn = true
 				endIf

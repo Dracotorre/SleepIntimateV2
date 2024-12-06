@@ -6637,8 +6637,7 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 	bool playerIntimateOK = false
 	bool companionRaceOK = true   	; v2.60
 	int scenePickerType = 0       ; 0 = default, 1 = FF, 2 = MM     v3.0
-	
-	Armor playerIntimateArmor = None				;v3.17
+
 	
 	; v2.35 moved to top to ensure check once for regular sleep or intimacy
 	bool sleepTime = (DTSleep_HealthRecoverQuestP as DTSleep_HealthRecoverQuestScript).IsSleepTimePublic(gameTime)
@@ -7846,12 +7845,6 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 				; 
 				sequenceID = SetUndressAndFadeForIntimateScene(IntimateCompanionRef, targetRef, undressLevel, playerPositioned, playSlowMo, dogmeatScene, useLowSceneCam, animPacks, isNaked, twinBedRef, pickStyle, nearCompanion.PowerArmorFlag)
 				
-				; and set intimate outfit
-				if (sequenceID >= 100 && DTSleep_AdultContentOn.GetValue() >= 2.0 && DTSleep_SettingIntimate.GetValueInt() < 3)
-					if (DressData.PlayerHasSexyOutfitEquipped && DressData.PlayerEquippedIntimateAttireItem != None)
-						playerIntimateArmor = DressData.PlayerEquippedIntimateAttireItem 
-					endIf
-				endIf
 				; ---------------
 				
 				bool playerNakedOrPJ = isNaked
@@ -7904,8 +7897,8 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 			; start scene - adult pack or regular 
 			
 			if (doScene && SceneData.AnimationSet > 0 && sequenceID >= 100 && (DTSConditionals as DTSleep_Conditionals).ImaPCMod && TestVersion == -2)
-								
-				if (SceneData.AnimationSet < 20 && (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlayActionIntimateSeq(sequenceID, playerIntimateArmor))	;v3.17
+				
+				if (SceneData.AnimationSet < 20 && (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlayActionIntimateSeq(sequenceID))	;v3.17
 					noPreBedAnim = false
 					RegisterForRemoteEvent(targetRef, "OnActivate")			; watch for NPC activate
 					RegisterForCustomEvent((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript), "IntimateSequenceDoneEvent")
@@ -9982,14 +9975,8 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 					
 					
 					if (sequenceID >= 100 && SceneData.AnimationSet > 0)
-					
-						; v3.17
-						Armor playerIntimateArmor = None
-						if (DressData.PlayerHasSexyOutfitEquipped && DressData.PlayerEquippedIntimateAttireItem != None)
-							playerIntimateArmor = DressData.PlayerEquippedIntimateAttireItem 
-						endIf
-					
-						if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlayActionIntimateSeq(sequenceID, playerIntimateArmor))
+				
+						if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlayActionIntimateSeq(sequenceID))
 							noPreBedAnim = false
 							if (specialFurn < 100)
 								RegisterForRemoteEvent(furnToPlayObj, "OnActivate")			; watch for NPC activate
@@ -16218,12 +16205,7 @@ int Function SetUndressPlaySexyDance(ObjectReference furnToPlayObj, bool playerI
 			endIf
 			
 			; do scene
-			Armor playerIntimateOutfit = None
-			if (DressData.PlayerHasSexyOutfitEquipped && DressData.PlayerEquippedIntimateAttireItem != None)
-				playerIntimateOutfit = DressData.PlayerEquippedIntimateAttireItem 
-			endIf
 
-			
 			if (furnIsPole && (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlayActionDancePole())
 			
 				RegisterForCustomEvent((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript), "IntimateSequenceDoneEvent")
@@ -16232,7 +16214,7 @@ int Function SetUndressPlaySexyDance(ObjectReference furnToPlayObj, bool playerI
 				endIf
 				
 				return 1
-			elseIf (!furnIsPole && adultReady && (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlayActionDanceSexy(playerIntimateOutfit))
+			elseIf (!furnIsPole && adultReady && (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).PlayActionDanceSexy())
 				if (SceneData.MaleRole != PlayerRef)
 					RegisterForRemoteEvent(furnToPlayObj, "OnActivate")			; watch for NPC activate
 				endIf
