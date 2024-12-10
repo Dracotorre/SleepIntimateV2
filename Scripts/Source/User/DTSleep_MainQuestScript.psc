@@ -16495,10 +16495,10 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 		endIf
 	elseIf (SceneData.AnimationSet == 4)
 		if (seqID >= 490)
-			camLevel = -1
+			camLevel = 0			; v3.18 why was -1??
 		endIf
 	elseIf (SceneData.AnimationSet == 0 || seqID < 100)
-		camLevel = -1
+		camLevel = 0		; v3.18 why was -1??
 	endIf
 				
 	; v2.74 moved here since already establishing check above		
@@ -16513,7 +16513,7 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 	; ---------------------------------
 	; ** 6. ** set camera
 	;
-	if (camLevel >= 0)
+	if (camLevel >= 0)						
 		if (seqID >= 536 && seqID <= 537)
 			; PA repair station  - v2.70
 			MainQSceneScriptP.CamHeightOffset = 18.0
