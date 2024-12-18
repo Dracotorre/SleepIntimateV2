@@ -535,7 +535,7 @@ Function InitSceneAndPlay()
 	float secondAngleOff = 0.0
 	float mainYOff = 0.0
 	float mainZOff = 0.0					; only move secondActor! moving player up/down may cause camera shake
-	float secondYOff = 0.0
+	;float secondYOff = 0.0    - not used
 	bool turned = false
 	int longScene = 0
 	int genders = -1		; FM, 0 = MM, 1 = FF
@@ -773,6 +773,7 @@ Function InitSceneAndPlay()
 		angleM = seqStagesArray[0].MAngleOffset
 		angleF = seqStagesArray[0].FAngleOffset
 		yOffM = seqStagesArray[0].MPosYOffset
+		
 		if (otherActor > 0 && seqStagesArray[0].OAnimFormID > 0)
 			; require third actor
 			if (ThirdActor == None)
@@ -807,7 +808,7 @@ Function InitSceneAndPlay()
 		SecondActor.MoveTo(MainActor, 0.0, -50.0, 0.0, true)
 		if (SecondActor == SceneData.MaleRole)
 			secondAngleOff = angleOffset + angleM
-			secondYOff = yOffM
+			;secondYOff = yOffM
 		else
 			secondAngleOff = angleOffset + angleF
 		endIf
@@ -821,7 +822,7 @@ Function InitSceneAndPlay()
 	endIf
 	
 
-	; in other file for easy access
+	; in other file for easy access  - v3.20 added X-offset
 	(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).MoveActorsToAACPositions(MainActor, SecondActor, ThirdActor, mainYOff, mainAngleOff, secondAngleOff, mainZOff)
 
 	;Debug.Trace("[DTSleep_PlayAAC] actors (MST) " + MainActor + " / " + SecondActor + " / " + ThirdActor)

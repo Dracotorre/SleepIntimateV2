@@ -8475,6 +8475,13 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 	elseIf (specialFurn == 4)
 		if ((DTSConditionals as DTSleep_Conditionals).IsAtomicLustActive)
 			animPacks[0] = 5
+			; v3.20
+			if ((DTSConditionals as DTSleep_Conditionals).IsRZSexActive && (DTSConditionals as DTSleep_Conditionals).RZSexVers >= 2.50)
+				animPacks.Add(11)
+			endIf
+		elseIf ((DTSConditionals as DTSleep_Conditionals).IsRZSexActive && (DTSConditionals as DTSleep_Conditionals).RZSexVers >= 2.50)
+			; v3.20
+			animPacks[0] = 11
 		else
 			hugsOnly = true
 			animPacks[0] = 0
@@ -8956,6 +8963,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 					elseIf (doOtherProp)
 						animPacks[0] = 0				; no pick-spot for sedan or motorcycle
 						hugsOnly = true
+						
 					elseIf (specialFurn == 4)
 						if (nearCompanion.Gender == 0)
 							hugsOnly = true
@@ -9206,8 +9214,8 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 				endIf
 			endIf
 			
-			; check props or sexstyle level for menu  --- v3.15 added desks okay to check
-			if (specialFurn >= 2 && specialFurn <= 3 && !hugsOnly && DTSleep_AdultContentOn.GetValue() >= 2.0 && TestVersion == -2)
+			; check props or sexstyle level for menu  --- v3.15 added desks okay to check -- v3.20 added PA Repair
+			if (specialFurn >= 2 && specialFurn <= 4 && !hugsOnly && DTSleep_AdultContentOn.GetValue() >= 2.0 && TestVersion == -2)
 				
 				if (SceneData.IsUsingCreature && SceneData.IsCreatureType == CreatureTypeStrong)
 					
@@ -9248,6 +9256,12 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 						DTSleep_SexStyleLevel.SetValueInt(6)			; show Pick-Spot
 					endIf
 					
+				elseIf (specialFurn == 4)
+					; PA Repair station sexstyle - v3.20
+					if (!SceneData.SameGender || SceneData.MaleRoleGender == 1)
+						DTSleep_SexStyleLevel.SetValue(9.0)
+					endIf
+					
 				elseIf (specialFurn == 2 && (lapDanceOkay || IsSexyDanceCompatibleFurn(akFurniture, furnBaseForm, SceneData.SameGender)))
 					; lap dance at chair
 					
@@ -9266,7 +9280,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 					endIf
 					
 				elseIf (!doOtherProp)					;; same-gender okay--check below-- v3.0
-					; chair or desk
+					; chair or desk 
 					
 					int seatOralOrAnalVal = -1
 					bool seatSpank = false				; does seat have spank animation?  v3.15
@@ -9281,6 +9295,8 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 					endIf
 					
 					; v3.15 now return 5 for female recipient which may be FM or FF 
+					
+					
 					if (seatOralOrAnalVal > 0)
 						; set oral / manual option on prompt
 						float val = 0.0
@@ -9599,6 +9615,19 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 					checkVal = 0
 					playerPickedStyle = 10
 					pickSpot = false
+					
+					if (SceneData.SameGender)
+						if (DTSleep_SettingSwapRoles.GetValueInt() <= 0)			; v3.20 swap check
+							; no  swap, same roles as old versions
+							SceneData.FemaleRole = PlayerRef
+							SceneData.MaleRole = nearCompanion.CompanionActor
+							MainQSceneScriptP.IsMaleCamOffset = false
+						else
+							SceneData.FemaleRole = nearCompanion.CompanionActor
+							SceneData.MaleRole = PlayerRef
+							MainQSceneScriptP.IsMaleCamOffset = true
+						endIf
+					endIf 
 					
 				elseIf (checkVal >= 9)
 					; picked a table or other prop
@@ -16517,6 +16546,9 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 		if (seqID >= 536 && seqID <= 537)
 			; PA repair station  - v2.70
 			MainQSceneScriptP.CamHeightOffset = 18.0
+		elseIf (seqID == 1138)
+			; PA repair station oral hanging  - v3.20
+			MainQSceneScriptP.CamHeightOffset = 18.0
 		
 		elseIf (seqID < 100 || mainActorIsPositioned || (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SceneIDAtPlayerPosition(seqID))
 			; check VR-mode v3.0 
@@ -16797,10 +16829,11 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 			
 			SetUndressForBed(bedRef, companionRef, None, false, false, isNaked)
 			
-		elseIf (((seqID >= 536 && seqID <= 537) || playerScenePick == 10 || seqID == 1153) && undressPrefLev == 1)		; v3.15 added undress preference check -- 2 is always undress (we adjusted)
+		elseIf (((seqID >= 536 && seqID <= 537) || playerScenePick == 10 || seqID == 1153 || seqID == 1138) && undressPrefLev == 1)		; v3.15 added undress preference check -- 2 is always undress (we adjusted)
 			; situational undress at PA, spank, or show-flirt-1153-not-at-bed
 			; v2.25 -- PA Station - only female get naked
 			; v3.15 -- spanking scene-pick or show scene-pick-1153 --- only female-role get naked
+			; v3.20 -- PA repair Station Rohzima oral sex - only female undress
 			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).CompanionSecondRef = None
 			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).DropSleepClothes = doPlaceSleepOutfit
 			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).PlaceBackpackOkay = false				; v3.15 -- changed to no-place
@@ -16844,7 +16877,8 @@ int Function SetUndressAndFadeForIntimateScene(Actor companionRef, ObjectReferen
 				endIf
 			endIf
 		
-			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).StartForGirlSexy(companionRef, true, includePipBoy, true, playerGender, useSleepOutfit)
+			; v3.20 added final param, true, for male removes glasses no matter preference setting
+			(DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).StartForGirlSexy(companionRef, true, includePipBoy, true, playerGender, useSleepOutfit, true)
 		else
 			
 			; normal undress for sex
@@ -17911,20 +17945,17 @@ Function TestModeOutput()
 			Debug.Trace(myScriptName + "     LeFO4Anim: " + (DTSConditionals as DTSleep_Conditionals).IsLeitoActive)
 			Debug.Trace(myScriptName + "      CrazyGun: " + (DTSConditionals as DTSleep_Conditionals).IsCrazyAnimGunActive)
 			Debug.Trace(myScriptName + "      CHAKPack: " + (DTSConditionals as DTSleep_Conditionals).IsCHAKPackActive)
-			Debug.Trace(myScriptName + "   Atomic Lust: " + (DTSConditionals as DTSleep_Conditionals).IsAtomicLustActive)
-			Debug.Trace(myScriptName + "   Atomic vers: " + (DTSConditionals as DTSleep_Conditionals).AtomicLustVers)
+			Debug.Trace(myScriptName + "   Atomic Lust: " + (DTSConditionals as DTSleep_Conditionals).IsAtomicLustActive + " v" + (DTSConditionals as DTSleep_Conditionals).AtomicLustVers)
 			Debug.Trace(myScriptName + "  Mutated Lust: " + (DTSConditionals as DTSleep_Conditionals).IsMutatedLustActive)
 			Debug.Trace(myScriptName + "     old Rufgt: " + (DTSConditionals as DTSleep_Conditionals).IsRufgtActive)
 			Debug.Trace(myScriptName + "   RaidMyHeart: " + (DTSConditionals as DTSleep_Conditionals).IsRufgtRaidHeartActive)
-			Debug.Trace(myScriptName + " LeFO4Anim AAF: " + (DTSConditionals as DTSleep_Conditionals).IsLeitoAAFActive)
-			Debug.Trace(myScriptName + "     Leito ver: " + (DTSConditionals as DTSleep_Conditionals).LeitoAnimVers)
-			Debug.Trace(myScriptName + " SavageCabbage: " + (DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive)
-			Debug.Trace(myScriptName + "  SavageC vers: " + (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers)
+			Debug.Trace(myScriptName + " LeFO4Anim AAF: " + (DTSConditionals as DTSleep_Conditionals).IsLeitoAAFActive + " v" + (DTSConditionals as DTSleep_Conditionals).LeitoAnimVers)
+			Debug.Trace(myScriptName + " SavageCabbage: " + (DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive + " v" + (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers)
 			Debug.Trace(myScriptName + "       ZaZOut4: " + (SleepPlayerAlias as DTSleep_PlayerAliasScript).DTSleep_IsZaZOut.GetValue())
 			Debug.Trace(myScriptName + "       GrayMod: " + (DTSConditionals as DTSleep_Conditionals).IsGrayAnimsActive)
 			Debug.Trace(myScriptName + "  GrayCreature: " + (DTSConditionals as DTSleep_Conditionals).IsGrayCreatureActive)
 			Debug.Trace(myScriptName + "          BP70: " + (DTSConditionals as DTSleep_Conditionals).IsBP70Active)
-			Debug.Trace(myScriptName + "         RZSex: " + (DTSConditionals as DTSleep_Conditionals).IsRZSexActive)
+			Debug.Trace(myScriptName + "         RZSex: " + (DTSConditionals as DTSleep_Conditionals).IsRZSexActive + " v" + (DTSConditionals as DTSleep_Conditionals).RZSexVers)
 		endIf
 		
 		Debug.Trace(myScriptName + "         ----- TEST MODE ---- conditionals ----------")

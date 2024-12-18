@@ -761,7 +761,9 @@ bool Function StartForCompanionSleepwear(Actor companionActorRef, bool companion
 endFunction
 
 ; v2.82 update to include setting playerGender to override actual gender where playerGender==1 undresses player completely
-bool Function StartForGirlSexy(Actor companionActorRef, bool includeClothing, bool includePipBoy, bool remJacket = false, int playerGender = -1, bool useSleepClothes = false)
+; v3.20 added param, maleRemGlasses
+;
+bool Function StartForGirlSexy(Actor companionActorRef, bool includeClothing, bool includePipBoy, bool remJacket = false, int playerGender = -1, bool useSleepClothes = false, bool maleRemGlasses = false)
 
 	; v3.16 if includeClothing, female role gets naked unless useSleepClothes and sleep clothes equipped other than robe
 	;                     male role stays dressed unless useSleepClothes
@@ -802,9 +804,12 @@ bool Function StartForGirlSexy(Actor companionActorRef, bool includeClothing, bo
 					UndressActor(CompanionRef, 0, includeClothing, includeClothing, false)
 					Utility.WaitMenuMode(0.1)
 					SleepWearEquipForActor(CompanionRef)
+					if (maleRemGlasses && DTSleep_SettingUndressGlasses.GetValueInt() > 0)
+						UndressActorArmorGlasses(CompanionRef)
+					endIf
 				else
 					; v3.15 added includeClothing for remGloves parameter
-					UndressActorRespect(CompanionRef, true, true, !includeClothing, remJacket, includeClothing)
+					UndressActorRespect(CompanionRef, true, true, !includeClothing, remJacket, includeClothing, maleRemGlasses)
 				endIf
 				Utility.WaitMenuMode(0.1)
 				
@@ -812,6 +817,7 @@ bool Function StartForGirlSexy(Actor companionActorRef, bool includeClothing, bo
 				UndressActor(CompanionRef, 0, includeClothing, includeClothing, false)
 			else
 				; v3.15 added includeClothing for remGloves parameter
+				; v3.20 added remGlasses
 				UndressActorRespect(CompanionRef, true, true, false, remJacket, includeClothing)	
 			endIf
 		endIf
@@ -835,7 +841,8 @@ bool Function StartForGirlSexy(Actor companionActorRef, bool includeClothing, bo
 			if (useSleepClothes && playerGender == 0 && DressData.PlayerEquippedSleepwearItem != None)
 				; already in sleep outfit
 				if (remJacket)
-					UndressActorRespect(PlayerRef, true, true, false, remJacket, includeClothing)
+					; v3.20 added glasses
+					UndressActorRespect(PlayerRef, true, true, false, remJacket, includeClothing, maleRemGlasses)
 				endIf
 				
 			elseIf (useSleepClothes && playerGender == 0 && includeClothing && IsActorCarryingSleepwear(PlayerRef))
@@ -843,8 +850,12 @@ bool Function StartForGirlSexy(Actor companionActorRef, bool includeClothing, bo
 				UndressActor(PlayerRef, 0, includeClothing, includeClothing, false)
 				Utility.WaitMenuMode(0.1)
 				SleepWearEquipForActor(PlayerRef)
+				if (maleRemGlasses)
+					UndressActorArmorGlasses(PlayerRef)
+				endIf
 			else
-				UndressActorRespect(PlayerRef, true, true, false, remJacket)				; not respectOnly
+				; v3.20 added glasses
+				UndressActorRespect(PlayerRef, true, true, false, remJacket, includeClothing, maleRemGlasses)				; not respectOnly
 			endIf
 		endIf
 		
@@ -3840,8 +3851,9 @@ EndFunction
 ; use instead of regular UndressActor to undress only respectful items:
 ;   - hats, glasses, masks, jacket, backpack
 ;   - outer-armors only if known items
+;   - v3.20 added remGlasses
 ;
-Function UndressActorRespect(Actor actorRef, bool isIndoors, bool remHatsOutside = true, bool respectOnly = true, bool remJacket = false, bool remGloves = false)
+Function UndressActorRespect(Actor actorRef, bool isIndoors, bool remHatsOutside = true, bool respectOnly = true, bool remJacket = false, bool remGloves = false, bool remGlasses = false)
 
 	; limited undress - avoid items that knock off entire outfit since we cannot know for certain
 	; if outfit covers many slots
@@ -3959,7 +3971,8 @@ Function UndressActorRespect(Actor actorRef, bool isIndoors, bool remHatsOutside
 	;	UndressActorArmorOutSlots(actorRef, skipUpper, respectOnly)
 	;endIf
 	
-	if (DTSleep_SettingUndressGlasses.GetValueInt() >= 2)
+	; v3.20 added remGlasses param
+	if (remGlasses || DTSleep_SettingUndressGlasses.GetValueInt() >= 2)
 		UndressActorArmorGlasses(actorRef)
 	endIf
 	

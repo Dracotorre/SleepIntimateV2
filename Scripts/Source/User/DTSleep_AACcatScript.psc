@@ -82,8 +82,8 @@ int Function GetStageCountForSequenceID(int seqID, int longScene = 0, int other 
 			result = 4
 		elseIf (seqID == 1135)
 			result = 2
-		;elseIf (seqID == 1134)
-		;	result = 4
+		elseIf (seqID >= 1138 && seqID <= 1139)
+			result = 4
 		elseIf (seqID == 1148)
 			result = 1
 		elseIf (seqID >= 1149 && seqID <= 1150)
@@ -920,6 +920,90 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 				ssStruct.PositionOrigID = "RZ_SexBehindChairTender05"
 				ssStruct.PositionID = "DTSIX_1137_S5"
 			endIf
+			
+		elseIf (seqID == 1138)								; PA station oral -- adjust Y-57, Z+3-- v3.20
+			if (stageNumber == 1)										
+				ssStruct.FAnimFormID = 0x09011B8A
+				ssStruct.MAnimFormID = 0x09011B8B
+				ssStruct.PositionOrigID = "RZ_SexPARigTender01"
+				ssStruct.PositionID = "DTSIX_1138_S1"
+				ssStruct.ArmorNudeAGun = -1
+				ssStruct.MAngleOffset = 180.0
+				ssStruct.MPosZOffset = -3.0
+				
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x09011B8C
+				ssStruct.MAnimFormID = 0x09011B8D
+				ssStruct.PositionOrigID = "RZ_SexPARigTender02"
+				ssStruct.PositionID = "DTSIX_1138_S2"
+				ssStruct.ArmorNudeAGun = -1
+				ssStruct.MAngleOffset = 180.0
+				ssStruct.MPosZOffset = -3.0
+				
+			else
+				ssStruct.FAnimFormID = 0x09011B8E
+				ssStruct.MAnimFormID = 0x09011B8F
+				ssStruct.PositionOrigID = "RZ_SexPARigTender02"
+				ssStruct.PositionID = "DTSIX_1138_S3"
+				ssStruct.ArmorNudeAGun = -1
+				ssStruct.MAngleOffset = 180.0
+				ssStruct.MPosZOffset = -3.0
+				
+			endIf
+		elseIf (seqID == 1139)								; PA station doggy -- adjust Y-57 and rotate 180   v3.20
+			if (stageNumber == 1)										
+				ssStruct.FAnimFormID = 0x09011B90
+				ssStruct.MAnimFormID = 0x09011B91
+				ssStruct.PositionOrigID = "RZ_SexPARigTender04"
+				ssStruct.PositionID = "DTSIX_1139_S1"
+				
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x09011B92
+				ssStruct.MAnimFormID = 0x09011B93
+				ssStruct.PositionOrigID = "RZ_SexPARigTender05"
+				ssStruct.PositionID = "DTSIX_1139_S2"
+				
+			else
+				ssStruct.FAnimFormID = 0x09011B94
+				ssStruct.MAnimFormID = 0x09011B95
+				ssStruct.PositionOrigID = "RZ_SexPARigTender06"
+				ssStruct.PositionID = "DTSIX_1139_S3"
+				
+			endIf
+			
+		elseIf (seqID == 1140)													; v3.20
+			if (stageNumber == 1)							
+				ssStruct.FAnimFormID = 0x09011B7C
+				ssStruct.MAnimFormID = 0x09011B7D
+				ssStruct.PositionOrigID = "RZ_AnalCouchTender01"
+				ssStruct.PositionID = "DTSIX_1140_S1"
+			elseIf (stageNumber == 2)							
+				ssStruct.FAnimFormID = 0x09011B7E
+				ssStruct.MAnimFormID = 0x09011B7F
+				ssStruct.PositionOrigID = "RZ_AnalCouchTender02"
+				ssStruct.PositionID = "DTSIX_1140_S2"
+			elseIf (stageNumber == 3)							
+				ssStruct.FAnimFormID = 0x09011B80
+				ssStruct.MAnimFormID = 0x09011B81
+				ssStruct.PositionOrigID = "RZ_AnalCouchTender03"
+				ssStruct.PositionID = "DTSIX_1140_S3"
+			elseIf (stageNumber == 4)							
+				ssStruct.FAnimFormID = 0x09011B82
+				ssStruct.MAnimFormID = 0x09011B83
+				ssStruct.PositionOrigID = "RZ_AnalCouchTender04"
+				ssStruct.PositionID = "DTSIX_1140_S4"
+			elseIf (stageNumber == 5)							
+				ssStruct.FAnimFormID = 0x09011B84
+				ssStruct.MAnimFormID = 0x09011B85
+				ssStruct.PositionOrigID = "RZ_AnalCouchTender05"
+				ssStruct.PositionID = "DTSIX_1140_S5"
+			else
+				ssStruct.FAnimFormID = 0x09011B86
+				ssStruct.MAnimFormID = 0x09011B87
+				ssStruct.PositionOrigID = "RZ_AnalCouchTender06"
+				ssStruct.PositionID = "DTSIX_1140_S6"
+			endIf
+			
 		elseIf (seqID == 1148)
 			
 			ssStruct.FAnimFormID = 0x090026A6					; sit on face rev

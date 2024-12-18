@@ -1809,7 +1809,8 @@ bool Function CheckActorsIntimateCompatible(int seqID)
 				
 				elseIf (SceneData.MaleRoleGender == 1)
 					; v3.15 changes for pack 11
-					if ((seqID >= 1000 && seqID < 1100) || seqID == 181 || seqID == 180 || seqID == 680 || seqID == 681 || seqID == 281 || seqID == 947 || seqID == 1130 || seqID == 1135 || seqID == 1149 || seqID == 1152)
+					; v3.20 added PA-Repair 1138
+					if ((seqID >= 1000 && seqID < 1100) || seqID == 181 || seqID == 180 || seqID == 680 || seqID == 681 || seqID == 281 || seqID == 947 || seqID == 1130 || seqID == 1135 || seqID == 1138 || seqID == 1149 || seqID == 1152)
 						if (SceneData.HasToyEquipped && SceneData.ToyArmor != None)
 							CheckRemoveToys(false, true)
 						endIf
@@ -3164,7 +3165,7 @@ bool Function HasFurnitureOralChoice(ObjectReference obj, Form baseBedForm)
 	return false
 endFunction
 
-; returns 1 for FM-only oral, 2 for FF-only oral, 3 for anal, 4 for both anal and FM-oral, 5 for female-stimulation or spanking (FM or FF)
+; returns 1 for FM oral, 2 for FF-only oral, 3 for anal, 4 for both anal and FM-oral, 5 for female-stimulation or spanking (FM or FF)
 int Function HasFurnitureOralAnalChoiceInt(ObjectReference obj, Form baseBedForm)
 	int result = 0			
 	
@@ -3205,6 +3206,10 @@ int Function HasFurnitureOralAnalChoiceInt(ObjectReference obj, Form baseBedForm
 				
 				if (GetIsOnIgnoreListSceneID(781) && GetIsOnIgnoreListSceneID(735))
 					fallThru = true
+					
+				elseIf ((DTSConditionals as DTSleep_Conditionals).IsRZSexActive && (DTSConditionals as DTSleep_Conditionals).RZSexVers >= 2.50 && !GetIsOnIgnoreListSceneID(1140))
+					; has both v3.20
+					return 4
 				else
 					return 1
 				endIf
@@ -3245,8 +3250,17 @@ int Function HasFurnitureOralAnalChoiceInt(ObjectReference obj, Form baseBedForm
 		
 		if ((DTSConditionals as DTSleep_Conditionals).IsRZSexActive)			; v3.15 
 			
-			if (!GetIsOnIgnoreListSceneID(1135) && obj.HasKeyword(AnimFurnCouchKY))
-				return 1
+			if (obj.HasKeyword(AnimFurnCouchKY))
+				if ((DTSConditionals as DTSleep_Conditionals).RZSexVers >= 2.50 && !GetIsOnIgnoreListSceneID(1140) && !GetIsOnIgnoreListSceneID(1135))
+					; has both v3.20
+					return 4
+				endIf
+				if (!GetIsOnIgnoreListSceneID(1135))
+					return 1
+				endIf
+				if (!GetIsOnIgnoreListSceneID(1140))
+					return 3
+				endIf
 			endIf
 			if (!GetIsOnIgnoreListSceneID(1162))
 				if (baseBedForm == None)
@@ -5613,6 +5627,21 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 								elseIf (id == 1137)
 									yOffset = 1.5	; due to legs clip v3.15
 									
+								elseIf (id == 1138)
+									; PA Repair  oral hanging 			v3.20
+									yOffset = -57.0
+									zOffset = 3.0
+									bedUseNodeMarker = true
+									markerIsBed = false
+									headingAngle = SleepBedRef.GetAngleZ()
+									
+								elseIf (id == 1139)
+									; PA Repair doggy on floor   			v3.20
+									yOffset = -58.0
+									bedUseNodeMarker = true
+									markerIsBed = false
+									headingAngle = SleepBedRef.GetAngleZ() + 180.001
+									
 								elseIf (id == 1162)
 									; rotate to front of desk  v3.15
 									bedUseNodeMarker = true
@@ -6947,12 +6976,31 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 		elseIf (MySleepBedFurnType == FurnTypeIsPARepair && !SceneData.IsUsingCreature && !SceneData.CompanionInPowerArmor)
 			
 			if (packID == 5)
-				if (SceneData.SameGender && SceneData.MaleRoleGender == 1)
-					sidArray.Add(36)	
-					;sidArray.Add(37) ; actors position needs adjustment
-				elseIf (!SceneData.SameGender)
-					sidArray.Add(36)
-					;sidArray.Add(37)
+				bool okayToAdd = true 	
+				if ((DTSConditionals as DTSleep_Conditionals).RZSexVers >= 2.50)
+					; has pack with regular sex, so only add if picked oral     	v3.20
+					if (!playerPick || !DoesMainActorPrefID(ScenePrefIsOral))
+						okayToAdd = false
+					endIf
+				endIf
+				if (okayToAdd)
+					if (SceneData.SameGender && SceneData.MaleRoleGender == 1)
+						sidArray.Add(36)	
+						;sidArray.Add(37) ; actors position needs adjustment
+					elseIf (!SceneData.SameGender)
+						sidArray.Add(36)
+						;sidArray.Add(37)
+					endIf
+				endIf
+			elseIf (packID == 11 && (DTSConditionals as DTSleep_Conditionals).RZSexVers >= 2.50)				; v3.20
+				if (playerPick && DoesMainActorPrefID(ScenePrefIsOral))
+					sidArray.Add(38)    ;  oral
+				elseIf (!playerPick)
+					if (!SceneData.SameGender || SceneData.HasToyAvailable)
+						sidArray.Add(39)	;  doggy
+					else
+						sidArray.Add(38)    ;  oral
+					endIf
 				endIf
 			endIf
 		elseIf (MySleepBedFurnType == FurnTypeIsWorkbenchArmor && !SceneData.IsUsingCreature && !SceneData.CompanionInPowerArmor && !MainActorPositionByCaller)
@@ -7297,6 +7345,10 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 								if (DTSleep_IntimateChairHighNoArmsList.HasForm(baseBedForm))
 									sidArray.Add(30)
 								endIf
+							endIf
+						elseIf (DoesMainActorPrefID(ScenePrefIsAnal))			;v3.20
+							if (MySleepBedFurnType == FurnTypeIsSeatSofa)
+								sidArray.Add(40)
 							endIf
 						endIf
 					; end player-picked
@@ -8846,6 +8898,7 @@ Function MoveActorsToAACPositions(Actor mainActor, Actor secondActor, Actor thir
 		posX = SceneData.MaleMarker.GetPositionX()
 		posY = SceneData.MaleMarker.GetPositionY()
 		
+		; offsets: y, z, x  
 		DTSleep_CommonF.MoveActorToObject(mainActor, SceneData.MaleMarker, mainAngleOff, mainYOff, 0.0)		; never move mainActor Z-axis
 		
 		if (secondActor != None)
@@ -9106,6 +9159,9 @@ bool Function SceneOkayToClonePlayer(int sid)
 	
 	elseIf (sid == 1193)
 		SceneData.IntimateSceneViewType = 1 ; forced due to rotation and shift			v3.15
+		return true
+	elseIf (sid == 1138)
+		SceneData.IntimateSceneViewType = 1 ; forced due to z-offset		v3.20
 		return true
 		
 	elseIf ((MySleepBedFurnType == FurnTypeIsLocker && !MainActorPositionByCaller && sid > 700) || sid == 788)
