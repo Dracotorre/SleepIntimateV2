@@ -1810,7 +1810,8 @@ bool Function CheckActorsIntimateCompatible(int seqID)
 				elseIf (SceneData.MaleRoleGender == 1)
 					; v3.15 changes for pack 11
 					; v3.20 added PA-Repair 1138
-					if ((seqID >= 1000 && seqID < 1100) || seqID == 181 || seqID == 180 || seqID == 680 || seqID == 681 || seqID == 281 || seqID == 947 || seqID == 1130 || seqID == 1135 || seqID == 1138 || seqID == 1149 || seqID == 1152)
+					; v3.21 added desk-spank 1141
+					if ((seqID >= 1000 && seqID < 1100) || seqID == 181 || seqID == 180 || seqID == 680 || seqID == 681 || seqID == 281 || seqID == 947 || seqID == 1130 || seqID == 1135 || seqID == 1138 || seqID == 1141 || seqID == 1149 || seqID == 1152)
 						if (SceneData.HasToyEquipped && SceneData.ToyArmor != None)
 							CheckRemoveToys(false, true)
 						endIf
@@ -3305,7 +3306,7 @@ bool Function HasFurnitureSpankChoice(ObjectReference obj, Form baseBedForm)
 	
 	if ((DTSConditionals as DTSleep_Conditionals).IsRZSexActive)
 			
-		if (!GetIsOnIgnoreListSceneID(1030))
+		if (!GetIsOnIgnoreListSceneID(1130))			; v3.21 - fix with correct sid
 		
 			if (baseBedForm == None)
 				baseBedForm = obj.GetBaseObject()
@@ -3318,6 +3319,16 @@ bool Function HasFurnitureSpankChoice(ObjectReference obj, Form baseBedForm)
 				return true
 			endIf
 			if (DTSleep_IntimateChairHighNoArmsList.HasForm(baseBedForm))
+				return true
+			endIf
+		endIf
+		
+		if ((DTSConditionals as DTSleep_Conditionals).RZSexVers >= 2.60 && !GetIsOnIgnoreListSceneID(1141))			; v3.21
+		
+			if (baseBedForm == None)
+				baseBedForm = obj.GetBaseObject()
+			endIf
+			if (DTSleep_IntimateDeskList.HasForm(baseBedForm))
 				return true
 			endIf
 		endIf
@@ -5641,6 +5652,11 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 									bedUseNodeMarker = true
 									markerIsBed = false
 									headingAngle = SleepBedRef.GetAngleZ() + 180.001
+								elseIf (id == 1141)							;v3.21
+									yOffset = 2.0
+									bedUseNodeMarker = true
+									markerIsBed = false
+									headingAngle = SleepBedRef.GetAngleZ()
 									
 								elseIf (id == 1162)
 									; rotate to front of desk  v3.15
@@ -7486,6 +7502,15 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 							sidArray.Add(3)
 						endIf
 					endIf
+					
+					if (MySleepBedFurnType == FurnTypeIsTableDesk)
+						; v3.21
+						if ((DTSConditionals as DTSleep_Conditionals).RZSexVers >= 2.60)
+							if (playerPick && DoesMainActorPrefID(ScenePrefIsSpank))
+								sidArray.Add(41)
+							endIf
+						endIf
+					endIf
 				
 				elseIf (packID == 10)		
 					if (MySleepBedFurnType == FurnTypeIsTablePicnic)
@@ -7526,7 +7551,9 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 							sidArray.Add(44)
 							sidArray.Add(45)
 						elseIf (MySleepBedFurnType == FurnTypeIsTableDesk)
-							sidArray.Add(52)  ; desk/desk-table
+							if (!playerPick)			; no-pick only v3.21
+								sidArray.Add(52)  ; desk/desk-table
+							endIf
 						endIf
 					endIf
 				elseIf (packID == 6 || packID == 1)
@@ -8766,6 +8793,8 @@ endFunction
 bool Function SceneIDIsSpanking(int id)				; v3.15
 	if (id == 1130)
 		return true
+	elseIf (id == 1141)
+		return true 		; v3.21
 	elseIf (id == 937)
 		return true
 	elseIf (id == 547)

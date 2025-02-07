@@ -84,6 +84,8 @@ int Function GetStageCountForSequenceID(int seqID, int longScene = 0, int other 
 			result = 2
 		elseIf (seqID >= 1138 && seqID <= 1139)
 			result = 4
+		elseIf (seqID == 1141)
+			result = 4
 		elseIf (seqID == 1148)
 			result = 1
 		elseIf (seqID >= 1149 && seqID <= 1150)
@@ -1003,7 +1005,36 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 				ssStruct.PositionOrigID = "RZ_AnalCouchTender06"
 				ssStruct.PositionID = "DTSIX_1140_S6"
 			endIf
-			
+		elseIf (seqID == 1141)											;turn angle 180 - v3.21
+			if (stageNumber == 1)							
+				ssStruct.FAnimFormID = 0x09012AC8
+				ssStruct.MAnimFormID = 0x09012AC9
+				ssStruct.PositionOrigID = "RZ_SpankingDeskTender01"
+				ssStruct.PositionID = "DTSIX_1141_S1"
+				ssStruct.MAngleOffset = 90.0
+				ssStruct.ArmorNudeAGun = -1
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x09012ACA
+				ssStruct.MAnimFormID = 0x09012ACB
+				ssStruct.PositionOrigID = "RZ_SpankingDeskTender02"
+				ssStruct.PositionID = "DTSIX_1141_S2"
+				ssStruct.MAngleOffset = 90.0
+				ssStruct.ArmorNudeAGun = -1
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x09012ACC
+				ssStruct.MAnimFormID = 0x09012ACD
+				ssStruct.PositionOrigID = "RZ_SpankingDeskTender03"
+				ssStruct.PositionID = "DTSIX_1141_S3"
+				ssStruct.MAngleOffset = 90.0
+				ssStruct.ArmorNudeAGun = -1
+			elseIf (stageNumber == 4)
+				ssStruct.FAnimFormID = 0x09012ACE
+				ssStruct.MAnimFormID = 0x09012ACF
+				ssStruct.PositionOrigID = "RZ_SpankingDeskTender04"
+				ssStruct.PositionID = "DTSIX_1141_S4"
+				ssStruct.MAngleOffset = 90.0
+				ssStruct.ArmorNudeAGun = -1
+			endIf
 		elseIf (seqID == 1148)
 			
 			ssStruct.FAnimFormID = 0x090026A6					; sit on face rev

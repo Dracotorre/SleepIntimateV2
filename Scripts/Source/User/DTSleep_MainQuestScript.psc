@@ -23,7 +23,7 @@ Scriptname DTSleep_MainQuestScript extends Quest
 ; **** mod authors interested in making compatibility patch  - see the website for details
 ;
 ;    basics: player may choose two styles of sleep:
-;       - Quick Sleep (global DTSleep_SettingNapOnly <= 0): normal game sleep events then OnPlayerSleepStop places characters in bed if unocuppied
+;       - Quick Sleep (global DTSleep_SettingNapOnly <= 0): normal game sleep events then OnPlayerSleepStop places characters in bed if unoccupied
 ;       - Immersive Rest (global DTSleep_SettingNapOnly >= 1): fake-sleep with character placed in bed with optional recovery for Survival
 ;			** player allowed to exit bed early and continue sleep within 2 hours
 ;
@@ -1630,7 +1630,7 @@ Event DTSleep_IntimateAnimQuestScript.IntimateSequenceDoneEvent(DTSleep_Intimate
 					; note: SleepBedUsesSpecialAnims not needed here any longer since before intimacy we set moveToBed = false
 					;
 					if (DTSleep_SettingNapOnly.GetValue() > 0.0 || SleepBedUsesSpecialAnims || !nakedPlayer)
-					
+						
 						if (!inBed && !fadedOut && activateBedOK && DTSleep_SettingShowIntimateCheck.GetValueInt() > 0)
 							
 							int restCheck = 0
@@ -7605,7 +7605,7 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 				
 					if (chanceForScene.Chance >= randomChance)
 					
-						doScene = true				; ***** successs ****
+						doScene = true				; ***** success ****
 						
 						; -------- speak and notify ------------------------------
 						EnablePlayerControlsSleep()
@@ -7680,6 +7680,7 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 						
 					elseIf (chanceForScene.Chance >= 5)
 						
+						; ********************* fail *******************************
 						PlayerRef.SayCustom(PlayerHackFailSubtype, None, randomChance > 50)
 						
 						; only mark fail if chance and no more often than 3/4 hours
@@ -7699,6 +7700,11 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 							endIf
 						endIf
 						Utility.Wait(0.3)
+						
+						; if not sleepy or never-nap then cancel scene -- v3.21 (was added in 2.70 for hug-and-kiss only)
+						if (!sleepTime || DTSleep_SettingFadeEndScene.GetValueInt() <= 0)
+							cancledScene = true
+						endIf
 					endIf
 					
 				elseIf (ChanceForIntimateSceneAdjDance(chanceForScene.Chance) > randomChance)
@@ -7768,7 +7774,8 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 					endIf
 					
 					; check if sleepy to go to bed, or not sleep to cancel scene -- v2.70
-					if (!sleepTime)
+					; also if always prompt v3.21
+					if (!sleepTime || DTSleep_SettingFadeEndScene.GetValueInt() <= 0)
 						cancledScene = true
 					endIf
 					Utility.Wait(0.2)
@@ -8585,7 +8592,12 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 			int playerGender = (DTSleep_IntimateUndressQuestP as DTSleep_IntimateUndressQuestScript).GetGenderForActor(PlayerRef)
 			if (playerGender == 1)
 				if (specialFurn != 4)		; allow FF for PA (4)
-					genderPref = 0
+					; check desk for spank -- v3.21
+					if (specialFurn == 3 && (DTSConditionals as DTSleep_Conditionals).RZSexVers >= 2.60)
+						; do nothing -- allow FF
+					else
+						genderPref = 0
+					endIf
 				endIf
 			else
 				genderPref = 1
@@ -8924,7 +8936,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 					endIf
 				
 				;
-				; TODO: check here for new animationpacks supporting chairs FMF or same-gender
+				; TODO: check here for new animation packs supporting chairs FMF or same-gender
 				;
 				; --------- SameGender check -------------------			
 						; v2.52 added specialFurn restriction
@@ -8960,9 +8972,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 							hugsOnly = true
 						endIf
 						
-					elseIf (doOtherProp)
-						animPacks[0] = 0				; no pick-spot for sedan or motorcycle
-						hugsOnly = true
+					
 						
 					elseIf (specialFurn == 4)
 						if (nearCompanion.Gender == 0)
@@ -8976,7 +8986,17 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 							SceneData.MaleRole = nearCompanion.CompanionActor
 							SceneData.FemaleRole = PlayerRef
 						endIf
-					elseIf (!doOtherProp)
+						
+					elseIf (specialFurn == 3 && (DTSConditionals as DTSleep_Conditionals).RZSexVers >= 2.60)	; v3.21 - desk same-gender spank okay
+						
+						
+						sameGenderPickSpotOK = true
+						
+					elseIf (doOtherProp)
+						animPacks[0] = 0				; no pick-spot for sedan or motorcycle
+						hugsOnly = true
+						
+					else
 						if (specialFurn == 2 && IsSexyDanceCompatibleFurn(akFurniture, furnBaseForm, true))
 							lapDanceOkay = true
 						
@@ -9151,7 +9171,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 			
 			; what about spank?
 			bool hasSpank = false
-			if (animPacks.Length == 0 && SceneData.SameGender && !SceneData.HasToyAvailable)
+			if (animPacks.Length == 0 && SceneData.SameGender) ; v3.21 -- does this matter? --> && !SceneData.HasToyAvailable)
 				if ((DTSConditionals as DTSleep_Conditionals).IsRZSexActive)
 					if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).HasFurnitureSpankChoice(akFurniture, furnBaseForm))
 						hasSpank = true
@@ -9165,7 +9185,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 				hugsOnly = true
 				DTDebug("seat sameGender pickSpot false--hugsOnly", 2)
 				
-			elseIf (hasSpank && animPacks.Length == 1)
+			elseIf (hasSpank && animPacks.Length >= 1)
 				; no pick-spot since no other packs v3.16
 				DTSleep_SexStyleLevel.SetValueInt(23)		; spank
 				DTDebug("seat sameGender pickSpot false, seat has spank", 2)
@@ -11489,6 +11509,11 @@ bool Function IsAdultAnimationChairAvailable()
 			return true
 		endIf
 	endIf
+	
+	if ((DTSConditionals as DTSleep_Conditionals).IsRZSexActive)		; v3.21
+		return true
+	endIf
+	
 	; not counting Atomic Lust on its own since very limited
 	
 	return false

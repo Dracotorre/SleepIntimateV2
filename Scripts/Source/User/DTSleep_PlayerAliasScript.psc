@@ -2341,7 +2341,9 @@ Function CheckCompatibility()
 				else
 					(DTSConditionals as DTSleep_Conditionals).IsAtomicLustActive = false
 					(DTSConditionals as DTSleep_Conditionals).AtomicLustVers = -1.0
-					DTSleep_ActivPAStation.SetValue(-1.0)
+					if ((DTSConditionals as DTSleep_Conditionals).RZSexVers < 2.50)				;v3.20
+						DTSleep_ActivPAStation.SetValue(-1.0)
+					endIf
 				endIf
 				
 				; Mutated Lust
@@ -2599,8 +2601,33 @@ Function CheckCompatibility()
 				; RSex    - v3.13
 				if (Game.IsPluginInstalled("RZSex.esp"))
 					(DTSConditionals as DTSleep_Conditionals).IsRZSexActive = true
+					if ((DTSConditionals as DTSleep_Conditionals).RZSexVers < 2.60)
+						; v3.21
+						if (Game.GetFormFromFile(0x09012ACE, "RZSex.esp") != None)
+							(DTSConditionals as DTSleep_Conditionals).RZSexVers = 2.60
+							DTSleep_ActivPAStation.SetValue(1.0)
+								
+						elseIf ((DTSConditionals as DTSleep_Conditionals).RZSexVers < 2.50)
+						; v3.20
+						
+							if (Game.GetFormFromFile(0x09011B8E, "RZSex.esp") != None)
+								(DTSConditionals as DTSleep_Conditionals).RZSexVers = 2.50
+								DTSleep_ActivPAStation.SetValue(1.0)
+								
+							else
+								(DTSConditionals as DTSleep_Conditionals).RZSexVers = 2.31
+								if ((DTSConditionals as DTSleep_Conditionals).IsAtomicLustActive == false)
+									DTSleep_ActivPAStation.SetValue(0.0)
+								endIf
+							endIf
+						endIf
+					endIf
 				else
 					(DTSConditionals as DTSleep_Conditionals).IsRZSexActive = false
+					(DTSConditionals as DTSleep_Conditionals).RZSexVers = 0.0
+					if ((DTSConditionals as DTSleep_Conditionals).IsAtomicLustActive == false)
+						DTSleep_ActivPAStation.SetValue(0.0)
+					endIf
 				endIf
 				
 				; ------------------------chair animations check ------------------------------------------------
