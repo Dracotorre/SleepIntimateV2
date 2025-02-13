@@ -1811,9 +1811,10 @@ bool Function CheckActorsIntimateCompatible(int seqID)
 					; v3.15 changes for pack 11
 					; v3.20 added PA-Repair 1138
 					; v3.21 added desk-spank 1141
-					if ((seqID >= 1000 && seqID < 1100) || seqID == 181 || seqID == 180 || seqID == 680 || seqID == 681 || seqID == 281 || seqID == 947 || seqID == 1130 || seqID == 1135 || seqID == 1138 || seqID == 1141 || seqID == 1149 || seqID == 1152)
+					; v3.22 moved to another fuction
+					if (SceneIDToyArmorNotOkay(seqID))
 						if (SceneData.HasToyEquipped && SceneData.ToyArmor != None)
-							CheckRemoveToys(false, true)
+							CheckRemoveToys(false, true, true)
 						endIf
 						return true
 						
@@ -1850,17 +1851,27 @@ bool Function CheckActorsIntimateCompatible(int seqID)
 	return result
 endFunction
 
-Function CheckRemoveToys(bool allowRetry = true, bool forceRem = false)
+Function CheckRemoveToys(bool allowRetry = true, bool forceRem = false, bool notAllowed = false)
 	if (self.HasToyEquipped || forceRem)
 		int index = 0
 		bool searchList = false
 		
 		if (SceneData.ToyArmor != None)
 			if (SceneData.HasToyEquipped)
-				Actor toyActor = SceneData.MaleRole
+				Actor toyActor = SceneData.MaleRole				; usually in a normal MF-scene using a toy, but female may have equipped in spanking or FF scene
+				Actor otherActor = SceneData.FemaleRole				; v3.22
+				
+				if (forceRem && notAllowed)
+					; search anyway in case both actors have one equipped   v3.22
+					searchList = true
+				endIf
+				
 				if (!SceneData.SameGender)
 					toyActor = SceneData.FemaleRole
+					otherActor = None
+					searchList = false		; no need to check male
 				endIf
+				
 
 				if (toyActor.GetItemCount(SceneData.ToyArmor) > 0)
 					
@@ -1868,8 +1879,14 @@ Function CheckRemoveToys(bool allowRetry = true, bool forceRem = false)
 					self.HasToyEquipped = false
 					SceneData.HasToyEquipped = false
 					
+				elseIf (forceRem && otherActor != None && otherActor.GetItemCount(SceneData.ToyArmor) > 0)		; other may have equipped - v3.22
+				
+					otherActor.UnequipItem(SceneData.ToyArmor, false, true)
+					self.HasToyEquipped = false
+					SceneData.HasToyEquipped = false
+					
 				elseIf (allowRetry && SceneData.AnimationSet > 4 && CheckRemoveToysCount < 5)
-					; likely not copied back yet from AAF
+					; may not be copied back yet from AAF
 					if (DTSleep_DebugMode.GetValue() > 0.0 && DTSleep_SettingTestMode.GetValue() >= 2.0)
 						Debug.Trace(myScriptName + " no ToyArmor inventory -- try again count " + CheckRemoveToysCount)
 					endIf
@@ -8801,6 +8818,24 @@ bool Function SceneIDIsSpanking(int id)				; v3.15
 		return true
 	endIf
 	return false
+endFunction
+
+bool Function SceneIDToyArmorNotOkay(int seqID)		;v3.22	
+	
+	; first FF-pair scenes
+	if (seqID >= 1000 && seqID < 1100)
+		return true
+	elseIf (seqID == 181 || seqID == 180 || seqID == 680 || seqID == 681 || seqID == 281 || seqID == 947 || seqID == 1130 || seqID == 1135 || seqID == 1138 || seqID == 1141 || seqID == 1149 || seqID == 1152)
+		
+		return true
+	endIf
+	
+	; MF-only scenes
+	if (seqID >= 700 && seqID < 800)
+		return true
+	endIf
+	
+	return false ;scene okay to have toy armor equipped
 endFunction
 
 bool Function ActorsIntimateCompatible()
