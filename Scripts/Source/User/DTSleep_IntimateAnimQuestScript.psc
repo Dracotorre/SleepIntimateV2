@@ -1246,14 +1246,15 @@ bool Function PlayActionDancing(bool isRomantic = false)
 	endIf
 	
 	int sid = 11					; default random dance
-	if (isRomantic)
+	if (isRomantic && SecondActorRef != None)	; v3.22 fix only if have 2 actors
 		sid = 91
 	endIf
 	
 	SceneData.IntimateSceneIsDanceHug = 2
 	SceneStartGameTime = Utility.GetCurrentGameTime()		; to check dance lasted long enough -v3.08
 	
-	if (isRomantic && FadeEnable && (DTSConditionals as DTSleep_Conditionals).IsCHAKPackActive)			; v3.0
+	; v3.22 fix check for second actor
+	if (isRomantic && SecondActorRef != None && FadeEnable && (DTSConditionals as DTSleep_Conditionals).IsCHAKPackActive)			; v3.0
 		if (Utility.RandomInt(1,10) > 5)
 			sid = 494
 		endIf
