@@ -46,6 +46,7 @@ GlobalVariable property DTSleep_ActivPAStation auto
 GlobalVariable property DTSleep_ActivFlagpole auto
 GlobalVariable property DTSleep_EquipMonInit auto const
 GlobalVariable property DTSleep_PlayerCollisionEnabled auto					; added v2.70 - check to reset collision
+GlobalVariable property DTSleep_ActivatorShowerVal auto						; added v3.23 - to mark if have a shower activator
 Keyword property DTSleep_WorkshopRecipeKY auto const
 Armor property DTSleep_NudeSuit auto const
 Armor property DTSleep_ClothesBathrobePink auto const
@@ -121,6 +122,7 @@ FormList property DTSleep_ArmorStockingsList auto const				; v2.80
 FormList property DTSleep_ArmorShoesList auto const 				; v2.80
 FormList property DTSleep_IntimateBenchNoBackList auto const		; v3.13
 FormList property DTSleep_IntimateBenchShortList auto const			; v3.13
+FormList property DTSleep_ActivatorShowerList auto const			; v3.23
 Message property DTSleep_VersionMsg auto const
 Message property DTSleep_VersionDowngradeMsg auto const				; v2.60
 Message property DTSleep_VersionExplicitMsg auto const
@@ -1185,6 +1187,8 @@ Function CheckCompatibility()
 	endIf
 	
 	; CWSS
+	; note - these showers have an optional override -- we cannot override
+	;
 	if ((DTSConditionals as DTSleep_Conditionals).IsCWSSActive == false)
 		Form showerForm = IsPluginActive(0x09002675, "CWSS Redux.esp")
 		if (showerForm != None)
@@ -1196,6 +1200,7 @@ Function CheckCompatibility()
 			DTSleep_IntimatePropList.AddForm(showerForm)
 		endIf
 	endIf
+	
 	
 	; wastlander barb - nws
 	if ((DTSConditionals as DTSleep_Conditionals).IsNWSBarbActive == false)
@@ -2212,6 +2217,65 @@ Function CheckCompatibility()
 			(DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive = false
 			(DTSConditionals as DTSleep_Conditionals).SavageCabbageVers = -1.0
 		endIf
+		
+		; BYOP AKAWaterWorld  v3.23
+		; including here since only need if have Savage Cabbage's pack above
+		
+		if ((DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers > 1.2)
+		
+			; only including Player-House showers 
+			if ((DTSConditionals as DTSleep_Conditionals).IsAKAWaterWorldActive == false)
+				Form showerForm = IsPluginActive(0x09014F79, "AkaWaterWorld.esp")
+				if (showerForm != None)
+					(DTSConditionals as DTSleep_Conditionals).IsAKAWaterWorldActive = true
+					
+					DTSleep_ActivatorShowerVal.SetValue(2.0)				; new to v3.23 to mark OK to override activator
+					DTSleep_ActivatorShowerList.AddForm(showerForm)				; new to v3.23 so we can override this activator
+					
+					DTSleep_IntimateShowerList.AddForm(showerForm)
+					DTSleep_IntimatePropList.AddForm(showerForm)
+					
+					showerForm = Game.GetFormFromFile(0x090090FD, "AkaWaterWorld.esp")
+					DTSleep_IntimateShowerList.AddForm(showerForm)
+					DTSleep_IntimatePropList.AddForm(showerForm)
+					DTSleep_ActivatorShowerList.AddForm(showerForm)
+
+					showerForm = Game.GetFormFromFile(0x09009100, "AkaWaterWorld.esp")
+					DTSleep_IntimateShowerList.AddForm(showerForm)
+					DTSleep_IntimatePropList.AddForm(showerForm)
+					DTSleep_ActivatorShowerList.AddForm(showerForm)
+
+					showerForm = Game.GetFormFromFile(0x09014F7B, "AkaWaterWorld.esp")
+					DTSleep_IntimateShowerList.AddForm(showerForm)
+					DTSleep_IntimatePropList.AddForm(showerForm)
+					DTSleep_ActivatorShowerList.AddForm(showerForm)
+					
+					showerForm = Game.GetFormFromFile(0x090090FA, "AkaWaterWorld.esp")
+					DTSleep_IntimateShowerList.AddForm(showerForm)
+					DTSleep_IntimatePropList.AddForm(showerForm)
+					DTSleep_ActivatorShowerList.AddForm(showerForm)
+					
+					showerForm = Game.GetFormFromFile(0x09014F78, "AkaWaterWorld.esp")
+					DTSleep_IntimateShowerList.AddForm(showerForm)
+					DTSleep_IntimatePropList.AddForm(showerForm)
+					DTSleep_ActivatorShowerList.AddForm(showerForm)
+					
+					showerForm = Game.GetFormFromFile(0x090090FF, "AkaWaterWorld.esp")
+					DTSleep_IntimateShowerList.AddForm(showerForm)
+					DTSleep_IntimatePropList.AddForm(showerForm)
+					DTSleep_ActivatorShowerList.AddForm(showerForm)
+					
+					showerForm = Game.GetFormFromFile(0x09014F7A, "AkaWaterWorld.esp")
+					DTSleep_IntimateShowerList.AddForm(showerForm)
+					DTSleep_IntimatePropList.AddForm(showerForm)
+					DTSleep_ActivatorShowerList.AddForm(showerForm)
+				endIf
+			elseIf (!Game.IsPluginInstalled("AkaWaterWorld.esp"))
+				Debug.Trace(myScriptName + " BYOB/AkaWaterWorld has been removed")
+				DTSleep_ActivatorShowerVal.SetValue(0.0)
+			endIf
+		endIf
+		
 		
 		; Rufgt Raid my Heart - available for XOXO			; v2.88
 		if (Game.IsPluginInstalled("Raid My Heart.esp"))

@@ -953,7 +953,7 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 				
 			endIf
 		elseIf (seqID == 1139)								; PA station doggy -- adjust Y-57 and rotate 180   v3.20
-			if (stageNumber == 1)										
+			if (stageNumber == 1 || stageNumber == 3)				; also use on 3rd stage v3.23										
 				ssStruct.FAnimFormID = 0x09011B90
 				ssStruct.MAnimFormID = 0x09011B91
 				ssStruct.PositionOrigID = "RZ_SexPARigTender04"
@@ -966,7 +966,7 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 				ssStruct.PositionID = "DTSIX_1139_S2"
 				
 			else
-				ssStruct.FAnimFormID = 0x09011B94
+				ssStruct.FAnimFormID = 0x09011B94				; intended as finish??
 				ssStruct.MAnimFormID = 0x09011B95
 				ssStruct.PositionOrigID = "RZ_SexPARigTender06"
 				ssStruct.PositionID = "DTSIX_1139_S3"

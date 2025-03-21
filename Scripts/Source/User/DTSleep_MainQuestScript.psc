@@ -1094,6 +1094,11 @@ Event Perk.OnEntryRun(Perk DTSleep_PlayerSleepBedPerk, int Fragment_Entry_01, Ob
 		Debug.Trace(myScriptName + " -- Perk OnEntry -- not player!!")
 		
 		return
+		
+	elseIf (Fragment_Entry_01 == 20)
+		; shower   v3.23
+		HandlePlayerActivateFurniture(akTarget, 107)
+		
 	elseIf (Fragment_Entry_01 == 19)
 		; locker door
 		HandlePlayerActivateFurniture(akTarget, 106)
@@ -8183,6 +8188,7 @@ bool HandlePlayerFurnitureBusy = false
 
 ; specialFurn: <0 = any chair, 1 = pillory, 2 = chair supporting sex, 3 = desk, 4 = PA Repair station, 5 = workbench
 ;  101 = dance pole, 102 = sedan/motorcycle, 103 = pool table, 104 = picnic table, 105 = jail door, 106 = locker door
+;  107 = shower
 ;
 ;  note: isNaked only covered by perk; not 101, 102, 103
 ;
@@ -8247,6 +8253,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 	elseIf (specialFurn == 101)
 		doSexyDance = true
 
+		
 	elseIf (specialFurn >= 102)
 		doOtherProp = true
 		
@@ -8259,6 +8266,8 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 				doOtherProp = false
 				hugsOnly = true
 			endIf
+		elseIf (specialFurn == 107)
+			doOtherProp = false			; not for shower -- v3.23
 		endIf
 	endIf
 	
@@ -8328,7 +8337,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 	
 	if (!doSexyDance && !doDance && !doOtherProp && akFurniture.IsFurnitureInUse())
 	
-		if (specialFurn > 2)
+		if (specialFurn > 2 && specialFurn != 107)
 			if (DTSleep_SettingNotifications.GetValue() > 0.0)
 				DTSleep_PilloryBusyMessage.Show()
 			endIf
@@ -8340,7 +8349,11 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 			bool okayToGo = false
 			chairActuallyInUse = true
 			
-			if ((DTSConditionals as DTSleep_Conditionals).WeightBenchKY != None && akFurniture.HasKeyword((DTSConditionals as DTSleep_Conditionals).WeightBenchKY))
+			if (specialFurn == 107)
+				; shower - v3.23
+				; just fall-thru
+			
+			elseIf ((DTSConditionals as DTSleep_Conditionals).WeightBenchKY != None && akFurniture.HasKeyword((DTSConditionals as DTSleep_Conditionals).WeightBenchKY))
 				; cannot use 
 				okayToGo = false
 				
@@ -8385,10 +8398,11 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 					endIf
 				endIf
 			endIf
+			
 			if (!okayToGo)
 				bool okayToSit = false
 				
-				if (!isPillory)
+				if (!isPillory && specialFurn != 107)			; v3.23 also 107-shower
 					okayToSit = OkaySitOnSeat(akFurniture)
 				endIf
 				if (okayToSit)
@@ -8532,7 +8546,14 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 		DTSleep_SexStyleLevel.SetValue(0.0)
 		DTSleep_PropStyleLevel.SetValue(0.0)			; reset   v3.15
 		
-	elseIf (specialFurn > 0 && specialFurn != 103 && specialFurn != 104 && IsAdultAnimationChairAvailable())
+	elseIf (specialFurn == 107 && ((DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive && (DTSConditionals as DTSleep_Conditionals).SavageCabbageVers > 1.2))
+		; v3.23 - shower
+		animPacks[0] = 7
+		
+		DTSleep_SexStyleLevel.SetValue(0.0)
+		DTSleep_PropStyleLevel.SetValue(0.0)
+		
+	elseIf (specialFurn > 0 && specialFurn < 103 && IsAdultAnimationChairAvailable())
 		; may be mutliple packs with chair support --- v2.73
 		animPacks.Clear()
 		if ((DTSConditionals as DTSleep_Conditionals).IsSavageCabbageActive)
@@ -9531,7 +9552,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 				elseIf (specialFurn == 3)
 					checkVal = ShowDeskPrompt(checkVal, nearCompanion, sexAppealScore, chanceForScene.Chance, locHourChance, gameTime)
 					
-				elseIf (isPillory || (doOtherProp && specialFurn != 104))
+				elseIf (isPillory || specialFurn == 107 || (doOtherProp && specialFurn != 104))
 					checkVal = ShowPilloryPrompt(checkVal, nearCompanion, sexAppealScore, chanceForScene.Chance, locHourChance, gameTime)
 					
 				else
@@ -9867,8 +9888,8 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 				
 				PlayPickSpotTimer(pickedOtherFurniture)
 				
-			elseIf (animPacks[0] >= 6 && animPacks[0] < 12 && !IsAAFReady() && PlayerRef.GetDistance(akFurniture) < 90.0)
-				; step back
+			elseIf (animPacks[0] >= 6 && animPacks[0] < 14 && !IsAAFReady() && PlayerRef.GetDistance(akFurniture) < 90.0 && specialFurn != 107)
+				; step back  - no needed for shower activator 107 v3.23
 				PlayPickSpotTimer(2)
 			endIf
 			

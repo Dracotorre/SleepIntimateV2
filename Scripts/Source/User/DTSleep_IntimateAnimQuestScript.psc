@@ -5033,7 +5033,7 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 								headingAngle = SleepBedRef.GetAngleZ() + 0.03
 							elseIf (id == 735 || id == 781)
 								; couch adjustment - keep arms and shoulders from clipping
-								yOffset = 6.25
+								yOffset = 7.25			; v3.23 +1.0
 								xOffset = 0.0
 								bedUseNodeMarker = true
 								markerIsBed = false
