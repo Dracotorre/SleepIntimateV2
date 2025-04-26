@@ -1394,9 +1394,10 @@ Function CheckCompatibility()
 				(DTSConditionals as DTSleep_Conditionals).InsaneIvyRef = Game.GetFormFromFile(ivyRef, ivyPluginName) as Actor
 			endIf
 			
+			; v3.24 -- by default Ivy doesn't use her custom body, but let's identify for player using patch
 			; Ivy's custom/unique body - v2.86
 			if ((DTSConditionals as DTSleep_Conditionals).ModCompanionBodyInsaneIvyIndex < 0)
-
+			
 				Armor bodyNakedArmor = Game.GetFormFromFile(0x020558D9, ivyPluginName) as Armor   ; same FormID both versions
 				if (bodyNakedArmor != None && !DTSleep_ModCompanionBodiesLst.HasForm(bodyNakedArmor))
 					DTSleep_ModCompanionBodiesLst.AddForm(bodyNakedArmor)
@@ -1404,6 +1405,7 @@ Function CheckCompatibility()
 					(DTSConditionals as DTSleep_Conditionals).ModCompanionBodyInsaneIvyIndex = DTSleep_ModCompanionBodiesLst.GetSize() - 1
 				endIf
 			endIf
+
 		else
 			(DTSConditionals as DTSleep_Conditionals).InsaneIvyRef = None
 		endIf

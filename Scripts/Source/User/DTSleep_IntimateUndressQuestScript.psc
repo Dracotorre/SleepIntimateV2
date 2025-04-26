@@ -75,6 +75,7 @@ GlobalVariable property DTSleep_UndressCarryBonus auto const
 GlobalVariable property DTSleep_CompanionUndressed auto const
 GlobalVariable property DTSleep_DebugMode auto const
 GlobalVariable property DTSleep_IUndressStat auto
+GlobalVariable property DTSleep_SettingIvyBodySwap auto const			; v3.24 -- for user with patched Ivy custom body
 
 EndGroup
 
@@ -1015,7 +1016,7 @@ endFunction
 ; if includeClothing and observeWinter=false then also removes Lacy Underwear bottoms etc
 ;
 bool Function StartForManualStop(bool includeClothing, Actor companionActorRef, bool observeWinter = true, bool companionReqNudeSuit = true, ObjectReference optionalBedRef = none, bool includePipBoy = false)
-	;Debug.Trace(myScriptName + " starting manual undress with companion: " + companionActorRef + " require Nude-suit: " + companionReqNudeSuit)
+	DTDebug(" starting manual undress with companion: " + companionActorRef + " require Nude-suit: " + companionReqNudeSuit, 2)
 	
 	;float timeStart = Utility.GetCurrentRealTime()
 	
@@ -1823,8 +1824,9 @@ Armor Function GetCustomNudeSuitForCompanion(Actor actorRef)
 			endIf
 		endIf
 		
+		; !!!! v3.24 -- not actually using the custom body so limit to user-patch pref IvyBodySwap
 		; Insane Ivy - v2.86
-		if (gender == 1 && armorIndex < 0 && (DTSConditionals as DTSleep_Conditionals).ModCompanionBodyInsaneIvyIndex >= 0)
+		if (gender == 1 && armorIndex < 0 && DTSleep_SettingIvyBodySwap.GetValue() > 0.0 && (DTSConditionals as DTSleep_Conditionals).ModCompanionBodyInsaneIvyIndex >= 0)
 			if (actorRef == (DTSConditionals as DTSleep_Conditionals).InsaneIvyRef)
 				armorIndex = (DTSConditionals as DTSleep_Conditionals).ModCompanionBodyInsaneIvyIndex
 			endIf
@@ -2239,6 +2241,7 @@ bool Function HandleStartForCompanionSleepwear()
 	
 	DressData.CompanionRequiresNudeSuit = false			; force ring for sleep clothes
 	UndressActorCompanionDressNudeSuit(CompanionRef)
+
 	
 	; note - this may put on sleepwear beneath armor or character may have sleepwear on beneath armor
 	; - fix during Undress
@@ -5576,7 +5579,7 @@ Function UndressActorFinalCheckArmors(Actor actorRef, bool skipUpperOuterArmorSl
 			DTDebug(" player final check: armor-right-leg needs removing " + DressData.PlayerEquippedArmorLegRightItem, 2)
 		endIf
 			
-	elseIf (actorRef == CompanionRef)
+	elseIf (actorRef != None && actorRef == CompanionRef)
 		
 		if (!skipUpperOuterArmorSlots)
 			if (DressData.CompanionEquippedArmorTorsoItem != None)

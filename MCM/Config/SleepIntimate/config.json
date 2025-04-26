@@ -957,6 +957,19 @@
 			}
 		},
 		{
+			"id": "MCM_SettingIvyBodySwap:Intimacy",
+			"text": "Ivy Custom nude-suit",
+			"type": "dropdown",
+			"help": "enable only if using Ivy's custom body patch",
+			"groupCondition": 10,
+			"valueOptions": {
+				"options": ["Disabled", "Enabled"],
+				"sourceType": "GlobalValue",
+				"sourceForm": "SleepIntimate.esp|1F646",
+				"propertyName": "DTSleep_SettingIvyBodySwap"
+			}
+		},
+		{
 			"id": "MCM_SettingUseSMMorph:Intimacy",
 			"text": "Super Mutant Body Morph",
 			"type": "dropdown",

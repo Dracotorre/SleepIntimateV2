@@ -626,6 +626,22 @@ pDTSleep_SettingShowerActEnabled.SetValue(1.0)
 EndFunction
 ;END FRAGMENT
 
+;BEGIN FRAGMENT Fragment_Terminal_76
+Function Fragment_Terminal_76(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingIvyBodySwap.SetValue(1.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_77
+Function Fragment_Terminal_77(ObjectReference akTerminalRef)
+;BEGIN CODE
+pDTSleep_SettingIvyBodySwap.SetValue(0.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
 ;END FRAGMENT CODE - Do not edit anything between this and the begin comment
 
 GlobalVariable Property pDTSleep_SettingIntimate Auto Const Mandatory
@@ -695,3 +711,5 @@ GlobalVariable Property pDTSleep_SettingCollision Auto Const Mandatory
 GlobalVariable Property pDTSleep_SettingSwapRoles Auto Const Mandatory
 
 GlobalVariable Property pDTSleep_SettingShowerActEnabled Auto Const Mandatory
+
+GlobalVariable Property pDTSleep_SettingIvyBodySwap Auto Const Mandatory
