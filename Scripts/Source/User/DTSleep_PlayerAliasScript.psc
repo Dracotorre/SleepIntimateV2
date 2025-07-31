@@ -2667,9 +2667,14 @@ Function CheckCompatibility()
 				; RSex    - v3.13
 				if (Game.IsPluginInstalled("RZSex.esp"))
 					(DTSConditionals as DTSleep_Conditionals).IsRZSexActive = true
-					if ((DTSConditionals as DTSleep_Conditionals).RZSexVers < 2.60)
+					
+					if ((DTSConditionals as DTSleep_Conditionals).RZSexVers < 3.00)
+						; v3.25
+						if (Game.GetFormFromFile(0x09015130, "RZSex.esp") != None)
+							(DTSConditionals as DTSleep_Conditionals).RZSexVers = 3.00
+							
 						; v3.21
-						if (Game.GetFormFromFile(0x09012ACE, "RZSex.esp") != None)
+						elseIf (Game.GetFormFromFile(0x09012ACE, "RZSex.esp") != None)
 							(DTSConditionals as DTSleep_Conditionals).RZSexVers = 2.60
 							DTSleep_ActivPAStation.SetValue(1.0)
 								
@@ -2694,6 +2699,13 @@ Function CheckCompatibility()
 					if ((DTSConditionals as DTSleep_Conditionals).IsAtomicLustActive == false)
 						DTSleep_ActivPAStation.SetValue(0.0)
 					endIf
+				endIf
+				
+				; TBOS-BedroomHymn    v3.25
+				if (Game.IsPluginInstalled("TBOS-BedroomHymn.esp"))
+					(DTSConditionals as DTSleep_Conditionals).IsTBOSHymnActive = true
+				else
+					(DTSConditionals as DTSleep_Conditionals).IsTBOSHymnActive = false
 				endIf
 				
 				; ------------------------chair animations check ------------------------------------------------

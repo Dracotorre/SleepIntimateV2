@@ -227,6 +227,14 @@ EndFunction
 ;BEGIN FRAGMENT Fragment_Terminal_28
 Function Fragment_Terminal_28(ObjectReference akTerminalRef)
 ;BEGIN CODE
+pDTSleep_SettingPackPick.SetValue(12.0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_29
+Function Fragment_Terminal_29(ObjectReference akTerminalRef)
+;BEGIN CODE
 pDTSleep_SettingPackPick.SetValue(0.0)
 ;END CODE
 EndFunction

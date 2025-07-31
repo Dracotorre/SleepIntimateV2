@@ -14,12 +14,13 @@ ScriptName DTSleep_AACcatScript Hidden
 ;
 ; built-in hug & kiss (90s)
 ; CHAK (400s)
-; Atomic Lust, RufGt, Mutant Lust (500s) - 11 scenes
-; SavageCabbage_Animations (700s) - 42 scenes
+; Atomic Lust, RufGt, Mutant Lust (500s)
+; SavageCabbage_Animations (700s) 
 ; ZaZOut4 (800s) - 4 scenes (2 broken into shorter scenes)
 ; Gray (900s)
 ; BP70 (1000s)
 ; Rohzima (1100s)
+; TBOS-BedroomHymns (1200s)
 
 ; **********************  Structs **************
 ;
@@ -72,9 +73,16 @@ endFunction
 int Function GetStageCountForSequenceID(int seqID, int longScene = 0, int other = 0) global
 	int result = 4   ; most of them
 	
-	if (seqID >= 1100)
+	if (seqID >= 1200)
+		result = 1
+		
+	elseIf (seqID >= 1100)
 		result = 6
 		if (seqID == 1102 || seqID == 1106)
+			result = 4
+		elseIf (seqID == 1111)
+			result = 4
+		elseIf (seqID == 1117)
 			result = 4
 		elseIf (seqID == 1120)
 			result = 4
@@ -84,7 +92,7 @@ int Function GetStageCountForSequenceID(int seqID, int longScene = 0, int other 
 			result = 2
 		elseIf (seqID >= 1138 && seqID <= 1139)
 			result = 4
-		elseIf (seqID == 1141)
+		elseIf (seqID >= 1141 && seqID <= 1142)
 			result = 4
 		elseIf (seqID == 1148)
 			result = 1
@@ -418,7 +426,31 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 		return ssStruct
 	endIf
 	
-	if (seqID >= 1100)
+	if (seqID >= 1200)
+		ssStruct.PluginName = "TBOS-BedroomHymn.esp"				; M-M only -- added v3.25
+		
+		if (seqID == 1200)
+			ssStruct.FAnimFormID = 0x09001ECD
+			ssStruct.MAnimFormID = 0x09001ECE
+			ssStruct.PositionOrigID = "BH-Missionary"
+			ssStruct.PositionID = "DTSIX_1200_S1"
+			ssStruct.StageTime = 24.0
+		elseIf (seqID == 1206)
+			ssStruct.FAnimFormID = 0x09000F99
+			ssStruct.MAnimFormID = 0x09000F9A
+			ssStruct.PositionOrigID = "BH-Cowboy"
+			ssStruct.PositionID = "DTSIX_1206_S1"
+			ssStruct.StageTime = 24.0
+		elseIf (seqID == 1249)
+			ssStruct.FAnimFormID = 0x01002668
+			ssStruct.MAnimFormID = 0x01002669
+			ssStruct.PositionOrigID = "BH-MutualOral"
+			ssStruct.PositionID = "DTSIX_1249_S1"
+			ssStruct.StageTime = 24.0
+		endIf
+	
+	
+	elseIf (seqID >= 1100 && seqID < 1200)
 		ssStruct.PluginName = "RZSex.esp"					; added v3.15 -- 25 scenes
 		
 		if (seqID == 1100)
@@ -618,6 +650,33 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 				ssStruct.PositionID = "DTSIX_1106_S5"
 				ssStruct.ArmorNudeAGun = 2
 			endIf
+		elseIf (seqID == 1111) 									; added v3.25 - ground or place-on-bed
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x0901606D								
+				ssStruct.MAnimFormID = 0x0901606E								
+				ssStruct.PositionOrigID = "RZ_DoggyLowGroundTender01"
+				ssStruct.PositionID = "DTSIX_1111_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x0901606F								
+				ssStruct.MAnimFormID = 0x09016070								
+				ssStruct.PositionOrigID = "RZ_DoggyLowGroundTender02"
+				ssStruct.PositionID = "DTSIX_1111_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x09016071								
+				ssStruct.MAnimFormID = 0x09016072								
+				ssStruct.PositionOrigID = "RZ_DoggyLowGroundTender03"
+				ssStruct.PositionID = "DTSIX_1111_S3"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x09016073								
+				ssStruct.MAnimFormID = 0x09016074								
+				ssStruct.PositionOrigID = "RZ_DoggyLowGroundTender04"
+				ssStruct.PositionID = "DTSIX_1111_S4"
+			else
+				ssStruct.FAnimFormID = 0x09016075								
+				ssStruct.MAnimFormID = 0x09016076								
+				ssStruct.PositionOrigID = "RZ_DoggyLowGroundTender05"
+				ssStruct.PositionID = "DTSIX_1111_S5"
+			endIf
 		elseIf (seqID == 1116)
 			if (stageNumber == 1)
 				ssStruct.FAnimFormID = 0x09001EF9								
@@ -646,6 +705,33 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 				ssStruct.PositionID = "DTSIX_1116_S5"
 			endIf
 		
+		elseIf (seqID == 1117)											; added v3.25 -- double bed
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x09013A20								
+				ssStruct.MAnimFormID = 0x09013A21								
+				ssStruct.PositionOrigID = "RZ_SleepSexBedTender03"
+				ssStruct.PositionID = "DTSIX_1117_S1"
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x09013A22								
+				ssStruct.MAnimFormID = 0x09013A23								
+				ssStruct.PositionOrigID = "RZ_SleepSexBedTender04"
+				ssStruct.PositionID = "DTSIX_1117_S2"
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x09013A24								
+				ssStruct.MAnimFormID = 0x09013A25								
+				ssStruct.PositionOrigID = "RZ_SleepSexBedTender05"
+				ssStruct.PositionID = "DTSIX_1117_S3"
+			elseIf (stageNumber == 4)
+				ssStruct.FAnimFormID = 0x09013A26								
+				ssStruct.MAnimFormID = 0x09013A27								
+				ssStruct.PositionOrigID = "RZ_SleepSexBedTender06"
+				ssStruct.PositionID = "DTSIX_1117_S4"
+			else
+				ssStruct.FAnimFormID = 0x09013A28								
+				ssStruct.MAnimFormID = 0x09013A29								
+				ssStruct.PositionOrigID = "RZ_SleepSexBedTender07"
+				ssStruct.PositionID = "DTSIX_1117_S5"
+			endIf
 		elseIf (seqID == 1121)
 			if (stageNumber == 1)
 				ssStruct.FAnimFormID = 0x0900FCC2								; stand posing
@@ -1035,6 +1121,29 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 				ssStruct.MAngleOffset = 90.0
 				ssStruct.ArmorNudeAGun = -1
 			endIf
+		elseIf (seqID == 1142)								; added v3.25 -- oral -- rotate 180 and shift right
+			if (stageNumber == 1)							
+				ssStruct.FAnimFormID = 0x09015129
+				ssStruct.MAnimFormID = 0x0901512A
+				ssStruct.PositionOrigID = "RZ_SleepSexCouchTender01"
+				ssStruct.PositionID = "DTSIX_1142_S1"
+			elseIf (stageNumber == 2)							
+				ssStruct.FAnimFormID = 0x0901512B
+				ssStruct.MAnimFormID = 0x0901512C
+				ssStruct.PositionOrigID = "RZ_SleepSexCouchTender02"
+				ssStruct.PositionID = "DTSIX_1142_S2"
+			elseIf (stageNumber == 3)							
+				ssStruct.FAnimFormID = 0x0901512D
+				ssStruct.MAnimFormID = 0x0901512E
+				ssStruct.PositionOrigID = "RZ_SleepSexCouchTender03"
+				ssStruct.PositionID = "DTSIX_1142_S3"
+			else
+				ssStruct.FAnimFormID = 0x0901512F
+				ssStruct.MAnimFormID = 0x09015130
+				ssStruct.PositionOrigID = "RZ_SleepSexCouchTender04"
+				ssStruct.PositionID = "DTSIX_1142_S4"
+			endIf
+		
 		elseIf (seqID == 1148)
 			
 			ssStruct.FAnimFormID = 0x090026A6					; sit on face rev

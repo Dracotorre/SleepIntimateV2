@@ -7182,8 +7182,9 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 				;      	7 = Cowgirl			-limitlevel = 6
 				;      	8 = Spoon			-limitlevel = 7
 				;       9 = not used
-				;		10 = spank			-DTSleep_SexStyleExtra = 1 or 3 (added v3.15)
-				;		11 = solo-show		-DTSleep_SexStyleExtra = 2 or 3 (added v3.15)
+				;		10 = spank		-DTSleep_SexStyleExtra = 1 or 3 or 5 or 7 (added v3.15)
+				;		11 = solo-show		-DTSleep_SexStyleExtra = 2 or 3 or 6 or 7 (added v3.15)
+				;		12 = prone		-DTSleep_SexStyleExtra = 4 or 5 or 6 or 7 (added v3.25)
 				;
 				;  ---------FF SexStyle level found on DTSleep_IntimateScenePickFFMessage ------  v3 
 				;
@@ -7196,9 +7197,10 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 				;      	6 = 69
 				;      	7 = scissors		-limitlevel = 6
 				;      	8 = spoon  -not used   
-				;	9 = not used
-				;		10 = spank			-DTSleep_SexStyleExtra = 1 or 3 (added v3.15)
-				;		11 = solo-show		-DTSleep_SexStyleExtra = 2 or 3 (added v3.15)
+				;		9 = not used
+				;		10 = spank		(any)		-DTSleep_SexStyleExtra = 1 or 3 or 5 or 7 (added v3.15)
+				;		11 = solo-show (floor)		-DTSleep_SexStyleExtra = 2 or 3 or 6 or 7 (added v3.15)
+				;		
 				;
 				; -------------
 				;  ---------MM SexStyle level found on DTSleep_IntimateScenePickMMMessage ------  v3 
@@ -7212,7 +7214,7 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 				;      	6 = 69
 				;      	7 = cowboy 			-limitlevel = 6
 				;      	8 = spoon  - not used
-				;	9 = not used
+				;		9 = not used
 				;		10 = spank			-DTSleep_SexStyleExtra = 1 or 3 (added v3.15)
 				;		11 = solo-show		-DTSleep_SexStyleExtra = 2 or 3 (added v3.15)
 				
@@ -7262,13 +7264,19 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 							;
 							; limit these to floor beds due to size and actor rotations preventing pick-spot
 							;
-							if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsFloorBed(targetRef))	
+							if ((DTSConditionals as DTSleep_Conditionals).IsRZSexActive)
+								if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).IsFloorBed(targetRef))	
 								
-								if ((DTSConditionals as DTSleep_Conditionals).IsRZSexActive)
 									DTDebug("   set style-extra for solo-show", 2)
 									extraLev += 2	; solo-show
 								endIf
+								if (!SceneData.SameGender)
+									; v3.25
+									DTDebug("   set style-extra for prone", 2)
+									extraLev += 4	; prone
+								endIf
 							endIf
+
 						endIf
 						
 						if (limitLevel > 3.0)
@@ -7307,6 +7315,9 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 									endIf
 								elseIf (SceneData.MaleRoleGender == 0)
 									if ((DTSConditionals as DTSleep_Conditionals).IsAtomicLustActive)
+										limitLevel = 7.0
+										scenePickerType = 2
+									elseIf ((DTSConditionals as DTSleep_Conditionals).IsTBOSHymnActive)			; v3.25
 										limitLevel = 7.0
 										scenePickerType = 2
 									else
@@ -7467,7 +7478,7 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 										if (chanceForScene.Chance > 100)
 											chanceForScene.Chance = 100
 										endIf
-									elseIf (pickStyle >= 10)
+									elseIf (pickStyle >= 10 && pickStyle < 12)
 										; player picked extra -- spank or show -- adjust chance  v3.15
 										chanceForScene.Chance += 45
 										if (chanceForScene.Chance > 100)
@@ -7936,6 +7947,7 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 					noPreBedAnim = true
 					
 					(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).StopAll()
+					MainQSceneScriptP.GoSceneViewDone(True)			; v3.25
 					FadeInFast(false)
 					
 					; free retry - v2.73
@@ -7970,6 +7982,7 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 					noPreBedAnim = true
 					
 					(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).StopAll()
+					MainQSceneScriptP.GoSceneViewDone(True)			;v3.25
 					FadeInFast(false)
 					
 					; free retry - v2.73
@@ -7988,6 +8001,7 @@ Function HandlePlayerActivateBed(ObjectReference targetRef, bool isNaked, bool i
 				SceneData.AnimationSet = -1
 				FadeInFast(false)
 				noPreBedAnim = true
+				MainQSceneScriptP.GoSceneViewDone(True)			; v3.25
 				(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).StopAll()
 			endIf
 			
@@ -9197,6 +9211,10 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 					if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).HasFurnitureSpankChoice(akFurniture, furnBaseForm))
 						hasSpank = true
 						animPacks.Add(11)
+					elseIf ((DTSConditionals as DTSleep_Conditionals).RZSexVers >= 3.00 && (DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).HasFurnitureOralAnalChoiceInt(akFurniture, furnBaseForm) >= 5)
+						; oral-choice available so do not set hugs-only  v3.25
+						animPacks.Add(11)
+						hasSpank = true ; to disable pick-spot
 					endIf
 				endIf
 			endIf
@@ -9336,6 +9354,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 					endIf
 					
 					; v3.15 now return 5 for female recipient which may be FM or FF 
+					; v3.25 now return 6 for both anal and female-stimulation
 					
 					
 					if (seatOralOrAnalVal > 0)
@@ -9352,8 +9371,8 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 								
 							endIf
 						elseIf (SceneData.SameGender && SceneData.MaleRoleGender == 1)
-							; FF - check if 2 or 5  v3.15
-							if (seatOralOrAnalVal == 2 || seatOralOrAnalVal == 5)
+							; FF - check if 2 or 5  v3.15 ... or 6 v3.25
+							if (seatOralOrAnalVal == 2 || seatOralOrAnalVal >= 5)
 								val = 9.0
 								oralSameGenderOK = true
 							endIf
@@ -10086,6 +10105,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 						noPreBedAnim = true
 						
 						(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).StopAll()
+						MainQSceneScriptP.GoSceneViewDone(True)			; v3.25
 						FadeInFast(false)
 						
 					endIf
@@ -10979,6 +10999,7 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 	;   9 = AAF_GrayAnimations & AAF_CreaturePack
 	;  10 = BP70
 	;  11 = RZSex
+	;  12 = TBOS-Hymn
 	
 	; v2.26 - ignore powerArmorFlag here --- later before scene start will disable AnimQuestScript.PlayAAFEnabled
 	powerArmorFlag = false 
@@ -10993,6 +11014,7 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 	bool hasBP70Anims = false
 	bool hasCHAKAnims = false		; only for bed and table
 	bool hasRZSexAnims = false 		; v3.15
+	bool hasTBOSAnims = False		; v3.25
 	int animSetCount = 0
 	int animSetFailCount = 0
 	int multiLoverGender = -1
@@ -11086,6 +11108,11 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 			
 			if ((DTSConditionals as DTSleep_Conditionals).IsRZSexActive)		; v3.15
 				hasRZSexAnims = true
+				animSetCount += 1
+			endIf
+			
+			if ((DTSConditionals as DTSleep_Conditionals).IsTBOSHymnActive)		; v3.25
+				hasTBOSAnims = true
 				animSetCount += 1
 			endIf
 
@@ -11310,6 +11337,10 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 			
 			if (hasRZSexAnims && stylePicked >= 10)		; may pick show  -v3.16
 				animSets.Add(11)
+			endIf
+			
+			if (hasTBOSAnims)
+				animSets.Add(12)					; v3.25
 			endIf
 		
 			if (hasAtomicLustAnims)
@@ -18002,6 +18033,7 @@ Function TestModeOutput()
 			Debug.Trace(myScriptName + "  GrayCreature: " + (DTSConditionals as DTSleep_Conditionals).IsGrayCreatureActive)
 			Debug.Trace(myScriptName + "          BP70: " + (DTSConditionals as DTSleep_Conditionals).IsBP70Active)
 			Debug.Trace(myScriptName + "         RZSex: " + (DTSConditionals as DTSleep_Conditionals).IsRZSexActive + " v" + (DTSConditionals as DTSleep_Conditionals).RZSexVers)
+			Debug.Trace(myScriptName + "     TBOS-Hymn: " + (DTSConditionals as DTSleep_Conditionals).IsTBOSHymnActive)
 		endIf
 		
 		Debug.Trace(myScriptName + "         ----- TEST MODE ---- conditionals ----------")
@@ -18084,6 +18116,7 @@ Function UpdateIntimateAnimPreferences(int playerChoice)
 	; 9 - anal
 	; 10- spanking    v3.15
 	; 11- solo-show   v3.15
+	; 12- prone	      v3.25
 	; ---------------------------
 
 	; playerChoice -- see DTSleep_IntimateScenePickMessage for index
@@ -18121,6 +18154,8 @@ Function UpdateIntimateAnimPreferences(int playerChoice)
 		(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePlayerPrefSpanking()
 	elseIf (playerChoice == 11)
 		(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePlayerPrefSoloShow()
+	elseIf (playerChoice == 12)
+		(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePlayerPrefProne()		; v3.25
 	endIf
 
 	if (IntimateCompanionRef != None)
@@ -18139,6 +18174,7 @@ Function UpdateIntimateAnimPreferences(int playerChoice)
 				(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePlayerPrefCowgirl()
 				(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePlayerPrefMissionary()
 				(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePlayerPrefCunn()
+				(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePlayerPrefProne()
 			else
 				(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePrefCuddle(true)
 				(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePrefCowgirl(true)
@@ -18153,6 +18189,7 @@ Function UpdateIntimateAnimPreferences(int playerChoice)
 				(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePlayerPrefMissionary()
 				(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePlayerPrefCunn()
 				(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePlayerPrefSixNine()
+				(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePlayerPrefProne()
 			endIf
 		
 		elseIf ((DTSConditionals as DTSleep_Conditionals).InsaneIvyRef != None && IntimateCompanionRef == (DTSConditionals as DTSleep_Conditionals).InsaneIvyRef)
@@ -18164,6 +18201,7 @@ Function UpdateIntimateAnimPreferences(int playerChoice)
 				(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePlayerPrefDoggy()
 				(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePlayerPrefOral()
 				(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePlayerPrefSixNine()
+				(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePlayerPrefProne()
 			else
 				(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePrefCuddle(true)
 				(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePrefCowgirl(false) 
@@ -18283,6 +18321,7 @@ Function UpdateIntimateAnimPreferences(int playerChoice)
 				(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePlayerPrefCowgirl()
 				(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePlayerPrefCunn()
 				(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePlayerPrefSixNine()
+				(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePlayerPrefProne()
 			else
 				(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePrefCuddle(true)
 				(DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).SetActorScenePrefCowgirl()

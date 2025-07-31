@@ -2332,7 +2332,7 @@
 			"type": "dropdown",
 			"help": "limit scenes to single pack, but if none fitting situation will pick one from any available pack",
 			"valueOptions": {
-				"options": ["All", "1-Leito", "2-All", "3-All", "4-All", "5-Rufgt/Atomic", "6-Leito", "7-Savage", "8-All", "9-Gray", "10-BP70", "11-Rohzima" ],
+				"options": ["All", "1-Leito", "2-All", "3-All", "4-All", "5-Rufgt/Atomic", "6-Leito", "7-Savage", "8-All", "9-Gray", "10-BP70", "11-Rohzima", "12-TBOS" ],
 				"sourceType": "GlobalValue",
 				"sourceForm": "SleepIntimate.esp|FB4B",
 				"propertyName": "DTSleep_SettingPackPick"
@@ -2478,7 +2478,7 @@
           "type": "section"
         },
 		{
-		  "text": "The 'Rest' will hide when in Power Armor, weapon drawn, sneaking, over-encumbered, or if bed marked incompatible by the mod. If only 'Sleep' may have another mod altering bed activation such as place-anywhere or set-private mod. If instead of 'Sleep' states, 'Awaken' then sneak or try activate bed to reset.",
+		  "text": "The 'Rest' will hide when in Power Armor, weapon drawn, sneaking, over-encumbered, or if bed marked incompatible by the mod. If only 'Sleep' may have another mod altering bed activation such as place-anywhere or set-private mod or Workshop Plus. If instead of 'Sleep' states, 'Awaken' then sneak or try activate bed to reset.",
 		  "type": "text",
 		  "align": "left"
 		},

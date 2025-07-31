@@ -300,6 +300,7 @@ int ScenePrefIsCowboy = 503
 int ScenePrefIsCowgirlRev = 506 const
 int ScenePrefIsScissors = 507 const
 int ScenePrefIsSpoon = 510 const
+int ScenePrefIsProne = 511 const
 int ScenePrefSoloPair = 548 const
 int ScenePrefisAnal = 549 const
 int ScenePrefIsOral = 550 const
@@ -1128,6 +1129,10 @@ endFunction
 
 Function SetActorScenePlayerPrefMissionary()
 	MainActorScenePrefArray.Add(ScenePrefIsMission)
+endFunction
+
+Function SetActorScenePlayerPrefProne()						; v3.25
+	MainActorScenePrefArray.Add(ScenePrefIsProne)
 endFunction
 
 Function SetActorScenePlayerPrefSpoon()
@@ -2828,6 +2833,10 @@ float Function GetTimeForPlayID(int id)
 		SceneData.WaitSecs = 12.0 + (endurance as float)		; for mid-stage -- others have set times
 		
 		return tm + 13.0 + SceneData.WaitSecs
+		
+	elseIf (id >= 1200 && id < 1300)					; v3.25
+		DTSleep_IntimateSceneLen.SetValueInt(0)
+		return tm + 22.0
 	
 	elseIf (id >= 100)
 		float baseSec = 59.5				; base time for multi-stage scenes
@@ -3184,7 +3193,7 @@ bool Function HasFurnitureOralChoice(ObjectReference obj, Form baseBedForm)
 	return false
 endFunction
 
-; returns 1 for FM oral, 2 for FF-only oral, 3 for anal, 4 for both anal and FM-oral, 5 for female-stimulation or spanking (FM or FF)
+; returns 1 for FM oral, 2 for FF-only oral, 3 for anal, 4 for both anal and FM-oral, 5 for female-stimulation or spanking (FM or FF), 6 for both female-stimulation and anal
 int Function HasFurnitureOralAnalChoiceInt(ObjectReference obj, Form baseBedForm)
 	int result = 0			
 	
@@ -3222,13 +3231,24 @@ int Function HasFurnitureOralAnalChoiceInt(ObjectReference obj, Form baseBedForm
 				return 1
 			endIf
 			if (obj.HasKeyword(AnimFurnCouchKY))
+			
 				
 				if (GetIsOnIgnoreListSceneID(781) && GetIsOnIgnoreListSceneID(735))
 					fallThru = true
 					
-				elseIf ((DTSConditionals as DTSleep_Conditionals).IsRZSexActive && (DTSConditionals as DTSleep_Conditionals).RZSexVers >= 2.50 && !GetIsOnIgnoreListSceneID(1140))
-					; has both v3.20
-					return 4
+				elseIf ((DTSConditionals as DTSleep_Conditionals).IsRZSexActive && (DTSConditionals as DTSleep_Conditionals).RZSexVers >= 2.50)
+					; has both v3.20 oral and anal
+					; first check if has RZSex  - v3.25
+					if ((DTSConditionals as DTSleep_Conditionals).RZSexVers >= 3.00 && !GetIsOnIgnoreListSceneID(1142))
+						; female stimulation and anal
+						return 6
+					endIf
+					
+					if (!GetIsOnIgnoreListSceneID(1140))
+						return 4
+					endIf
+					
+					return 1
 				else
 					return 1
 				endIf
@@ -3243,6 +3263,11 @@ int Function HasFurnitureOralAnalChoiceInt(ObjectReference obj, Form baseBedForm
 				if (GetIsOnIgnoreListSceneID(735))
 					fallThru = true
 				else
+					; first check if has RZSex  - v3.25
+					if ((DTSConditionals as DTSleep_Conditionals).IsRZSexActive && (DTSConditionals as DTSleep_Conditionals).RZSexVers >= 3.00 && !GetIsOnIgnoreListSceneID(1142))
+						return 5
+					endIf
+				
 					return 1
 				endIf
 			endIf
@@ -3268,17 +3293,36 @@ int Function HasFurnitureOralAnalChoiceInt(ObjectReference obj, Form baseBedForm
 		endIf
 		
 		if ((DTSConditionals as DTSleep_Conditionals).IsRZSexActive)			; v3.15 
+		
+			bool isCouch = obj.HasKeyword(AnimFurnCouchKY)
+			bool onCouchList = false 
 			
-			if (obj.HasKeyword(AnimFurnCouchKY))
-				if ((DTSConditionals as DTSleep_Conditionals).RZSexVers >= 2.50 && !GetIsOnIgnoreListSceneID(1140) && !GetIsOnIgnoreListSceneID(1135))
-					; has both v3.20
-					return 4
+			; sceneID 1142 may be any couch, so check list   -- v3.25
+			if (baseBedForm != None && !isCouch)
+				onCouchList = DTSleep_IntimateCouchList.HasForm(baseBedForm)
+			endIf
+			
+			if (isCouch || onCouchList)
+			
+				if ((DTSConditionals as DTSleep_Conditionals).RZSexVers >= 3.00 && !GetIsOnIgnoreListSceneID(1142))
+					; v3.25 -- female stimulation
+					if (!GetIsOnIgnoreListSceneID(1140))
+						return 6
+					endIf
+					
+					return 5
 				endIf
-				if (!GetIsOnIgnoreListSceneID(1135))
-					return 1
-				endIf
-				if (!GetIsOnIgnoreListSceneID(1140))
-					return 3
+				if (isCouch)
+					if ((DTSConditionals as DTSleep_Conditionals).RZSexVers >= 2.50 && !GetIsOnIgnoreListSceneID(1140) && !GetIsOnIgnoreListSceneID(1135))
+						; has both v3.20
+						return 4
+					endIf
+					if (!GetIsOnIgnoreListSceneID(1135))
+						return 1
+					endIf
+					if (!GetIsOnIgnoreListSceneID(1140))
+						return 3
+					endIf
 				endIf
 			endIf
 			if (!GetIsOnIgnoreListSceneID(1162))
@@ -5543,27 +5587,41 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 								xOffset = 1.0		; angle prevent random
 							endIf
 							
-						elseIf (id >= 900 && id < 1200)					; v2.90 adjust limit for future
+						elseIf (id >= 900 && id < 1300)					; adjust limit for future
+						
+							zOffset = 0.0
+							
 							; TODO: BP70 position
-							if (standOnly && onFloorOK)					; v3.15
+							if (MainActorPositionByCaller)					; v3.25
+								placeOnBedSimple = false
+							elseIf (standOnly && onFloorOK)					; v3.15
 								placeOnBedSimple = false
 							else
 								placeOnBedSimple = true
 								matchRotation = true
-								zOffset = PositionMarkerOnBedZAdjustForSceneID(id)
-							
 								yOffset = -16.0
+								
+								if (id == 1117)					; v3.25
+									markerIsBed = true
+									zOffset = -43.25			; ??
+									
+								elseIf (id != 1137)			
+									zOffset = PositionMarkerOnBedZAdjustForSceneID(id)
+								endIf
 							
 								if (id == 903)
 									yOffset = -56.0
-								endIf
-								
-								if (MySleepBedFurnType == FurnTypeIsSeatKitchen && id == 1137)
-									zOffset = 0.0
-									yOffset = -2.5			; default seating position too close to backrest v3.15
+									
+								elseIf (id == 1137)
+									if (MySleepBedFurnType == FurnTypeIsSeatKitchen)
+										zOffset = 0.0
+										yOffset = -2.5			; default seating position too close to backrest v3.15
+									else
+										yOffset = 1.5	; due to legs clip v3.15
+									endIf
 									
 								elseIf (id == 1116)
-									yOffset = 3.0		; v3.16
+									yOffset = 6.0			; was 3  v3.25
 									
 								elseIf (id == 1010)
 									; rotate 90 degrees to fit on bed
@@ -5616,6 +5674,7 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 									yOffset = 30.0	
 								elseIf (id == 1106)
 									yOffset = 4.0
+									
 								elseIf (id == 1149)
 									; move towards center of bed
 									yOffset = -20.0
@@ -5652,9 +5711,7 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 									bedUseNodeMarker = true
 									markerIsBed = false
 									headingAngle = SleepBedRef.GetAngleZ() + 180.001
-									;head2AngleOffset = -90.0			; angle when using bedUseNodeMarker -- also shifts left
-								elseIf (id == 1137)
-									yOffset = 1.5	; due to legs clip v3.15
+									;head2AngleOffset = -90.0			; angle when using bedUseNodeMarker -- also shifts left									
 									
 								elseIf (id == 1138)
 									; PA Repair  oral hanging 			v3.20
@@ -5675,6 +5732,12 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 									bedUseNodeMarker = true
 									markerIsBed = false
 									headingAngle = SleepBedRef.GetAngleZ()
+								elseIf (id == 1142)
+									; rotate 180  and shift                     v3.25
+									xOffset = 20.0
+									yOffset = -8.0
+									matchRotation = true
+									revHeading = true 
 									
 								elseIf (id == 1162)
 									; rotate to front of desk  v3.15
@@ -6283,7 +6346,7 @@ float Function PositionMarkerOnBedZAdjustForSceneID(int id)
 			return 0.0
 		elseIf (id >= 800 && id < 900)
 			return 0.0
-		elseIf (id >= 1100 && id < 1200)			; v3.15
+		elseIf (id >= 1100 && id < 1300)			
 			if (MySleepBedFurnType == FurnTypeIsSleepingBag)
 				return 1.4
 			endIf
@@ -6406,7 +6469,9 @@ float Function PositionMarkerOnBedZAdjustForSceneID(int id)
 	elseIf (id >= 1100 && id <= 1049)
 		; RZSex floor animations on bed
 		return 43.25
-		
+	elseIf (id >= 1200 && id < 1300)
+		; TBOS floor animations on bed   v3.25
+		return 43.25
 	elseIf (id >= 1000 && id < 1019)					
 		; BP70 floor animations on bed
 		if (id == 1010)
@@ -7343,7 +7408,17 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 				
 					if (playerPick) 
 						if (DoesMainActorPrefID(ScenePrefIsOral))
+						
+							if (MySleepBedFurnType == FurnTypeIsSeatSofa)
+								if ((DTSConditionals as DTSleep_Conditionals).RZSexVers >= 3.00)
+									; okay for same-gender
+									sidArray.Add(42)		; v3.25
+								endIf
+							endIf
+						
 							if (SleepBedRef.HasKeyword(AnimFurnCouchKY))
+							
+								; does not include couch lists with alternate seated position
 								if (!SceneData.SameGender)
 									if (mainActorIsMaleRole)
 										
@@ -7402,7 +7477,13 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 						
 					elseIf (MySleepBedFurnType == FurnTypeIsSeatSofa)
 						
-						if (!SceneData.SameGender)
+						if (SceneData.SameGender && SceneData.MaleRoleGender == 1)
+							; allow for non-oral pick    v3.25
+							if ((DTSConditionals as DTSleep_Conditionals).RZSexVers >= 3.00)
+								sidArray.Add(42)
+							endIf
+						
+						elseIf (!SceneData.SameGender)
 							
 							if (SleepBedRef.HasKeyword(AnimFurnCouchKY))
 								sidArray.Add(31)
@@ -7417,6 +7498,7 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 									sidArray.Add(37)
 								endIf
 							endIf
+							
 						endIf
 					elseIf (MySleepBedFurnType == FurnTypeIsSeatIntimateChair)
 						
@@ -8018,6 +8100,20 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 				endIf
 			endIf	; end isAtomicLust
 			
+		; TBOS-BedroomHymn    v3.25
+		elseIf (packID == 12 && SceneData.SameGender && SceneData.MaleRoleGender == 0 && !SceneData.CompanionInPowerArmor && !SceneData.IsUsingCreature)
+		
+			if (playerPick && DoesMainActorPrefID(ScenePrefIsOral))
+				sidArray.Add(49)
+			elseIf (playerPick && DoesMainActorPrefID(ScenePrefIsMission))
+				sidArray.Add(1)
+			elseIf (playerPick && DoesMainActorPrefID(ScenePrefIsCowboy))
+				sidArray.Add(6)
+			elseIf (!playerPick)
+				sidArray.Add(1)
+				sidArray.Add(6)
+			endIf
+			
 		; RZSex  v3.15
 		elseIf (packID == 11 && !SceneData.IsUsingCreature)
 			
@@ -8079,6 +8175,10 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 				endIf
 				if (!playerPick || DoesMainActorPrefID(ScenePrefIsDoggy))
 				
+					if ((DTSConditionals as DTSleep_Conditionals).RZSexVers >= 3.00)
+						sidArray.Add(11)			; v3.25
+					endIf
+						
 					sidArray.Add(3)
 					if (bedIsFloorBed)
 						if (playerPick && !SceneData.SameGender)
@@ -8132,9 +8232,12 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 					
 					sidArray.Add(55)
 					
-				elseIf (!playerPick)
+				elseIf (!playerPick || DoesMainActorPrefID(ScenePrefIsProne))
 					
 					sidArray.Add(16)
+					if (MySleepBedFurnType == FurnTypeIsDoubleBed && (DTSConditionals as DTSleep_Conditionals).RZSexVers >= 3.00)
+						sidArray.Add(17)		; v3.25
+					endIf
 				endIf
 			endIf
 			
@@ -8826,6 +8929,10 @@ bool Function SceneIDToyArmorNotOkay(int seqID)		;v3.22
 	; first FF-pair scenes
 	if (seqID >= 1000 && seqID < 1100)
 		return true
+	elseIf (seqID == 1142)
+		; v3.25
+		return true
+		
 	elseIf (seqID == 181 || seqID == 180 || seqID == 680 || seqID == 681 || seqID == 281 || seqID == 947 || seqID == 1130 || seqID == 1135 || seqID == 1138 || seqID == 1141 || seqID == 1149 || seqID == 1152)
 		
 		return true

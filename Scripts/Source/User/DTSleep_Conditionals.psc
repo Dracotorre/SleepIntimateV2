@@ -72,6 +72,7 @@ bool property IsSavageCabbageActive = false auto conditional hidden
 float property SavageCabbageVers = 0.0 auto conditional hidden
 bool property IsRZSexActive = false auto conditional hidden				; v3.13
 float property RZSexVers = 0.0 auto conditional hidden					; v3.20
+bool property IsTBOSHymnActive = false auto conditional hidden			; v3.25
 bool property IsConquestActive = false auto conditional hidden
 Keyword property ConquestWorkshopKW = None auto conditional hidden
 bool property IsCrossBosUniActive = false auto conditional hidden
