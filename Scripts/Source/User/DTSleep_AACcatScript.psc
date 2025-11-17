@@ -30,6 +30,7 @@ Struct DTAACSceneStageStruct
 	float StageTime = -1.0				; duration in seconds - if <0.0 then use default
 	float FAngleOffset = 0.0			; female-role (or 2nd actor) angle offset - how much to turn
 	float MAngleOffset = 0.0			; male-role (or 1st actor) angle offset
+	float OAngleOffset = 0.0			; third-role angle offset      v3.26
 	float MPosYOffset = 0.0				; male-role Y-offset
 	float MPosZOffset = 0.0				; male-role Z-offset
 	int ArmorNudeAGun = 0				; male erection angle for primary male-role
@@ -78,6 +79,7 @@ int Function GetStageCountForSequenceID(int seqID, int longScene = 0, int other 
 		
 	elseIf (seqID >= 1100)
 		result = 6
+		
 		if (seqID == 1102 || seqID == 1106)
 			result = 4
 		elseIf (seqID == 1111)
@@ -797,7 +799,33 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 			endIf
 		
 		elseIf (seqID == 1131)
-			if (stageNumber == 0)								; FAngle changes not supported, so skip first 2 stages
+			if (other > 100)	
+				ssStruct.ArmorNudeBGun = 0			; FMM added v3.26 - RZSex v3.2 -- position problem -- none lined up
+				if (stageNumber == 1)													
+					ssStruct.FAnimFormID = 0x0901776F
+					ssStruct.MAnimFormID = 0x09017770
+					ssStruct.OAnimFormID = 0x09017771
+					ssStruct.PositionOrigID = "RZ_DP2MCouchTender01"
+					ssStruct.PositionID = "DTSIXFMM_1131_S1"
+					ssStruct.MAngleOffset = 180.0
+					
+				elseIf (stageNumber == 2)							
+					ssStruct.FAnimFormID = 0x09017772
+					ssStruct.MAnimFormID = 0x09017773
+					ssStruct.OAnimFormID = 0x09017774
+					ssStruct.PositionOrigID = "RZ_DP2MCouchTender02"
+					ssStruct.PositionID = "DTSIXFMM_1131_S2"
+					ssStruct.MAngleOffset = 180.0
+				else							
+					ssStruct.FAnimFormID = 0x09017775
+					ssStruct.MAnimFormID = 0x09017776
+					ssStruct.OAnimFormID = 0x09017777
+					ssStruct.PositionOrigID = "RZ_DP2MCouchTender03"
+					ssStruct.PositionID = "DTSIXFMM_1131_S3"
+					ssStruct.MAngleOffset = 180.0
+				endIf
+			
+			elseIf (stageNumber == 0)								; FAngle changes not supported, so skip first 2 stages
 				ssStruct.FAnimFormID = 0x0900DE14
 				ssStruct.MAnimFormID = 0x0900DE15
 				ssStruct.PositionOrigID = "RZ_SexCouchTender01"
@@ -852,8 +880,60 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 				ssStruct.PositionOrigID = "RZ_DoggyCouchTender05"
 				ssStruct.PositionID = "DTSIX_1132_S5"
 			endIf
-		elseIf (seqID == 1133)					; AnimFurnCouch KY only					
-			if (stageNumber == 1)
+		elseIf (seqID == 1133)					; AnimFurnCouch KY only		
+			if (other > 0)
+				ssStruct.ArmorNudeBGun = 0 							; FMM BJ v3.26 
+				if (stageNumber == 1)													
+					ssStruct.FAnimFormID = 0x0901775A
+					ssStruct.MAnimFormID = 0x0901775B
+					ssStruct.OAnimFormID = 0x0901775C
+					ssStruct.PositionOrigID = "RZ_Blowjob2MCouchTender01"
+					ssStruct.PositionID = "DTSIXFMM_1133_S1"
+					ssStruct.MAngleOffset = 180.0
+					ssStruct.OAngleOffset = 90.0
+				elseIf (stageNumber == 2)							
+					ssStruct.FAnimFormID = 0x0901775D
+					ssStruct.MAnimFormID = 0x0901775E
+					ssStruct.OAnimFormID = 0x0901775F
+					ssStruct.PositionOrigID = "RZ_Blowjob2MCouchTender02"
+					ssStruct.PositionID = "DTSIXFMM_1133_S2"
+					ssStruct.MAngleOffset = 180.0
+					ssStruct.OAngleOffset = 90.0
+				elseIf (stageNumber == 3)							
+					ssStruct.FAnimFormID = 0x09017760
+					ssStruct.MAnimFormID = 0x09017761
+					ssStruct.OAnimFormID = 0x09017762
+					ssStruct.PositionOrigID = "RZ_Blowjob2MCouchTender03"
+					ssStruct.PositionID = "DTSIXFMM_1133_S3"
+					ssStruct.MAngleOffset = 180.0
+					ssStruct.OAngleOffset = 90.0
+				elseIf (stageNumber == 4)							
+					ssStruct.FAnimFormID = 0x09017763
+					ssStruct.MAnimFormID = 0x09017764
+					ssStruct.OAnimFormID = 0x09017765
+					ssStruct.PositionOrigID = "RZ_Blowjob2MCouchTender04"
+					ssStruct.PositionID = "DTSIXFMM_1133_S4"
+					ssStruct.MAngleOffset = 180.0
+					ssStruct.OAngleOffset = 90.0
+				elseIf (stageNumber == 5)							
+					ssStruct.FAnimFormID = 0x09017766
+					ssStruct.MAnimFormID = 0x09017767
+					ssStruct.OAnimFormID = 0x09017768
+					ssStruct.PositionOrigID = "RZ_Blowjob2MCouchTender05"
+					ssStruct.PositionID = "DTSIXFMM_1133_S5"
+					ssStruct.MAngleOffset = 180.0
+					ssStruct.OAngleOffset = 90.0
+				else
+					ssStruct.FAnimFormID = 0x09017769
+					ssStruct.MAnimFormID = 0x0901776A
+					ssStruct.OAnimFormID = 0x0901776B
+					ssStruct.PositionOrigID = "RZ_Blowjob2MCouchTender06"
+					ssStruct.PositionID = "DTSIXFMM_1133_S6"
+					ssStruct.MAngleOffset = 180.0
+					ssStruct.OAngleOffset = 90.0
+				endIf
+				
+			elseIf (stageNumber == 1)
 				ssStruct.FAnimFormID = 0x0900DE0A
 				ssStruct.MAnimFormID = 0x0900DE0B
 				ssStruct.PositionOrigID = "RZ_BlowjobCouchTender01"
@@ -1122,6 +1202,7 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 				ssStruct.ArmorNudeAGun = -1
 			endIf
 		elseIf (seqID == 1142)								; added v3.25 -- oral -- rotate 180 and shift right
+			
 			if (stageNumber == 1)							
 				ssStruct.FAnimFormID = 0x09015129
 				ssStruct.MAnimFormID = 0x0901512A
@@ -1318,6 +1399,82 @@ DTAACSceneStageStruct Function GetSingleStage(int seqID, int stageNumber, int ge
 				ssStruct.MAnimFormID = 0x0900545B
 				ssStruct.PositionOrigID = "RZ_StandingGroundTender05"
 				ssStruct.PositionID = "DTSIX_1155_S5"
+			endIf
+		elseIf (seqID == 1157)										; added v3.26, RZSex v3.2
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x09016FB7
+				ssStruct.MAnimFormID = 0x09016FB8
+				ssStruct.PositionOrigID = "RZ_StandingFacingGroundTender01"
+				ssStruct.PositionID = "DTSIX_1157_S1"
+				ssStruct.MAngleOffset = 180.0
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x09016FB9
+				ssStruct.MAnimFormID = 0x09016FBA
+				ssStruct.PositionOrigID = "RZ_StandingFacingGroundTender02"
+				ssStruct.PositionID = "DTSIX_1157_S2"
+				ssStruct.MAngleOffset = 180.0
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x09016FBB
+				ssStruct.MAnimFormID = 0x09016FBC
+				ssStruct.PositionOrigID = "RZ_StandingFacingGroundTender03"
+				ssStruct.PositionID = "DTSIX_1157_S3"
+				ssStruct.MAngleOffset = 180.0
+			elseIf (stageNumber == 4)
+				ssStruct.FAnimFormID = 0x09016FBD
+				ssStruct.MAnimFormID = 0x09016FBE
+				ssStruct.PositionOrigID = "RZ_StandingFacingGroundTender04"
+				ssStruct.PositionID = "DTSIX_1157_S4"
+				ssStruct.MAngleOffset = 180.0
+			else
+				ssStruct.FAnimFormID = 0x09016FBF
+				ssStruct.MAnimFormID = 0x09016FC0
+				ssStruct.PositionOrigID = "RZ_StandingFacingGroundTender05"
+				ssStruct.PositionID = "DTSIX_1157_S5"
+				ssStruct.MAngleOffset = 180.0
+			endIf
+		elseIf (seqID == 1158)									; v3.27 spanking stand/ground - Rv3.31
+			if (stageNumber == 1)
+				ssStruct.FAnimFormID = 0x09017F11
+				ssStruct.MAnimFormID = 0x09017F12
+				ssStruct.PositionOrigID = "RZ_SpankingGroundRough01"
+				ssStruct.PositionID = "DTSIX_1158_S1"
+				ssStruct.MAngleOffset = 180.0
+				ssStruct.ArmorNudeAGun = -1
+			elseIf (stageNumber == 2)
+				ssStruct.FAnimFormID = 0x09017F13
+				ssStruct.MAnimFormID = 0x09017F14
+				ssStruct.PositionOrigID = "RZ_SpankingGroundRough02"
+				ssStruct.PositionID = "DTSIX_1158_S2"
+				ssStruct.MAngleOffset = 180.0
+				ssStruct.ArmorNudeAGun = -1
+			elseIf (stageNumber == 3)
+				ssStruct.FAnimFormID = 0x09017F15
+				ssStruct.MAnimFormID = 0x09017F16
+				ssStruct.PositionOrigID = "RZ_SpankingGroundRough03"
+				ssStruct.PositionID = "DTSIX_1158_S3"
+				ssStruct.MAngleOffset = 180.0
+				ssStruct.ArmorNudeAGun = -1
+			elseIf (stageNumber == 4)
+				ssStruct.FAnimFormID = 0x09017F17
+				ssStruct.MAnimFormID = 0x09017F18
+				ssStruct.PositionOrigID = "RZ_SpankingGroundRough04"
+				ssStruct.PositionID = "DTSIX_1158_S4"
+				ssStruct.MAngleOffset = 180.0
+				ssStruct.ArmorNudeAGun = -1
+			elseIf (stageNumber == 5)
+				ssStruct.FAnimFormID = 0x09017F19
+				ssStruct.MAnimFormID = 0x09017F1A
+				ssStruct.PositionOrigID = "RZ_SpankingGroundRough05"
+				ssStruct.PositionID = "DTSIX_1158_S5"
+				ssStruct.MAngleOffset = 180.0
+				ssStruct.ArmorNudeAGun = -1
+			else
+				ssStruct.FAnimFormID = 0x09017F1B
+				ssStruct.MAnimFormID = 0x09017F1C
+				ssStruct.PositionOrigID = "RZ_SpankingGroundRough06"
+				ssStruct.PositionID = "DTSIX_1158_S6"
+				ssStruct.MAngleOffset = 180.0
+				ssStruct.ArmorNudeAGun = -1
 			endIf
 		elseIf (seqID == 1162)									; manual & oral  -- do not repeat mid-stages!
 			if (stageNumber == 1)

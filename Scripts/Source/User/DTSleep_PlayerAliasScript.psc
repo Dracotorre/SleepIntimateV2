@@ -2668,13 +2668,20 @@ Function CheckCompatibility()
 				if (Game.IsPluginInstalled("RZSex.esp"))
 					(DTSConditionals as DTSleep_Conditionals).IsRZSexActive = true
 					
-					if ((DTSConditionals as DTSleep_Conditionals).RZSexVers < 3.00)
+					if ((DTSConditionals as DTSleep_Conditionals).RZSexVers < 3.31)
+						; v3.27
+						if (Game.GetFormFromFile(0x09017F1B, "RZSex.esp") != None)
+							(DTSConditionals as DTSleep_Conditionals).RZSexVers = 3.31
+							DTSleep_ActivPAStation.SetValue(1.0)
+						elseIf ((DTSConditionals as DTSleep_Conditionals).RZSexVers < 3.2 && Game.GetFormFromFile(0x09016FBD, "RZSex.esp") != None)
+							(DTSConditionals as DTSleep_Conditionals).RZSexVers = 3.20
+							DTSleep_ActivPAStation.SetValue(1.0)
+						elseIf ((DTSConditionals as DTSleep_Conditionals).RZSexVers < 3.0 && Game.GetFormFromFile(0x09015130, "RZSex.esp") != None)
 						; v3.25
-						if (Game.GetFormFromFile(0x09015130, "RZSex.esp") != None)
 							(DTSConditionals as DTSleep_Conditionals).RZSexVers = 3.00
-							
+							DTSleep_ActivPAStation.SetValue(1.0)
 						; v3.21
-						elseIf (Game.GetFormFromFile(0x09012ACE, "RZSex.esp") != None)
+						elseIf ((DTSConditionals as DTSleep_Conditionals).RZSexVers < 2.60 && Game.GetFormFromFile(0x09012ACE, "RZSex.esp") != None)
 							(DTSConditionals as DTSleep_Conditionals).RZSexVers = 2.60
 							DTSleep_ActivPAStation.SetValue(1.0)
 								

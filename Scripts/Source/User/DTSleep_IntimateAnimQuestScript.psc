@@ -856,7 +856,17 @@ int Function GetFurnitureSupportExtraActorForPacks(ObjectReference aFurnObjRef, 
 		if (baseFurnForm == None)
 			baseFurnForm = aFurnObjRef.GetBaseObject()
 		endIf
-		if (aFurnObjRef.HasKeyword(DTSleep_IntimateChairKeyword) || DTSleep_IntimateChairsList.HasForm(baseFurnForm))
+		if (aFurnObjRef.HasKeyword(AnimFurnCouchKY))
+			; couch with keyword v3.26
+			; not working, so leave out
+			;if ((DTSConditionals as DTSleep_Conditionals).RZSexVers >= 3.20 && DTSleep_CommonF.IsIntegerInArray(11, packs) && (packLimiVal <= 0 || packLimiVal == 11))
+			;	return 0
+			;endIf
+			if (DTSleep_CommonF.IsIntegerInArray(7, packs) && (packLimiVal <= 0 || packLimiVal == 7))
+				return 0
+			endIf
+			
+		elseIf (aFurnObjRef.HasKeyword(DTSleep_IntimateChairKeyword) || DTSleep_IntimateChairsList.HasForm(baseFurnForm))
 			if (DTSleep_CommonF.IsIntegerInArray(7, packs) && (packLimiVal <= 0 || packLimiVal == 7))
 				return 0
 			endIf
@@ -3367,6 +3377,11 @@ endFunction
 bool Function HasFurnitureSpankChoice(ObjectReference obj, Form baseBedForm)
 	
 	if ((DTSConditionals as DTSleep_Conditionals).IsRZSexActive)
+	
+		if ((DTSConditionals as DTSleep_Conditionals).RZSexVers >= 3.31 && !GetIsOnIgnoreListSceneID(1158))
+			; all seats allow stand-spank v3.27
+			return true
+		endIf 
 			
 		if (!GetIsOnIgnoreListSceneID(1130))			; v3.21 - fix with correct sid
 		
@@ -7392,6 +7407,7 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 						elseIf (playerPick && DoesMainActorPrefID(ScenePrefIsOral))
 							
 							sidArray.Add(39)
+							
 						elseIf (!playerPick)
 							sidArray.Add(40)
 							;sidArray.Add(41)
@@ -7409,7 +7425,7 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 					if (playerPick) 
 						if (DoesMainActorPrefID(ScenePrefIsOral))
 						
-							if (MySleepBedFurnType == FurnTypeIsSeatSofa)
+							if (MySleepBedFurnType == FurnTypeIsSeatSofa && SceneData.SecondMaleRole == None)
 								if ((DTSConditionals as DTSleep_Conditionals).RZSexVers >= 3.00)
 									; okay for same-gender
 									sidArray.Add(42)		; v3.25
@@ -7422,21 +7438,30 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 								if (!SceneData.SameGender)
 									if (mainActorIsMaleRole)
 										
-										if (Utility.RandomInt(0, 6) > 4)
+										if (SceneData.SecondMaleRole == None && Utility.RandomInt(0, 6) > 4)
 											sidArray.Add(35)			; only using 2 stages due to angle changes
 										else
 											sidArray.Add(33)
 										endIf
 									else
-										sidArray.Add(35)
-										if (Utility.RandomInt(0, 6) > 4)
+										if (SceneData.SecondMaleRole == None)
+											sidArray.Add(35)
+										endIf
+										if (SceneData.SecondMaleRole != None || Utility.RandomInt(0, 6) > 4)
 											sidArray.Add(33)
 										endIf
 									endIf
 								endIf
 							endIf
 						elseIf (DoesMainActorPrefID(ScenePrefIsSpank))
-							if (MySleepBedFurnType == FurnTypeIsSeatKitchen)
+						
+							if (MainActorPositionByCaller || standOnly)
+								; may happen at bed or forced position situation - v3.27
+								if ((DTSConditionals as DTSleep_Conditionals).RZSexVers >= 3.31)
+									sidArray.Add(58)
+								endIf
+							
+							elseIf (MySleepBedFurnType == FurnTypeIsSeatKitchen)
 								sidArray.Add(30)
 							elseIf (MySleepBedFurnType == FurnTypeIsSeatBench)
 								; must be short bench
@@ -7455,6 +7480,12 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 									sidArray.Add(30)
 								endIf
 							endIf
+							
+							if (!MainActorPositionByCaller && (DTSConditionals as DTSleep_Conditionals).RZSexVers >= 3.31)
+								; on ground for any chair v3.27
+								sidArray.Add(58)
+							endIf
+							
 						elseIf (DoesMainActorPrefID(ScenePrefIsAnal))			;v3.20
 							if (MySleepBedFurnType == FurnTypeIsSeatSofa)
 								sidArray.Add(40)
@@ -7477,7 +7508,11 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 						
 					elseIf (MySleepBedFurnType == FurnTypeIsSeatSofa)
 						
-						if (SceneData.SameGender && SceneData.MaleRoleGender == 1)
+						if (SceneData.SecondMaleRole != None && !SceneData.SameGender && (DTSConditionals as DTSleep_Conditionals).RZSexVers >= 30000.20)
+							; v3.26 -- not working so above set to bad RZSexVers
+							sidArray.Add(31)
+							
+						elseIf (SceneData.SameGender && SceneData.MaleRoleGender == 1)
 							; allow for non-oral pick    v3.25
 							if ((DTSConditionals as DTSleep_Conditionals).RZSexVers >= 3.00)
 								sidArray.Add(42)
@@ -8148,6 +8183,10 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 					endIf
 				else
 					sidArray.Add(55)
+					if ((DTSConditionals as DTSleep_Conditionals).RZSexVers >= 3.20)
+						; TODO: sidArray.Add(56)  ; -- rough
+						sidArray.Add(57)			; v3.27
+					endIf
 				endIf
 				
 			elseIf (pillowBedHasFrame)
@@ -8853,6 +8892,8 @@ endFunction
 bool Function SceneIDIsGroupPlay(int sid)
 	
 	if (sid >= 1100)				; v3.15
+		;if (sid == 1131 || sid == 1133)				; v3.26 -- not yet using TODO:
+		;	return true
 		if (sid == 1193)
 			return true
 		endIf
@@ -8916,6 +8957,8 @@ bool Function SceneIDIsSpanking(int id)				; v3.15
 		return true
 	elseIf (id == 1141)
 		return true 		; v3.21
+	elseIf (id == 1158)		; v3.27
+		return true
 	elseIf (id == 937)
 		return true
 	elseIf (id == 547)
@@ -9181,6 +9224,8 @@ bool Function SceneIDAtPlayerPosition(int sid)
 	;	return true
 	elseIf (sid >= 1154 && sid <= 1155)			; v3.15
 		return true
+	elseIf (sid == 1158)
+		return true			;v3.27
 		
 	elseIf (sid >= 150 && sid < 160)
 		if (SleepBedRef == None || SleepBedRef.HasKeyword(AnimFurnFloorBedAnimKY))
