@@ -9014,12 +9014,13 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 							hugsOnly = true
 							animPacks[0] = 0
 							
-						elseIf (DTSleep_SettingSwapRoles.GetValueInt() >= 1)				; check swap roles v2.82
-							SceneData.MaleRole = PlayerRef
-							SceneData.FemaleRole = nearCompanion.CompanionActor
-						else
-							SceneData.MaleRole = nearCompanion.CompanionActor
-							SceneData.FemaleRole = PlayerRef
+						; ----- moved down to after choosing from prompt - may end up using ToyArmor -------------- v3.28 
+						;elseIf (DTSleep_SettingSwapRoles.GetValueInt() >= 1)				; check swap roles v2.82
+						;	SceneData.MaleRole = PlayerRef
+						;	SceneData.FemaleRole = nearCompanion.CompanionActor
+						;else
+						;	SceneData.MaleRole = nearCompanion.CompanionActor
+						;	SceneData.FemaleRole = PlayerRef
 						endIf
 						
 					elseIf (specialFurn == 3 && (DTSConditionals as DTSleep_Conditionals).RZSexVers >= 2.60)	; v3.21 - desk same-gender spank okay
@@ -9206,7 +9207,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 			
 			; what about spank?
 			bool hasSpank = false
-			if (animPacks.Length == 0 && SceneData.SameGender) ; v3.21 -- does this matter? --> && !SceneData.HasToyAvailable)
+			if (SceneData.SameGender) ; FIX nothing to consider here --v3.28 
 				if ((DTSConditionals as DTSleep_Conditionals).IsRZSexActive)
 					if ((DTSleep_IntimateAnimQuestP as DTSleep_IntimateAnimQuestScript).HasFurnitureSpankChoice(akFurniture, furnBaseForm))
 						hasSpank = true
@@ -9383,7 +9384,7 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 						endIf
 						
 						if (seatSpank)
-							DTDebug(" seatOralOrAnalVal = " + seatOralOrAnalVal + " and seatSpank true", 2)
+							DTDebug(" seatOralOrAnalVal = " + seatOralOrAnalVal + " and seatSpank true " + "and val=" + val, 2)
 							if (val < 9.0)
 								val = 23.0
 							elseIf (val == 9.0 || val == 17.0)
@@ -9649,10 +9650,22 @@ Function HandlePlayerActivateFurniture(ObjectReference akFurniture, int specialF
 						; Strong at chair must be stand/pick-spot   v3.16
 						pickSpot = true
 						
-					elseIf (!oralSameGenderOK && SceneData.SameGender && specialFurn == 2)		
-						; v2.60 - lack chair animations, so must stand
-						pickSpot = true
-						hugsOnly = false
+					elseIf (SceneData.SameGender)
+						if (!oralSameGenderOK && specialFurn == 2)		
+							; v2.60 - lack chair animations, so must stand
+							pickSpot = true
+							hugsOnly = false
+							
+						elseIf (DTSleep_SettingSwapRoles.GetValueInt() <= 0)			; v3.28 swap check
+							; no  swap, same roles as old versions
+							SceneData.FemaleRole = PlayerRef
+							SceneData.MaleRole = nearCompanion.CompanionActor
+							MainQSceneScriptP.IsMaleCamOffset = false
+						else
+							SceneData.FemaleRole = nearCompanion.CompanionActor
+							SceneData.MaleRole = PlayerRef
+							MainQSceneScriptP.IsMaleCamOffset = true
+						endIf
 					endIf
 					
 				elseIf (checkVal == 6)
