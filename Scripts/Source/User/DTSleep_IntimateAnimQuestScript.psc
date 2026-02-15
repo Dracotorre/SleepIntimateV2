@@ -32,6 +32,7 @@ ScriptName DTSleep_IntimateAnimQuestScript extends Quest
 ;  900 - 999 - Graymod and Gray's creature
 ; 1000 - 1099 - BP70
 ; 1100 - 1199 - Rohzima
+; 1200 - 1299 - BOS
 ;
 ; positioning -
 ; NPC positioning works best if near target and free of obstructions
@@ -5692,7 +5693,7 @@ bool Function PositionIdleMarkersForBed(int id, bool mainActorIsMaleRole, bool u
 									; move to center of bed
 									yOffset = 30.0	
 								elseIf (id == 1106)
-									yOffset = 4.0
+									yOffset = -9.0				; 4 to -9 to be closer to center v3.29
 									
 								elseIf (id == 1149)
 									; move towards center of bed
@@ -6930,7 +6931,7 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 	; using packID-zero for all safe-content no matter which pack
 	; v3.0 also include CHAK pack-4 found only here
 	;
-	if (includeHugs > 0 && (packID <= 0 || packID == 4)) 
+	if ((includeHugs > 0 && packID <= 0) || packID == 4)			; v3.29 changed to always get if pack==4
 		; v2 included hugs/kisses
 		if (!SceneData.CompanionInPowerArmor)
 			if (!SceneData.IsUsingCreature || SceneData.IsCreatureType == 3)
@@ -6944,10 +6945,13 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 						; hugs
 						
 						if (!MainActorPositionByCaller && (DTSConditionals as DTSleep_Conditionals).IsCHAKPackActive && DTSleep_AdultContentOn.GetValue() >= 1.0)
-							if (MySleepBedFurnType == FurnTypeIsBedSingle)
-								sidArray.Add(400, 3)
-							elseIf (MySleepBedFurnType == FurnTypeIsDoubleBed)
-								sidArray.Add(401, 3)
+							; was single bed only, let's allow for double, too  v3.29
+							
+							if (MySleepBedFurnType == FurnTypeIsDoubleBed || MySleepBedFurnType == FurnTypeIsBedSingle)
+								sidArray.Add(400)
+							endIf
+							if (MySleepBedFurnType == FurnTypeIsDoubleBed)
+								sidArray.Add(401, 2)
 							endIf
 						endIf
 						if (!cuddlesOnly && packID <= 0)
@@ -6963,7 +6967,7 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 								sidArray.Add(402, 3)
 							endIf
 						endIf
-						if (!cuddlesOnly && packID <= 0)
+						if (!cuddlesOnly && (packID <= 0 || MySleepBedFurnType != FurnTypeIsDoubleBed || Utility.RandomInt(1,5) < 4))		; v3.29
 							sidArray.Add(97)
 							if (!SceneData.SameGender)
 								sidArray.Add(94)
@@ -7053,7 +7057,7 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 	
 	; sexual content
 	;
-	if (packID > 0 && DTSleep_AdultContentOn.GetValue() >= 2.0 && includeHugs <= 1)
+	if (packID > 0 && packID != 4 && DTSleep_AdultContentOn.GetValue() >= 2.0 && includeHugs <= 1)
 	
 		if (MySleepBedFurnType == FurnTypeIsPillory && !SceneData.IsUsingCreature && !SceneData.CompanionInPowerArmor)
 		
@@ -7456,7 +7460,10 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 							if (SleepBedRef.HasKeyword(AnimFurnCouchKY))
 							
 								; does not include couch lists with alternate seated position
-								if (!SceneData.SameGender)
+								if (SceneData.SameGender && SceneData.MaleRoleGender == 1)
+									; allow DomGirl with two females   v3.29
+									sidArray.Add(35)			; only using 2 stages due to angle changes
+								else
 									if (mainActorIsMaleRole)
 										
 										if (SceneData.SecondMaleRole == None && Utility.RandomInt(0, 6) > 4)
@@ -8204,9 +8211,12 @@ int[] Function SceneIDArrayForAnimationSet(int packID, bool mainActorIsMaleRole,
 				sidArray.Add(21)
 				
 			elseIf (SceneData.SameGender && SceneData.MaleRoleGender == 1 && !SceneData.HasToyAvailable)
-				; FF without toy
-				if (!playerPick)
+				; FF without toy -- see below for hasToy
+				if ((!playerPick && MainActorPositionByCaller) || DoesMainActorPrefID(ScenePrefIsStand) || DoesMainActorPrefID(ScenePrefSoloPair))	
+					; v3.29 also include prefer-stand and show-flirt
 					sidArray.Add(52)
+					sidArray.Add(53)
+					sidArray.Add(54)
 				endIf
 				
 			elseIf (MySleepBedFurnType == FurnTypeIsCoffin || MainActorPositionByCaller)
@@ -9011,12 +9021,15 @@ bool Function SceneIDToyArmorNotOkay(int seqID)		;v3.22
 	elseIf (SceneIDIsSpanking(seqID))		; v3.28
 		return true
 		
-	elseIf (seqID == 1142)
-		; v3.25
+	elseIf (seqID >= 1152 && seqID <= 1154)
+		;v3.29
 		return true
 		
+	elseIf (seqID >= 1141 && seqID <= 1142)
+		; v3.25 added 1142 and moved 1141 here
+		return true
 		
-	elseIf (seqID == 181 || seqID == 180 || seqID == 680 || seqID == 681 || seqID == 281 || seqID == 1135 || seqID == 1138 || seqID == 1141 || seqID == 1149 || seqID == 1152)
+	elseIf (seqID == 181 || seqID == 180 || seqID == 680 || seqID == 681 || seqID == 281 || seqID == 1135 || seqID == 1138 || seqID == 1149)
 		
 		return true
 	endIf

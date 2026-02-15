@@ -11312,6 +11312,9 @@ int[] Function IntimateAnimPacksPick(bool adultScenesAvailable, bool powerArmorF
 			if (hasSavageCabbageAnims)			; include for dance
 				animSets.Add(7)
 			endIf
+			if (hasRZSexAnims)		; show-tease, some FF scenes  -v3.29
+				animSets.Add(11)
+			endIf
 			if (hasGrayAnims)
 				animSets.Add(9)
 			endIf

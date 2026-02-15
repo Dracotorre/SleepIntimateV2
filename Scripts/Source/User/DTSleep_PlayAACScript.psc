@@ -786,6 +786,7 @@ Function InitSceneAndPlay()
 	endIf
 	
 	if (MainActor == SceneData.MaleRole)
+		
 		mainAngleOff = angleOffset + angleM
 		mainYOff = yOffM
 		if (SequenceID < 100)
@@ -806,11 +807,16 @@ Function InitSceneAndPlay()
 	if (SecondActor != None)
 		; first move second actor close, but out of bump range
 		SecondActor.MoveTo(MainActor, 0.0, -50.0, 0.0, true)
+		
+		float aOffset = 0.0						; v3.29
+		if (seqStagesArray.Length > 0)
+			aOffset = seqStagesArray[0].OAngleOffset
+		endIf
 		if (SecondActor == SceneData.MaleRole)
-			secondAngleOff = angleOffset + angleM + seqStagesArray[0].OAngleOffset				; v3.26 added optional seq-offset
+			secondAngleOff = angleOffset + angleM + aOffset				; v3.26 added optional seq-offset
 			;secondYOff = yOffM
 		else
-			secondAngleOff = angleOffset + angleF  + seqStagesArray[0].OAngleOffset
+			secondAngleOff = angleOffset + angleF  + aOffset
 		endIf
 	endIf
 	
