@@ -1893,12 +1893,14 @@ Function CheckRemoveToys(bool allowRetry = true, bool forceRem = false, bool not
 					toyActor.UnequipItem(SceneData.ToyArmor, false, true)
 					self.HasToyEquipped = false
 					SceneData.HasToyEquipped = false
+					Utility.Wait(0.2)				; v3.29
 					
 				elseIf (forceRem && otherActor != None && otherActor.GetItemCount(SceneData.ToyArmor) > 0)		; other may have equipped - v3.22
 				
 					otherActor.UnequipItem(SceneData.ToyArmor, false, true)
 					self.HasToyEquipped = false
 					SceneData.HasToyEquipped = false
+					Utility.Wait(0.2)				; v3.29
 					
 				elseIf (allowRetry && SceneData.AnimationSet > 4 && CheckRemoveToysCount < 5)
 					; may not be copied back yet from AAF
@@ -1927,6 +1929,7 @@ Function CheckRemoveToys(bool allowRetry = true, bool forceRem = false, bool not
 						index = len
 						SceneData.HasToyEquipped = false   ; remove flag from Scene since we applied
 						self.HasToyEquipped = false
+						Utility.Wait(0.2)				; v3.29
 					endIf
 				elseIf (MainActorRef != None && !SceneData.SameGender && MainActorRef == SceneData.FemaleRole)
 					if (MainActorRef.IsEquipped(toyArmor))

@@ -3116,8 +3116,11 @@ Function RedressActor(Actor actorRef, Form[] equippedFormArray, bool slowly = tr
 					actorRef.EquipItem(item, false, true)
 					equipOK = true
 				else
-					DTDebug(" skip item " + item + " actor did not have toy equipped", 3)
+					DTDebug(" skip item " + item + " actor did not have toy equipped", 2)
 				endIf
+			elseIf (actorRef == PlayerRef && item == DressData.PlayerLastEquippedStrapOnItem)
+				; ignore -- v3.29
+				DTDebug(" skip StrapOn item " + item + " player-actor did not have toy equipped during undress", 2)
 			
 			elseIf (actorRef == CompanionRef && item == DressData.CompanionEquippedStrapOnItem)
 				if (CompanionHasToyEquip)
@@ -3127,7 +3130,13 @@ Function RedressActor(Actor actorRef, Form[] equippedFormArray, bool slowly = tr
 				else
 					DTDebug(" skip item " + item + " actor did not have toy equipped", 3)
 				endIf
-				
+			elseIf (actorRef == CompanionRef && item == DressData.CompanionLastEquippedStrapOnItem)
+				; ignore -- v3.29
+				DTDebug(" skip StrapOn item " + item + " companion did not have toy equipped during undress", 2)
+			
+			elseIf (DTSleep_StrapOnList != None && DTSleep_StrapOnList.HasForm(item))
+				; ignore -- v3.29
+				DTDebug(" skip toy item " + item + " found in toyList", 2)
 				
 			; if nude-suit knocked off into list, remove without un-equip
 			elseIf (item == DTSleep_PlayerNudeRing)
